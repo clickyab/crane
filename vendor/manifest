@@ -1,0 +1,127 @@
+{
+	"version": 0,
+	"dependencies": [
+		{
+			"importpath": "github.com/BurntSushi/toml",
+			"repository": "https://github.com/BurntSushi/toml",
+			"revision": "99064174e013895bbd9b025c31100bd1d9b590ca",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/Sirupsen/logrus",
+			"repository": "https://github.com/Sirupsen/logrus",
+			"revision": "61e43dc76f7ee59a82bdf3d71033dc12bea4c77d",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/fzerorubigd/expand",
+			"repository": "https://github.com/fzerorubigd/expand",
+			"revision": "fd359294116f3987dc04c5987782f845e99e9f42",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/golang/mock",
+			"repository": "https://github.com/golang/mock",
+			"revision": "bd3c8e81be01eef76d4b503f5e687d2d1354d2d9",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/golang/mock/gomock",
+			"repository": "https://github.com/golang/mock",
+			"revision": "bd3c8e81be01eef76d4b503f5e687d2d1354d2d9",
+			"branch": "master",
+			"path": "/gomock"
+		},
+		{
+			"importpath": "github.com/jtolds/gls",
+			"repository": "https://github.com/jtolds/gls",
+			"revision": "bb0351aa7eb6f322f32667d51375f26a2bca6628",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/julienschmidt/httprouter",
+			"repository": "https://github.com/julienschmidt/httprouter",
+			"revision": "8a45e95fc75cb77048068a62daed98cc22fdac7c",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/mssola/user_agent",
+			"repository": "https://github.com/mssola/user_agent",
+			"revision": "07efe2b857fb8c02d2dd85c12d0145f58554ec7c",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/rs/xhandler",
+			"repository": "https://github.com/rs/xhandler",
+			"revision": "ed27b6fd65218132ee50cd95f38474a3d8a2cd12",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/rs/xmux",
+			"repository": "https://github.com/rs/xmux",
+			"revision": "447ce20d8516cc0d2564fc3de70b5d078e0b816e",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/smartystreets/assertions",
+			"repository": "https://github.com/smartystreets/assertions",
+			"revision": "c9ee7d9e9a2aeec0bee7c4a516f3e0ad7cb7e558",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/smartystreets/goconvey",
+			"repository": "https://github.com/smartystreets/goconvey",
+			"revision": "3bd662eac601ad6436e64776af2e112069eb2edc",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/streadway/amqp",
+			"repository": "https://github.com/streadway/amqp",
+			"revision": "63795daa9a446c920826655f26ba31c81c860fd6",
+			"branch": "master"
+		},
+		{
+			"importpath": "golang.org/x/net/context",
+			"repository": "https://go.googlesource.com/net",
+			"revision": "a6577fac2d73be281a500b310739095313165611",
+			"branch": "master",
+			"path": "/context"
+		},
+		{
+			"importpath": "gopkg.in/airbrake/gobrake.v2",
+			"repository": "https://gopkg.in/airbrake/gobrake.v2",
+			"revision": "668876711219e8b0206e2994bf0a59d889c775aa",
+			"branch": "master"
+		},
+		{
+			"importpath": "gopkg.in/fzerorubigd/onion.v2",
+			"repository": "https://gopkg.in/fzerorubigd/onion.v2",
+			"revision": "078930955df67fe99807c7099902a5282796521f",
+			"branch": "v2"
+		},
+		{
+			"importpath": "gopkg.in/gemnasium/logrus-airbrake-hook.v2",
+			"repository": "https://gopkg.in/gemnasium/logrus-airbrake-hook.v2",
+			"revision": "bfee1239d796830ca346767650cce5ba90d58c57",
+			"branch": "master"
+		},
+		{
+			"importpath": "gopkg.in/gorp.v2",
+			"repository": "https://gopkg.in/gorp.v2",
+			"revision": "4deece61034873cb5b5416e81abe4cea7bd0da72",
+			"branch": "master"
+		},
+		{
+			"importpath": "gopkg.in/redis.v5",
+			"repository": "https://gopkg.in/redis.v5",
+			"revision": "9cd49656897843b8f2bf3d9639230cb7aec90d6c",
+			"branch": "master"
+		},
+		{
+			"importpath": "gopkg.in/yaml.v2",
+			"repository": "https://gopkg.in/yaml.v2",
+			"revision": "4c78c975fe7c825c6d1466c42be594d1d6f3aba6",
+			"branch": "v2"
+		}
+	]
+}
