@@ -17,7 +17,7 @@ type restAd struct {
 }
 
 func (ra *restAd) Win() {
-	ra.demand.Win(context.Background(), ra.RID)
+	ra.demand.Win(context.Background(), ra.RID, ra.RCPM)
 }
 
 func (ra *restAd) Width() int {

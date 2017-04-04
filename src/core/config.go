@@ -1,11 +1,9 @@
 package core
 
 import (
-	"time"
-
-	"config"
-
 	"assert"
+	"config"
+	"time"
 
 	"gopkg.in/fzerorubigd/onion.v2"
 )

@@ -1,17 +1,15 @@
 package restful
 
 import (
-	"context"
-	"entity"
-	"net/http"
-	"time"
-
-	"bytes"
-	"encoding/json"
-
-	"net/url"
-
 	"assert"
+	"bytes"
+	"context"
+	"encoding/json"
+	"entity"
+	"fmt"
+	"net/http"
+	"net/url"
+	"time"
 
 	"github.com/Sirupsen/logrus"
 )
@@ -25,10 +23,20 @@ type demand struct {
 
 	requestTimeout time.Duration
 	key            string
+
+	minuteLimit int64
+	hourLimit   int64
+	dayLimit    int64
+	weekLimit   int64
+	monthLimit  int64
 }
 
 func (d *demand) Name() string {
 	return d.key
+}
+
+func (d *demand) checkLimits() {
+
 }
 
 func (d *demand) Provide(ctx context.Context, imp entity.Impression, ch chan map[string]entity.Advertise) {
@@ -51,6 +59,11 @@ func (d *demand) Provide(ctx context.Context, imp entity.Impression, ch chan map
 		return
 	}
 
+	if resp.StatusCode != http.StatusOK {
+		logrus.Debugf("status code is %d", resp.StatusCode)
+		return
+	}
+
 	ads := map[string]restAd{}
 	dec := json.NewDecoder(resp.Body)
 	defer resp.Body.Close()
@@ -61,19 +74,23 @@ func (d *demand) Provide(ctx context.Context, imp entity.Impression, ch chan map
 
 	adsInter := make(map[string]entity.Advertise, len(ads))
 	for i := range ads {
-		adsInter[i] = ads[i]
+		tmp := ads[i]
+		// set demand for win resp
+		tmp.demand = d
+		adsInter[i] = tmp
 	}
 
 	ch <- adsInter
 }
 
-func (d *demand) Status(context.Context, http.ResponseWriter, *http.Request) {
+func (d *demand) Status(c context.Context, h http.ResponseWriter, r *http.Request) {
 	panic("implement me")
 }
 
-func (d *demand) Win(ctx context.Context, id string) {
+func (d *demand) Win(ctx context.Context, id string, cpm int64) {
 	u := *d.winPoint
 	u.Query().Add("win", id)
+	u.Query().Add("cpm", fmt.Sprint(cpm))
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
 		logrus.Debug(err)
@@ -103,8 +120,8 @@ func (d *demand) createConnection() {
 }
 
 // NewRestfulClient return a new client for restful call
-func NewRestfulClient(name, endpoint, winpoint string, maxIdleConnection int, timeout time.Duration) entity.Demand {
-	win, err := url.Parse(winpoint)
+func NewRestfulClient(name, endpoint, winPoint string, maxIdleConnection int, timeout time.Duration) entity.Demand {
+	win, err := url.Parse(winPoint)
 	assert.Nil(err)
 	return &demand{
 		endPoint:           endpoint,

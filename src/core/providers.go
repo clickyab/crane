@@ -50,15 +50,15 @@ func (p *providerData) watch(ctx context.Context, imp entity.Impression) map[str
 }
 
 // Register is used to handle new layer in system
-func Register(name string, provider entity.Demand, timeout time.Duration) {
+func Register(provider entity.Demand, timeout time.Duration) {
 	for i := range allProviders {
-		assert.True(allProviders[i].name != name, "[BUG] same name registered twice")
+		assert.True(allProviders[i].name != provider.Name(), "[BUG] same name registered twice")
 	}
 
 	allProviders = append(
 		allProviders,
 		providerData{
-			name:     name,
+			name:     provider.Name(),
 			provider: provider,
 			timeout:  timeout,
 		},

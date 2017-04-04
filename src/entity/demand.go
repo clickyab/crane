@@ -16,7 +16,8 @@ type Demand interface {
 	// in separate co-routine. just create a channel, run a co-routine, and return.
 	Provide(context.Context, Impression, chan map[string]Advertise)
 	// Win return the win response to the demand. it happen only if the request is the winner
-	Win(context.Context, string)
+	// the 2nd arg is the id of ad, the 3rd is the winner cpm bid
+	Win(context.Context, string, int64)
 	// Status is called for getting the statistics of this Demand
 	Status(context.Context, http.ResponseWriter, *http.Request)
 }
