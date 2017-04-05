@@ -99,7 +99,8 @@ func Call(ctx context.Context, imp entity.Impression) map[string][]entity.Advert
 	for i := range allProviders {
 		go func(inner string) {
 			defer wg.Done()
-			res := allProviders[inner].watch(rCtx, imp)
+			p := allProviders[inner]
+			res := p.watch(rCtx, imp)
 			if res != nil {
 				allRes <- res
 			}

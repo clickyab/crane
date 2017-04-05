@@ -37,12 +37,31 @@ func (d *demand) Name() string {
 	return d.key
 }
 
-func (d *demand) checkLimits() bool {
-
+func (d *demand) hasLimits() bool {
+	mo, we, da, ho, mi := getCPM(d.key)
+	if mo >= d.monthLimit {
+		return false
+	}
+	if we >= d.weekLimit {
+		return false
+	}
+	if da >= d.dayLimit {
+		return false
+	}
+	if ho >= d.hourLimit {
+		return false
+	}
+	if mi >= d.minuteLimit {
+		return false
+	}
+	return true
 }
 
 func (d *demand) Provide(ctx context.Context, imp entity.Impression, ch chan map[string]entity.Advertise) {
 	defer close(ch)
+	if !d.hasLimits() {
+		return
+	}
 	tmp := impressionToMap(imp)
 	buf := &bytes.Buffer{}
 	enc := json.NewEncoder(buf)
@@ -90,6 +109,7 @@ func (d *demand) Status(c context.Context, h http.ResponseWriter, r *http.Reques
 }
 
 func (d *demand) Win(ctx context.Context, id string, cpm int64) {
+	incCPM(d.key, cpm)
 	u := *d.winPoint
 	u.Query().Add("win", id)
 	u.Query().Add("cpm", fmt.Sprint(cpm))
@@ -109,7 +129,6 @@ func (d *demand) Win(ctx context.Context, id string, cpm int64) {
 	}
 
 	logrus.Debug("winner call status was %d", resp.StatusCode)
-
 }
 
 func (d *demand) createConnection() {
