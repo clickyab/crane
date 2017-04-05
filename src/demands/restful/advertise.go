@@ -16,30 +16,30 @@ type restAd struct {
 	demand entity.Demand
 }
 
-func (ra *restAd) Win() {
+func (ra restAd) Win() {
 	ra.demand.Win(context.Background(), ra.RID, ra.RCPM)
 }
 
-func (ra *restAd) Width() int {
+func (ra restAd) Width() int {
 	return ra.RWidth
 }
 
-func (ra *restAd) Height() int {
+func (ra restAd) Height() int {
 	return ra.RHeight
 }
 
-func (ra *restAd) ID() string {
+func (ra restAd) ID() string {
 	return ra.RID
 }
 
-func (ra *restAd) Type() entity.AdType {
+func (ra restAd) Type() entity.AdType {
 	return ra.RType
 }
 
-func (ra *restAd) CPM() int64 {
+func (ra restAd) CPM() int64 {
 	return ra.RCPM
 }
 
-func (ra *restAd) Code() string {
+func (ra restAd) Code() string {
 	return ra.RCode
 }

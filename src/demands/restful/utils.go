@@ -41,7 +41,7 @@ func supplierToMap(pub entity.Supplier) map[string]interface{} {
 	return tmp
 }
 
-func slotToMap(s []entity.Slot) map[string]interface{} {
+func slotToMap(s []entity.Slot) []map[string]interface{} {
 	res := make([]map[string]interface{}, len(s))
 	for i := range s {
 		res[i] = map[string]interface{}{

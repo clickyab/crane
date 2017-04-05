@@ -12,7 +12,10 @@ import (
 	oldctx "golang.org/x/net/context"
 )
 
-var allProviders []providerData
+var (
+	allProviders = make(map[string]providerData)
+	lock         = &sync.RWMutex{}
+)
 
 type providerData struct {
 	name     string
@@ -51,22 +54,29 @@ func (p *providerData) watch(ctx context.Context, imp entity.Impression) map[str
 
 // Register is used to handle new layer in system
 func Register(provider entity.Demand, timeout time.Duration) {
-	for i := range allProviders {
-		assert.True(allProviders[i].name != provider.Name(), "[BUG] same name registered twice")
-	}
+	lock.Lock()
+	defer lock.Unlock()
 
-	allProviders = append(
-		allProviders,
-		providerData{
-			name:     provider.Name(),
-			provider: provider,
-			timeout:  timeout,
-		},
-	)
+	allProviders[provider.Name()] = providerData{
+		name:     provider.Name(),
+		provider: provider,
+		timeout:  timeout,
+	}
+}
+
+// Reset remove all providers
+func Reset() {
+	lock.Lock()
+	defer lock.Unlock()
+
+	allProviders = make(map[string]providerData)
 }
 
 // Mount is called to create status page for all providers
 func Mount(m *xmux.Mux) {
+	lock.RLock()
+	defer lock.RUnlock()
+
 	for i := range allProviders {
 		m.GET("/"+allProviders[i].name, allProviders[i])
 		m.POST("/"+allProviders[i].name, allProviders[i])
@@ -85,8 +95,9 @@ func Call(ctx context.Context, imp entity.Impression) map[string][]entity.Advert
 	l := len(allProviders)
 	wg.Add(l)
 	allRes := make(chan map[string]entity.Advertise, l)
+	lock.RLock()
 	for i := range allProviders {
-		go func(inner int) {
+		go func(inner string) {
 			defer wg.Done()
 			res := allProviders[inner].watch(rCtx, imp)
 			if res != nil {
@@ -94,6 +105,7 @@ func Call(ctx context.Context, imp entity.Impression) map[string][]entity.Advert
 			}
 		}(i)
 	}
+	lock.RUnlock()
 
 	wg.Wait()
 	// The close is essential here.

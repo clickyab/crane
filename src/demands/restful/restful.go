@@ -11,6 +11,8 @@ import (
 	"net/url"
 	"time"
 
+	"demands/models"
+
 	"github.com/Sirupsen/logrus"
 )
 
@@ -35,7 +37,7 @@ func (d *demand) Name() string {
 	return d.key
 }
 
-func (d *demand) checkLimits() {
+func (d *demand) checkLimits() bool {
 
 }
 
@@ -120,14 +122,19 @@ func (d *demand) createConnection() {
 }
 
 // NewRestfulClient return a new client for restful call
-func NewRestfulClient(name, endpoint, winPoint string, maxIdleConnection int, timeout time.Duration) entity.Demand {
-	win, err := url.Parse(winPoint)
+func NewRestfulClient(d models.Demand) entity.Demand {
+	win, err := url.Parse(d.WinURL)
 	assert.Nil(err)
 	return &demand{
-		endPoint:           endpoint,
+		endPoint:           d.GetURL,
 		winPoint:           win,
-		maxIdleConnections: maxIdleConnection,
-		requestTimeout:     timeout,
-		key:                name,
+		maxIdleConnections: d.IdleConnections,
+		requestTimeout:     d.GetTimeout(),
+		key:                d.Name,
+		minuteLimit:        d.MinuteLimit,
+		hourLimit:          d.HourLimit,
+		dayLimit:           d.DayLimit,
+		weekLimit:          d.WeekLimit,
+		monthLimit:         d.MonthLimit,
 	}
 }

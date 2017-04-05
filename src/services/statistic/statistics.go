@@ -15,6 +15,8 @@ type Interface interface {
 	DecSubKey(string, int64) (int64, error)
 	// Touch return the current value of the sub key
 	Touch(string) (int64, error)
+	// GetAll return all keys in single call
+	GetAll() (map[string]int64, error)
 }
 
 // Factory is a function to handle the new store.Interface

@@ -12,6 +12,24 @@ type storeRedis struct {
 	expire time.Duration
 }
 
+func (sr *storeRedis) GetAll() (map[string]int64, error) {
+	cmd := aredis.Client.HGetAll(sr.key)
+	if err := cmd.Err(); err != nil {
+		return nil, err
+	}
+	ss, err := cmd.Result()
+	if err != nil {
+		return nil, err
+	}
+	si := make(map[string]int64, len(ss))
+	for i := range ss {
+		si[i], _ = strconv.ParseInt(ss[i], 10, 0)
+	}
+
+	return si, nil
+
+}
+
 func (sr *storeRedis) Key() string {
 	return sr.key
 }
