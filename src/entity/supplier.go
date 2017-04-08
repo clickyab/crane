@@ -15,6 +15,4 @@ type Supplier interface {
 	CountryWhiteList() []Country
 	// CallRate is the rate of calling the object, 0 < X <= 100
 	CallRate() int
-	// Handicap is used to handle the handicap for play in the bid
-	Handicap() int
 }

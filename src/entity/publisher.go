@@ -15,8 +15,6 @@ type Publisher interface {
 	// SoftFloorCPM is the soft version of floor cpm. if the publisher ahs it, then the system
 	// try to use this as floor, but if this is not available, the FloorCPM is used
 	SoftFloorCPM() int64
-	// Active is the publisher active?
-	Active() bool
 	// Attributes is the generic attribute system
 	Attributes(PublisherAttributes) interface{}
 	// Supplier return the exchange object for this publisher

@@ -1,9 +1,6 @@
 package entity
 
-import (
-	"net"
-	"net/http"
-)
+import "net"
 
 // ImpressionType is the publisher type
 type ImpressionType string
@@ -22,11 +19,8 @@ const (
 
 // Impression is the single impression object
 type Impression interface {
-	Request() *http.Request
-	// MegaIMP return the random id of this imp object
-	MegaIMP() string
-	// ClientID is the key to identify client
-	ClientID() int64
+	// TrackID return the random id of this imp object
+	TrackID() string
 	// IP return the client ip
 	IP() net.IP
 	// UserAgent return the client user agent
@@ -47,4 +41,7 @@ type Impression interface {
 	Type() ImpressionType
 	// Is this publisher accept under floor ads or not ?
 	UnderFloor() bool
+	// Raw is a helper function to transform the impression to a JSON ready struct or map
+	// or whatever
+	Raw() interface{}
 }

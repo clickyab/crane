@@ -74,10 +74,9 @@ func (d *demand) Provide(ctx context.Context, imp entity.Impression, ch chan map
 	if !d.hasLimits() {
 		return
 	}
-	tmp := impressionToMap(imp)
 	buf := &bytes.Buffer{}
 	enc := json.NewEncoder(buf)
-	if err := enc.Encode(tmp); err != nil {
+	if err := enc.Encode(imp.Raw()); err != nil {
 		logrus.Debug(err)
 		return
 	}
@@ -100,7 +99,7 @@ func (d *demand) Provide(ctx context.Context, imp entity.Impression, ch chan map
 	ads := map[string]*restAd{}
 	dec := json.NewDecoder(resp.Body)
 	defer resp.Body.Close()
-	if err := dec.Decode(&tmp); err != nil {
+	if err := dec.Decode(&ads); err != nil {
 		logrus.Debug(err)
 		return
 	}

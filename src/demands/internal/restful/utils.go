@@ -1,7 +1,6 @@
 package restful
 
 import (
-	"entity"
 	"fmt"
 	"services/statistic"
 	"time"
@@ -13,56 +12,6 @@ const (
 	week  = 7 * day
 	month = 31 * day
 )
-
-func impressionToMap(imp entity.Impression) map[string]interface{} {
-	tmp := map[string]interface{}{
-		"impersion_id": imp.MegaIMP(),
-		"client_id":    imp.ClientID(),
-		"ip":           imp.IP().String(),
-		"user_agent":   imp.UserAgent(),
-		"publisher":    publisherToMap(imp.Source()),
-		"location":     imp.Location(),
-		"os":           imp.OS(),
-		"slots":        slotToMap(imp.Slots()),
-		"category":     imp.Category(),
-		"type":         imp.Type(),
-		"under_floor":  imp.UnderFloor(),
-	}
-	return tmp
-}
-
-func publisherToMap(pub entity.Publisher) map[string]interface{} {
-	tmp := map[string]interface{}{
-		"name":           pub.Name(),
-		"floor_cpm":      pub.FloorCPM(),
-		"soft_floor_cpm": pub.SoftFloorCPM(),
-		"supplier":       supplierToMap(pub.Supplier()),
-	}
-	return tmp
-}
-
-func supplierToMap(pub entity.Supplier) map[string]interface{} {
-	tmp := map[string]interface{}{
-		"name":           pub.Name(),
-		"floor_cpm":      pub.FloorCPM(),
-		"soft_floor_cpm": pub.SoftFloorCPM(),
-	}
-	return tmp
-}
-
-func slotToMap(s []entity.Slot) []map[string]interface{} {
-	res := make([]map[string]interface{}, len(s))
-	for i := range s {
-		res[i] = map[string]interface{}{
-			"width":       s[i].Width(),
-			"height":      s[i].Height(),
-			"track_id":    s[i].TrackID(),
-			"maximum_cpm": s[i].MaxCPM(),
-		}
-	}
-
-	return res
-}
 
 func getMonthlyPattern() string {
 	return time.Now().Format("200601")

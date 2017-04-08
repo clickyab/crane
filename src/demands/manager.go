@@ -56,7 +56,7 @@ func (dm *demandManager) Initialize() {
 	signal.Notify(reloadChan, syscall.SIGHUP)
 	go func() {
 		for i := range reloadChan {
-			logrus.Infof("Reloding config, due to signal %s", i)
+			logrus.Infof("Reloding demands config, due to signal %s", i)
 			dm.loadDemands()
 		}
 	}()
