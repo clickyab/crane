@@ -3,17 +3,15 @@ package mysql
 import (
 	"assert"
 	"config"
+	"context"
 	"database/sql"
 	"errors"
+	"services/initializer"
 	"sync"
 
-	gorp "gopkg.in/gorp.v2"
-
-	"context"
-
-	"services/initializer"
-
 	"github.com/Sirupsen/logrus"
+	_ "github.com/go-sql-driver/mysql" // the mysql driver, make it available for this import
+	gorp "gopkg.in/gorp.v2"
 )
 
 var (

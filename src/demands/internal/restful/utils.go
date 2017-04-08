@@ -25,6 +25,7 @@ func impressionToMap(imp entity.Impression) map[string]interface{} {
 		"os":           imp.OS(),
 		"slots":        slotToMap(imp.Slots()),
 		"category":     imp.Category(),
+		"type":         imp.Type(),
 	}
 	return tmp
 }
@@ -34,8 +35,6 @@ func publisherToMap(pub entity.Publisher) map[string]interface{} {
 		"name":           pub.Name(),
 		"floor_cpm":      pub.FloorCPM(),
 		"soft_floor_cpm": pub.SoftFloorCPM(),
-		"type":           pub.Type(),
-		"minimum_cpc":    pub.MinCPC(),
 		"accepted_type":  pub.AcceptedTypes(),
 		"under_floor":    pub.UnderFloor(),
 		"supplier":       supplierToMap(pub.Supplier()),
@@ -57,9 +56,10 @@ func slotToMap(s []entity.Slot) []map[string]interface{} {
 	res := make([]map[string]interface{}, len(s))
 	for i := range s {
 		res[i] = map[string]interface{}{
-			"width":    s[i].Width(),
-			"height":   s[i].Height(),
-			"state_id": s[i].StateID(),
+			"width":       s[i].Width(),
+			"height":      s[i].Height(),
+			"state_id":    s[i].StateID(),
+			"maximum_cpm": s[i].MaxCPM(),
 		}
 	}
 

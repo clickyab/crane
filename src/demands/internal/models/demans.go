@@ -41,6 +41,8 @@ type Demand struct {
 	Timeout         int64 `db:"timeout" json:"timeout"`
 
 	Active int `db:"active" json:"active"`
+
+	Handicap int64 `json:"handicap" db:"handicap"`
 }
 
 // IsValid try to validate enum value on ths type

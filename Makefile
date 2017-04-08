@@ -1,4 +1,4 @@
-export APPNAME=gad
+export APPNAME=exchange
 export DEFAULT_PASS=bita123
 export GO=$(shell which go)
 export NODE=$(shell which nodejs)
@@ -21,7 +21,7 @@ export LDARG=-ldflags $(FLAGS)
 export BUILD=$(BIN)/gb build $(LDARG)
 export DBPASS?=$(DEFAULT_PASS)
 export DB_USER?=root
-export DB_NAME?=clickyab
+export DB_NAME?=$(APPNAME)
 export RUSER?=$(APPNAME)
 export RPASS?=$(DEFAULT_PASS)
 export WORK_DIR=$(ROOT)/tmp
@@ -53,22 +53,11 @@ $(GB):
 $(LINTER):
 	@[ -f $(LINTER) ] || make metalinter
 
-fetch: $(GB)
-	PATH=$(PATH):$(BIN) $(GB) vendor fetch $(REPO)
-
-crane: $(GB)
-	$(BUILD) cmd/crane
-
-run-crane: crane
-	sudo setcap cap_net_bind_service=+ep $(BIN)/crane
-	$(BIN)/crane
-
 mysql-setup: needroot
 	echo 'UPDATE user SET plugin="";' | mysql mysql | true
 	echo 'UPDATE user SET password=PASSWORD("$(DBPASS)") WHERE user="$(DB_USER)";' | mysql mysql | true
 	echo 'FLUSH PRIVILEGES;' | mysql mysql | true
 	echo 'DROP DATABASE IF EXISTS $(DB_NAME); CREATE DATABASE $(DB_NAME);' | mysql -u $(DB_USER) -p$(DBPASS)
-	#mysql -u $(DB_USER) -p$(DBPASS) -c $(DB_NAME) <$(ROOT)/db/structure.sql
 
 rabbitmq-setup: needroot
 	[ "1" -eq "$(shell rabbitmq-plugins enable rabbitmq_management | grep 'Plugin configuration unchanged' | wc -l)" ] || (rabbitmqctl stop_app && rabbitmqctl start_app)
@@ -89,30 +78,8 @@ lint: $(LINTER) $(SUBDIRS)
 $(SUBDIRS):
 	$(LINTERCMD) $@/...
 
-uglifyjs:
-	npm install uglifyjs
-
-$(UGLIFYJS):
-	@[ -f $(UGLIFYJS) ] || make uglifyjs
-
-uglify: $(UGLIFYJS)
-	rm -rf $(ROOT)/tmp/embed
-	mkdir -p $(ROOT)/tmp/embed
-	cp $(ROOT)/statics/show.js $(ROOT)/tmp/embed/show.js
-	$(NODE) $(UGLIFYJS) $(ROOT)/statics/show.js -o $(ROOT)/tmp/embed/show-min.js
-	cp $(ROOT)/statics/conversion/clickyab-tracking.js $(ROOT)/tmp/embed/clickyab-tracking.js
-	$(NODE) $(UGLIFYJS) $(ROOT)/statics/conversion/clickyab-tracking.js -o $(ROOT)/tmp/embed/clickyab-tracking-min.js
-	cp $(ROOT)/statics/vastAD.js $(ROOT)/tmp/embed/vastAD.js
-	$(NODE) $(UGLIFYJS) $(ROOT)/statics/vastAD.js -o $(ROOT)/tmp/embed/vastAD-min.js
-
 go-bindata: $(GB)
 	$(BUILD) github.com/jteeuwen/go-bindata/go-bindata
-
-embed: go-bindata uglify
-	cd $(ROOT)/tmp/embed/ && $(BIN)/go-bindata -o $(ROOT)/src/statics/static-no-lint.go -nomemcopy=true -pkg=statics ./...
-
-create-imp-table :
-	echo 'CREATE TABLE impressions$(IMPDATE)  LIKE impressions20161108; ' | mysql -u $(DB_USER) -p$(DBPASS) -c $(DB_NAME)
 
 restore: $(GB)
 	PATH=$(PATH):$(BIN) $(GB) vendor restore
@@ -120,11 +87,6 @@ restore: $(GB)
 
 conditional-restore:
 	$(DIFF) $(ROOT)/vendor/manifest $(ROOT)/vendor/manifest.done || make restore
-
-docker-build: conditional-restore all
-
-ansible:
-	ansible-playbook -vvvv -i $(ROOT)/contrib/deploy/hosts.ini $(ROOT)/contrib/deploy/staging.yaml
 
 convey: $(GB)
 	$(BUILD) github.com/smartystreets/goconvey
@@ -142,5 +104,30 @@ test-gui: mockentity convey
 
 test: mockentity convey
 	cd $(ROOT) && $(GB) test -v
+
+migup: tools-migrate
+	$(BIN)/migration -action=up
+
+migdown: tools-migrate
+	$(BIN)/migration -action=down
+
+migdown-all: tools-migrate
+	$(BIN)/migration -action=down-all
+
+migredo: tools-migrate
+	$(BIN)/migration -action=redo
+
+miglist: tools-migrate
+	$(BIN)/migration -action=list
+
+migcreate:
+	@/bin/bash $(BIN)/create_migration.sh
+
+migration: go-bindata
+	cd $(ROOT) && $(BIN)/go-bindata -o ./src/commands/migration/migration.gen.go -nomemcopy=true -pkg=main ./db/migrations/...
+
+tools-migrate: $(BIN)/gb migration
+	$(BUILD) commands/migration
+
 
 .PHONY: lint $(SUBDIRS) $(ENTITIES) mockentity

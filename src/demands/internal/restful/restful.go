@@ -11,7 +11,7 @@ import (
 	"net/url"
 	"time"
 
-	"demands/models"
+	"demands/internal/models"
 
 	"github.com/Sirupsen/logrus"
 )
@@ -31,6 +31,11 @@ type demand struct {
 	dayLimit    int64
 	weekLimit   int64
 	monthLimit  int64
+	handicap    int64
+}
+
+func (d *demand) Handicap() int64 {
+	return d.handicap
 }
 
 func (d *demand) Name() string {
@@ -38,6 +43,13 @@ func (d *demand) Name() string {
 }
 
 func (d *demand) hasLimits() bool {
+	if d.minuteLimit == 0 &&
+		d.hourLimit == 0 &&
+		d.dayLimit == 0 &&
+		d.weekLimit == 0 &&
+		d.monthLimit == 0 {
+		return true
+	}
 	mo, we, da, ho, mi := getCPM(d.key)
 	if mo >= d.monthLimit {
 		return false
@@ -85,7 +97,7 @@ func (d *demand) Provide(ctx context.Context, imp entity.Impression, ch chan map
 		return
 	}
 
-	ads := map[string]restAd{}
+	ads := map[string]*restAd{}
 	dec := json.NewDecoder(resp.Body)
 	defer resp.Body.Close()
 	if err := dec.Decode(&tmp); err != nil {
@@ -155,5 +167,6 @@ func NewRestfulClient(d models.Demand) entity.Demand {
 		dayLimit:           d.DayLimit,
 		weekLimit:          d.WeekLimit,
 		monthLimit:         d.MonthLimit,
+		handicap:           d.Handicap,
 	}
 }

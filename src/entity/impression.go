@@ -5,8 +5,20 @@ import (
 	"net/http"
 )
 
+// ImpressionType is the publisher type
+type ImpressionType string
+
 // ImpressionAttributes is the imp attr key
 type ImpressionAttributes string
+
+const (
+	// ImpressionTypeApp is the app
+	ImpressionTypeApp ImpressionType = "app"
+	// ImpressionTypeWeb is the web
+	ImpressionTypeWeb ImpressionType = "web"
+	// ImpressionTypeVast is the vast
+	ImpressionTypeVast ImpressionType = "vast"
+)
 
 // Impression is the single impression object
 type Impression interface {
@@ -31,5 +43,6 @@ type Impression interface {
 	Slots() []Slot
 	// Category returns category obviously
 	Category() []Category
+	// Type return the publisher type
+	Type() ImpressionType
 }
-

@@ -20,4 +20,7 @@ type Demand interface {
 	Win(context.Context, string, int64)
 	// Status is called for getting the statistics of this Demand
 	Status(context.Context, http.ResponseWriter, *http.Request)
+	// Handicap return the handicap for this demand. higher handicap means higher chance to
+	// win the bid. this is the factor to multiply with cpm, 100 means 1
+	Handicap() int64
 }

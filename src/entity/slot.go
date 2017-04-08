@@ -7,5 +7,6 @@ type Slot interface {
 	Height() int
 	// StateID is an string for this slot, its a random at first but the value is not changed at all other calls
 	StateID() string
+	// MaxCPM return the maximum cpm for this request
+	MaxCPM() int64
 }
-

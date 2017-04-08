@@ -14,9 +14,33 @@
 			"branch": "master"
 		},
 		{
+			"importpath": "github.com/armon/go-radix",
+			"repository": "https://github.com/armon/go-radix",
+			"revision": "4239b77079c7b5d1243b7b4736304ce8ddb6f0f2",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/bgentry/speakeasy",
+			"repository": "https://github.com/bgentry/speakeasy",
+			"revision": "675b82c74c0ed12283ee81ba8a534c8982c07b85",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/denisenkom/go-mssqldb",
+			"repository": "https://github.com/denisenkom/go-mssqldb",
+			"revision": "05a5564207042f04d43d186d82e195a7f5699d48",
+			"branch": "master"
+		},
+		{
 			"importpath": "github.com/fzerorubigd/expand",
 			"repository": "https://github.com/fzerorubigd/expand",
 			"revision": "fd359294116f3987dc04c5987782f845e99e9f42",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/go-sql-driver/mysql",
+			"repository": "https://github.com/go-sql-driver/mysql",
+			"revision": "9dee4ca50b83acdf57a35fb9e6fb4be640afa2f3",
 			"branch": "master"
 		},
 		{
@@ -33,6 +57,19 @@
 			"path": "/gomock"
 		},
 		{
+			"importpath": "github.com/golang/mock/mockgen",
+			"repository": "https://github.com/golang/mock",
+			"revision": "bd3c8e81be01eef76d4b503f5e687d2d1354d2d9",
+			"branch": "master",
+			"path": "/mockgen"
+		},
+		{
+			"importpath": "github.com/jteeuwen/go-bindata",
+			"repository": "https://github.com/jteeuwen/go-bindata",
+			"revision": "a0ff2567cfb70903282db057e799fd826784d41d",
+			"branch": "master"
+		},
+		{
 			"importpath": "github.com/jtolds/gls",
 			"repository": "https://github.com/jtolds/gls",
 			"revision": "bb0351aa7eb6f322f32667d51375f26a2bca6628",
@@ -45,9 +82,45 @@
 			"branch": "master"
 		},
 		{
+			"importpath": "github.com/lib/pq",
+			"repository": "https://github.com/lib/pq",
+			"revision": "2704adc878c21e1329f46f6e56a1c387d788ff94",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/mattn/go-isatty",
+			"repository": "https://github.com/mattn/go-isatty",
+			"revision": "fc9e8d8ef48496124e79ae0df75490096eccf6fe",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/mattn/go-runewidth",
+			"repository": "https://github.com/mattn/go-runewidth",
+			"revision": "14207d285c6c197daabb5c9793d63e7af9ab2d50",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/mattn/go-sqlite3",
+			"repository": "https://github.com/mattn/go-sqlite3",
+			"revision": "cf7286f069c3ef596efcc87781a4653a2e7607bd",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/mitchellh/cli",
+			"repository": "https://github.com/mitchellh/cli",
+			"revision": "ee8578a9c12a5bb9d55303b9665cc448772c81b8",
+			"branch": "master"
+		},
+		{
 			"importpath": "github.com/mssola/user_agent",
 			"repository": "https://github.com/mssola/user_agent",
 			"revision": "07efe2b857fb8c02d2dd85c12d0145f58554ec7c",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/olekukonko/tablewriter",
+			"repository": "https://github.com/olekukonko/tablewriter",
+			"revision": "febf2d34b54a69ce7530036c7503b1c9fbfdf0bb",
 			"branch": "master"
 		},
 		{
@@ -60,6 +133,12 @@
 			"importpath": "github.com/rs/xmux",
 			"repository": "https://github.com/rs/xmux",
 			"revision": "447ce20d8516cc0d2564fc3de70b5d078e0b816e",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/rubenv/sql-migrate",
+			"repository": "https://github.com/rubenv/sql-migrate",
+			"revision": "38004e7a77f2b350ea8467038dca66073d907725",
 			"branch": "master"
 		},
 		{
@@ -79,6 +158,13 @@
 			"repository": "https://github.com/streadway/amqp",
 			"revision": "63795daa9a446c920826655f26ba31c81c860fd6",
 			"branch": "master"
+		},
+		{
+			"importpath": "golang.org/x/crypto/md4",
+			"repository": "https://go.googlesource.com/crypto",
+			"revision": "55a552f0823e0d3d54931488a2993ebd2fd0258c",
+			"branch": "master",
+			"path": "/md4"
 		},
 		{
 			"importpath": "golang.org/x/net/context",
@@ -103,6 +189,12 @@
 			"importpath": "gopkg.in/gemnasium/logrus-airbrake-hook.v2",
 			"repository": "https://gopkg.in/gemnasium/logrus-airbrake-hook.v2",
 			"revision": "bfee1239d796830ca346767650cce5ba90d58c57",
+			"branch": "master"
+		},
+		{
+			"importpath": "gopkg.in/gorp.v1",
+			"repository": "https://gopkg.in/gorp.v1",
+			"revision": "c87af80f3cc5036b55b83d77171e156791085e2e",
 			"branch": "master"
 		},
 		{

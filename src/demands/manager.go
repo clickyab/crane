@@ -4,18 +4,15 @@ import (
 	"assert"
 	"context"
 	"core"
-	"demands/models"
-	"demands/restful"
+	"demands/internal/models"
+	"demands/internal/restful"
 	"net/http"
 	"os"
-	"time"
-
-	"sync"
-
-	"services/mysql"
-
 	"os/signal"
+	"services/mysql"
+	"sync"
 	"syscall"
+	"time"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/rs/xhandler"
