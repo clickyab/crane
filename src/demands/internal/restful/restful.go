@@ -51,19 +51,19 @@ func (d *demand) hasLimits() bool {
 		return true
 	}
 	mo, we, da, ho, mi := getCPM(d.key)
-	if mo >= d.monthLimit {
+	if mo > 0 && mo >= d.monthLimit {
 		return false
 	}
-	if we >= d.weekLimit {
+	if we > 0 && we >= d.weekLimit {
 		return false
 	}
-	if da >= d.dayLimit {
+	if da > 0 && da >= d.dayLimit {
 		return false
 	}
-	if ho >= d.hourLimit {
+	if ho > 0 && ho >= d.hourLimit {
 		return false
 	}
-	if mi >= d.minuteLimit {
+	if mi > 0 && mi >= d.minuteLimit {
 		return false
 	}
 	return true
@@ -106,11 +106,14 @@ func (d *demand) Provide(ctx context.Context, imp entity.Impression, ch chan map
 	}
 
 	adsInter := make(map[string]entity.Advertise, len(ads))
-	for i := range ads {
-		tmp := ads[i]
+	for _, sl := range imp.Slots() {
+		tmp := ads[sl.TrackID()]
+		if tmp == nil {
+			continue
+		}
 		// set demand for win resp
 		tmp.demand = d
-		adsInter[i] = tmp
+		adsInter[sl.TrackID()] = tmp
 	}
 
 	ch <- adsInter
@@ -156,7 +159,7 @@ func (d *demand) createConnection() {
 func NewRestfulClient(d models.Demand) entity.Demand {
 	win, err := url.Parse(d.WinURL)
 	assert.Nil(err)
-	return &demand{
+	dm := &demand{
 		endPoint:           d.GetURL,
 		winPoint:           win,
 		maxIdleConnections: d.IdleConnections,
@@ -169,4 +172,6 @@ func NewRestfulClient(d models.Demand) entity.Demand {
 		monthLimit:         d.MonthLimit,
 		handicap:           d.Handicap,
 	}
+	dm.createConnection()
+	return dm
 }

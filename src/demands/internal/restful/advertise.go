@@ -6,12 +6,11 @@ import (
 )
 
 type restAd struct {
-	RID     string        `json:"id"`
-	RType   entity.AdType `json:"type"`
-	RMaxCPM int64         `json:"max_cpm"`
-	RWidth  int           `json:"width"`
-	RHeight int           `json:"height"`
-	RURL    string        `json:"url"`
+	RID     string `json:"id"`
+	RMaxCPM int64  `json:"max_cpm"`
+	RWidth  int    `json:"width"`
+	RHeight int    `json:"height"`
+	RURL    string `json:"url"`
 
 	demand    entity.Demand
 	trackID   string
@@ -51,10 +50,6 @@ func (ra restAd) Height() int {
 
 func (ra restAd) ID() string {
 	return ra.RID
-}
-
-func (ra restAd) Type() entity.AdType {
-	return ra.RType
 }
 
 func (ra restAd) MaxCPM() int64 {

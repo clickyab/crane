@@ -9,8 +9,6 @@ type Supplier interface {
 	// SoftFloorCPM is the soft version of floor cpm. if the publisher ahs it, then the system
 	// try to use this as floor, but if this is not available, the FloorCPM is used
 	SoftFloorCPM() int64
-	// AcceptedTypes is the types that this network can request
-	AcceptedTypes() []AdType
 	// ExcludedNetwork is the black listed network for this.
 	ExcludedDemands() []string
 	// CountryWhiteList is the list of country accepted for this
@@ -20,4 +18,3 @@ type Supplier interface {
 	// Handicap is used to handle the handicap for play in the bid
 	Handicap() int
 }
-

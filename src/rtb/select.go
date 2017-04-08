@@ -20,12 +20,14 @@ func SelectCPM(imp entity.Impression, all map[string][]entity.Advertise) map[str
 		if lower > res[id].MaxCPM() {
 			lower = imp.Source().FloorCPM()
 		}
-		if len(sorted) > 1 {
+		if len(sorted) > 1 && sorted[1].MaxCPM() > lower {
 			lower = sorted[1].MaxCPM()
 		}
 
 		if lower < res[id].MaxCPM() {
 			res[id].SetWinnerCPM(lower + 1)
+		} else {
+			res[id].SetWinnerCPM(res[id].MaxCPM())
 		}
 	}
 

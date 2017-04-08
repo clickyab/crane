@@ -111,10 +111,19 @@ func Call(ctx context.Context, imp entity.Impression) map[string][]entity.Advert
 	wg.Wait()
 	// The close is essential here.
 	close(allRes)
+	var limit int64
+	if !imp.UnderFloor() {
+		limit = imp.Source().FloorCPM()
+		if limit == 0 {
+			limit = imp.Source().Supplier().FloorCPM()
+		}
+	}
 	res := make(map[string][]entity.Advertise)
 	for provided := range allRes {
 		for j := range provided {
-			res[j] = append(res[j], provided[j])
+			if provided[j].MaxCPM() > limit {
+				res[j] = append(res[j], provided[j])
+			}
 		}
 	}
 

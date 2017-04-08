@@ -19,10 +19,6 @@ type Publisher interface {
 	Active() bool
 	// Attributes is the generic attribute system
 	Attributes(PublisherAttributes) interface{}
-	// AcceptedTypes is the type accepted by this impression
-	AcceptedTypes() []AdType
-	// Is this publisher accept under floor ads or not ?
-	UnderFloor() bool
 	// Supplier return the exchange object for this publisher
 	Supplier() Supplier
 }

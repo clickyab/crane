@@ -45,4 +45,6 @@ type Impression interface {
 	Category() []Category
 	// Type return the publisher type
 	Type() ImpressionType
+	// Is this publisher accept under floor ads or not ?
+	UnderFloor() bool
 }
