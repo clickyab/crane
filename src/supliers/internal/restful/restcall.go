@@ -38,7 +38,7 @@ type requestBody struct {
 		UserAgent string `json:"user_agent,omitempty"`
 	} `json:"vast,omitempty"`
 
-	Slots []slotRest `json:"slots"`
+	Slots []*slotRest `json:"slots"`
 }
 
 // GetImpression try to create an impression object from a request

@@ -44,6 +44,12 @@
 			"branch": "master"
 		},
 		{
+			"importpath": "github.com/golang/groupcache",
+			"repository": "https://github.com/golang/groupcache",
+			"revision": "72d04f9fcdec7d3821820cc4a6f150eae553639a",
+			"branch": "master"
+		},
+		{
 			"importpath": "github.com/golang/mock",
 			"repository": "https://github.com/golang/mock",
 			"revision": "bd3c8e81be01eef76d4b503f5e687d2d1354d2d9",
@@ -62,6 +68,40 @@
 			"revision": "bd3c8e81be01eef76d4b503f5e687d2d1354d2d9",
 			"branch": "master",
 			"path": "/mockgen"
+		},
+		{
+			"importpath": "github.com/golang/protobuf/proto",
+			"repository": "https://github.com/golang/protobuf",
+			"revision": "2bba0603135d7d7f5cb73b2125beeda19c09f4ef",
+			"branch": "master",
+			"path": "/proto"
+		},
+		{
+			"importpath": "github.com/hashicorp/go.net/internal/iana",
+			"repository": "https://github.com/hashicorp/go.net",
+			"revision": "104dcad90073cd8d1e6828b2af19185b60cf3e29",
+			"branch": "master",
+			"path": "/internal/iana"
+		},
+		{
+			"importpath": "github.com/hashicorp/go.net/ipv4",
+			"repository": "https://github.com/hashicorp/go.net",
+			"revision": "104dcad90073cd8d1e6828b2af19185b60cf3e29",
+			"branch": "master",
+			"path": "/ipv4"
+		},
+		{
+			"importpath": "github.com/hashicorp/go.net/ipv6",
+			"repository": "https://github.com/hashicorp/go.net",
+			"revision": "104dcad90073cd8d1e6828b2af19185b60cf3e29",
+			"branch": "master",
+			"path": "/ipv6"
+		},
+		{
+			"importpath": "github.com/hashicorp/mdns",
+			"repository": "https://github.com/hashicorp/mdns",
+			"revision": "4e527d9d808175f132f949523e640c699e4253bb",
+			"branch": "master"
 		},
 		{
 			"importpath": "github.com/jteeuwen/go-bindata",
@@ -103,6 +143,12 @@
 			"importpath": "github.com/mattn/go-sqlite3",
 			"repository": "https://github.com/mattn/go-sqlite3",
 			"revision": "cf7286f069c3ef596efcc87781a4653a2e7607bd",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/miekg/dns",
+			"repository": "https://github.com/miekg/dns",
+			"revision": "dcffd061aaeef4f0ab8369d0443146462b64ea6d",
 			"branch": "master"
 		},
 		{

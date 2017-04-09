@@ -1,40 +1,34 @@
 package main
 
 import (
-	"assert"
-	"config"
+	"commands"
 	"fmt"
-	"services/cache"
-	_ "services/cache/redis"
-	"services/initializer"
-	_ "services/redis"
-	"time"
+	"math/rand"
+	"services/ip2location"
 )
 
-type test struct {
-	X int
-	Y string
-	Z float64
+func randInt() int {
+	return rand.Intn(254) + 1
 }
 
 func main() {
-	config.Initialize()
-	defer initializer.Initialize()()
+	ip2location.Open()
 
-	t := test{
-	//X: 11111,
-	//Y: "s;wlswijdoiw",
-	//Z: 1000.999,
+	for i := 0; i < 100; i++ {
+
+		ip := fmt.Sprintf("%d.%d.%d.%d", randInt(), randInt(), randInt(), randInt())
+
+		results := ip2location.Get_all(ip)
+
+		fmt.Printf("ip: %s\n", ip)
+		fmt.Printf("country_short: %s\n", results.Country_short)
+		fmt.Printf("country_long: %s\n", results.Country_long)
+		fmt.Printf("region: %s\n", results.Region)
+		fmt.Printf("city: %s\n", results.City)
+		fmt.Printf("latitude: %f\n", results.Latitude)
+		fmt.Printf("longitude: %f\n", results.Longitude)
+		fmt.Printf("elevation: %f\n", results.Elevation)
 	}
-
-	cc := cache.CreateWrapper("SSS", &t)
-	err := cache.Hit("SSS", cc)
-	if err == nil {
-		fmt.Println("cache hit")
-		fmt.Printf("%+v", t)
-	}
-
-	err = cache.Do(cc, time.Hour, nil)
-	assert.Nil(err)
-
+	ip2location.Close()
+	commands.WaitExitSignal()
 }

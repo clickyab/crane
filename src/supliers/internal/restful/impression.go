@@ -3,12 +3,10 @@ package restful
 import (
 	"entity"
 	"net"
-	"net/http"
 	"services/random"
 )
 
 type impressionRest struct {
-	r             *http.Request
 	SIP           string                `json:"ip"`
 	Mega          string                `json:"track_id"`
 	UA            string                `json:"user_agent"`
@@ -19,6 +17,8 @@ type impressionRest struct {
 	Categories    []entity.Category     `json:"categories"`
 	ImpType       entity.ImpressionType `json:"type"`
 	UnderFloorCPM bool                  `json:"under_floor"`
+
+	Attr map[entity.ImpressionAttributes]interface{} `json:"attributes"`
 
 	dum []entity.Slot
 }
@@ -92,6 +92,19 @@ func newImpressionFromVastRequest(sup entity.Supplier, r *requestBody) (entity.I
 }
 
 func newImpressionFromWebRequest(sup entity.Supplier, r *requestBody) (entity.Impression, error) {
-	resp := impressionRest{}
+	resp := impressionRest{
+		SIP:           r.IP,
+		UA:            r.Web.UserAgent,
+		ImpType:       entity.ImpressionTypeWeb,
+		Categories:    r.Categories,
+		ImpSlots:      r.Slots,
+		Mega:          <-random.ID,
+		UnderFloorCPM: r.UnderFloor,
+
+		Attr: map[entity.ImpressionAttributes]interface{}{
+			"referrer": r.Web.Referrer,
+			"parent":   r.Web.Parent,
+		},
+	}
 	return &resp, nil
 }

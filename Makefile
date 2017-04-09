@@ -129,5 +129,13 @@ migration: go-bindata
 tools-migrate: $(BIN)/gb migration
 	$(BUILD) commands/migration
 
+$(ROOT)/contrib/IP-COUNTRY-REGION-CITY.BIN:
+	wget -c http://www.clickyab.com/downloads/IP-COUNTRY-REGION-CITY.BIN -O $(ROOT)/contrib/IP-COUNTRY-REGION-CITY.BIN
+
+$(ROOT)/src/services/ip2location/data.gen.go: $(ROOT)/contrib/IP-COUNTRY-REGION-CITY.BIN go-bindata
+	cd $(ROOT)/contrib && $(BIN)/go-bindata -nomemcopy -o $(ROOT)/src/services/ip2location/data.gen.go -pkg ip2location .
+
+ip2location: $(ROOT)/src/services/ip2location/data.gen.go
+	$(BUILD) commands/ip2location
 
 .PHONY: lint $(SUBDIRS) $(ENTITIES) mockentity
