@@ -8,7 +8,7 @@ import (
 
 	"time"
 
-	"config"
+	"services/config"
 
 	"services/initializer"
 

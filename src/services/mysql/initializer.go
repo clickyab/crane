@@ -2,7 +2,7 @@ package mysql
 
 import (
 	"assert"
-	"config"
+	"services/config"
 	"context"
 	"database/sql"
 	"errors"

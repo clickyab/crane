@@ -2,7 +2,7 @@ package main
 
 import (
 	"commands"
-	"config"
+	"services/config"
 	"services/initializer"
 
 	"net/http"
@@ -30,7 +30,7 @@ func main() {
 		assert.Nil(dec.Encode(tmp))
 	})
 	go func() {
-		http.ListenAndServe(":80", nil)
+		http.ListenAndServe(":8090", nil)
 	}()
 
 	sig := commands.WaitExitSignal()

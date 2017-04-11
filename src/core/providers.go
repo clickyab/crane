@@ -8,8 +8,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/rs/xmux"
-	oldctx "golang.org/x/net/context"
+	"github.com/fzerorubigd/xmux"
 )
 
 var (
@@ -23,7 +22,7 @@ type providerData struct {
 	timeout  time.Duration
 }
 
-func (p providerData) ServeHTTPC(ctx oldctx.Context, w http.ResponseWriter, r *http.Request) {
+func (p providerData) ServeHTTPC(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	p.provider.Status(ctx, w, r)
 }
 

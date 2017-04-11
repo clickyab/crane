@@ -1,14 +1,12 @@
-package core
+package router
 
 import (
-	"assert"
 	"services/config"
-	"time"
 
 	"gopkg.in/fzerorubigd/onion.v2"
 )
 
-var maximumTimeout time.Duration
+var listenAddress string
 
 type cfgInitializer struct {
 	o *onion.Onion
@@ -17,14 +15,12 @@ type cfgInitializer struct {
 func (ci *cfgInitializer) Initialize(o *onion.Onion) []onion.Layer {
 	ci.o = o
 	l := onion.NewDefaultLayer()
-	l.SetDefault("exchange.core.maximum_timeout", time.Second)
+	l.SetDefault("exchange.router.listen", ":80")
 	return []onion.Layer{l}
 }
 
 func (ci *cfgInitializer) Loaded() {
-	maximumTimeout = ci.o.GetDuration("exchange.core.maximum_timeout")
-	assert.True(maximumTimeout > 0)
-	assert.True(maximumTimeout < 10*time.Second)
+	listenAddress = ci.o.GetStringDefault("exchange.router.listen", ":80")
 }
 
 func init() {

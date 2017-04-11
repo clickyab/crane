@@ -38,6 +38,18 @@
 			"branch": "master"
 		},
 		{
+			"importpath": "github.com/fzerorubigd/xhandler",
+			"repository": "https://github.com/fzerorubigd/xhandler",
+			"revision": "6caa149442f4463464c45ccf8a9da031f4fddbce",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/fzerorubigd/xmux",
+			"repository": "https://github.com/fzerorubigd/xmux",
+			"revision": "63f4c0936ee5c986766735dfa557a4d3d6a53023",
+			"branch": "master"
+		},
+		{
 			"importpath": "github.com/go-sql-driver/mysql",
 			"repository": "https://github.com/go-sql-driver/mysql",
 			"revision": "9dee4ca50b83acdf57a35fb9e6fb4be640afa2f3",
@@ -167,18 +179,6 @@
 			"importpath": "github.com/olekukonko/tablewriter",
 			"repository": "https://github.com/olekukonko/tablewriter",
 			"revision": "febf2d34b54a69ce7530036c7503b1c9fbfdf0bb",
-			"branch": "master"
-		},
-		{
-			"importpath": "github.com/rs/xhandler",
-			"repository": "https://github.com/rs/xhandler",
-			"revision": "ed27b6fd65218132ee50cd95f38474a3d8a2cd12",
-			"branch": "master"
-		},
-		{
-			"importpath": "github.com/rs/xmux",
-			"repository": "https://github.com/rs/xmux",
-			"revision": "447ce20d8516cc0d2564fc3de70b5d078e0b816e",
 			"branch": "master"
 		},
 		{

@@ -1,6 +1,9 @@
 package initializer
 
-import "context"
+import (
+	"context"
+	"time"
+)
 
 // Interface is the type to call early on system initialize call
 type Interface interface {
@@ -25,5 +28,8 @@ func Initialize() func() {
 		gr[i].Initialize(ctx)
 	}
 
-	return cnl
+	return func() {
+		cnl()
+		<-time.After(time.Second)
+	}
 }

@@ -1,14 +1,14 @@
-package core
+package client
 
 import (
-	"assert"
 	"services/config"
-	"time"
 
 	"gopkg.in/fzerorubigd/onion.v2"
 )
 
-var maximumTimeout time.Duration
+var (
+	ip2lserver string
+)
 
 type cfgInitializer struct {
 	o *onion.Onion
@@ -17,14 +17,12 @@ type cfgInitializer struct {
 func (ci *cfgInitializer) Initialize(o *onion.Onion) []onion.Layer {
 	ci.o = o
 	l := onion.NewDefaultLayer()
-	l.SetDefault("exchange.core.maximum_timeout", time.Second)
+	l.SetDefault("services.ip2location.client.endpoint", "127.0.0.1:8090")
 	return []onion.Layer{l}
 }
 
 func (ci *cfgInitializer) Loaded() {
-	maximumTimeout = ci.o.GetDuration("exchange.core.maximum_timeout")
-	assert.True(maximumTimeout > 0)
-	assert.True(maximumTimeout < 10*time.Second)
+	ip2lserver = ci.o.GetStringDefault("services.ip2location.client.endpoint", "127.0.0.1:8090")
 }
 
 func init() {

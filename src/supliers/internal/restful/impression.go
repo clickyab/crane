@@ -87,7 +87,22 @@ func newImpressionFromAppRequest(sup entity.Supplier, r *requestBody) (entity.Im
 }
 
 func newImpressionFromVastRequest(sup entity.Supplier, r *requestBody) (entity.Impression, error) {
-	resp := impressionRest{}
+	resp := impressionRest{
+		SIP:           r.IP,
+		UA:            r.Vast.UserAgent,
+		ImpType:       entity.ImpressionTypeVast,
+		Categories:    r.Categories,
+		ImpSlots:      r.Slots,
+		Mega:          <-random.ID,
+		UnderFloorCPM: r.UnderFloor,
+
+		Attr: map[entity.ImpressionAttributes]interface{}{
+			"referrer": r.Vast.Referrer,
+			"parent":   r.Vast.Parent,
+		},
+		Pub: r.Publisher,
+	}
+	resp.Pub.sup = sup
 	return &resp, nil
 }
 
@@ -105,6 +120,8 @@ func newImpressionFromWebRequest(sup entity.Supplier, r *requestBody) (entity.Im
 			"referrer": r.Web.Referrer,
 			"parent":   r.Web.Parent,
 		},
+		Pub: r.Publisher,
 	}
+	resp.Pub.sup = sup
 	return &resp, nil
 }

@@ -1,7 +1,7 @@
 package redis
 
 import (
-	"config"
+	"services/config"
 	"services/initializer"
 	"services/redis"
 	"services/store"

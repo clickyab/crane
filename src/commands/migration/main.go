@@ -1,7 +1,7 @@
 package main
 
 import (
-	"config"
+	"services/config"
 	"flag"
 	"fmt"
 	"os"

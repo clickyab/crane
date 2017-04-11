@@ -15,8 +15,8 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/rs/xhandler"
-	"github.com/rs/xmux"
+	"github.com/fzerorubigd/xhandler"
+	"github.com/fzerorubigd/xmux"
 )
 
 type demandManager struct {

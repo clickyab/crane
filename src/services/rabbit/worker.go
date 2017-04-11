@@ -2,7 +2,7 @@ package rabbit
 
 import (
 	"assert"
-	"config"
+	"services/config"
 	"encoding/json"
 	"errors"
 	"reflect"

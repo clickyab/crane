@@ -2,7 +2,7 @@ package main
 
 import (
 	"commands"
-	"config"
+	"services/config"
 	"services/initializer"
 
 	"github.com/Sirupsen/logrus"
@@ -11,8 +11,6 @@ import (
 func main() {
 	config.Initialize()
 	defer initializer.Initialize()()
-
-	go runStatusServer()
 
 	sig := commands.WaitExitSignal()
 	logrus.Debugf("%s received, exiting...", sig.String())

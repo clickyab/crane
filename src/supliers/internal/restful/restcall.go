@@ -10,7 +10,7 @@ import (
 
 type requestBody struct {
 	IP         string            `json:"ip"`
-	Publisher  restPublisher     `json:"publisher"`
+	Publisher  *restPublisher    `json:"publisher"`
 	Categories []entity.Category `json:"categories"`
 	Type       string            `json:"type"`
 	UnderFloor bool

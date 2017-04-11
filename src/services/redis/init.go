@@ -2,7 +2,7 @@ package aredis
 
 import (
 	"assert"
-	"config"
+	"services/config"
 	"sync"
 
 	"context"
