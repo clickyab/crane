@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	config.Initialize()
+	config.Initialize(commands.Organization, commands.AppName, commands.Prefix)
 	defer initializer.Initialize()()
 
 	sig := commands.WaitExitSignal()

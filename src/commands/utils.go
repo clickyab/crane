@@ -6,6 +6,15 @@ import (
 	"syscall"
 )
 
+const (
+	// AppName the application name
+	AppName string = "exchange"
+	// Organization the organization name
+	Organization = "clickyab"
+	// Prefix the prefix for config loader from env
+	Prefix = "EXC"
+)
+
 // WaitExitSignal get os signal
 func WaitExitSignal() os.Signal {
 	quit := make(chan os.Signal, 6)

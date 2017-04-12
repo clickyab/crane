@@ -13,13 +13,13 @@ import (
 
 	"encoding/json"
 
-	"assert"
+	"services/assert"
 
 	"github.com/Sirupsen/logrus"
 )
 
 func main() {
-	config.Initialize()
+	config.Initialize(commands.Organization, commands.AppName, commands.Prefix)
 	defer initializer.Initialize()()
 	ip2location.Open()
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {

@@ -1,10 +1,11 @@
 package main
 
 import (
-	"services/config"
+	"commands"
 	"flag"
 	"fmt"
 	"os"
+	"services/config"
 	"services/initializer"
 	"text/tabwriter"
 
@@ -45,7 +46,7 @@ func doMigration(dir migrate.MigrationDirection, max int) error {
 
 func main() {
 	flag.Parse()
-	config.Initialize()
+	config.Initialize(commands.Organization, commands.AppName, commands.Prefix)
 
 	var err error
 

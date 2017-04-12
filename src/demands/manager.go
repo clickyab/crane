@@ -1,7 +1,7 @@
 package demands
 
 import (
-	"assert"
+	"services/assert"
 	"context"
 	"core"
 	"demands/internal/models"

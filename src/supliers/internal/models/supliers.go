@@ -1,7 +1,7 @@
 package models
 
 import (
-	"assert"
+	"services/assert"
 	"entity"
 )
 

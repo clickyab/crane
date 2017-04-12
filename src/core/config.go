@@ -1,7 +1,7 @@
 package core
 
 import (
-	"assert"
+	"services/assert"
 	"services/config"
 	"time"
 

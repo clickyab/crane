@@ -14,7 +14,7 @@ import (
 
 	"net/http"
 
-	"assert"
+	"services/assert"
 
 	"supliers/internal/restful"
 

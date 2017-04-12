@@ -1,7 +1,7 @@
 package restful
 
 import (
-	"assert"
+	"services/assert"
 	"bytes"
 	"context"
 	"encoding/json"
