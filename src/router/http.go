@@ -3,6 +3,7 @@ package router
 import (
 	"context"
 	"net/http"
+	"router/internal/middlewares"
 	"services/initializer"
 	"time"
 
@@ -16,12 +17,13 @@ type initRouter struct {
 
 func (i initRouter) Initialize(ctx context.Context) {
 	mux := xmux.New()
-	mux.POST("/get", xhandler.HandlerFuncC(getAd))
+	mux.POST("/get", xhandler.HandlerFuncC(middlewares.Recovery(middlewares.Logger(getAd))))
+	mux.GET("/get", xhandler.HandlerFuncC(middlewares.Recovery(middlewares.Logger(getAd))))
 
 	srv := &http.Server{Addr: listenAddress, Handler: xhandler.New(ctx, mux)}
 	go func() {
 		if err := srv.ListenAndServe(); err != nil {
-			logrus.Error(err)
+			logrus.Debug(err)
 		}
 	}()
 

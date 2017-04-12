@@ -2,21 +2,16 @@ package supliers
 
 import (
 	"entity"
+	"fmt"
+	"net/http"
 	"os"
 	"os/signal"
+	"services/assert"
 	"services/mysql"
+	"supliers/internal/models"
+	"supliers/internal/restful"
 	"sync"
 	"syscall"
-
-	"supliers/internal/models"
-
-	"fmt"
-
-	"net/http"
-
-	"services/assert"
-
-	"supliers/internal/restful"
 
 	"github.com/Sirupsen/logrus"
 )

@@ -1,9 +1,9 @@
 package models
 
 import (
-	"services/assert"
 	"database/sql/driver"
 	"errors"
+	"services/assert"
 	"time"
 )
 
@@ -43,6 +43,7 @@ type Demand struct {
 	Active int `db:"active" json:"active"`
 
 	Handicap int64 `json:"handicap" db:"handicap"`
+	Share    int   `json:"-" db:"share"`
 }
 
 // IsValid try to validate enum value on ths type

@@ -17,7 +17,8 @@ CREATE TABLE demands
   idle_connection INT,
   timeout INT,
   active INT DEFAULT 1 NOT NULL,
-  handicap INT DEFAULT 100 NOT NULL
+  handicap INT DEFAULT 100 NOT NULL,
+  share INT DEFAULT 100 NOT NULL
 );
 CREATE UNIQUE INDEX demands_name_uindex ON demands (name);
 

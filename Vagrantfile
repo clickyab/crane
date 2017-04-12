@@ -15,7 +15,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     s.args   = [%x(ip addr | grep inet | grep docker0 | awk -F" " '{print $2}'| sed -e 's/\\/.*$//')]
   end
 
-  config.vm.network "forwarded_port", guest: 80,    	host: 80       # nginx
+  config.vm.network "forwarded_port", guest: 8090,    	host: 80       # nginx
   config.vm.network "forwarded_port", guest: 8080,    	host: 8080     # goconvey
   config.vm.network "forwarded_port", guest: 15672,     host: 15672    # rabbitmq management
   config.vm.network "forwarded_port", guest: 22,        host: 5555     # ssh server

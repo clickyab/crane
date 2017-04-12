@@ -46,7 +46,7 @@ func doMigration(dir migrate.MigrationDirection, max int) error {
 
 func main() {
 	flag.Parse()
-	config.Initialize(commands.Organization, commands.AppName, commands.Prefix)
+	config.Initialize(commands.Organization, commands.AppName, commands.Prefix, commands.DefaultConfig())
 
 	var err error
 

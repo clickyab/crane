@@ -5,11 +5,13 @@ import (
 	"services/config"
 	"services/initializer"
 
+	_ "router"
+
 	"github.com/Sirupsen/logrus"
 )
 
 func main() {
-	config.Initialize(commands.Organization, commands.AppName, commands.Prefix)
+	config.Initialize(commands.Organization, commands.AppName, commands.Prefix, commands.DefaultConfig())
 	defer initializer.Initialize()()
 
 	sig := commands.WaitExitSignal()

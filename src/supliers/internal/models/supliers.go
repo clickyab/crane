@@ -1,8 +1,8 @@
 package models
 
 import (
-	"services/assert"
 	"entity"
+	"services/assert"
 )
 
 // Supplier is a supplier in our system
@@ -16,6 +16,7 @@ type Supplier struct {
 	UnderFloor    int    `json:"under_floor" db:"under_floor"`
 	Excluded      string `json:"-" db:"excluded"`
 	Rate          int    `json:"-" db:"call_rate"`
+	Share         int    `json:"-" db:"share"`
 }
 
 func (s Supplier) Name() string {
