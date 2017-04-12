@@ -12,7 +12,6 @@ CREATE TABLE suppliers
   soft_floor_cpm INT NOT NULL,
   under_floor INT NOT NULL,
   excluded TEXT,
-  call_rate INT NOT NULL,
   share INT NOT NULL
 );
 CREATE UNIQUE INDEX suppliers_name_uindex ON suppliers (name);

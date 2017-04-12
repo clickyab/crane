@@ -17,8 +17,7 @@ type initRouter struct {
 
 func (i initRouter) Initialize(ctx context.Context) {
 	mux := xmux.New()
-	mux.POST("/get", xhandler.HandlerFuncC(middlewares.Recovery(middlewares.Logger(getAd))))
-	mux.GET("/get", xhandler.HandlerFuncC(middlewares.Recovery(middlewares.Logger(getAd))))
+	mux.POST("/get/:key", xhandler.HandlerFuncC(middlewares.Recovery(middlewares.Logger(getAd))))
 
 	srv := &http.Server{Addr: listenAddress, Handler: xhandler.New(ctx, mux)}
 	go func() {

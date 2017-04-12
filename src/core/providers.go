@@ -1,13 +1,14 @@
 package core
 
 import (
-	"services/assert"
 	"context"
 	"entity"
 	"net/http"
+	"services/assert"
 	"sync"
 	"time"
 
+	"github.com/Sirupsen/logrus"
 	"github.com/fzerorubigd/xmux"
 )
 
@@ -27,6 +28,8 @@ func (p providerData) ServeHTTPC(ctx context.Context, w http.ResponseWriter, r *
 }
 
 func (p *providerData) watch(ctx context.Context, imp entity.Impression) map[string]entity.Advertise {
+	logrus.Debugf("Watch in for %s", p.provider.Name())
+	defer logrus.Debugf("Watch out for %s", p.provider.Name())
 	done := ctx.Done()
 	assert.NotNil(done)
 

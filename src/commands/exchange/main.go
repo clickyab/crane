@@ -2,10 +2,10 @@ package main
 
 import (
 	"commands"
+	_ "demands"
+	_ "router"
 	"services/config"
 	"services/initializer"
-
-	_ "router"
 
 	"github.com/Sirupsen/logrus"
 )

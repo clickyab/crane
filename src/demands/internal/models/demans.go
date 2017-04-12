@@ -37,13 +37,14 @@ type Demand struct {
 	WeekLimit   int64 `db:"week_limit" json:"week_limit"`
 	MonthLimit  int64 `db:"month_limit" json:"month_limit"`
 
-	IdleConnections int   `db:"idle_connections" json:"idle_connections"`
+	IdleConnections int   `db:"idle_connection" json:"idle_connection"`
 	Timeout         int64 `db:"timeout" json:"timeout"`
 
 	Active int `db:"active" json:"active"`
 
 	Handicap int64 `json:"handicap" db:"handicap"`
 	Share    int   `json:"-" db:"share"`
+	Rate     int   `json:"-" db:"call_rate"`
 }
 
 // IsValid try to validate enum value on ths type

@@ -16,6 +16,7 @@ CREATE TABLE demands
   month_limit INT,
   idle_connection INT,
   timeout INT,
+  call_rate INT NOT NULL,
   active INT DEFAULT 1 NOT NULL,
   handicap INT DEFAULT 100 NOT NULL,
   share INT DEFAULT 100 NOT NULL

@@ -1,7 +1,6 @@
 package restful
 
 import (
-	"services/assert"
 	"bytes"
 	"context"
 	"encoding/json"
@@ -9,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"services/assert"
 	"time"
 
 	"demands/internal/models"
@@ -32,6 +32,11 @@ type demand struct {
 	weekLimit   int64
 	monthLimit  int64
 	handicap    int64
+}
+
+func (*demand) CallRate() int {
+	// TODO : implement me
+	return 100
 }
 
 func (d *demand) Handicap() int64 {

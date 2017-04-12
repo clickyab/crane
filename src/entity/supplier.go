@@ -13,6 +13,4 @@ type Supplier interface {
 	ExcludedDemands() []string
 	// CountryWhiteList is the list of country accepted for this
 	CountryWhiteList() []Country
-	// CallRate is the rate of calling the object, 0 < X <= 100
-	CallRate() int
 }

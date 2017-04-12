@@ -1,22 +1,22 @@
 package models
 
 import (
+	"database/sql"
 	"entity"
 	"services/assert"
 )
 
 // Supplier is a supplier in our system
 type Supplier struct {
-	ID            int64  `json:"id" db:"id"`
-	SName         string `json:"name" db:"name"`
-	SType         string `json:"type" db:"type"`
-	Key           string `json:"-" db:"key"`
-	SFloorCPM     int64  `json:"floor_cpm" db:"floor_cpm"`
-	SSoftFloorCPM int64  `json:"soft_floor_cpm" db:"soft_floor_cpm"`
-	UnderFloor    int    `json:"under_floor" db:"under_floor"`
-	Excluded      string `json:"-" db:"excluded"`
-	Rate          int    `json:"-" db:"call_rate"`
-	Share         int    `json:"-" db:"share"`
+	ID            int64          `json:"id" db:"id"`
+	SName         string         `json:"name" db:"name"`
+	SType         string         `json:"type" db:"type"`
+	Key           string         `json:"-" db:"key"`
+	SFloorCPM     int64          `json:"floor_cpm" db:"floor_cpm"`
+	SSoftFloorCPM int64          `json:"soft_floor_cpm" db:"soft_floor_cpm"`
+	UnderFloor    int            `json:"under_floor" db:"under_floor"`
+	Excluded      sql.NullString `json:"-" db:"excluded"`
+	Share         int            `json:"-" db:"share"`
 }
 
 func (s Supplier) Name() string {
@@ -37,17 +37,6 @@ func (s Supplier) ExcludedDemands() []string {
 
 func (Supplier) CountryWhiteList() []entity.Country {
 	return nil
-}
-
-func (s Supplier) CallRate() int {
-	if s.Rate < 10 {
-		return 10
-	}
-	if s.Rate > 100 {
-		return 100
-	}
-
-	return s.Rate
 }
 
 func (s Supplier) Type() string {

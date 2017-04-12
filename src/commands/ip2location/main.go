@@ -24,13 +24,13 @@ func main() {
 	ip2location.Open()
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		ip := strings.Trim(r.URL.String(), "/ ")
-		//fmt.Println(ip)
 		tmp := ip2location.Get_all(ip)
 		dec := json.NewEncoder(w)
 		assert.Nil(dec.Encode(tmp))
 	})
 	go func() {
-		http.ListenAndServe(":8090", nil)
+		// TODO : load from config
+		http.ListenAndServe(":8190", nil)
 	}()
 
 	sig := commands.WaitExitSignal()

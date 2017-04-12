@@ -8,6 +8,8 @@ import (
 	"rtb"
 	"supliers"
 
+	"entity"
+
 	"github.com/fzerorubigd/xmux"
 )
 
@@ -45,12 +47,14 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 	res := rtb.SelectCPM(imp, ads)
 	has = false
+	data := make(map[string]entity.DumbAd)
 	for i := range res {
 		if res[i] != nil {
 			has = true
-			break
+			data[i] = res[i].Morph("winpixel")
 		}
 	}
+
 	if !has {
 		w.WriteHeader(http.StatusNoContent)
 		dec.Encode(struct {
@@ -61,5 +65,5 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dec.Encode(res)
+	dec.Encode(data)
 }

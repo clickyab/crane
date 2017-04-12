@@ -2,33 +2,56 @@ package main
 
 import (
 	"commands"
+	"encoding/json"
 	"fmt"
-	"math/rand"
-	"services/ip2location"
+	"net/http"
+	"services/random"
 )
 
-func randInt() int {
-	return rand.Intn(254) + 1
+type restAd struct {
+	RID     string `json:"id"`
+	RMaxCPM int64  `json:"max_cpm"`
+	RWidth  int    `json:"width"`
+	RHeight int    `json:"height"`
+	RURL    string `json:"url"`
+}
+
+func getAdd(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		return
+	}
+	mp := make(map[string]interface{})
+	dec := json.NewDecoder(r.Body)
+	defer r.Body.Close()
+	err := dec.Decode(&mp)
+	if err != nil {
+		return
+	}
+	fmt.Println(mp)
+
+	x := map[string]restAd{}
+
+	x[mp["slots"].([]interface{})[0].(map[string]interface{})["track_id"].(string)] = restAd{
+		RID:     <-random.ID,
+		RMaxCPM: 150,
+		RWidth:  320,
+		RHeight: 250,
+		RURL:    "http://google.com",
+	}
+	x[mp["slots"].([]interface{})[1].(map[string]interface{})["track_id"].(string)] = restAd{
+		RID:     <-random.ID,
+		RMaxCPM: 150,
+		RWidth:  320,
+		RHeight: 250,
+		RURL:    "http://yahoo.com",
+	}
+
+	enc := json.NewEncoder(w)
+	enc.Encode(x)
 }
 
 func main() {
-	ip2location.Open()
-
-	for i := 0; i < 100; i++ {
-
-		ip := fmt.Sprintf("%d.%d.%d.%d", randInt(), randInt(), randInt(), randInt())
-
-		results := ip2location.Get_all(ip)
-
-		fmt.Printf("ip: %s\n", ip)
-		fmt.Printf("country_short: %s\n", results.Country_short)
-		fmt.Printf("country_long: %s\n", results.Country_long)
-		fmt.Printf("region: %s\n", results.Region)
-		fmt.Printf("city: %s\n", results.City)
-		fmt.Printf("latitude: %f\n", results.Latitude)
-		fmt.Printf("longitude: %f\n", results.Longitude)
-		fmt.Printf("elevation: %f\n", results.Elevation)
-	}
-	ip2location.Close()
+	http.HandleFunc("/", getAdd)
+	http.ListenAndServe(":9898", nil)
 	commands.WaitExitSignal()
 }

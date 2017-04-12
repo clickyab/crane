@@ -1,7 +1,6 @@
 package demands
 
 import (
-	"services/assert"
 	"context"
 	"core"
 	"demands/internal/models"
@@ -9,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"services/assert"
 	"services/mysql"
 	"sync"
 	"syscall"
@@ -42,8 +42,10 @@ func (dm *demandManager) loadDemands() {
 
 	mux := xmux.New()
 	core.Mount(mux)
+	// TODO : move to config
 	dm.server = &http.Server{Addr: ":8080", Handler: xhandler.New(context.Background(), mux)}
 	go func() {
+		<-time.After(time.Second)
 		if err := dm.server.ListenAndServe(); err != nil {
 			logrus.Errorf("listen: %s", err)
 		}

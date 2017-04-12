@@ -3,7 +3,12 @@ package restful
 import (
 	"entity"
 	"net"
+	"services/ip2location/client"
 	"services/random"
+
+	"services/gmaps"
+
+	"github.com/Sirupsen/logrus"
 )
 
 type impressionRest struct {
@@ -12,7 +17,6 @@ type impressionRest struct {
 	UA            string                `json:"user_agent"`
 	Pub           *restPublisher        `json:"source"`
 	Loc           entity.Location       `json:"location"`
-	ImpOS         entity.OS             `json:"os"`
 	ImpSlots      []*slotRest           `json:"slots"`
 	Categories    []entity.Category     `json:"categories"`
 	ImpType       entity.ImpressionType `json:"type"`
@@ -20,7 +24,26 @@ type impressionRest struct {
 
 	Attr map[entity.ImpressionAttributes]interface{} `json:"attributes"`
 
-	dum []entity.Slot
+	dum    []entity.Slot
+	latlon entity.LatLon
+}
+
+type location struct {
+	TheCountry  entity.Country  `json:"country"`
+	TheProvince entity.Province `json:"province"`
+	TheLatLon   entity.LatLon   `json:"latlon"`
+}
+
+func (l location) Country() entity.Country {
+	return l.TheCountry
+}
+
+func (l location) Province() entity.Province {
+	return l.TheProvince
+}
+
+func (l location) LatLon() entity.LatLon {
+	return l.TheLatLon
 }
 
 func (ir *impressionRest) TrackID() string {
@@ -45,10 +68,6 @@ func (ir impressionRest) Source() entity.Publisher {
 
 func (ir impressionRest) Location() entity.Location {
 	return ir.Loc
-}
-
-func (ir impressionRest) OS() entity.OS {
-	return ir.ImpOS
 }
 
 func (impressionRest) Attributes(entity.ImpressionAttributes) interface{} {
@@ -81,8 +100,57 @@ func (ir impressionRest) Raw() interface{} {
 	return ir
 }
 
+func (ir *impressionRest) extractData() {
+	d := client.IP2Location(ir.SIP)
+	logrus.Debug(d)
+	ir.Loc = location{
+		TheCountry: entity.Country{
+			Name:  d.CountryLong,
+			ISO:   d.CountryShort,
+			Valid: d.CountryLong != "-",
+		},
+
+		TheProvince: entity.Province{
+			Valid: d.Region != "-",
+			Name:  d.Region,
+		},
+
+		TheLatLon: ir.latlon,
+	}
+
+}
+
 func newImpressionFromAppRequest(sup entity.Supplier, r *requestBody) (entity.Impression, error) {
-	resp := impressionRest{}
+	resp := impressionRest{
+		SIP:           r.IP,
+		UA:            r.App.UserAgent,
+		ImpType:       entity.ImpressionTypeApp,
+		Categories:    r.Categories,
+		ImpSlots:      r.Slots,
+		Mega:          <-random.ID,
+		UnderFloorCPM: r.UnderFloor,
+		Pub:           r.Publisher,
+		Attr: map[entity.ImpressionAttributes]interface{}{
+			"network":     r.App.Network,
+			"brand":       r.App.Brand,
+			"cid":         r.App.CID,
+			"lac":         r.App.LAC,
+			"mcc":         r.App.MCC,
+			"mnc":         r.App.MNC,
+			"language":    r.App.Language,
+			"model":       r.App.Model,
+			"operator":    r.App.Operator,
+			"os_identity": r.App.OSIdentity,
+		},
+	}
+	lat, lon, err := gmaps.LockUp(r.App.MCC, r.App.MNC, r.App.LAC, r.App.CID)
+	resp.latlon = entity.LatLon{
+		Valid: err == nil,
+		Lat:   lat,
+		Lon:   lon,
+	}
+	resp.Pub.sup = sup
+	resp.extractData()
 	return &resp, nil
 }
 
@@ -103,6 +171,7 @@ func newImpressionFromVastRequest(sup entity.Supplier, r *requestBody) (entity.I
 		Pub: r.Publisher,
 	}
 	resp.Pub.sup = sup
+	resp.extractData()
 	return &resp, nil
 }
 
@@ -123,5 +192,6 @@ func newImpressionFromWebRequest(sup entity.Supplier, r *requestBody) (entity.Im
 		Pub: r.Publisher,
 	}
 	resp.Pub.sup = sup
+	resp.extractData()
 	return &resp, nil
 }

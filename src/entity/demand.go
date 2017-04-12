@@ -23,4 +23,6 @@ type Demand interface {
 	// Handicap return the handicap for this demand. higher handicap means higher chance to
 	// win the bid. this is the factor to multiply with cpm, 100 means 1
 	Handicap() int64
+	// CallRate is the rate of calling the object, 0 < X <= 100
+	CallRate() int
 }

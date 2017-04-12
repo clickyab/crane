@@ -26,6 +26,7 @@ type requestBody struct {
 		MNC        int64  `json:"mnc,omitempty"`
 		LAC        int64  `json:"lac,omitempty"`
 		CID        int64  `json:"cid,omitempty"`
+		UserAgent  string `json:"user_agent,omitempty"`
 	} `json:"app,omitempty"`
 	Web struct {
 		Referrer  string `json:"referrer,omitempty"`
@@ -62,4 +63,44 @@ func GetImpression(sup entity.Supplier, r *http.Request) (entity.Impression, err
 	default:
 		return nil, fmt.Errorf("type is not supported: %s", rb.Type)
 	}
+}
+
+func init() {
+	//x := requestBody{
+	//	IP: "127.0.0.1",
+	//
+	//	Categories: []entity.Category{"cat_a", "cat_b"},
+	//	Type:       "web",
+	//	UnderFloor: true,
+	//	Publisher: &restPublisher{
+	//		PubFloorCPM:     100,
+	//		PubName:         "testpubname",
+	//		PubSoftFloorCPM: 130,
+	//	},
+	//	Web: struct {
+	//		Referrer  string `json:"referrer,omitempty"`
+	//		Parent    string `json:"parent,omitempty"`
+	//		UserAgent string `json:"user_agent,omitempty"`
+	//	}{
+	//		"referr",
+	//		"parent",
+	//		"USER",
+	//	},
+	//	Slots: []*slotRest{
+	//		{
+	//			MaximumCPM: 100,
+	//			TID:        "tracker_id_1",
+	//			H:          320,
+	//			W:          250,
+	//		},
+	//		{
+	//			MaximumCPM: 101,
+	//			TID:        "tracker_id_2",
+	//			H:          320,
+	//			W:          250,
+	//		},
+	//	},
+	//}
+	//b, _ := json.MarshalIndent(x, "\t", "\t")
+	//fmt.Println(string(b))
 }

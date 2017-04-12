@@ -29,8 +29,6 @@ type Impression interface {
 	Source() Publisher
 	// Location of the request
 	Location() Location
-	// OS the os of requester if available
-	OS() OS
 	// Attributes is the generic attribute system
 	Attributes(ImpressionAttributes) interface{}
 	// Slots is the slot for this request
