@@ -130,8 +130,10 @@ func (d *demand) Status(c context.Context, h http.ResponseWriter, r *http.Reques
 func (d *demand) Win(ctx context.Context, id string, cpm int64) {
 	incCPM(d.key, cpm)
 	u := *d.winPoint
-	u.Query().Add("win", id)
-	u.Query().Add("cpm", fmt.Sprint(cpm))
+	tmp := u.Query()
+	tmp.Add("win", id)
+	tmp.Add("cpm", fmt.Sprint(cpm))
+	u.RawQuery = tmp.Encode()
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
 		logrus.Debug(err)
