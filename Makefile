@@ -102,6 +102,7 @@ test-gui: mockentity convey
 	cd $(ROOT)/src && goconvey -host=0.0.0.0
 
 test: mockentity convey
+	rm -rf $(ROOT)/services/tmp/*
 	cd $(ROOT) && $(GB) test -v
 
 migup: tools-migrate

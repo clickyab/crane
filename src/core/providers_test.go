@@ -41,11 +41,14 @@ func (s slot) MaxCPM() int64 {
 }
 
 type imp struct {
-	track string
-	ip    string
-	ua    string
+	track  string
+	ip     string
+	ua     string
+	undser bool
 
 	slots []slot
+	pub   entity.Publisher
+	ts    *testing.T
 }
 
 func (i imp) TrackID() string {
@@ -61,7 +64,13 @@ func (i imp) UserAgent() string {
 }
 
 func (i imp) Source() entity.Publisher {
-	panic("implement me")
+	if i.pub == nil {
+		ctrl := gomock.NewController(i.ts)
+		tmp := mock_entity.NewMockPublisher(ctrl)
+		tmp.EXPECT().FloorCPM().Return(int64(100))
+		i.pub = tmp
+	}
+	return i.pub
 }
 
 func (i imp) Location() entity.Location {
@@ -90,21 +99,21 @@ func (i imp) Type() entity.ImpressionType {
 }
 
 func (i imp) UnderFloor() bool {
-	panic("implement me")
+	return i.undser
 }
 
 func (i imp) Raw() interface{} {
 	panic("implement me")
 }
 
-func newImp(slotCount int) entity.Impression {
+func newImp(ts *testing.T, slotCount int) entity.Impression {
 	tmp := make([]slot, slotCount)
 	for i := range tmp {
 		tmp[i] = slot{
 			track: <-random.ID,
 		}
 	}
-	return &imp{slots: tmp}
+	return &imp{slots: tmp, ts: ts}
 }
 
 type tdemand struct {
@@ -122,11 +131,11 @@ func (*tdemand) Win(context.Context, string, int64) {
 }
 
 func (*tdemand) Handicap() int64 {
-	panic("implement me")
+	return 100
 }
 
 func (*tdemand) CallRate() int {
-	panic("implement me")
+	return 100
 }
 
 func (d *tdemand) Status(ctx context.Context, rw http.ResponseWriter, rq *http.Request) {
@@ -140,7 +149,9 @@ func (d *tdemand) Provide(ctx context.Context, imp entity.Impression, ch chan ma
 	ads := make(map[string]entity.Advertise)
 
 	for _, s := range imp.Slots() {
-		ads[s.TrackID()] = mock_entity.NewMockAdvertise(ctrl)
+		tmp := mock_entity.NewMockAdvertise(ctrl)
+		tmp.EXPECT().MaxCPM().Return(int64(200))
+		ads[s.TrackID()] = tmp
 		ch <- ads
 	}
 	close(ch)
@@ -161,7 +172,7 @@ func TestProviders(t *testing.T) {
 			Convey("Should return two ads", func() {
 				demand := &tdemand{t, time.Millisecond * 1, "test1"}
 				Register(demand, time.Millisecond*100)
-				im := newImp(2)
+				im := newImp(t, 2)
 				bk := context.Background()
 
 				ads := Call(bk, im)
@@ -175,7 +186,7 @@ func TestProviders(t *testing.T) {
 				demand := &tdemand{t, time.Millisecond * 100, "test1"}
 
 				Register(demand, time.Millisecond*100)
-				im := newImp(2)
+				im := newImp(t, 2)
 				bk := context.Background()
 
 				ads := Call(bk, im)
@@ -188,7 +199,7 @@ func TestProviders(t *testing.T) {
 				Register(demand1, time.Millisecond*100)
 				demand2 := &tdemand{t, time.Millisecond * 10, "prv2"}
 				Register(demand2, time.Millisecond*100)
-				im := newImp(3)
+				im := newImp(t, 3)
 				bk := context.Background()
 
 				ads := Call(bk, im)
