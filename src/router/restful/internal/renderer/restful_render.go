@@ -1,7 +1,6 @@
 package renderer
 
 import (
-	"context"
 	"encoding/json"
 	"entity"
 	"fmt"
@@ -11,7 +10,7 @@ import (
 
 type dumbAd struct {
 	ID     string `json:"id"`
-	MaxCPM int64  `json:"max_cpm"`
+	Winner int64  `json:"winner"`
 	Width  int    `json:"width"`
 	Height int    `json:"height"`
 	Code   string `json:"code"`
@@ -21,7 +20,7 @@ type restful struct {
 	pixelPattern *url.URL
 }
 
-func (rf restful) Render(ctx context.Context, in map[string]entity.Advertise, w io.Writer) error {
+func (rf restful) Render(pub entity.Publisher, in map[string]entity.Advertise, w io.Writer) error {
 	res := make(map[string]*dumbAd, len(in))
 	for i := range in {
 		if in[i] == nil {
@@ -29,9 +28,10 @@ func (rf restful) Render(ctx context.Context, in map[string]entity.Advertise, w 
 			continue
 		}
 
+		share := int64(100-pub.Supplier().Share()) / 100
 		d := &dumbAd{
 			ID:     in[i].ID(),
-			MaxCPM: in[i].MaxCPM(),
+			Winner: in[i].WinnerCPM() * share,
 			Width:  in[i].Width(),
 			Height: in[i].Height(),
 		}

@@ -3,7 +3,7 @@ export DEFAULT_PASS=bita123
 export GO=$(shell which go)
 export NODE=$(shell which nodejs)
 export GIT:=$(shell which git)
-export ROOT=$(realpath $(dir $(lastword $(MAKEFILE_LIST))))
+export ROOT=$(realpath $(dir $(firstword $(MAKEFILE_LIST))))
 export BIN=$(ROOT)/bin
 export GB=$(BIN)/gb
 export LINTER=$(BIN)/gometalinter.v1
@@ -27,12 +27,14 @@ export RPASS?=$(DEFAULT_PASS)
 export WORK_DIR=$(ROOT)/tmp
 export LINTERCMD=$(LINTER) -e ".*.gen.go" --cyclo-over=19 --line-length=120 --deadline=100s --disable-all --enable=structcheck --enable=deadcode --enable=gocyclo --enable=ineffassign --enable=golint --enable=goimports --enable=errcheck --enable=varcheck --enable=goconst --enable=gosimple --enable=staticcheck --enable=unused --enable=misspell
 export UGLIFYJS=$(ROOT)/node_modules/.bin/uglifyjs
+
+all: $(GB) codegen
+	$(BUILD)
+
 include src/services/Makefile.mk
 
 .PHONY: all gb clean
 
-all: $(GB) codegen
-	$(BUILD)
 
 needroot :
 	@[ "$(shell id -u)" -eq "0" ] || exit 1
@@ -125,9 +127,6 @@ convey: $(GB)
 mockgen: $(GB)
 	$(BUILD) github.com/golang/mock/mockgen
 	mkdir -p $(ROOT)/src/entity/mock_entity
-
-mockentity: $(LINTER) mockgen
-	$(BIN)/mockgen -destination=$(ROOT)/src/entity/mock_entity/mock_entity.gen.go entity Impression,Demand,Advertise,Publisher,Location,Slot,Supplier
 
 mockentity: $(LINTER) mockgen
 	$(BIN)/mockgen -destination=$(ROOT)/src/entity/mock_entity/mock_entity.gen.go entity Impression,Demand,Advertise,Publisher,Location,Slot,Supplier

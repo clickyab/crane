@@ -16,7 +16,7 @@ type Supplier struct {
 	SSoftFloorCPM int64          `json:"soft_floor_cpm" db:"soft_floor_cpm"`
 	UnderFloor    int            `json:"under_floor" db:"under_floor"`
 	Excluded      sql.NullString `json:"-" db:"excluded"`
-	Share         int            `json:"-" db:"share"`
+	SShare        int            `json:"-" db:"share"`
 }
 
 // Name of this supplier
@@ -26,12 +26,14 @@ func (s Supplier) Name() string {
 
 // FloorCPM of this supplier
 func (s Supplier) FloorCPM() int64 {
-	return s.SFloorCPM
+	i := s.SFloorCPM * int64(100+s.Share())
+	return i / 100
 }
 
 // SoftFloorCPM of this supplier
 func (s Supplier) SoftFloorCPM() int64 {
-	return s.SSoftFloorCPM
+	i := s.SSoftFloorCPM * int64(100+s.Share())
+	return i / 100
 }
 
 // ExcludedDemands of this supplire @TODO implement this
@@ -47,6 +49,17 @@ func (Supplier) CountryWhiteList() []entity.Country {
 // Type is the supplier type
 func (s Supplier) Type() string {
 	return s.SType
+}
+
+// Share of the supplier
+func (s Supplier) Share() int {
+	if s.SShare > 100 {
+		return 100
+	}
+	if s.SShare < 1 {
+		s.SShare = 1
+	}
+	return s.SShare
 }
 
 // GetSuppliers return all suppliers @TODO manage active/disable

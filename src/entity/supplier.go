@@ -13,4 +13,6 @@ type Supplier interface {
 	ExcludedDemands() []string
 	// CountryWhiteList is the list of country accepted for this
 	CountryWhiteList() []Country
+	// Share return the share of this supplier
+	Share() int
 }
