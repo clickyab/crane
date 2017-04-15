@@ -27,10 +27,11 @@ export RPASS?=$(DEFAULT_PASS)
 export WORK_DIR=$(ROOT)/tmp
 export LINTERCMD=$(LINTER) -e ".*.gen.go" --cyclo-over=19 --line-length=120 --deadline=100s --disable-all --enable=structcheck --enable=deadcode --enable=gocyclo --enable=ineffassign --enable=golint --enable=goimports --enable=errcheck --enable=varcheck --enable=goconst --enable=gosimple --enable=staticcheck --enable=unused --enable=misspell
 export UGLIFYJS=$(ROOT)/node_modules/.bin/uglifyjs
+include src/services/Makefile.mk
 
 .PHONY: all gb clean
 
-all: $(GB)
+all: $(GB) codegen
 	$(BUILD)
 
 needroot :
@@ -39,19 +40,12 @@ needroot :
 gb:
 	GOPATH=$(ROOT)/tmp GOBIN=$(ROOT)/bin $(GO) get -v github.com/constabulary/gb/...
 
-metalinter:
-	GOPATH=$(ROOT)/tmp GOBIN=$(ROOT)/bin $(GO)  get -v gopkg.in/alecthomas/gometalinter.v1
-	GOPATH=$(ROOT)/tmp GOBIN=$(ROOT)/bin $(LINTER) --install
-
 clean:
 	rm -rf $(ROOT)/pkg $(ROOT)/vendor/pkg
 	cd $(ROOT) && git clean -fX ./bin
 
 $(GB):
 	@[ -f $(BIN)/gb ] || make gb
-
-$(LINTER):
-	@[ -f $(LINTER) ] || make metalinter
 
 mysql-setup: needroot
 	echo 'UPDATE user SET plugin="";' | mysql mysql | true
@@ -73,10 +67,11 @@ rabbitmq-setup: needroot
 
 SUBDIRS := $(wildcard $(ROOT)/src/*)
 
-lint: $(LINTER) $(SUBDIRS)
 
 $(SUBDIRS):
 	echo $@ | grep services  || $(LINTERCMD) $@/...
+
+codegen: services_ip2l
 
 go-bindata: $(GB)
 	$(BUILD) github.com/jteeuwen/go-bindata/go-bindata
@@ -88,22 +83,6 @@ restore: $(GB)
 conditional-restore:
 	$(DIFF) $(ROOT)/vendor/manifest $(ROOT)/vendor/manifest.done || make restore
 
-convey: $(GB)
-	$(BUILD) github.com/smartystreets/goconvey
-
-mockgen: $(GB)
-	$(BUILD) github.com/golang/mock/mockgen
-	mkdir -p $(ROOT)/src/entity/mock_entity
-
-mockentity: $(LINTER) mockgen
-	$(BIN)/mockgen -destination=$(ROOT)/src/entity/mock_entity/mock_entity.gen.go entity Impression,Demand,Advertise,Publisher,Location,Slot,Supplier
-
-test-gui: mockentity convey
-	cd $(ROOT)/src && goconvey -host=0.0.0.0
-
-test: mockentity convey
-	rm -rf $(ROOT)/services/tmp/*
-	cd $(ROOT) && $(GB) test -v
 
 migup: tools-migrate
 	$(BIN)/migration -action=up
@@ -129,13 +108,36 @@ migration: go-bindata
 tools-migrate: $(BIN)/gb migration
 	$(BUILD) commands/migration
 
-$(ROOT)/contrib/IP-COUNTRY-REGION-CITY.BIN:
-	wget -c http://www.clickyab.com/downloads/IP-COUNTRY-REGION-CITY.BIN -O $(ROOT)/contrib/IP-COUNTRY-REGION-CITY.BIN
 
-$(ROOT)/src/services/ip2location/data.gen.go: $(ROOT)/contrib/IP-COUNTRY-REGION-CITY.BIN go-bindata
-	cd $(ROOT)/contrib && $(BIN)/go-bindata -nomemcopy -o $(ROOT)/src/services/ip2location/data.gen.go -pkg ip2location .
+# Tests ans lint
+lint: codegen $(LINTER) $(SUBDIRS)
 
-ip2location: $(ROOT)/src/services/ip2location/data.gen.go
-	$(BUILD) commands/ip2location
+metalinter:
+	GOPATH=$(ROOT)/tmp GOBIN=$(ROOT)/bin $(GO)  get -v gopkg.in/alecthomas/gometalinter.v1
+	GOPATH=$(ROOT)/tmp GOBIN=$(ROOT)/bin $(LINTER) --install
+
+$(LINTER):
+	@[ -f $(LINTER) ] || make metalinter
+
+convey: $(GB)
+	$(BUILD) github.com/smartystreets/goconvey
+
+mockgen: $(GB)
+	$(BUILD) github.com/golang/mock/mockgen
+	mkdir -p $(ROOT)/src/entity/mock_entity
+
+mockentity: $(LINTER) mockgen
+	$(BIN)/mockgen -destination=$(ROOT)/src/entity/mock_entity/mock_entity.gen.go entity Impression,Demand,Advertise,Publisher,Location,Slot,Supplier
+
+mockentity: $(LINTER) mockgen
+	$(BIN)/mockgen -destination=$(ROOT)/src/entity/mock_entity/mock_entity.gen.go entity Impression,Demand,Advertise,Publisher,Location,Slot,Supplier
+
+test-gui: mockentity codegen convey
+	cd $(ROOT)/src && goconvey -host=0.0.0.0
+
+test: mockentity codegen convey
+	cd $(ROOT) && $(GB) test -v
+
+# END Tests ans lint
 
 .PHONY: lint $(SUBDIRS) $(ENTITIES) mockentity

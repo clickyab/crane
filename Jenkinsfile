@@ -6,6 +6,7 @@ node {
     }
     stage('Codegen') {
         checkout scm
+        sh "make codegen"
         sh "make mockentity"
     }
     stage('Build') {
