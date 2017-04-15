@@ -3,7 +3,7 @@ package main
 import (
 	"commands"
 	_ "demands"
-	_ "router"
+	_ "router/restful"
 	"services/config"
 	"services/initializer"
 

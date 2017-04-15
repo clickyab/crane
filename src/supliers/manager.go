@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"services/assert"
 	"services/mysql"
 	"supliers/internal/models"
 	"supliers/internal/restful"
@@ -62,8 +61,13 @@ func GetImpression(key string, r *http.Request) (entity.Impression, error) {
 		return nil, err
 	}
 
-	assert.True(sup.SType == "rest", "Not a supported type", sup.SType)
-	return restful.GetImpression(sup, r)
+	switch sup.SType {
+	case "rest":
+		return restful.GetImpression(sup, r)
+	default:
+		logrus.Panicf("Not a supported type: %s", sup.SType)
+	}
+	return nil, fmt.Errorf("not supported type: %s", sup.SType)
 }
 
 func init() {

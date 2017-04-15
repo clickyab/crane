@@ -31,8 +31,13 @@ func (dm *demandManager) loadDemands() {
 	dm.activeDemands = models.NewManager().ActiveDemands()
 	core.ResetProviders()
 	for _, demand := range dm.activeDemands {
-		assert.True(demand.Type == models.DemandTypeRest, "Not supported demand type")
-		core.Register(restful.NewRestfulClient(demand), demand.GetTimeout())
+		switch demand.Type {
+		case models.DemandTypeRest:
+			core.Register(restful.NewRestfulClient(demand), demand.GetTimeout())
+		default:
+			logrus.Panicf("Not supported demand type : %s", demand.Type)
+		}
+
 	}
 
 	if dm.server != nil {

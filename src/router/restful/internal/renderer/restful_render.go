@@ -20,7 +20,7 @@ type restful struct {
 	pixelPattern *url.URL
 }
 
-func (rf restful) Render(pub entity.Publisher, in map[string]entity.Advertise, w io.Writer) error {
+func (rf restful) Render(sup entity.Supplier, in map[string]entity.Advertise, w io.Writer) error {
 	res := make(map[string]*dumbAd, len(in))
 	for i := range in {
 		if in[i] == nil {
@@ -28,7 +28,7 @@ func (rf restful) Render(pub entity.Publisher, in map[string]entity.Advertise, w
 			continue
 		}
 
-		share := int64(100-pub.Supplier().Share()) / 100
+		share := int64(100-sup.Share()) / 100
 		d := &dumbAd{
 			ID:     in[i].ID(),
 			Winner: in[i].WinnerCPM() * share,

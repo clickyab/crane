@@ -47,7 +47,7 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 	res := rtb.SelectCPM(imp, ads)
 	renderer := ctx.Value(rendererKey).(entity.Renderer)
-	err = renderer.Render(imp.Source(), res, w)
+	err = renderer.Render(imp.Source().Supplier(), res, w)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		dec.Encode(struct {

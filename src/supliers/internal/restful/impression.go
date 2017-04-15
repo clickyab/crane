@@ -3,12 +3,9 @@ package restful
 import (
 	"entity"
 	"net"
+	"services/gmaps"
 	"services/ip2location/client"
 	"services/random"
-
-	"services/gmaps"
-
-	"github.com/Sirupsen/logrus"
 )
 
 type impressionRest struct {
@@ -102,7 +99,7 @@ func (ir impressionRest) Raw() interface{} {
 
 func (ir *impressionRest) extractData() {
 	d := client.IP2Location(ir.SIP)
-	logrus.Debug(d)
+	//logrus.Debug(d)
 	ir.Loc = location{
 		TheCountry: entity.Country{
 			Name:  d.CountryLong,
