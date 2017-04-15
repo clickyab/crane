@@ -1,4 +1,4 @@
-package router
+package restful
 
 import (
 	"context"
@@ -46,24 +46,14 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	res := rtb.SelectCPM(imp, ads)
-	has = false
-	data := make(map[string]entity.DumbAd)
-	for i := range res {
-		if res[i] != nil {
-			has = true
-			data[i] = res[i].Morph("winpixel")
-		}
-	}
-
-	if !has {
-		w.WriteHeader(http.StatusNoContent)
+	renderer := ctx.Value(rendererKey).(entity.Renderer)
+	err = renderer.Render(ctx, res, w)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
 		dec.Encode(struct {
 			Error string
 		}{
-			Error: "no data",
+			Error: err.Error(),
 		})
-		return
 	}
-
-	dec.Encode(data)
 }

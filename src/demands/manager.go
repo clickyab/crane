@@ -29,7 +29,7 @@ func (dm *demandManager) loadDemands() {
 	dm.lock.Lock()
 	defer dm.lock.Unlock()
 	dm.activeDemands = models.NewManager().ActiveDemands()
-	core.Reset()
+	core.ResetProviders()
 	for _, demand := range dm.activeDemands {
 		assert.True(demand.Type == models.DemandTypeRest, "Not supported demand type")
 		core.Register(restful.NewRestfulClient(demand), demand.GetTimeout())

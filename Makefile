@@ -76,7 +76,7 @@ SUBDIRS := $(wildcard $(ROOT)/src/*)
 lint: $(LINTER) $(SUBDIRS)
 
 $(SUBDIRS):
-	$(LINTERCMD) $@/...
+	echo $@ | grep services  || $(LINTERCMD) $@/...
 
 go-bindata: $(GB)
 	$(BUILD) github.com/jteeuwen/go-bindata/go-bindata
@@ -94,7 +94,6 @@ convey: $(GB)
 mockgen: $(GB)
 	$(BUILD) github.com/golang/mock/mockgen
 	mkdir -p $(ROOT)/src/entity/mock_entity
-	mkdir -p $(ROOT)/src/clickyab/entity/mock_entity
 
 mockentity: $(LINTER) mockgen
 	$(BIN)/mockgen -destination=$(ROOT)/src/entity/mock_entity/mock_entity.gen.go entity Impression,Demand,Advertise,Publisher,Location,Slot,Supplier

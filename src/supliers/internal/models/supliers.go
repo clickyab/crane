@@ -19,30 +19,37 @@ type Supplier struct {
 	Share         int            `json:"-" db:"share"`
 }
 
+// Name of this supplier
 func (s Supplier) Name() string {
 	return s.SName
 }
 
+// FloorCPM of this supplier
 func (s Supplier) FloorCPM() int64 {
 	return s.SFloorCPM
 }
 
+// SoftFloorCPM of this supplier
 func (s Supplier) SoftFloorCPM() int64 {
 	return s.SSoftFloorCPM
 }
 
+// ExcludedDemands of this supplire @TODO implement this
 func (s Supplier) ExcludedDemands() []string {
 	return nil
 }
 
+// CountryWhiteList is the country allowed by this supplier @TODO implement this
 func (Supplier) CountryWhiteList() []entity.Country {
 	return nil
 }
 
+// Type is the supplier type
 func (s Supplier) Type() string {
 	return s.SType
 }
 
+// GetSuppliers return all suppliers @TODO manage active/disable
 func (m *Manager) GetSuppliers() map[string]Supplier {
 	q := "SELECT * FROM suppliers"
 	var res []Supplier

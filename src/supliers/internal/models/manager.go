@@ -2,10 +2,12 @@ package models
 
 import "services/mysql"
 
+// Manager is the model manager
 type Manager struct {
 	mysql.Manager
 }
 
+// Initialize the model, its the interface, not really need this
 func (m *Manager) Initialize() {
 
 }

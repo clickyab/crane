@@ -1,13 +1,5 @@
 package entity
 
-type DumbAd struct {
-	ID     string `json:"id"`
-	MaxCPM int64  `json:"max_cpm"`
-	Width  int    `json:"width"`
-	Height int    `json:"height"`
-	Code   string `json:"code"`
-}
-
 // Advertise is the single advertise interface
 type Advertise interface {
 	// GetID return the id of advertise
@@ -29,6 +21,4 @@ type Advertise interface {
 	WinnerCPM() int64
 	// Demand return the demand registered with this ad
 	Demand() Demand
-	// Morph the current ad and add the pixel url to it
-	Morph(string) DumbAd
 }

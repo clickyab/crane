@@ -66,8 +66,8 @@ func Register(provider entity.Demand, timeout time.Duration) {
 	}
 }
 
-// Reset remove all providers
-func Reset() {
+// ResetProviders remove all providers
+func ResetProviders() {
 	lock.Lock()
 	defer lock.Unlock()
 

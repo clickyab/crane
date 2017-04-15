@@ -8,10 +8,12 @@ import (
 )
 
 type (
+	// DemandType list all supported demand type
 	DemandType string
 )
 
 const (
+	// DemandTypeRest is for rest demand type
 	DemandTypeRest DemandType = "rest"
 )
 
@@ -85,6 +87,7 @@ func (e DemandType) Value() (driver.Value, error) {
 	return string(e), nil
 }
 
+// GetTimeout return the timeout for this demand
 func (d Demand) GetTimeout() time.Duration {
 	if time.Duration(d.Timeout) < 100*time.Millisecond {
 		return 100 * time.Millisecond
@@ -95,6 +98,7 @@ func (d Demand) GetTimeout() time.Duration {
 	return time.Duration(d.Timeout)
 }
 
+// ActiveDemands list all active demands
 func (m *Manager) ActiveDemands() []Demand {
 	var res []Demand
 	_, err := m.GetRDbMap().Select(&res, "SELECT * FROM demands WHERE active <> 0")
