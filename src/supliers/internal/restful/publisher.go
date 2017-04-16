@@ -22,7 +22,7 @@ func (rp restPublisher) SoftFloorCPM() int64 {
 	return rp.PubFloorCPM
 }
 
-func (restPublisher) Attributes(entity.PublisherAttributes) interface{} {
+func (restPublisher) Attributes() map[string]interface{} {
 	return nil
 }
 

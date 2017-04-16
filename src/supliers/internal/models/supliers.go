@@ -6,6 +6,8 @@ import (
 	"services/assert"
 )
 
+type RendererFactory func(string) entity.Renderer
+
 // Supplier is a supplier in our system
 type Supplier struct {
 	ID            int64          `json:"id" db:"id"`
@@ -17,6 +19,12 @@ type Supplier struct {
 	UnderFloor    int            `json:"under_floor" db:"under_floor"`
 	Excluded      sql.NullString `json:"-" db:"excluded"`
 	SShare        int            `json:"-" db:"share"`
+
+	r entity.Renderer
+}
+
+func (s *Supplier) Renderer() entity.Renderer {
+	return s.r
 }
 
 // Name of this supplier
@@ -26,14 +34,12 @@ func (s Supplier) Name() string {
 
 // FloorCPM of this supplier
 func (s Supplier) FloorCPM() int64 {
-	i := s.SFloorCPM * int64(100+s.Share())
-	return i / 100
+	return s.SFloorCPM
 }
 
 // SoftFloorCPM of this supplier
 func (s Supplier) SoftFloorCPM() int64 {
-	i := s.SSoftFloorCPM * int64(100+s.Share())
-	return i / 100
+	return s.SSoftFloorCPM
 }
 
 // ExcludedDemands of this supplire @TODO implement this
@@ -63,13 +69,14 @@ func (s Supplier) Share() int {
 }
 
 // GetSuppliers return all suppliers @TODO manage active/disable
-func (m *Manager) GetSuppliers() map[string]Supplier {
+func (m *Manager) GetSuppliers(factory RendererFactory) map[string]Supplier {
 	q := "SELECT * FROM suppliers"
 	var res []Supplier
 	_, err := m.GetRDbMap().Select(&res, q)
 	assert.Nil(err)
 	ret := make(map[string]Supplier, len(res))
 	for i := range res {
+		res[i].r = factory(res[i].SType)
 		ret[res[i].Key] = res[i]
 	}
 

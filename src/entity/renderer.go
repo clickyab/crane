@@ -6,5 +6,5 @@ import "io"
 type Renderer interface {
 	// Render is a function to handle rendering of bunch of ads into a
 	// output stream
-	Render(Supplier, map[string]Advertise, io.Writer) error
+	Render(map[string]Advertise, io.Writer) error
 }

@@ -1,4 +1,4 @@
-package restful
+package supliers
 
 import (
 	"services/config"
@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	listenAddress string
+	domain string
 )
 
 type cfgInitializer struct {
@@ -17,12 +17,12 @@ type cfgInitializer struct {
 func (ci *cfgInitializer) Initialize(o *onion.Onion) []onion.Layer {
 	ci.o = o
 	l := onion.NewDefaultLayer()
-	l.SetDefault("exchange.router.listen", ":80")
+	l.SetDefault("exchange.supplier.domain", "localhost")
 	return []onion.Layer{l}
 }
 
 func (ci *cfgInitializer) Loaded() {
-	listenAddress = ci.o.GetStringDefault("exchange.router.listen", ":80")
+	domain = ci.o.GetStringDefault("exchange.supplier.domain", "localhost")
 }
 
 func init() {

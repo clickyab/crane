@@ -30,7 +30,7 @@ type Impression interface {
 	// Location of the request
 	Location() Location
 	// Attributes is the generic attribute system
-	Attributes(ImpressionAttributes) interface{}
+	Attributes() map[string]interface{}
 	// Slots is the slot for this request
 	Slots() []Slot
 	// Category returns category obviously
@@ -39,7 +39,4 @@ type Impression interface {
 	Type() ImpressionType
 	// Is this publisher accept under floor ads or not ?
 	UnderFloor() bool
-	// Raw is a helper function to transform the impression to a JSON ready struct or map
-	// or whatever
-	Raw() interface{}
 }

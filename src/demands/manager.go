@@ -33,7 +33,7 @@ func (dm *demandManager) loadDemands() {
 	for _, demand := range dm.activeDemands {
 		switch demand.Type {
 		case models.DemandTypeRest:
-			core.Register(restful.NewRestfulClient(demand), demand.GetTimeout())
+			core.Register(restful.NewRestfulClient(demand, getRawImpresssion), demand.GetTimeout())
 		default:
 			logrus.Panicf("Not supported demand type : %s", demand.Type)
 		}

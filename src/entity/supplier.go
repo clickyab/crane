@@ -15,4 +15,6 @@ type Supplier interface {
 	CountryWhiteList() []Country
 	// Share return the share of this supplier
 	Share() int
+	// Renderer return the renderer of this supplier
+	Renderer() Renderer
 }

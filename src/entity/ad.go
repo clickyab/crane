@@ -12,6 +12,12 @@ type Advertise interface {
 	Height() int
 	// return the url to call for show
 	URL() string
+
+	AdvertiseExtra
+}
+
+// AdvertiseExtra is the parameters from our system passed to advertise
+type AdvertiseExtra interface {
 	// Return the track id, it must be randomly generated code and after the first call
 	// must not change in a one call
 	TrackID() string

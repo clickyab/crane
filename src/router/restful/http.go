@@ -7,14 +7,6 @@ import (
 	"services/initializer"
 	"time"
 
-	"router/restful/internal/renderer"
-
-	"net/url"
-
-	"fmt"
-
-	"services/assert"
-
 	"github.com/Sirupsen/logrus"
 	"github.com/fzerorubigd/xhandler"
 	"github.com/fzerorubigd/xmux"
@@ -31,11 +23,7 @@ func (i initRouter) Initialize(ctx context.Context) {
 	mux := xmux.New()
 	mux.POST("/get/:key", xhandler.HandlerFuncC(middlewares.Recovery(middlewares.Logger(getAd))))
 
-	pixel, err := url.Parse(fmt.Sprintf("http://%s/track", domain))
-	assert.Nil(err)
-
-	nCtx := context.WithValue(ctx, rendererKey, renderer.NewRestfulRenderer(pixel))
-	srv := &http.Server{Addr: listenAddress, Handler: xhandler.New(nCtx, mux)}
+	srv := &http.Server{Addr: listenAddress, Handler: xhandler.New(ctx, mux)}
 	go func() {
 		if err := srv.ListenAndServe(); err != nil {
 			logrus.Debug(err)

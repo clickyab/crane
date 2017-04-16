@@ -19,7 +19,7 @@ type impressionRest struct {
 	ImpType       entity.ImpressionType `json:"type"`
 	UnderFloorCPM bool                  `json:"under_floor"`
 
-	Attr map[entity.ImpressionAttributes]interface{} `json:"attributes"`
+	Attr map[string]interface{} `json:"attributes"`
 
 	dum    []entity.Slot
 	latlon entity.LatLon
@@ -67,7 +67,7 @@ func (ir impressionRest) Location() entity.Location {
 	return ir.Loc
 }
 
-func (impressionRest) Attributes(entity.ImpressionAttributes) interface{} {
+func (impressionRest) Attributes() map[string]interface{} {
 	return nil
 }
 
@@ -127,7 +127,7 @@ func newImpressionFromAppRequest(sup entity.Supplier, r *requestBody) (entity.Im
 		Mega:          <-random.ID,
 		UnderFloorCPM: r.UnderFloor,
 		Pub:           r.Publisher,
-		Attr: map[entity.ImpressionAttributes]interface{}{
+		Attr: map[string]interface{}{
 			"network":     r.App.Network,
 			"brand":       r.App.Brand,
 			"cid":         r.App.CID,
@@ -161,7 +161,7 @@ func newImpressionFromVastRequest(sup entity.Supplier, r *requestBody) (entity.I
 		Mega:          <-random.ID,
 		UnderFloorCPM: r.UnderFloor,
 
-		Attr: map[entity.ImpressionAttributes]interface{}{
+		Attr: map[string]interface{}{
 			"referrer": r.Vast.Referrer,
 			"parent":   r.Vast.Parent,
 		},
@@ -182,7 +182,7 @@ func newImpressionFromWebRequest(sup entity.Supplier, r *requestBody) (entity.Im
 		Mega:          <-random.ID,
 		UnderFloorCPM: r.UnderFloor,
 
-		Attr: map[entity.ImpressionAttributes]interface{}{
+		Attr: map[string]interface{}{
 			"referrer": r.Web.Referrer,
 			"parent":   r.Web.Parent,
 		},

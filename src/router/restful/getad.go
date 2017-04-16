@@ -8,8 +8,6 @@ import (
 	"rtb"
 	"supliers"
 
-	"entity"
-
 	"github.com/fzerorubigd/xmux"
 )
 
@@ -46,8 +44,8 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	res := rtb.SelectCPM(imp, ads)
-	renderer := ctx.Value(rendererKey).(entity.Renderer)
-	err = renderer.Render(imp.Source().Supplier(), res, w)
+
+	err = imp.Source().Supplier().Renderer().Render(res, w)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		dec.Encode(struct {

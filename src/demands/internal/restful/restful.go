@@ -32,6 +32,8 @@ type demand struct {
 	weekLimit   int64
 	monthLimit  int64
 	handicap    int64
+
+	encoder func(entity.Impression) interface{}
 }
 
 func (*demand) CallRate() int {
@@ -81,7 +83,7 @@ func (d *demand) Provide(ctx context.Context, imp entity.Impression, ch chan map
 	}
 	buf := &bytes.Buffer{}
 	enc := json.NewEncoder(buf)
-	if err := enc.Encode(imp.Raw()); err != nil {
+	if err := enc.Encode(d.encoder(imp)); err != nil {
 		logrus.Debug(err)
 		return
 	}
@@ -162,7 +164,7 @@ func (d *demand) createConnection() {
 }
 
 // NewRestfulClient return a new client for restful call
-func NewRestfulClient(d models.Demand) entity.Demand {
+func NewRestfulClient(d models.Demand, encoder func(entity.Impression) interface{}) entity.Demand {
 	win, err := url.Parse(d.WinURL)
 	assert.Nil(err)
 	dm := &demand{
@@ -177,6 +179,8 @@ func NewRestfulClient(d models.Demand) entity.Demand {
 		weekLimit:          d.WeekLimit,
 		monthLimit:         d.MonthLimit,
 		handicap:           d.Handicap,
+
+		encoder: encoder,
 	}
 	dm.createConnection()
 	return dm

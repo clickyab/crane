@@ -115,11 +115,9 @@ func Call(ctx context.Context, imp entity.Impression) map[string][]entity.Advert
 	close(allRes)
 	var limit int64
 	if !imp.UnderFloor() {
-		limit = imp.Source().FloorCPM()
-		if limit == 0 {
-			limit = imp.Source().Supplier().FloorCPM()
-		}
+		limit = entity.GetFloorCPM(imp.Source(), true)
 	}
+
 	res := make(map[string][]entity.Advertise)
 	for provided := range allRes {
 		for j := range provided {

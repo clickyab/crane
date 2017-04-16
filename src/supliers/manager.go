@@ -9,8 +9,13 @@ import (
 	"services/mysql"
 	"supliers/internal/models"
 	"supliers/internal/restful"
+	"supliers/internal/restful/renderer"
 	"sync"
 	"syscall"
+
+	"net/url"
+
+	"services/assert"
 
 	"github.com/Sirupsen/logrus"
 )
@@ -22,12 +27,24 @@ type supplierManager struct {
 	lock      *sync.RWMutex
 }
 
+func rendererFactory(in string) entity.Renderer {
+	switch in {
+	case "rest":
+		pixel, err := url.Parse(fmt.Sprintf("http://%s/track", domain))
+		assert.Nil(err)
+		return renderer.NewRestfulRenderer(pixel)
+	default:
+		logrus.Panicf("supplier with key %s not found", in)
+	}
+	return nil
+}
+
 func (sm *supplierManager) loadSuppliers() {
 	sm.lock.Lock()
 	defer sm.lock.Unlock()
 
 	m := models.NewManager()
-	sm.suppliers = m.GetSuppliers()
+	sm.suppliers = m.GetSuppliers(rendererFactory)
 }
 
 func (sm *supplierManager) Initialize() {
