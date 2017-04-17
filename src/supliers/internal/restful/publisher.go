@@ -19,7 +19,7 @@ func (rp restPublisher) FloorCPM() int64 {
 }
 
 func (rp restPublisher) SoftFloorCPM() int64 {
-	return rp.PubFloorCPM
+	return rp.PubSoftFloorCPM
 }
 
 func (restPublisher) Attributes() map[string]interface{} {

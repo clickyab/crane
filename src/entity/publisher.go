@@ -20,35 +20,3 @@ type Publisher interface {
 	// Supplier return the exchange object for this publisher
 	Supplier() Supplier
 }
-
-// GetSoftFloorCPM is a utility function to handle the share and other case
-func GetSoftFloorCPM(pub Publisher, inc bool) int64 {
-	floor := pub.SoftFloorCPM()
-	if floor == 0 {
-		floor = pub.Supplier().SoftFloorCPM()
-	}
-	share := pub.Supplier().Share()
-	if inc {
-		share += 100
-	} else {
-		share = 100 - share
-	}
-	floor *= int64(share)
-	return floor / 100
-}
-
-// GetFloorCPM is a utility function to handle the share and other case
-func GetFloorCPM(pub Publisher, inc bool) int64 {
-	floor := pub.FloorCPM()
-	if floor == 0 {
-		floor = pub.Supplier().FloorCPM()
-	}
-	share := pub.Supplier().Share()
-	if inc {
-		share += 100
-	} else {
-		share = 100 - share
-	}
-	floor *= int64(share)
-	return floor / 100
-}

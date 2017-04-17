@@ -27,12 +27,13 @@ type supplierManager struct {
 	lock      *sync.RWMutex
 }
 
-func rendererFactory(in string) entity.Renderer {
+func restRendererFactory(sup entity.Supplier, in string) entity.Renderer {
 	switch in {
 	case "rest":
+		// TODO : tracker url
 		pixel, err := url.Parse(fmt.Sprintf("http://%s/track", domain))
 		assert.Nil(err)
-		return renderer.NewRestfulRenderer(pixel)
+		return renderer.NewRestfulRenderer(sup, pixel)
 	default:
 		logrus.Panicf("supplier with key %s not found", in)
 	}
@@ -44,7 +45,7 @@ func (sm *supplierManager) loadSuppliers() {
 	defer sm.lock.Unlock()
 
 	m := models.NewManager()
-	sm.suppliers = m.GetSuppliers(rendererFactory)
+	sm.suppliers = m.GetSuppliers(restRendererFactory)
 }
 
 func (sm *supplierManager) Initialize() {
@@ -78,13 +79,14 @@ func GetImpression(key string, r *http.Request) (entity.Impression, error) {
 		return nil, err
 	}
 
+	// Make sure the profit margin is added to the request
 	switch sup.SType {
 	case "rest":
 		return restful.GetImpression(sup, r)
 	default:
 		logrus.Panicf("Not a supported type: %s", sup.SType)
+		return nil, fmt.Errorf("not supported type: %s", sup.SType)
 	}
-	return nil, fmt.Errorf("not supported type: %s", sup.SType)
 }
 
 func init() {

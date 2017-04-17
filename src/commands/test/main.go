@@ -27,7 +27,8 @@ func getAdd(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-	fmt.Println(mp)
+	t, _ := json.MarshalIndent(mp, "\t", "\t")
+	fmt.Println(string(t))
 
 	x := map[string]restAd{}
 

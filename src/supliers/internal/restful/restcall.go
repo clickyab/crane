@@ -53,54 +53,31 @@ func GetImpression(sup entity.Supplier, r *http.Request) (entity.Impression, err
 		return nil, err
 	}
 
+	var res *impressionRest
 	switch strings.ToLower(rb.Type) {
 	case "app":
-		return newImpressionFromAppRequest(sup, &rb)
+		res, err = newImpressionFromAppRequest(sup, &rb)
 	case "web":
-		return newImpressionFromWebRequest(sup, &rb)
+		res, err = newImpressionFromWebRequest(sup, &rb)
 	case "vast":
-		return newImpressionFromVastRequest(sup, &rb)
+		res, err = newImpressionFromVastRequest(sup, &rb)
 	default:
-		return nil, fmt.Errorf("type is not supported: %s", rb.Type)
+		err = fmt.Errorf("type is not supported: %s", rb.Type)
 	}
-}
 
-func init() {
-	//x := requestBody{
-	//	IP: "127.0.0.1",
-	//
-	//	Categories: []entity.Category{"cat_a", "cat_b"},
-	//	Type:       "web",
-	//	UnderFloor: true,
-	//	Publisher: &restPublisher{
-	//		PubFloorCPM:     100,
-	//		PubName:         "testpubname",
-	//		PubSoftFloorCPM: 130,
-	//	},
-	//	Web: struct {
-	//		Referrer  string `json:"referrer,omitempty"`
-	//		Parent    string `json:"parent,omitempty"`
-	//		UserAgent string `json:"user_agent,omitempty"`
-	//	}{
-	//		"referr",
-	//		"parent",
-	//		"USER",
-	//	},
-	//	Slots: []*slotRest{
-	//		{
-	//			MaximumCPM: 100,
-	//			TID:        "tracker_id_1",
-	//			H:          320,
-	//			W:          250,
-	//		},
-	//		{
-	//			MaximumCPM: 101,
-	//			TID:        "tracker_id_2",
-	//			H:          320,
-	//			W:          250,
-	//		},
-	//	},
-	//}
-	//b, _ := json.MarshalIndent(x, "\t", "\t")
-	//fmt.Println(string(b))
+	if err != nil {
+		return nil, err
+	}
+
+	// Hidden profit is here. the floor and soft floor are rising here
+	share := int64(100 + res.Pub.sup.Share())
+	res.Pub.PubFloorCPM = (res.Pub.PubFloorCPM * share) / 100
+	if res.Pub.PubFloorCPM == 0 {
+		res.Pub.PubFloorCPM = (sup.FloorCPM() * share) / 100
+	}
+	res.Pub.PubSoftFloorCPM = (res.Pub.PubSoftFloorCPM * share) / 100
+	if res.Pub.PubSoftFloorCPM == 0 {
+		res.Pub.PubSoftFloorCPM = (sup.SoftFloorCPM() * share) / 100
+	}
+	return res, nil
 }

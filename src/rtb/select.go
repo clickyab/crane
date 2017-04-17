@@ -5,13 +5,6 @@ import (
 	"sort"
 )
 
-func incShare(cpm int64, share int) int64 {
-	return cpm * int64((100+share)/100)
-}
-func decShare(cpm int64, share int) int64 {
-	return cpm * int64((100-share)/100)
-}
-
 // SelectCPM is the simplest way to bid. sort the value, return the
 func SelectCPM(imp entity.Impression, all map[string][]entity.Advertise) map[string]entity.Advertise {
 	res := make(map[string]entity.Advertise, len(all))
@@ -23,7 +16,7 @@ func SelectCPM(imp entity.Impression, all map[string][]entity.Advertise) map[str
 		sort.Sort(sorted)
 
 		res[id] = sorted[0]
-		lower := incShare(imp.Source().SoftFloorCPM(), imp.Source().Supplier().Share())
+		lower := imp.Source().SoftFloorCPM()
 		if lower > res[id].MaxCPM() {
 			lower = imp.Source().FloorCPM()
 		}

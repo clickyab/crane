@@ -12,10 +12,6 @@ import (
 	"github.com/fzerorubigd/xmux"
 )
 
-type ctxKey int
-
-const rendererKey ctxKey = iota
-
 type initRouter struct {
 }
 

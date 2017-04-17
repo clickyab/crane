@@ -18,6 +18,7 @@ type dumbAd struct {
 
 type restful struct {
 	pixelPattern *url.URL
+	sup          entity.Supplier
 }
 
 func (rf restful) Render(in map[string]entity.Advertise, w io.Writer) error {
@@ -30,7 +31,7 @@ func (rf restful) Render(in map[string]entity.Advertise, w io.Writer) error {
 
 		d := &dumbAd{
 			ID:     in[i].ID(),
-			Winner: in[i].WinnerCPM(),
+			Winner: in[i].WinnerCPM() * int64(100-rf.sup.Share()) / 100,
 			Width:  in[i].Width(),
 			Height: in[i].Height(),
 		}
@@ -38,7 +39,17 @@ func (rf restful) Render(in map[string]entity.Advertise, w io.Writer) error {
 		q := x.Query()
 		q.Set("id", i)
 		x.RawQuery = q.Encode()
-		d.Code = fmt.Sprintf("TODO , tracker code is %s, the actual route is %s", x.String(), in[i].URL())
+
+		winURL := in[i].URL()
+		win, err := url.Parse(winURL)
+		if err == nil {
+			q := win.Query()
+			q.Set("win", fmt.Sprint(in[i].WinnerCPM()))
+			win.RawQuery = q.Encode()
+			winURL = win.String()
+		}
+
+		d.Code = fmt.Sprintf("TODO , tracker code is %s, the actual route is %s", x.String(), winURL)
 		res[i] = d
 	}
 
@@ -47,8 +58,9 @@ func (rf restful) Render(in map[string]entity.Advertise, w io.Writer) error {
 }
 
 // NewRestfulRenderer return a restful renderer
-func NewRestfulRenderer(pixel *url.URL) entity.Renderer {
+func NewRestfulRenderer(sup entity.Supplier, pixel *url.URL) entity.Renderer {
 	return &restful{
 		pixelPattern: pixel,
+		sup:          sup,
 	}
 }

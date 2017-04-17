@@ -31,7 +31,7 @@ export UGLIFYJS=$(ROOT)/node_modules/.bin/uglifyjs
 all: $(GB) codegen
 	$(BUILD)
 
-include src/services/Makefile.mk
+include $(ROOT)/src/services/Makefile.mk
 
 .PHONY: all gb clean
 
@@ -73,7 +73,7 @@ SUBDIRS := $(wildcard $(ROOT)/src/*)
 $(SUBDIRS):
 	echo $@ | grep services  || $(LINTERCMD) $@/...
 
-codegen: services_ip2l
+codegen: services_ip2l migration
 
 go-bindata: $(GB)
 	$(BUILD) github.com/jteeuwen/go-bindata/go-bindata

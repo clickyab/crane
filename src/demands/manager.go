@@ -52,7 +52,7 @@ func (dm *demandManager) loadDemands() {
 	go func() {
 		<-time.After(time.Second)
 		if err := dm.server.ListenAndServe(); err != nil {
-			logrus.Errorf("listen: %s", err)
+			logrus.Warnf("listen: %s", err)
 		}
 	}()
 }

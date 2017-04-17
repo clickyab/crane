@@ -58,9 +58,13 @@ func (p *providerData) watch(ctx context.Context, imp entity.Impression) map[str
 func Register(provider entity.Demand, timeout time.Duration) {
 	lock.Lock()
 	defer lock.Unlock()
+	name := provider.Name()
 
-	allProviders[provider.Name()] = providerData{
-		name:     provider.Name(),
+	_, ok := allProviders[name]
+	assert.False(ok, "[BUG] provider is already registered")
+
+	allProviders[name] = providerData{
+		name:     name,
 		provider: provider,
 		timeout:  timeout,
 	}
@@ -115,7 +119,7 @@ func Call(ctx context.Context, imp entity.Impression) map[string][]entity.Advert
 	close(allRes)
 	var limit int64
 	if !imp.UnderFloor() {
-		limit = entity.GetFloorCPM(imp.Source(), true)
+		limit = imp.Source().FloorCPM()
 	}
 
 	res := make(map[string][]entity.Advertise)

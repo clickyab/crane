@@ -51,6 +51,10 @@ type imp struct {
 	ts    *testing.T
 }
 
+func (imp) Attributes() map[string]interface{} {
+	return nil
+}
+
 func (i imp) TrackID() string {
 	return i.track
 }
@@ -74,10 +78,6 @@ func (i imp) Source() entity.Publisher {
 }
 
 func (i imp) Location() entity.Location {
-	panic("implement me")
-}
-
-func (i imp) Attributes(entity.ImpressionAttributes) interface{} {
 	panic("implement me")
 }
 

@@ -6,7 +6,8 @@ import (
 	"services/assert"
 )
 
-type RendererFactory func(string) entity.Renderer
+// RendererFactory is a factory function for a supplier base on its type
+type RendererFactory func(entity.Supplier, string) entity.Renderer
 
 // Supplier is a supplier in our system
 type Supplier struct {
@@ -23,7 +24,8 @@ type Supplier struct {
 	r entity.Renderer
 }
 
-func (s *Supplier) Renderer() entity.Renderer {
+// Renderer return this supplier renderer
+func (s Supplier) Renderer() entity.Renderer {
 	return s.r
 }
 
@@ -76,7 +78,7 @@ func (m *Manager) GetSuppliers(factory RendererFactory) map[string]Supplier {
 	assert.Nil(err)
 	ret := make(map[string]Supplier, len(res))
 	for i := range res {
-		res[i].r = factory(res[i].SType)
+		res[i].r = factory(res[i], res[i].SType)
 		ret[res[i].Key] = res[i]
 	}
 

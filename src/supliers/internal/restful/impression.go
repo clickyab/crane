@@ -71,7 +71,7 @@ func (impressionRest) Attributes() map[string]interface{} {
 	return nil
 }
 
-func (ir impressionRest) Slots() []entity.Slot {
+func (ir *impressionRest) Slots() []entity.Slot {
 	if ir.dum == nil {
 		ir.dum = make([]entity.Slot, len(ir.ImpSlots))
 		for i := range ir.ImpSlots {
@@ -117,7 +117,7 @@ func (ir *impressionRest) extractData() {
 
 }
 
-func newImpressionFromAppRequest(sup entity.Supplier, r *requestBody) (entity.Impression, error) {
+func newImpressionFromAppRequest(sup entity.Supplier, r *requestBody) (*impressionRest, error) {
 	resp := impressionRest{
 		SIP:           r.IP,
 		UA:            r.App.UserAgent,
@@ -151,7 +151,7 @@ func newImpressionFromAppRequest(sup entity.Supplier, r *requestBody) (entity.Im
 	return &resp, nil
 }
 
-func newImpressionFromVastRequest(sup entity.Supplier, r *requestBody) (entity.Impression, error) {
+func newImpressionFromVastRequest(sup entity.Supplier, r *requestBody) (*impressionRest, error) {
 	resp := impressionRest{
 		SIP:           r.IP,
 		UA:            r.Vast.UserAgent,
@@ -172,7 +172,7 @@ func newImpressionFromVastRequest(sup entity.Supplier, r *requestBody) (entity.I
 	return &resp, nil
 }
 
-func newImpressionFromWebRequest(sup entity.Supplier, r *requestBody) (entity.Impression, error) {
+func newImpressionFromWebRequest(sup entity.Supplier, r *requestBody) (*impressionRest, error) {
 	resp := impressionRest{
 		SIP:           r.IP,
 		UA:            r.Web.UserAgent,
