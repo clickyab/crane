@@ -1,6 +1,8 @@
 node { 
     stage('Dependency') {
         checkout scm
+        sh "git submodule update --init --recursive"
+        sh "rm -rf ./src/services/tmp/src"
         sh "make clean"
         sh "make restore"
     }
