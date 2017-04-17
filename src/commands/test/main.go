@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"services/config"
 	"services/random"
 )
 
@@ -15,6 +16,10 @@ type restAd struct {
 	RHeight int    `json:"height"`
 	RURL    string `json:"url"`
 }
+
+var (
+	port = config.RegisterString("test.config", ":9898")
+)
 
 func getAdd(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
@@ -52,7 +57,9 @@ func getAdd(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	config.Initialize("test", "test", "test")
 	http.HandleFunc("/", getAdd)
-	http.ListenAndServe(":9898", nil)
+	fmt.Println(*port)
+	http.ListenAndServe(*port, nil)
 	commands.WaitExitSignal()
 }

@@ -18,6 +18,10 @@ import (
 	"github.com/Sirupsen/logrus"
 )
 
+var (
+	listenAddress = config.RegisterString("exchange.ip2location.listen", ":8190")
+)
+
 func main() {
 	config.Initialize(commands.Organization, commands.AppName, commands.Prefix)
 	defer initializer.Initialize()()
@@ -29,8 +33,7 @@ func main() {
 		assert.Nil(dec.Encode(tmp))
 	})
 	go func() {
-		// TODO : load from config
-		http.ListenAndServe(":8190", nil)
+		http.ListenAndServe(*listenAddress, nil)
 	}()
 
 	sig := commands.WaitExitSignal()
