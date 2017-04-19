@@ -8,6 +8,8 @@ import (
 	"sync/atomic"
 	"time"
 
+	"errors"
+
 	"github.com/Sirupsen/logrus"
 )
 
@@ -132,4 +134,15 @@ func demandIsAllowed(impression exchange.Impression, data providerData) bool {
 		return false
 	}
 	return true
+}
+
+// GetDemand return demand by its name
+func GetDemand(name string) (exchange.Demand, error) {
+	lock.RLock()
+	defer lock.RUnlock()
+	val, found := allProviders[name]
+	if !found {
+		return nil, errors.New("demand not found")
+	}
+	return val.provider, nil
 }

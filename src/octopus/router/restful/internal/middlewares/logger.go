@@ -6,7 +6,7 @@ import (
 
 	"context"
 
-	"net"
+	"services/httplib"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/fzerorubigd/xhandler"
@@ -30,32 +30,12 @@ func (dw *dummyWriter) WriteHeader(s int) {
 	dw.w.WriteHeader(s)
 }
 
-const (
-	headerXForwardedFor  = "X-Forwarded-For"
-	headerXRealIP        = "X-Real-IP"
-	headerCFConnectingIP = "CF-Connecting-IP"
-)
-
-func realIP(r *http.Request) string {
-	ra := r.RemoteAddr
-	if ip := r.Header.Get(headerCFConnectingIP); ip != "" {
-		ra = ip
-	} else if ip := r.Header.Get(headerXForwardedFor); ip != "" {
-		ra = ip
-	} else if ip := r.Header.Get(headerXRealIP); ip != "" {
-		ra = ip
-	} else {
-		ra, _, _ = net.SplitHostPort(ra)
-	}
-	return ra
-}
-
 // Logger is the middleware for log system
 func Logger(next xhandler.HandlerFuncC) xhandler.HandlerFuncC {
 	return func(c context.Context, w http.ResponseWriter, r *http.Request) {
 		// Start timer
 		start := time.Now()
-		ip := realIP(r)
+		ip := httplib.RealIP(r)
 		// Process request
 		logrus.WithFields(
 			logrus.Fields{
