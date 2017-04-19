@@ -17,63 +17,28 @@ import (
 )
 
 type demand struct {
-	client *http.Client
-
+	client             *http.Client
+	callRate           int
+	dayLimit           int64
+	encoder            func(entity.Impression) interface{}
 	endPoint           string
-	winPoint           *url.URL
+	handicap           int64
+	hourLimit          int64
+	key                string
 	maxIdleConnections int
-
-	requestTimeout time.Duration
-	key            string
-
-	minuteLimit int64
-	hourLimit   int64
-	dayLimit    int64
-	weekLimit   int64
-	monthLimit  int64
-	handicap    int64
-
-	encoder func(entity.Impression) interface{}
+	minuteLimit        int64
+	monthLimit         int64
+	requestTimeout     time.Duration
+	weekLimit          int64
+	winPoint           *url.URL
 }
 
-func (*demand) CallRate() int {
-	// TODO : implement me
-	return 100
-}
-
-func (d *demand) Handicap() int64 {
-	return d.handicap
+func (*demand) Status(context.Context, http.ResponseWriter, *http.Request) {
+	panic("implement me")
 }
 
 func (d *demand) Name() string {
 	return d.key
-}
-
-func (d *demand) hasLimits() bool {
-	if d.minuteLimit == 0 &&
-		d.hourLimit == 0 &&
-		d.dayLimit == 0 &&
-		d.weekLimit == 0 &&
-		d.monthLimit == 0 {
-		return true
-	}
-	mo, we, da, ho, mi := getCPM(d.key)
-	if mo > 0 && mo >= d.monthLimit {
-		return false
-	}
-	if we > 0 && we >= d.weekLimit {
-		return false
-	}
-	if da > 0 && da >= d.dayLimit {
-		return false
-	}
-	if ho > 0 && ho >= d.hourLimit {
-		return false
-	}
-	if mi > 0 && mi >= d.minuteLimit {
-		return false
-	}
-	return true
 }
 
 func (d *demand) Provide(ctx context.Context, imp entity.Impression, ch chan map[string]entity.Advertise) {
@@ -125,10 +90,6 @@ func (d *demand) Provide(ctx context.Context, imp entity.Impression, ch chan map
 	ch <- adsInter
 }
 
-func (d *demand) Status(c context.Context, h http.ResponseWriter, r *http.Request) {
-	panic("implement me")
-}
-
 func (d *demand) Win(ctx context.Context, id string, cpm int64) {
 	incCPM(d.key, cpm)
 	u := *d.winPoint
@@ -152,6 +113,41 @@ func (d *demand) Win(ctx context.Context, id string, cpm int64) {
 	}
 
 	logrus.Debug("winner call status was %d", resp.StatusCode)
+}
+
+func (d demand) CallRate() int {
+	return d.callRate
+}
+
+func (d *demand) Handicap() int64 {
+	return d.handicap
+}
+
+func (d *demand) hasLimits() bool {
+	if d.minuteLimit == 0 &&
+		d.hourLimit == 0 &&
+		d.dayLimit == 0 &&
+		d.weekLimit == 0 &&
+		d.monthLimit == 0 {
+		return true
+	}
+	mo, we, da, ho, mi := getCPM(d.key)
+	if mo > 0 && mo >= d.monthLimit {
+		return false
+	}
+	if we > 0 && we >= d.weekLimit {
+		return false
+	}
+	if da > 0 && da >= d.dayLimit {
+		return false
+	}
+	if ho > 0 && ho >= d.hourLimit {
+		return false
+	}
+	if mi > 0 && mi >= d.minuteLimit {
+		return false
+	}
+	return true
 }
 
 func (d *demand) createConnection() {
@@ -181,6 +177,13 @@ func NewRestfulClient(d models.Demand, encoder func(entity.Impression) interface
 		handicap:           d.Handicap,
 
 		encoder: encoder,
+	}
+	dm.callRate = d.Rate
+	if dm.callRate > 1 {
+		dm.callRate = 1
+	}
+	if dm.callRate > 100 {
+		dm.callRate = 100
 	}
 	dm.createConnection()
 	return dm

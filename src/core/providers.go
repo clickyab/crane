@@ -3,13 +3,13 @@ package core
 import (
 	"context"
 	"entity"
-	"net/http"
 	"services/assert"
 	"sync"
 	"time"
 
+	"sync/atomic"
+
 	"github.com/Sirupsen/logrus"
-	"github.com/fzerorubigd/xmux"
 )
 
 var (
@@ -18,13 +18,18 @@ var (
 )
 
 type providerData struct {
-	name     string
-	provider entity.Demand
-	timeout  time.Duration
+	name            string
+	provider        entity.Demand
+	timeout         time.Duration
+	callRateTracker int64
 }
 
-func (p providerData) ServeHTTPC(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-	p.provider.Status(ctx, w, r)
+func (p *providerData) Skip() bool {
+	x := atomic.AddInt64(&p.callRateTracker, 1)
+	if x%int64(100/p.provider.CallRate()) != 0 {
+		return false
+	}
+	return true
 }
 
 func (p *providerData) watch(ctx context.Context, imp entity.Impression) map[string]entity.Advertise {
@@ -76,20 +81,6 @@ func ResetProviders() {
 	defer lock.Unlock()
 
 	allProviders = make(map[string]providerData)
-}
-
-// Mount is called to create status page for all providers
-func Mount(m *xmux.Mux) {
-	lock.RLock()
-	defer lock.RUnlock()
-
-	for i := range allProviders {
-		m.GET("/"+allProviders[i].name, allProviders[i])
-		m.POST("/"+allProviders[i].name, allProviders[i])
-		m.OPTIONS("/"+allProviders[i].name, allProviders[i])
-		m.DELETE("/"+allProviders[i].name, allProviders[i])
-		m.HEAD("/"+allProviders[i].name, allProviders[i])
-	}
 }
 
 // Call is for getting the current ads for this imp
