@@ -71,6 +71,8 @@ func (i imp) Source() entity.Publisher {
 	if i.pub == nil {
 		ctrl := gomock.NewController(i.ts)
 		tmp := mock_entity.NewMockPublisher(ctrl)
+		tmp.EXPECT().Name().Return("publisher")
+
 		tmp.EXPECT().FloorCPM().Return(int64(100))
 		i.pub = tmp
 	}
