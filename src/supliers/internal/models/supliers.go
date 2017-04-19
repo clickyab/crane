@@ -20,6 +20,7 @@ type Supplier struct {
 	UnderFloor    int            `json:"under_floor" db:"under_floor"`
 	Excluded      sql.NullString `json:"-" db:"excluded"`
 	SShare        int            `json:"-" db:"share"`
+	SActive       int            `json:"-" db:"active"`
 
 	r entity.Renderer
 }
@@ -72,9 +73,9 @@ func (s Supplier) Share() int {
 
 // GetSuppliers return all suppliers @TODO manage active/disable
 func (m *Manager) GetSuppliers(factory RendererFactory) map[string]Supplier {
-	q := "SELECT * FROM suppliers"
+	q := "SELECT * FROM suppliers WHERE active=?"
 	var res []Supplier
-	_, err := m.GetRDbMap().Select(&res, q)
+	_, err := m.GetRDbMap().Select(&res, q, 1)
 	assert.Nil(err)
 	ret := make(map[string]Supplier, len(res))
 	for i := range res {

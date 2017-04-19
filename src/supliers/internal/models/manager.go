@@ -1,6 +1,8 @@
 package models
 
-import "services/mysql"
+import (
+	"services/mysql"
+)
 
 // Manager is the model manager
 type Manager struct {
