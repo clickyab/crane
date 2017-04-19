@@ -21,6 +21,7 @@ node {
     }
     stage('Test') {
         checkout scm
+        sh "docker rm -f redis-jenkins-service-test || true"
         sh "docker run -d --name redis-jenkins-test -p 6379:6379 redis:alpine"
         sh "make test"
         sh "docker rm -f redis-jenkins-test"
