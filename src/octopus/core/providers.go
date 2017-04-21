@@ -2,6 +2,7 @@ package core
 
 import (
 	"context"
+	"math/rand"
 	"octopus/exchange"
 	"services/assert"
 	"sync"
@@ -16,6 +17,7 @@ import (
 var (
 	allProviders = make(map[string]providerData)
 	lock         = &sync.RWMutex{}
+	filters      []func(exchange.Impression, providerData) bool
 )
 
 type providerData struct {
@@ -25,12 +27,10 @@ type providerData struct {
 	callRateTracker int64
 }
 
+// Skip decide if provider should responde to demand or not
 func (p *providerData) Skip() bool {
 	x := atomic.AddInt64(&p.callRateTracker, 1)
-	if x%int64(100/p.provider.CallRate()) != 0 {
-		return false
-	}
-	return true
+	return x%100 < int64(p.provider.CallRate())
 }
 
 func (p *providerData) watch(ctx context.Context, imp exchange.Impression) map[string]exchange.Advertise {
@@ -42,6 +42,7 @@ func (p *providerData) watch(ctx context.Context, imp exchange.Impression) map[s
 	res := make(map[string]exchange.Advertise)
 	// the cancel is not required here. the parent is the hammer :)
 	rCtx, _ := context.WithTimeout(ctx, p.timeout)
+
 	chn := make(chan map[string]exchange.Advertise, len(imp.Slots()))
 	go p.provider.Provide(rCtx, imp, chn)
 	for {
@@ -70,9 +71,10 @@ func Register(provider exchange.Demand, timeout time.Duration) {
 	assert.False(ok, "[BUG] provider is already registered")
 
 	allProviders[name] = providerData{
-		name:     name,
-		provider: provider,
-		timeout:  timeout,
+		name:            name,
+		provider:        provider,
+		timeout:         timeout,
+		callRateTracker: rand.Int63n(100),
 	}
 }
 
@@ -95,11 +97,11 @@ func Call(ctx context.Context, imp exchange.Impression) map[string][]exchange.Ad
 	allRes := make(chan map[string]exchange.Advertise, l)
 	lock.RLock()
 	for i := range allProviders {
-		if !demandIsAllowed(imp, allProviders[i]) {
-			continue
-		}
 		go func(inner string) {
 			defer wg.Done()
+			if !demandIsAllowed(imp, allProviders[inner]) {
+				return
+			}
 			p := allProviders[inner]
 			res := p.watch(rCtx, imp)
 			if res != nil {
@@ -129,32 +131,40 @@ func Call(ctx context.Context, imp exchange.Impression) map[string][]exchange.Ad
 	return res
 }
 
-func demandIsAllowed(impression exchange.Impression, data providerData) bool {
-	if impression.Source().Name() == data.name {
-		return false
-	}
-	if contains(data.provider.ExcludedSuppliers(), impression.Source().Name()) {
-		return false
-	}
-	//if contains(data.provider.WhiteListCountries(),impression.Location().Country().Name) {
-	//	return false
-	//}
-	//if contains(impression.Source().Supplier().ExcludedDemands(), data.name) {
-	//	return false
-	//}
-	return true
-}
-
-func contains(s []string, t string) bool {
-	if len(s) == 0 {
-		return false
-	}
-	for _, a := range s {
-		if a == t {
+func demandIsAllowed(m exchange.Impression, d providerData) bool {
+	for _, f := range filters {
+		if f(m, d) {
 			return false
 		}
 	}
 	return true
+}
+
+func isSameProvider(impression exchange.Impression, data providerData) bool {
+	return impression.Source().Name() == data.name
+}
+
+func notwhitelistCountries(impression exchange.Impression, data providerData) bool {
+	return !contains(data.provider.WhiteListCountries(), impression.Location().Country().Name)
+}
+
+func isExcludedDemands(impression exchange.Impression, data providerData) bool {
+	return contains(impression.Source().Supplier().ExcludedDemands(), data.name)
+}
+
+func contains(s []string, t string) bool {
+	for _, a := range s {
+		if a == t {
+			return true
+		}
+	}
+	return false
+}
+
+func init() {
+	filters = append(filters, isSameProvider)
+	filters = append(filters, notwhitelistCountries)
+	filters = append(filters, isExcludedDemands)
 }
 
 // GetDemand return demand by its name

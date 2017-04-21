@@ -1,3 +1,0 @@
-[submodule "src/services"]
-	path = src/services
-	url = git@github.com:clickyab/services.git

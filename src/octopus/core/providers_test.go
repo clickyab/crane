@@ -2,168 +2,44 @@ package core
 
 import (
 	"context"
-	"net"
-	"net/http"
+	"fmt"
 	"octopus/exchange"
 	mock_entity "octopus/exchange/mock_exchange"
 	"services/random"
+	"sync"
+	"sync/atomic"
 	"testing"
 	"time"
 
-	. "github.com/smartystreets/goconvey/convey"
-
 	"github.com/golang/mock/gomock"
+	. "github.com/smartystreets/goconvey/convey"
 )
 
-type slot struct {
-	width, height int
-	track         string
-	max           int64
+func newPub(c *gomock.Controller) exchange.Publisher {
+	s := mock_entity.NewMockSupplier(c)
+	s.EXPECT().ExcludedDemands().Return([]string{}).AnyTimes()
+	tmp := mock_entity.NewMockPublisher(c)
+	tmp.EXPECT().Name().Return("publisher").AnyTimes()
+	tmp.EXPECT().Supplier().Return(s).AnyTimes()
+	tmp.EXPECT().FloorCPM().Return(int64(100)).AnyTimes()
+	return tmp
 }
-
-func (s slot) Width() int {
-	return s.width
-}
-
-func (s slot) Height() int {
-	return s.height
-}
-
-func (s slot) TrackID() string {
-	return s.track
-}
-
-func (s slot) MaxCPM() int64 {
-	return s.max
-}
-
-type imp struct {
-	track  string
-	ip     string
-	ua     string
-	undser bool
-
-	slots []slot
-	pub   exchange.Publisher
-	ts    *testing.T
-}
-
-func (imp) Attributes() map[string]interface{} {
-	return nil
-}
-
-func (i imp) TrackID() string {
-	return i.track
-}
-
-func (i imp) IP() net.IP {
-	return net.ParseIP(i.ip)
-}
-
-func (i imp) UserAgent() string {
-	return i.ua
-}
-
-func (i imp) Source() exchange.Publisher {
-	if i.pub == nil {
-		ctrl := gomock.NewController(i.ts)
-		tmp := mock_entity.NewMockPublisher(ctrl)
-		tmp.EXPECT().Name().Return("publisher")
-
-		tmp.EXPECT().FloorCPM().Return(int64(100))
-		i.pub = tmp
-	}
-	return i.pub
-}
-
-func (i imp) Location() exchange.Location {
-	panic("implement me")
-}
-
-func (i imp) Slots() []exchange.Slot {
-	res := make([]exchange.Slot, len(i.slots))
-	for k := range i.slots {
-		res[k] = &i.slots[k]
-	}
-
-	return res
-}
-
-func (i imp) Category() []exchange.Category {
-	panic("implement me")
-}
-
-func (i imp) Platform() exchange.ImpressionPlatform {
-	panic("implement me")
-}
-
-func (i imp) UnderFloor() bool {
-
-	return i.undser
-}
-
-func (i imp) Raw() interface{} {
-	panic("implement me")
-}
-
-func newImp(ts *testing.T, slotCount int) exchange.Impression {
-	tmp := make([]slot, slotCount)
+func newImp(c *gomock.Controller, count int) exchange.Impression {
+	tmp := make([]exchange.Slot, count)
 	for i := range tmp {
-		tmp[i] = slot{
-			track: <-random.ID,
-		}
+		s := mock_entity.NewMockSlot(c)
+		s.EXPECT().TrackID().Return(<-random.ID).AnyTimes()
+
+		tmp[i] = s
 	}
-	return &imp{slots: tmp, ts: ts}
-}
-
-type tdemand struct {
-	ts    *testing.T
-	sleep time.Duration
-	name  string
-}
-
-func (d *tdemand) Name() string {
-	return d.name
-}
-
-func (*tdemand) Win(context.Context, string, int64) {
-	panic("implement me")
-}
-
-func (*tdemand) Handicap() int64 {
-	return 100
-}
-
-func (*tdemand) CallRate() int {
-	return 100
-}
-
-func (*tdemand) WhiteListCountries() []string {
-	return []string{}
-}
-
-// ExcludedSuppliers is the white listed supplier for this.
-func (*tdemand) ExcludedSuppliers() []string {
-	return []string{}
-
-}
-func (d *tdemand) Status(ctx context.Context, rw http.ResponseWriter, rq *http.Request) {
-
-}
-
-func (d *tdemand) Provide(ctx context.Context, imp exchange.Impression, ch chan map[string]exchange.Advertise) {
-	ctrl := gomock.NewController(d.ts)
-
-	time.Sleep(d.sleep)
-	ads := make(map[string]exchange.Advertise)
-
-	for _, s := range imp.Slots() {
-		tmp := mock_entity.NewMockAdvertise(ctrl)
-		tmp.EXPECT().MaxCPM().Return(int64(200))
-		ads[s.TrackID()] = tmp
-		ch <- ads
-	}
-	close(ch)
+	l := mock_entity.NewMockLocation(c)
+	l.EXPECT().Country().Return(exchange.Country{Name: "IRAN"}).AnyTimes()
+	m := mock_entity.NewMockImpression(c)
+	m.EXPECT().Location().Return(l).AnyTimes()
+	m.EXPECT().Slots().Return(tmp).AnyTimes()
+	m.EXPECT().Source().Return(newPub(c)).AnyTimes()
+	m.EXPECT().UnderFloor().Return(false).AnyTimes()
+	return m
 }
 
 func TestProviders(t *testing.T) {
@@ -179,9 +55,28 @@ func TestProviders(t *testing.T) {
 		Convey("Call func", func() {
 
 			Convey("Should return two ads", func() {
-				demand := &tdemand{t, time.Millisecond * 1, "test1"}
-				Register(demand, time.Millisecond*100)
-				im := newImp(t, 2)
+
+				d1 := mock_entity.NewMockDemand(ctrl)
+				d1.EXPECT().WhiteListCountries().Return([]string{"IRAN"}).AnyTimes()
+
+				d1.EXPECT().Name().Return("d1").AnyTimes()
+
+				d1.EXPECT().Handicap().Return(int64(100)).AnyTimes()
+				d1.EXPECT().CallRate().Return(100).AnyTimes()
+				d1.EXPECT().Provide(gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
+					Do(func(ctx context.Context, imp exchange.Impression, ch chan map[string]exchange.Advertise) {
+						ads := make(map[string]exchange.Advertise)
+						for _, s := range imp.Slots() {
+							tmp := mock_entity.NewMockAdvertise(ctrl)
+
+							tmp.EXPECT().MaxCPM().Return(int64(200))
+							ads[s.TrackID()] = tmp
+							ch <- ads
+						}
+						close(ch)
+					})
+				Register(d1, time.Millisecond*100)
+				im := newImp(ctrl, 2)
 				bk := context.Background()
 
 				ads := Call(bk, im)
@@ -192,10 +87,25 @@ func TestProviders(t *testing.T) {
 			})
 
 			Convey("Should return NO ads", func() {
-				demand := &tdemand{t, time.Millisecond * 100, "test1"}
-
-				Register(demand, time.Millisecond*100)
-				im := newImp(t, 2)
+				d1 := mock_entity.NewMockDemand(ctrl)
+				d1.EXPECT().WhiteListCountries().Return([]string{}).AnyTimes()
+				d1.EXPECT().Name().Return("d1").AnyTimes()
+				d1.EXPECT().Handicap().Return(int64(100)).AnyTimes()
+				d1.EXPECT().CallRate().Return(100).AnyTimes()
+				d1.EXPECT().Provide(gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
+					Do(func(ctx context.Context, imp exchange.Impression, ch chan map[string]exchange.Advertise) {
+						ads := make(map[string]exchange.Advertise)
+						time.Sleep(time.Millisecond * 150)
+						for _, s := range imp.Slots() {
+							tmp := mock_entity.NewMockAdvertise(ctrl)
+							tmp.EXPECT().MaxCPM().Return(int64(200))
+							ads[s.TrackID()] = tmp
+							ch <- ads
+						}
+						close(ch)
+					})
+				Register(d1, time.Millisecond*100)
+				im := newImp(ctrl, 2)
 				bk := context.Background()
 
 				ads := Call(bk, im)
@@ -204,11 +114,44 @@ func TestProviders(t *testing.T) {
 			})
 
 			Convey("Should return one provider with three ads (timeout test)", func() {
-				demand1 := &tdemand{t, time.Millisecond * 100, "prv1"}
-				Register(demand1, time.Millisecond*100)
-				demand2 := &tdemand{t, time.Millisecond * 10, "prv2"}
-				Register(demand2, time.Millisecond*100)
-				im := newImp(t, 3)
+				d1 := mock_entity.NewMockDemand(ctrl)
+				d1.EXPECT().WhiteListCountries().Return([]string{"IRAN"}).AnyTimes()
+				d1.EXPECT().Name().Return("d1").AnyTimes()
+				d1.EXPECT().Handicap().Return(int64(100)).AnyTimes()
+				d1.EXPECT().CallRate().Return(100).AnyTimes()
+				d1.EXPECT().Provide(gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
+					Do(func(ctx context.Context, imp exchange.Impression, ch chan map[string]exchange.Advertise) {
+						ads := make(map[string]exchange.Advertise)
+						time.Sleep(time.Millisecond * 100)
+						for _, s := range imp.Slots() {
+							tmp := mock_entity.NewMockAdvertise(ctrl)
+
+							tmp.EXPECT().MaxCPM().Return(int64(200))
+							ads[s.TrackID()] = tmp
+							ch <- ads
+						}
+						close(ch)
+					})
+				Register(d1, time.Millisecond*100)
+				d2 := mock_entity.NewMockDemand(ctrl)
+				d2.EXPECT().WhiteListCountries().Return([]string{"IRAN"}).AnyTimes()
+				d2.EXPECT().Name().Return("d2").AnyTimes()
+				d2.EXPECT().Handicap().Return(int64(100)).AnyTimes()
+				d2.EXPECT().CallRate().Return(100).AnyTimes()
+				d2.EXPECT().Provide(gomock.Any(), gomock.Any(), gomock.Any()).
+					Do(func(ctx context.Context, imp exchange.Impression, ch chan map[string]exchange.Advertise) {
+						ads := make(map[string]exchange.Advertise)
+						time.Sleep(time.Millisecond * 10)
+						for _, s := range imp.Slots() {
+							tmp := mock_entity.NewMockAdvertise(ctrl)
+							tmp.EXPECT().MaxCPM().Return(int64(200))
+							ads[s.TrackID()] = tmp
+							ch <- ads
+						}
+						close(ch)
+					})
+				Register(d2, time.Millisecond*100)
+				im := newImp(ctrl, 3)
 				bk := context.Background()
 
 				ads := Call(bk, im)
@@ -216,7 +159,6 @@ func TestProviders(t *testing.T) {
 				So(len(ads[im.Slots()[0].TrackID()]), ShouldEqual, 1)
 				So(len(ads[im.Slots()[1].TrackID()]), ShouldEqual, 1)
 				So(len(ads[im.Slots()[2].TrackID()]), ShouldEqual, 1)
-
 			})
 
 		})
@@ -225,11 +167,11 @@ func TestProviders(t *testing.T) {
 
 			Convey("should panic if provider (name) is NOT unique", func() {
 				demand := mock_entity.NewMockDemand(ctrl)
-				demand.EXPECT().Name().Return("test1")
+				demand.EXPECT().Name().Return("test1").AnyTimes()
 				Register(demand, time.Second*2)
 				So(len(allProviders), ShouldEqual, 1)
 				demand2 := mock_entity.NewMockDemand(ctrl)
-				demand2.EXPECT().Name().Return("test1")
+				demand2.EXPECT().Name().Return("test1").AnyTimes()
 
 				So(func() {
 					Register(demand2, time.Second*2)
@@ -253,6 +195,120 @@ func TestProviders(t *testing.T) {
 
 			})
 
+		})
+	})
+
+	var counter [3000]int
+	skips := [...]int{1, 10, 15, 27, 35, 48, 50, 68, 79, 87, 100}
+
+	for _, s := range skips {
+		Convey(fmt.Sprintf("Skip method should return true %d out of %d times hit for %d percent call rate.", int64(float64(len(counter))*(float64(s)/100.)), len(counter), s), t, func() {
+			d := mock_entity.NewMockDemand(ctrl)
+			d.EXPECT().CallRate().Return(s).AnyTimes()
+			p := &providerData{name: <-random.ID, provider: d, timeout: time.Second}
+			var tr int64
+			wg := sync.WaitGroup{}
+			for range counter {
+				wg.Add(1)
+				go func() {
+					defer wg.Done()
+					if p.Skip() {
+						atomic.AddInt64(&tr, 1)
+					}
+				}()
+			}
+			wg.Wait()
+			So(tr, ShouldEqual, int64(float64(len(counter))*(float64(s)/100.)))
+
+		})
+	}
+
+	Convey("Reset function should empty allProviders", t, func() {
+		allProviders = make(map[string]providerData)
+		allProviders["prv1"] = providerData{}
+		allProviders["prv2"] = providerData{}
+		ResetProviders()
+		So(len(allProviders), ShouldEqual, 0)
+
+	})
+
+	Convey("Filters:", t, func() {
+
+		Convey("isSameProvider function should return", func() {
+
+			Convey("true if impression provider and provider are the same", func() {
+				p2 := mock_entity.NewMockPublisher(ctrl)
+				p2.EXPECT().Name().Return("prv1")
+				m1 := mock_entity.NewMockImpression(ctrl)
+				m1.EXPECT().Source().Return(p2)
+				pd := providerData{name: "prv1"}
+				So(isSameProvider(m1, pd), ShouldBeTrue)
+			})
+
+			Convey("false if impression provider and provider are NOT the same", func() {
+				p1 := mock_entity.NewMockPublisher(ctrl)
+				p1.EXPECT().Name().Return("prv1")
+				m1 := mock_entity.NewMockImpression(ctrl)
+				m1.EXPECT().Source().Return(p1)
+				pd := providerData{name: "prv2"}
+				So(isSameProvider(m1, pd), ShouldBeFalse)
+			})
+		})
+
+		Convey("isNotwhitelistCountries function should return", func() {
+
+			Convey("false if impression country is not in provider white list ", func() {
+
+				pr := mock_entity.NewMockDemand(ctrl)
+				pr.EXPECT().WhiteListCountries().Return([]string{"UAE", "IRAN"})
+				pd := providerData{provider: pr}
+				m := mock_entity.NewMockImpression(ctrl)
+				l := mock_entity.NewMockLocation(ctrl)
+				l.EXPECT().Country().Return(exchange.Country{Name: "IRAN"})
+				m.EXPECT().Location().Return(l)
+				So(notwhitelistCountries(m, pd), ShouldBeFalse)
+			})
+
+			Convey("true if impression country is in provider white list ", func() {
+
+				pr := mock_entity.NewMockDemand(ctrl)
+				pr.EXPECT().WhiteListCountries().Return([]string{"UAE", "IRAN"})
+				pd := providerData{provider: pr}
+				m := mock_entity.NewMockImpression(ctrl)
+				l := mock_entity.NewMockLocation(ctrl)
+				l.EXPECT().Country().Return(exchange.Country{Name: "USA"})
+				m.EXPECT().Location().Return(l)
+				So(notwhitelistCountries(m, pd), ShouldBeTrue)
+			})
+		})
+
+		Convey("isExcludedDemands function should return", func() {
+
+			Convey("true if impression exclude provider (by name)", func() {
+				pub := mock_entity.NewMockPublisher(ctrl)
+				sup := mock_entity.NewMockSupplier(ctrl)
+				sup.EXPECT().ExcludedDemands().Return([]string{"PQ", "SAME", "PSD"})
+				pub.EXPECT().Supplier().Return(sup)
+				m := mock_entity.NewMockImpression(ctrl)
+				m.EXPECT().Source().Return(pub)
+
+				pd := providerData{name: "SAME"}
+				So(isExcludedDemands(m, pd), ShouldBeTrue)
+
+			})
+
+			Convey("false if impression exclude provider (by name)", func() {
+				pub := mock_entity.NewMockPublisher(ctrl)
+				sup := mock_entity.NewMockSupplier(ctrl)
+				sup.EXPECT().ExcludedDemands().Return([]string{"PQ", "EFG", "PSD"})
+				pub.EXPECT().Supplier().Return(sup)
+				m := mock_entity.NewMockImpression(ctrl)
+				m.EXPECT().Source().Return(pub)
+
+				pd := providerData{name: "UNIQUE"}
+
+				So(isExcludedDemands(m, pd), ShouldBeFalse)
+			})
 		})
 	})
 }
