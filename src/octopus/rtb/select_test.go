@@ -86,16 +86,16 @@ type Impression struct {
 	underFloor bool
 }
 
-func (i *Impression) TrackID() string                    { panic("Impression") }
-func (i *Impression) IP() net.IP                         { panic("Impression") }
-func (i *Impression) UserAgent() string                  { panic("Impression") }
-func (i *Impression) Source() exchange.Publisher         { return i.publisher }
-func (i *Impression) Location() exchange.Location        { panic("Impression") }
-func (i *Impression) Attributes() map[string]interface{} { panic("Impression") }
-func (i *Impression) Slots() []exchange.Slot             { panic("Impression") }
-func (i *Impression) Category() []exchange.Category      { panic("Impression") }
-func (i *Impression) Type() exchange.ImpressionType      { panic("Impression") }
-func (i *Impression) UnderFloor() bool                   { return i.underFloor }
+func (i *Impression) TrackID() string                       { panic("Impression") }
+func (i *Impression) IP() net.IP                            { panic("Impression") }
+func (i *Impression) UserAgent() string                     { panic("Impression") }
+func (i *Impression) Source() exchange.Publisher            { return i.publisher }
+func (i *Impression) Location() exchange.Location           { panic("Impression") }
+func (i *Impression) Attributes() map[string]interface{}    { panic("Impression") }
+func (i *Impression) Slots() []exchange.Slot                { panic("Impression") }
+func (i *Impression) Category() []exchange.Category         { panic("Impression") }
+func (i *Impression) Platform() exchange.ImpressionPlatform { panic("Impression") }
+func (i *Impression) UnderFloor() bool                      { return i.underFloor }
 
 type Demand struct {
 	handicap int64

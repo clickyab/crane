@@ -93,11 +93,12 @@ func (i imp) Category() []exchange.Category {
 	panic("implement me")
 }
 
-func (i imp) Type() exchange.ImpressionType {
+func (i imp) Platform() exchange.ImpressionPlatform {
 	panic("implement me")
 }
 
 func (i imp) UnderFloor() bool {
+
 	return i.undser
 }
 

@@ -75,8 +75,8 @@ type rawImp struct {
 	Slots []rawSlot `json:"slots"`
 	// Category returns category obviously
 	Category []exchange.Category `json:"category"`
-	// Type return the publisher type
-	Type string `json:"type"`
+	// Platform return the publisher Platform
+	Platform int `json:"platform"`
 	// Is this publisher accept under floor ads or not ?
 	UnderFloor bool `json:"under_floor"`
 }
@@ -94,7 +94,7 @@ func getRawImpresssion(imp exchange.Impression) interface{} {
 		UserAgent:  imp.UserAgent(),
 		Attributes: imp.Attributes(),
 		Category:   imp.Category(),
-		Type:       string(imp.Type()),
+		Platform:   int(imp.Platform()),
 		UnderFloor: imp.UnderFloor(),
 		Slots:      getRawSlots(imp.Slots()),
 		Location:   getRawLocation(imp.Location()),

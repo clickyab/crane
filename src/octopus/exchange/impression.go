@@ -2,20 +2,27 @@ package exchange
 
 import "net"
 
-// ImpressionType is the publisher type
-type ImpressionType string
+// ImpressionPlatform is the publisher type
+type ImpressionPlatform int
+
+var impressionPlatformName = [...]string{"app", "vast", "web"}
+
+// String return string name of platform
+func (m ImpressionPlatform) String() string {
+	return impressionPlatformName[m]
+}
+
+const (
+	// ImpressionPlatformApp is the app
+	ImpressionPlatformApp ImpressionPlatform = iota
+	// ImpressionPlatformVast is the vast
+	ImpressionPlatformVast
+	// ImpressionPlatformWeb is the web
+	ImpressionPlatformWeb
+)
 
 // ImpressionAttributes is the imp attr key
 type ImpressionAttributes string
-
-const (
-	// ImpressionTypeApp is the app
-	ImpressionTypeApp ImpressionType = "app"
-	// ImpressionTypeWeb is the web
-	ImpressionTypeWeb ImpressionType = "web"
-	// ImpressionTypeVast is the vast
-	ImpressionTypeVast ImpressionType = "vast"
-)
 
 // Impression is the single impression object
 type Impression interface {
@@ -35,8 +42,8 @@ type Impression interface {
 	Slots() []Slot
 	// Category returns category obviously
 	Category() []Category
-	// Type return the publisher type
-	Type() ImpressionType
+	// Platform return the publisher type
+	Platform() ImpressionPlatform
 	// Is this publisher accept under floor ads or not ?
 	UnderFloor() bool
 }

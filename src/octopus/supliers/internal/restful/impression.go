@@ -9,15 +9,15 @@ import (
 )
 
 type impressionRest struct {
-	SIP           string                  `json:"ip"`
-	Mega          string                  `json:"track_id"`
-	UA            string                  `json:"user_agent"`
-	Pub           *restPublisher          `json:"source"`
-	Loc           exchange.Location       `json:"location"`
-	ImpSlots      []*slotRest             `json:"slots"`
-	Categories    []exchange.Category     `json:"categories"`
-	ImpType       exchange.ImpressionType `json:"type"`
-	UnderFloorCPM bool                    `json:"under_floor"`
+	SIP           string                      `json:"ip"`
+	Mega          string                      `json:"track_id"`
+	UA            string                      `json:"user_agent"`
+	Pub           *restPublisher              `json:"source"`
+	Loc           exchange.Location           `json:"location"`
+	ImpSlots      []*slotRest                 `json:"slots"`
+	Categories    []exchange.Category         `json:"categories"`
+	ImpPlatform   exchange.ImpressionPlatform `json:"platform"`
+	UnderFloorCPM bool                        `json:"under_floor"`
 
 	Attr map[string]interface{} `json:"attributes"`
 
@@ -85,8 +85,8 @@ func (ir impressionRest) Category() []exchange.Category {
 	return ir.Categories
 }
 
-func (ir impressionRest) Type() exchange.ImpressionType {
-	return ir.ImpType
+func (ir impressionRest) Platform() exchange.ImpressionPlatform {
+	return ir.ImpPlatform
 }
 
 func (ir impressionRest) UnderFloor() bool {
@@ -121,7 +121,7 @@ func newImpressionFromAppRequest(sup exchange.Supplier, r *requestBody) (*impres
 	resp := impressionRest{
 		SIP:           r.IP,
 		UA:            r.App.UserAgent,
-		ImpType:       exchange.ImpressionTypeApp,
+		ImpPlatform:   exchange.ImpressionPlatformApp,
 		Categories:    r.Categories,
 		ImpSlots:      r.Slots,
 		Mega:          <-random.ID,
@@ -155,7 +155,7 @@ func newImpressionFromVastRequest(sup exchange.Supplier, r *requestBody) (*impre
 	resp := impressionRest{
 		SIP:           r.IP,
 		UA:            r.Vast.UserAgent,
-		ImpType:       exchange.ImpressionTypeVast,
+		ImpPlatform:   exchange.ImpressionPlatformVast,
 		Categories:    r.Categories,
 		ImpSlots:      r.Slots,
 		Mega:          <-random.ID,
@@ -176,7 +176,7 @@ func newImpressionFromWebRequest(sup exchange.Supplier, r *requestBody) (*impres
 	resp := impressionRest{
 		SIP:           r.IP,
 		UA:            r.Web.UserAgent,
-		ImpType:       exchange.ImpressionTypeWeb,
+		ImpPlatform:   exchange.ImpressionPlatformWeb,
 		Categories:    r.Categories,
 		ImpSlots:      r.Slots,
 		Mega:          <-random.ID,
