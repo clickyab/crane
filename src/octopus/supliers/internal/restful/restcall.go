@@ -2,17 +2,17 @@ package restful
 
 import (
 	"encoding/json"
-	"octopus/exchange"
 	"fmt"
 	"net/http"
+	"octopus/exchange"
 	"strings"
 )
 
 type requestBody struct {
-	IP         string            `json:"ip"`
-	Publisher  *restPublisher    `json:"publisher"`
+	IP         string              `json:"ip"`
+	Publisher  *restPublisher      `json:"publisher"`
 	Categories []exchange.Category `json:"categories"`
-	Type       string            `json:"type"`
+	Type       string              `json:"type"`
 	UnderFloor bool
 	App        struct {
 		OSVersion  string `json:"os_version,omitempty"`

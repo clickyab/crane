@@ -11,7 +11,6 @@ import (
 
 	x "github.com/smartystreets/assertions"
 
-
 	. "github.com/smartystreets/goconvey/convey"
 )
 

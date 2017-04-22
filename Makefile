@@ -25,13 +25,11 @@ export DB_NAME?=$(APPNAME)
 export RUSER?=$(APPNAME)
 export RPASS?=$(DEFAULT_PASS)
 export WORK_DIR=$(ROOT)/tmp
-export LINTERCMD=$(LINTER) -e ".*.gen.go" --cyclo-over=19 --line-length=120 --deadline=100s --disable-all --enable=structcheck --enable=deadcode --enable=gocyclo --enable=ineffassign --enable=golint --enable=goimports --enable=errcheck --enable=varcheck --enable=goconst --enable=gosimple --enable=staticcheck --enable=unused --enable=misspell
+export LINTERCMD=$(LINTER) -e ".*.gen.go" -e "upstream.go" -e ".*_test.go" --cyclo-over=19 --line-length=120 --deadline=100s --disable-all --enable=structcheck --enable=deadcode --enable=gocyclo --enable=ineffassign --enable=golint --enable=goimports --enable=errcheck --enable=varcheck --enable=goconst --enable=gosimple --enable=staticcheck --enable=unused --enable=misspell
 export UGLIFYJS=$(ROOT)/node_modules/.bin/uglifyjs
 
 all: $(GB) codegen
 	$(BUILD)
-
-include $(ROOT)/src/services/Makefile.mk
 
 .PHONY: all gb clean
 
@@ -71,9 +69,17 @@ SUBDIRS := $(wildcard $(ROOT)/src/*)
 
 
 $(SUBDIRS):
-	echo $@ | grep services  || $(LINTERCMD) $@/...
+	$(LINTERCMD) $@/...
 
-codegen: services_ip2l migration
+
+$(ROOT)/contrib/IP-COUNTRY-REGION-CITY.BIN:
+	mkdir -p $(ROOT)/contrib
+	wget -c http://www.clickyab.com/downloads/IP-COUNTRY-REGION-CITY.BIN -O $(ROOT)/contrib/IP-COUNTRY-REGION-CITY.BIN
+
+$(ROOT)/src/services/ip2location/data.gen.go: $(ROOT)/contrib/IP-COUNTRY-REGION-CITY.BIN go-bindata
+	@[ -f $(ROOT)/src/services/ip2location/data.gen.go ] || cd $(ROOT)/contrib/ && $(BIN)/go-bindata -nomemcopy -o $(ROOT)/src/services/ip2location/data.gen.go -pkg ip2location .
+
+codegen: $(ROOT)/src/services/ip2location/data.gen.go migration
 
 go-bindata: $(GB)
 	$(BUILD) github.com/jteeuwen/go-bindata/go-bindata
@@ -129,7 +135,8 @@ mockgen: $(GB)
 	mkdir -p $(ROOT)/src/entity/mock_entity
 
 mockentity: $(LINTER) mockgen
-	$(BIN)/mockgen -destination=$(ROOT)/src/octopus/exchange/mock_exchange/mock_exchange.gen.go exchange Impression,Demand,Advertise,Publisher,Location,Slot,Supplier
+	mkdir -p $(ROOT)/src/octopus/exchange/mock_exchange
+	$(BIN)/mockgen -destination=$(ROOT)/src/octopus/exchange/mock_exchange/mock_exchange.gen.go octopus/exchange Impression,Demand,Advertise,Publisher,Location,Slot,Supplier
 
 test-gui: mockentity codegen convey
 	cd $(ROOT)/src && goconvey -host=0.0.0.0

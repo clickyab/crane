@@ -2,18 +2,15 @@ package core
 
 import (
 	"context"
-	"octopus/exchange"
+	"net"
 	"net/http"
+	"octopus/exchange"
+	mock_entity "octopus/exchange/mock_exchange"
+	"services/random"
 	"testing"
 	"time"
 
 	. "github.com/smartystreets/goconvey/convey"
-
-	"net"
-
-	"services/random"
-
-	"octopus/exchange/mock_entity"
 
 	"github.com/golang/mock/gomock"
 )

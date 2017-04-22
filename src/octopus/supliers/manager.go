@@ -1,21 +1,19 @@
 package supliers
 
 import (
-	"octopus/exchange"
 	"fmt"
 	"net/http"
-	"os"
-	"os/signal"
-	"services/mysql"
+	"net/url"
+	"octopus/exchange"
 	"octopus/supliers/internal/models"
 	"octopus/supliers/internal/restful"
 	"octopus/supliers/internal/restful/renderer"
+	"os"
+	"os/signal"
+	"services/assert"
+	"services/mysql"
 	"sync"
 	"syscall"
-
-	"net/url"
-
-	"services/assert"
 
 	"github.com/Sirupsen/logrus"
 )

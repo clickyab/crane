@@ -2,10 +2,10 @@ package renderer
 
 import (
 	"encoding/json"
-	"octopus/exchange"
 	"fmt"
 	"io"
 	"net/url"
+	"octopus/exchange"
 )
 
 type dumbAd struct {

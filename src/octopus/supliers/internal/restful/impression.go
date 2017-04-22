@@ -1,23 +1,23 @@
 package restful
 
 import (
-	"octopus/exchange"
 	"net"
+	"octopus/exchange"
 	"services/gmaps"
 	"services/ip2location/client"
 	"services/random"
 )
 
 type impressionRest struct {
-	SIP           string                `json:"ip"`
-	Mega          string                `json:"track_id"`
-	UA            string                `json:"user_agent"`
-	Pub           *restPublisher        `json:"source"`
+	SIP           string                  `json:"ip"`
+	Mega          string                  `json:"track_id"`
+	UA            string                  `json:"user_agent"`
+	Pub           *restPublisher          `json:"source"`
 	Loc           exchange.Location       `json:"location"`
-	ImpSlots      []*slotRest           `json:"slots"`
+	ImpSlots      []*slotRest             `json:"slots"`
 	Categories    []exchange.Category     `json:"categories"`
 	ImpType       exchange.ImpressionType `json:"type"`
-	UnderFloorCPM bool                  `json:"under_floor"`
+	UnderFloorCPM bool                    `json:"under_floor"`
 
 	Attr map[string]interface{} `json:"attributes"`
 
