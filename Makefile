@@ -86,26 +86,26 @@ conditional-restore:
 	$(DIFF) $(ROOT)/vendor/manifest $(ROOT)/vendor/manifest.done || make restore
 
 
-migup: tools-migrate
-	$(BIN)/migration -action=up
+octopus_migup: tools-migrate
+	$(BIN)/migration -action=up -app=octopus
 
-migdown: tools-migrate
-	$(BIN)/migration -action=down
+octopus_migdown: tools-migrate
+	$(BIN)/migration -action=down -app=octopus
 
-migdown-all: tools-migrate
-	$(BIN)/migration -action=down-all
+octopus_migdown-all: tools-migrate
+	$(BIN)/migration -action=down-all -app=octopus
 
-migredo: tools-migrate
-	$(BIN)/migration -action=redo
+octopus_migredo: tools-migrate
+	$(BIN)/migration -action=redo -app=octopus
 
-miglist: tools-migrate
-	$(BIN)/migration -action=list
+octopus_miglist: tools-migrate
+	$(BIN)/migration -action=list -app=octopus
 
 migcreate:
 	@/bin/bash $(BIN)/create_migration.sh
 
 migration: go-bindata
-	cd $(ROOT) && $(BIN)/go-bindata -o ./src/commands/migration/migration.gen.go -nomemcopy=true -pkg=main ./db/migrations/...
+	cd $(ROOT) && $(BIN)/go-bindata -o ./src/commands/migration/migration.gen.go -nomemcopy=true -pkg=main ./db/...
 
 tools-migrate: $(BIN)/gb migration
 	$(BUILD) commands/migration
@@ -129,7 +129,7 @@ mockgen: $(GB)
 	mkdir -p $(ROOT)/src/entity/mock_entity
 
 mockentity: $(LINTER) mockgen
-	$(BIN)/mockgen -destination=$(ROOT)/src/entity/mock_entity/mock_entity.gen.go entity Impression,Demand,Advertise,Publisher,Location,Slot,Supplier
+	$(BIN)/mockgen -destination=$(ROOT)/src/octopus/exchange/mock_exchange/mock_exchange.gen.go exchange Impression,Demand,Advertise,Publisher,Location,Slot,Supplier
 
 test-gui: mockentity codegen convey
 	cd $(ROOT)/src && goconvey -host=0.0.0.0

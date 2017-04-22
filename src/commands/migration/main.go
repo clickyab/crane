@@ -11,14 +11,29 @@ import (
 
 	"services/mysql"
 
+	"strings"
+
 	"github.com/Sirupsen/logrus"
 	"github.com/rubenv/sql-migrate"
 )
 
 var (
+	validApps = []string{"octopus"}
+
 	action = flag.String("action", "up", "up/down is supported, default is up")
+	app    = flag.String("app", "", "application to handle migrations valids are "+strings.Join(validApps, ","))
 	n      int
 )
+
+func validApp(in string) bool {
+	for i := range validApps {
+		if validApps[i] == in {
+			return true
+		}
+	}
+
+	return false
+}
 
 // doMigration is my try to migrate on demand. but I don't know if there is more than
 // one ins is in memory
@@ -27,7 +42,7 @@ func doMigration(dir migrate.MigrationDirection, max int) error {
 	migrations := &migrate.AssetMigrationSource{
 		Asset:    Asset,
 		AssetDir: AssetDir,
-		Dir:      "db/migrations",
+		Dir:      fmt.Sprintf("db/%s_migrations", *app),
 	}
 
 	var err error
@@ -51,6 +66,10 @@ func main() {
 	var err error
 
 	defer initializer.Initialize()()
+
+	if !validApp(*app) {
+		logrus.Fatalf("app is invalid, valids are %s", strings.Join(validApps, ","))
+	}
 
 	if *action == "up" {
 		err = doMigration(migrate.Up, 0)

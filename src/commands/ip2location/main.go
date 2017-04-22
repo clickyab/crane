@@ -2,18 +2,13 @@ package main
 
 import (
 	"commands"
+	"encoding/json"
+	"net/http"
+	"services/assert"
 	"services/config"
 	"services/initializer"
-
-	"net/http"
-
-	"strings"
-
 	"services/ip2location"
-
-	"encoding/json"
-
-	"services/assert"
+	"strings"
 
 	"github.com/Sirupsen/logrus"
 )

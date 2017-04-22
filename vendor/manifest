@@ -38,6 +38,12 @@
 			"branch": "master"
 		},
 		{
+			"importpath": "github.com/fzerorubigd/go-redmine",
+			"repository": "https://github.com/fzerorubigd/go-redmine",
+			"revision": "05bb0a08b5c20b45765553ca33aea5a2aea9f3a8",
+			"branch": "master"
+		},
+		{
 			"importpath": "github.com/fzerorubigd/xhandler",
 			"repository": "https://github.com/fzerorubigd/xhandler",
 			"revision": "6caa149442f4463464c45ccf8a9da031f4fddbce",
