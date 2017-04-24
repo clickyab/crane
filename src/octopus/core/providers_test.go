@@ -138,6 +138,15 @@ func (*tdemand) CallRate() int {
 	return 100
 }
 
+func (*tdemand) WhiteListCountries() []string {
+	return []string{}
+}
+
+// ExcludedSuppliers is the white listed supplier for this.
+func (*tdemand) ExcludedSuppliers() []string {
+	return []string{}
+
+}
 func (d *tdemand) Status(ctx context.Context, rw http.ResponseWriter, rq *http.Request) {
 
 }

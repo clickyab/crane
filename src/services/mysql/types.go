@@ -47,7 +47,7 @@ type NullString struct {
 type GenericJSONField map[string]interface{}
 
 // StringJSONArray is use to handle string to string map in postgres
-type StringJSONArray map[string]string
+type StringJSONArray []string
 
 // Scan convert the json array ino string slice
 func (is *Int64Slice) Scan(src interface{}) error {

@@ -109,6 +109,8 @@ func (d *Demand) Win(context.Context, string, int64)                         { p
 func (d *Demand) Status(context.Context, http.ResponseWriter, *http.Request) { panic("Demand") }
 func (d *Demand) Handicap() int64                                            { return d.handicap }
 func (d *Demand) CallRate() int                                              { panic("Demand") }
+func (d *Demand) WhiteListCountries() []string                               { return []string{} }
+func (d *Demand) ExcludedSuppliers() []string                                { return []string{} }
 
 type Publisher struct {
 	floorCPM,

@@ -1,9 +1,9 @@
 package models
 
 import (
-	"database/sql"
 	"octopus/exchange"
 	"services/assert"
+	"services/mysql"
 )
 
 // RendererFactory is a factory function for a supplier base on its type
@@ -11,16 +11,16 @@ type RendererFactory func(exchange.Supplier, string) exchange.Renderer
 
 // Supplier is a supplier in our system
 type Supplier struct {
-	ID            int64          `json:"id" db:"id"`
-	SName         string         `json:"name" db:"name"`
-	SType         string         `json:"type" db:"type"`
-	Key           string         `json:"-" db:"key"`
-	SFloorCPM     int64          `json:"floor_cpm" db:"floor_cpm"`
-	SSoftFloorCPM int64          `json:"soft_floor_cpm" db:"soft_floor_cpm"`
-	UnderFloor    int            `json:"under_floor" db:"under_floor"`
-	Excluded      sql.NullString `json:"-" db:"excluded"`
-	SShare        int            `json:"-" db:"share"`
-	SActive       int            `json:"-" db:"active"`
+	ID            int64                 `json:"id" db:"id"`
+	SName         string                `json:"name" db:"name"`
+	SType         string                `json:"type" db:"type"`
+	Key           string                `json:"-" db:"key"`
+	SFloorCPM     int64                 `json:"floor_cpm" db:"floor_cpm"`
+	SSoftFloorCPM int64                 `json:"soft_floor_cpm" db:"soft_floor_cpm"`
+	UnderFloor    int                   `json:"under_floor" db:"under_floor"`
+	Excluded      mysql.StringJSONArray `json:"excluded_demands" db:"excluded_demands"`
+	SShare        int                   `json:"-" db:"share"`
+	SActive       int                   `json:"-" db:"active"`
 
 	r exchange.Renderer
 }
@@ -47,7 +47,7 @@ func (s Supplier) SoftFloorCPM() int64 {
 
 // ExcludedDemands of this supplire @TODO implement this
 func (s Supplier) ExcludedDemands() []string {
-	return nil
+	return s.Excluded
 }
 
 // CountryWhiteList is the country allowed by this supplier @TODO implement this

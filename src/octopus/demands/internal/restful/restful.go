@@ -31,6 +31,16 @@ type demand struct {
 	requestTimeout     time.Duration
 	weekLimit          int64
 	winPoint           *url.URL
+	country            []string
+	supplier           []string
+}
+
+func (d *demand) WhiteListCountries() []string {
+	return d.country
+}
+
+func (d *demand) ExcludedSuppliers() []string {
+	return d.supplier
 }
 
 func (*demand) Status(context.Context, http.ResponseWriter, *http.Request) {
@@ -175,6 +185,8 @@ func NewRestfulClient(d models.Demand, encoder func(exchange.Impression) interfa
 		weekLimit:          d.WeekLimit,
 		monthLimit:         d.MonthLimit,
 		handicap:           d.Handicap,
+		country:            d.WhiteListCountries,
+		supplier:           d.ExcludedSuppliers,
 
 		encoder: encoder,
 	}

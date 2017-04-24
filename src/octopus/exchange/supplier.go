@@ -9,10 +9,8 @@ type Supplier interface {
 	// SoftFloorCPM is the soft version of floor cpm. if the publisher ahs it, then the system
 	// try to use this as floor, but if this is not available, the FloorCPM is used
 	SoftFloorCPM() int64
-	// ExcludedNetwork is the black listed network for this.
+	// ExcludedDemands is the Excluded list network for this.
 	ExcludedDemands() []string
-	// CountryWhiteList is the list of country accepted for this
-	CountryWhiteList() []Country
 	// Share return the share of this supplier
 	Share() int
 	// Renderer return the renderer of this supplier

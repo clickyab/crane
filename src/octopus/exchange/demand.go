@@ -25,4 +25,8 @@ type Demand interface {
 	Handicap() int64
 	// CallRate is the rate of calling the object, 0 < X <= 100
 	CallRate() int
+	//WhiteListCountries is the excluded list countries for this.
+	WhiteListCountries() []string
+	// ExcludedSuppliers is the white listed supplier for this.
+	ExcludedSuppliers() []string
 }

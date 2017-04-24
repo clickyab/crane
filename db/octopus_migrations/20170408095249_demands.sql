@@ -9,6 +9,8 @@ CREATE TABLE demands
   type VARCHAR(40) NOT NULL,
   get_url VARCHAR(300) NOT NULL,
   win_url VARCHAR(300) NOT NULL,
+  white_countrie TEXT,
+  excluded_suppliers TEXT,
   minute_limit INT,
   hour_limit INT,
   day_limit INT,

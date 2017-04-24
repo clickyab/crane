@@ -11,7 +11,7 @@ CREATE TABLE suppliers
   floor_cpm INT NOT NULL,
   soft_floor_cpm INT NOT NULL,
   under_floor INT NOT NULL,
-  excluded TEXT,
+  excluded_demands TEXT,
   share INT NOT NULL,
   active INT DEFAULT 1 NOT NULL
 );

@@ -133,6 +133,27 @@ func demandIsAllowed(impression exchange.Impression, data providerData) bool {
 	if impression.Source().Name() == data.name {
 		return false
 	}
+	if contains(data.provider.ExcludedSuppliers(), impression.Source().Name()) {
+		return false
+	}
+	//if contains(data.provider.WhiteListCountries(),impression.Location().Country().Name) {
+	//	return false
+	//}
+	//if contains(impression.Source().Supplier().ExcludedDemands(), data.name) {
+	//	return false
+	//}
+	return true
+}
+
+func contains(s []string, t string) bool {
+	if len(s) == 0 {
+		return false
+	}
+	for _, a := range s {
+		if a == t {
+			return false
+		}
+	}
 	return true
 }
 

@@ -4,6 +4,7 @@ import (
 	"database/sql/driver"
 	"errors"
 	"services/assert"
+	"services/mysql"
 	"time"
 )
 
@@ -44,9 +45,11 @@ type Demand struct {
 
 	Active int `db:"active" json:"active"`
 
-	Handicap int64 `json:"handicap" db:"handicap"`
-	Share    int   `json:"-" db:"share"`
-	Rate     int   `json:"-" db:"call_rate"`
+	Handicap           int64                 `json:"handicap" db:"handicap"`
+	Share              int                   `json:"-" db:"share"`
+	Rate               int                   `json:"-" db:"call_rate"`
+	WhiteListCountries mysql.StringJSONArray `json:"white_countrie" db:"white_countrie" `
+	ExcludedSuppliers  mysql.StringJSONArray `json:"excluded_suppliers" db:"excluded_suppliers"`
 }
 
 // IsValid try to validate enum value on ths type
