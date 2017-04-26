@@ -80,6 +80,7 @@ func (a *Advertise) TrackID() string         { panic("Advertise") }
 func (a *Advertise) SetWinnerCPM(w int64)    { a.win = w }
 func (a *Advertise) WinnerCPM() int64        { return a.win }
 func (a *Advertise) Demand() exchange.Demand { return a.demand }
+func (a *Advertise) Rates() []exchange.Rate  { panic("publisher") }
 
 type Impression struct {
 	publisher  exchange.Publisher
@@ -122,6 +123,7 @@ func (p *Publisher) FloorCPM() int64                    { return p.floorCPM }
 func (p *Publisher) SoftFloorCPM() int64                { return p.softFloorCPM }
 func (p *Publisher) Attributes() map[string]interface{} { panic("publisher") }
 func (p *Publisher) Supplier() exchange.Supplier        { panic("publisher") }
+func (p *Publisher) Rates() []exchange.Rate             { panic("publisher") }
 
 func TestSelect(t *testing.T) {
 

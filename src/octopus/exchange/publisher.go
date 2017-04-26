@@ -19,4 +19,5 @@ type Publisher interface {
 	Attributes() map[string]interface{}
 	// Supplier return the exchange object for this publisher
 	Supplier() Supplier
+	Rater
 }

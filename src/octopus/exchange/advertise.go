@@ -12,6 +12,7 @@ type Advertise interface {
 	Height() int
 	// return the url to call for show
 	URL() string
+	Rater
 
 	AdvertiseExtra
 }

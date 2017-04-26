@@ -35,3 +35,31 @@ func SelectCPM(imp exchange.Impression, all map[string][]exchange.Advertise) map
 
 	return res
 }
+
+// Moderate remove unacceptable ads for publisher
+func Moderate(imp exchange.Rater, ads map[string][]exchange.Advertise) map[string][]exchange.Advertise {
+	res := make(map[string][]exchange.Advertise)
+	for id := range ads {
+		rds := make([]exchange.Advertise, 0)
+		for _, ad := range ads[id] {
+			if reduce(imp, ad) {
+				rds = append(rds, ad)
+			}
+		}
+		res[id] = rds
+	}
+	return res
+}
+
+func reduce(pub exchange.Rater, ad exchange.Rater) bool {
+	p := pub.Rates()
+	a := ad.Rates()
+	for _, ar := range a {
+		for _, pr := range p {
+			if ar == pr {
+				return false
+			}
+		}
+	}
+	return true
+}

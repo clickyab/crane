@@ -162,9 +162,11 @@ func contains(s []string, t string) bool {
 }
 
 func init() {
-	filters = append(filters, isSameProvider)
-	filters = append(filters, notwhitelistCountries)
-	filters = append(filters, isExcludedDemands)
+	filters = []func(exchange.Impression, providerData) bool{
+		isSameProvider,
+		notwhitelistCountries,
+		isExcludedDemands,
+	}
 }
 
 // GetDemand return demand by its name

@@ -50,6 +50,7 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
+	ads = rtb.Moderate(imp.Source(), ads)
 	res := rtb.SelectCPM(imp, ads)
 	// save winner in store
 	for i := range res {

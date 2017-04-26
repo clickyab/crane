@@ -7,7 +7,8 @@ type restPublisher struct {
 	PubFloorCPM     int64  `json:"floor_cpm"`
 	PubSoftFloorCPM int64  `json:"soft_floor_cpm"`
 
-	sup exchange.Supplier
+	sup   exchange.Supplier
+	rates []exchange.Rate
 }
 
 func (rp restPublisher) Name() string {
@@ -28,4 +29,8 @@ func (restPublisher) Attributes() map[string]interface{} {
 
 func (rp restPublisher) Supplier() exchange.Supplier {
 	return rp.sup
+}
+
+func (rp restPublisher) Rates() []exchange.Rate {
+	return rp.rates
 }
