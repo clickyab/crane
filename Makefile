@@ -132,7 +132,6 @@ convey: $(GB)
 
 mockgen: $(GB)
 	$(BUILD) github.com/golang/mock/mockgen
-	mkdir -p $(ROOT)/src/entity/mock_entity
 
 mockentity: $(LINTER) mockgen
 	mkdir -p $(ROOT)/src/octopus/exchange/mock_exchange
