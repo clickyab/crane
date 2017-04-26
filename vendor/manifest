@@ -8,6 +8,12 @@
 			"branch": "master"
 		},
 		{
+			"importpath": "github.com/Shopify/sarama",
+			"repository": "https://github.com/Shopify/sarama",
+			"revision": "d4ece5d05a86b2b64248f4943f872bea961ec835",
+			"branch": "master"
+		},
+		{
 			"importpath": "github.com/Sirupsen/logrus",
 			"repository": "https://github.com/Sirupsen/logrus",
 			"revision": "61e43dc76f7ee59a82bdf3d71033dc12bea4c77d",
@@ -26,9 +32,35 @@
 			"branch": "master"
 		},
 		{
+			"importpath": "github.com/davecgh/go-spew/spew",
+			"repository": "https://github.com/davecgh/go-spew",
+			"revision": "346938d642f2ec3594ed81d874461961cd0faa76",
+			"branch": "master",
+			"path": "/spew"
+		},
+		{
 			"importpath": "github.com/denisenkom/go-mssqldb",
 			"repository": "https://github.com/denisenkom/go-mssqldb",
 			"revision": "05a5564207042f04d43d186d82e195a7f5699d48",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/eapache/go-resiliency/breaker",
+			"repository": "https://github.com/eapache/go-resiliency",
+			"revision": "b86b1ec0dd4209a588dc1285cdd471e73525c0b3",
+			"branch": "master",
+			"path": "/breaker"
+		},
+		{
+			"importpath": "github.com/eapache/go-xerial-snappy",
+			"repository": "https://github.com/eapache/go-xerial-snappy",
+			"revision": "bb955e01b9346ac19dc29eb16586c90ded99a98c",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/eapache/queue",
+			"repository": "https://github.com/eapache/queue",
+			"revision": "44cc805cf13205b55f69e14bcb69867d1ae92f98",
 			"branch": "master"
 		},
 		{
@@ -59,6 +91,12 @@
 			"importpath": "github.com/go-sql-driver/mysql",
 			"repository": "https://github.com/go-sql-driver/mysql",
 			"revision": "9dee4ca50b83acdf57a35fb9e6fb4be640afa2f3",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/gocql/gocql",
+			"repository": "https://github.com/gocql/gocql",
+			"revision": "7e9748ccda7fd5135a7db13ba03f09cad0c86bed",
 			"branch": "master"
 		},
 		{
@@ -93,6 +131,18 @@
 			"revision": "2bba0603135d7d7f5cb73b2125beeda19c09f4ef",
 			"branch": "master",
 			"path": "/proto"
+		},
+		{
+			"importpath": "github.com/golang/snappy",
+			"repository": "https://github.com/golang/snappy",
+			"revision": "553a641470496b2327abcac10b36396bd98e45c9",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/hailocab/go-hostpool",
+			"repository": "https://github.com/hailocab/go-hostpool",
+			"revision": "e80d13ce29ede4452c43dea11e79b9bc8a15b478",
+			"branch": "master"
 		},
 		{
 			"importpath": "github.com/hashicorp/go.net/internal/iana",
@@ -137,6 +187,12 @@
 			"importpath": "github.com/julienschmidt/httprouter",
 			"repository": "https://github.com/julienschmidt/httprouter",
 			"revision": "8a45e95fc75cb77048068a62daed98cc22fdac7c",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/klauspost/crc32",
+			"repository": "https://github.com/klauspost/crc32",
+			"revision": "1bab8b35b6bb565f92cbc97939610af9369f942a",
 			"branch": "master"
 		},
 		{
@@ -188,6 +244,25 @@
 			"branch": "master"
 		},
 		{
+			"importpath": "github.com/pierrec/lz4",
+			"repository": "https://github.com/pierrec/lz4",
+			"revision": "f5b77fd73d83122495309c0f459b810f83cc291f",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/pierrec/xxHash/xxHash32",
+			"repository": "https://github.com/pierrec/xxHash",
+			"revision": "5a004441f897722c627870a981d02b29924215fa",
+			"branch": "master",
+			"path": "/xxHash32"
+		},
+		{
+			"importpath": "github.com/rcrowley/go-metrics",
+			"repository": "https://github.com/rcrowley/go-metrics",
+			"revision": "1f30fe9094a513ce4c700b9a54458bbb0c96996c",
+			"branch": "master"
+		},
+		{
 			"importpath": "github.com/rubenv/sql-migrate",
 			"repository": "https://github.com/rubenv/sql-migrate",
 			"revision": "38004e7a77f2b350ea8467038dca66073d907725",
@@ -226,6 +301,12 @@
 			"path": "/context"
 		},
 		{
+			"importpath": "gopkg.in/Shopify/sarama.v1",
+			"repository": "https://gopkg.in/Shopify/sarama.v1",
+			"revision": "0fb560e5f7fbcaee2f75e3c34174320709f69944",
+			"branch": "master"
+		},
+		{
 			"importpath": "gopkg.in/airbrake/gobrake.v2",
 			"repository": "https://gopkg.in/airbrake/gobrake.v2",
 			"revision": "668876711219e8b0206e2994bf0a59d889c775aa",
@@ -253,6 +334,12 @@
 			"importpath": "gopkg.in/gorp.v2",
 			"repository": "https://gopkg.in/gorp.v2",
 			"revision": "4deece61034873cb5b5416e81abe4cea7bd0da72",
+			"branch": "master"
+		},
+		{
+			"importpath": "gopkg.in/inf.v0",
+			"repository": "https://gopkg.in/inf.v0",
+			"revision": "3887ee99ecf07df5b447e9b00d9c0b2adaa9f3e4",
 			"branch": "master"
 		},
 		{
