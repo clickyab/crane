@@ -6,17 +6,17 @@ import (
 )
 
 type restAd struct {
-	RID     string `json:"id"`
-	RMaxCPM int64  `json:"max_cpm"`
-	RWidth  int    `json:"width"`
-	RHeight int    `json:"height"`
-	RURL    string `json:"url"`
+	RID      string `json:"id"`
+	RMaxCPM  int64  `json:"max_cpm"`
+	RWidth   int    `json:"width"`
+	RHeight  int    `json:"height"`
+	RURL     string `json:"url"`
+	RLanding string `json:"landing"`
 
 	demand    exchange.Demand
 	trackID   string
 	winnerCPM int64
 	rates     []exchange.Rate
-	landing   string
 }
 
 func (ra restAd) URL() string {
@@ -63,5 +63,5 @@ func (ra restAd) Rates() []exchange.Rate {
 }
 
 func (ra restAd) Landing() string {
-	return ra.landing
+	return ra.RLanding
 }
