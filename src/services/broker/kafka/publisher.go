@@ -108,6 +108,6 @@ func (b *cluster) Initialize(ctx context.Context) {
 
 func init() {
 	b := &cluster{}
-	initializer.Register(b)
+	initializer.Register(b, 0)
 	base.SetActiveBroker(b)
 }

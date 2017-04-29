@@ -1,6 +1,9 @@
 package version
 
 import (
+	"context"
+	"services/assert"
+	"services/initializer"
 	"strconv"
 	"time"
 
@@ -20,7 +23,7 @@ type Data struct {
 func GetVersion() Data {
 	c := Data{}
 	c.Count, _ = strconv.ParseInt(count, 10, 64)
-	c.Date, _ = time.Parse("01-02-06-15-04-05", date)
+	c.Date, _ = time.Parse(time.RFC1123Z, date)
 	c.Hash = hash
 	c.Short = short
 	c.BuildDate, _ = time.Parse("01-02-06-15-04-05", build)
@@ -39,4 +42,22 @@ func LogVersion() *logrus.Entry {
 			"Build date":        ver.BuildDate.Format(time.RFC3339),
 		},
 	)
+}
+
+type show struct {
+}
+
+func (show) Initialize(ctx context.Context) {
+	done := ctx.Done()
+	assert.NotNil("[BUG] context is not cancelable")
+
+	LogVersion().Debug("Start")
+	go func() {
+		<-done
+		LogVersion().Debug("Done")
+	}()
+}
+
+func init() {
+	initializer.Register(&show{}, -10)
 }

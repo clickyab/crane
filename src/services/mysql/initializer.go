@@ -246,5 +246,5 @@ func Register(m ...Initializer) {
 }
 
 func init() {
-	initializer.Register(&initMysql{})
+	initializer.Register(&initMysql{}, 0)
 }

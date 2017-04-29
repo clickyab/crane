@@ -235,5 +235,5 @@ func finalize() {
 }
 
 func init() {
-	initializer.Register(&initRabbit{})
+	initializer.Register(&initRabbit{}, 0)
 }

@@ -52,6 +52,11 @@ func (m *Kiwi) Save(t time.Duration) error {
 	return nil
 }
 
+// TTL return the expiration time of this
+func (m *Kiwi) TTL() time.Duration {
+	return m.Duration
+}
+
 // NewMockStore is the new mock store
 func NewMockStore(key string) eav.Kiwi {
 	if k, ok := store[key]; ok {

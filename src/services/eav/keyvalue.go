@@ -19,6 +19,8 @@ type Kiwi interface {
 	Save(time.Duration) error
 	// Drop the entire eav store
 	Drop() error
+	// TTL return the time to expire this
+	TTL() time.Duration
 }
 
 // StoreFactory is a function to create store

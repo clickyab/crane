@@ -44,5 +44,5 @@ func (i initRouter) Initialize(ctx context.Context) {
 }
 
 func init() {
-	initializer.Register(&initRouter{})
+	initializer.Register(&initRouter{}, 100)
 }

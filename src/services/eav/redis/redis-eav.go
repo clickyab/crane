@@ -13,6 +13,13 @@ type kiwiRedis struct {
 	lock sync.Mutex
 }
 
+func (kr *kiwiRedis) TTL() time.Duration {
+	d := aredis.Client.TTL(kr.key)
+	r, _ := d.Result()
+
+	return r
+}
+
 func (kr *kiwiRedis) Drop() error {
 	kr.lock.Lock()
 	defer kr.lock.Unlock()
