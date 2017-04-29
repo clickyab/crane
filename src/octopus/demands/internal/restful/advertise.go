@@ -16,6 +16,7 @@ type restAd struct {
 	trackID   string
 	winnerCPM int64
 	rates     []exchange.Rate
+	landing   string
 }
 
 func (ra restAd) URL() string {
@@ -59,4 +60,8 @@ func (ra restAd) MaxCPM() int64 {
 
 func (ra restAd) Rates() []exchange.Rate {
 	return ra.rates
+}
+
+func (ra restAd) Landing() string {
+	return ra.landing
 }

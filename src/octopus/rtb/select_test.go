@@ -81,6 +81,7 @@ func (a *Advertise) SetWinnerCPM(w int64)    { a.win = w }
 func (a *Advertise) WinnerCPM() int64        { return a.win }
 func (a *Advertise) Demand() exchange.Demand { return a.demand }
 func (a *Advertise) Rates() []exchange.Rate  { panic("publisher") }
+func (a *Advertise) Landing() string         { panic("publisher") }
 
 type Impression struct {
 	publisher  exchange.Publisher

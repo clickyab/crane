@@ -12,6 +12,8 @@ type Advertise interface {
 	Height() int
 	// return the url to call for show
 	URL() string
+	// Landing return FQDN of ad
+	Landing() string
 	Rater
 
 	AdvertiseExtra

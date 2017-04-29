@@ -9,11 +9,12 @@ import (
 )
 
 type dumbAd struct {
-	ID     string `json:"id"`
-	Winner int64  `json:"winner"`
-	Width  int    `json:"width"`
-	Height int    `json:"height"`
-	Code   string `json:"code"`
+	ID      string `json:"id"`
+	Winner  int64  `json:"winner"`
+	Width   int    `json:"width"`
+	Height  int    `json:"height"`
+	Code    string `json:"code"`
+	Landing string `json:"land"`
 }
 
 type restful struct {
@@ -30,10 +31,11 @@ func (rf restful) Render(in map[string]exchange.Advertise, w io.Writer) error {
 		}
 
 		d := &dumbAd{
-			ID:     in[i].ID(),
-			Winner: in[i].WinnerCPM() * int64(100-rf.sup.Share()) / 100,
-			Width:  in[i].Width(),
-			Height: in[i].Height(),
+			ID:      in[i].ID(),
+			Winner:  in[i].WinnerCPM() * int64(100-rf.sup.Share()) / 100,
+			Width:   in[i].Width(),
+			Height:  in[i].Height(),
+			Landing: in[i].Landing(),
 		}
 		var x url.URL = *rf.pixelPattern
 		q := x.Query()
