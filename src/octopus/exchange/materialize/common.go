@@ -2,14 +2,20 @@ package materialize
 
 import "octopus/exchange"
 
-func Impression(imp exchange.Impression) []byte {
+func impressionToMap(imp exchange.Impression) map[string]interface{} {
 	return nil
 }
 
-func Demand(dmn exchange.Demand) []byte {
-	return nil
+func demandToMap(dmn exchange.Demand) map[string]interface{} {
+	return map[string]interface{}{
+		"name":               dmn.Name(),
+		"callRate":           dmn.CallRate(),
+		"handicap":           dmn.Handicap(),
+		"whiteListCountries": dmn.WhiteListCountries(),
+		"excludedSuppliers":  dmn.WhiteListCountries(),
+	}
 }
 
-func Advertise(ad exchange.Advertise) []byte {
+func advertiseToMap(ad exchange.Advertise) map[string]interface{} {
 	return nil
 }
