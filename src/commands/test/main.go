@@ -58,7 +58,8 @@ func getAdd(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	config.Initialize("test", "test", "test")
-	http.HandleFunc("/", getAdd)
+	http.HandleFunc("/getad", getAdd)
+	http.HandleFunc("/", demandDemo)
 	fmt.Println(*port)
 	http.ListenAndServe(*port, nil)
 	commands.WaitExitSignal()
