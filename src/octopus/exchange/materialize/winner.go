@@ -1,33 +1,46 @@
 package materialize
 
 import (
+	"encoding/json"
 	"octopus/exchange"
 	"services/broker"
 )
 
 type winner struct {
+	data map[string]interface{}
+	key  string
 }
 
+// Encode encode
 func (w *winner) Encode() ([]byte, error) {
-	panic("implement me")
+	return json.Marshal(w.data)
 }
 
+// Length return length
 func (w *winner) Length() int {
-	panic("implement me")
+	res, _ := w.Encode()
+	return len(res)
 }
 
+// Topic return topic
 func (w *winner) Topic() string {
-	panic("implement me")
+	panic("winner")
 }
 
+// Key return key
 func (w *winner) Key() string {
-	panic("implement me")
+	return w.key
 }
 
+// Report report
 func (w *winner) Report() func(error) {
 	panic("implement me")
 }
 
-func WinnerJob(imp exchange.Impression, dmn exchange.Demand, cpm int64, ad exchange.Advertise, slotID string) broker.Job {
-	return nil
+// WinnerJob return a broker job
+func WinnerJob(imp exchange.Impression, dmn exchange.Demand, ad exchange.Advertise, slotID string) broker.Job {
+	return &winner{
+		data: winnerToMap(imp, dmn, ad, slotID),
+		key:  imp.IP().String(),
+	}
 }
