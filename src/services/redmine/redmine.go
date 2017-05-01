@@ -10,7 +10,6 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/fzerorubigd/go-redmine"
-	"gopkg.in/fzerorubigd/onion.v2"
 )
 
 var (
@@ -24,8 +23,8 @@ var (
 type reporter struct {
 }
 
-func (reporter) Initialize(*onion.Onion) []onion.Layer {
-	return nil
+func (reporter) Initialize() config.DescriptiveLayer {
+	return config.NewDescriptiveLayer()
 }
 
 // Loaded is called after config loading, so the active is ready here

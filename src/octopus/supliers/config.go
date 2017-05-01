@@ -2,8 +2,6 @@ package supliers
 
 import (
 	"services/config"
-
-	"gopkg.in/fzerorubigd/onion.v2"
 )
 
 var (
@@ -11,18 +9,16 @@ var (
 )
 
 type cfgInitializer struct {
-	o *onion.Onion
 }
 
-func (ci *cfgInitializer) Initialize(o *onion.Onion) []onion.Layer {
-	ci.o = o
-	l := onion.NewDefaultLayer()
-	l.SetDefault("exchange.supplier.domain", "localhost")
-	return []onion.Layer{l}
+func (ci *cfgInitializer) Initialize() config.DescriptiveLayer {
+	l := config.NewDescriptiveLayer()
+	l.Add("DESCRIPTION", "exchange.supplier.domain", "localhost")
+	return l
 }
 
 func (ci *cfgInitializer) Loaded() {
-	domain = ci.o.GetStringDefault("exchange.supplier.domain", "localhost")
+	domain = config.GetStringDefault("exchange.supplier.domain", "localhost")
 }
 
 func init() {

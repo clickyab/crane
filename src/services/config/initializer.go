@@ -20,13 +20,13 @@ var (
 // Initializer is the config initializer for module
 type Initializer interface {
 	// Initialize is called when the module is going to add its layer
-	Initialize(*onion.Onion) []onion.Layer
+	Initialize() DescriptiveLayer
 	// Loaded inform the modules that all layer are ready
 	Loaded()
 }
 
 //Initialize try to initialize config
-func Initialize(organization, appName, prefix string, layers ...onion.Layer) {
+func Initialize(organization, appName, prefix string, layers ...DescriptiveLayer) {
 	usr, err := user.Current()
 	if err != nil {
 		logrus.Warn(err)
@@ -37,16 +37,17 @@ func Initialize(organization, appName, prefix string, layers ...onion.Layer) {
 	}
 
 	assert.Nil(o.AddLayer(defaultLayer()))
+
 	for i := range all {
-		nL := all[i].Initialize(o)
-		for l := range nL {
-			_ = o.AddLayer(nL[l])
-		}
+		nL := all[i].Initialize()
+		_ = o.AddLayer(nL)
+
 	}
 	// now add the layer provided by app
 	for i := range layers {
 		_ = o.AddLayer(layers[i])
 	}
+
 	// Now load external config to overwrite them all.
 	if err = o.AddLayer(onion.NewFileLayer("/etc/" + organization + "/" + appName + ".yaml")); err == nil {
 

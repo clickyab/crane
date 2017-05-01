@@ -1,18 +1,12 @@
 package rabbit
 
 import (
-	"services/assert"
-
 	"services/config"
-
-	onion "gopkg.in/fzerorubigd/onion.v2"
 )
 
 var cfg cfgLoader
 
 type cfgLoader struct {
-	o *onion.Onion `onion:"-"`
-
 	DSN        string `onion:"dsn"`
 	Exchange   string `onion:"exchange"`
 	Publisher  int    `onion:"publisher"`
@@ -20,21 +14,18 @@ type cfgLoader struct {
 	Debug      bool   `onion:"debug"`
 }
 
-func (cl *cfgLoader) Initialize(o *onion.Onion) []onion.Layer {
-	cl.o = o
-
-	d := onion.NewDefaultLayer()
-	assert.Nil(d.SetDefault("service.amqp.dsn", "amqp://server:bita123@127.0.0.1:5672/cy"))
-	assert.Nil(d.SetDefault("service.amqp.exchange", "cy"))
-	assert.Nil(d.SetDefault("service.ampq.publisher", 30))
-	assert.Nil(d.SetDefault("service.amqp.confirm_len", 200))
-	assert.Nil(d.SetDefault("service.amqp.debug", false))
-
-	return []onion.Layer{d}
+func (cl *cfgLoader) Initialize() config.DescriptiveLayer {
+	d := config.NewDescriptiveLayer()
+	d.Add("DESCRITION", "service.amqp.dsn", "amqp://server:bita123@127.0.0.1:5672/cy")
+	d.Add("DESCRITION", "service.amqp.exchange", "cy")
+	d.Add("DESCRITION", "service.ampq.publisher", 30)
+	d.Add("DESCRITION", "service.amqp.confirm_len", 200)
+	d.Add("DESCRITION", "service.amqp.debug", false)
+	return d
 }
 
 func (cl *cfgLoader) Loaded() {
-	cl.o.GetStruct("service.amqp", cl)
+	config.GetStruct("service.amqp", cl)
 	if cl.Publisher < 1 {
 		cl.Publisher = 1
 	}

@@ -2,23 +2,18 @@ package aredis
 
 import (
 	"os"
-	"services/assert"
 
 	"services/config"
 
 	"regexp"
 
 	"fmt"
-
-	onion "gopkg.in/fzerorubigd/onion.v2"
 )
 
 var cfg cfgLoader
 var redisPattern = regexp.MustCompile("^redis://([^:]+):([^@]+)@([^:]+):([0-9]+)$")
 
 type cfgLoader struct {
-	o *onion.Onion `onion:"-"`
-
 	Network  string `onion:"network"`
 	Address  string `onion:"address"`
 	Password string `onion:"password"`
@@ -26,10 +21,8 @@ type cfgLoader struct {
 	DB       int    `onion:"db"`
 }
 
-func (cl *cfgLoader) Initialize(o *onion.Onion) []onion.Layer {
-	cl.o = o
+func (cl *cfgLoader) Initialize() config.DescriptiveLayer {
 
-	d := onion.NewDefaultLayer()
 	var (
 		port = "6379"
 		host = "127.0.0.1"
@@ -42,18 +35,18 @@ func (cl *cfgLoader) Initialize(o *onion.Onion) []onion.Layer {
 		host = all[3]
 		pass = all[2]
 	}
+	l := config.NewDescriptiveLayer()
 
-	assert.Nil(d.SetDefault("service.redis.network", "tcp"))
-	assert.Nil(d.SetDefault("service.redis.address", fmt.Sprintf("%s:%s", host, port)))
-	assert.Nil(d.SetDefault("service.redis.password", pass))
-	assert.Nil(d.SetDefault("service.redis.poolsize", 200))
-	assert.Nil(d.SetDefault("service.redis.db", 1))
-
-	return []onion.Layer{d}
+	l.Add("DESCRIPTION", "service.redis.network", "tcp")
+	l.Add("DESCRIPTION", "service.redis.address", fmt.Sprintf("%s:%s", host, port))
+	l.Add("DESCRIPTION", "service.redis.password", pass)
+	l.Add("DESCRIPTION", "service.redis.poolsize", 200)
+	l.Add("DESCRIPTION", "service.redis.db", 1)
+	return l
 }
 
 func (cl *cfgLoader) Loaded() {
-	cl.o.GetStruct("service.redis", cl)
+	config.GetStruct("service.redis", cl)
 }
 
 func init() {
