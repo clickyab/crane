@@ -9,23 +9,23 @@ import (
 type show struct {
 }
 
-func (a *show) Encode() ([]byte, error) {
+func (*show) Encode() ([]byte, error) {
 	panic("implement me")
 }
 
-func (s *show) Length() int {
+func (*show) Length() int {
 	panic("implement me")
 }
 
-func (s *show) Topic() string {
+func (*show) Topic() string {
 	panic("implement me")
 }
 
-func (s *show) Key() string {
+func (*show) Key() string {
 	panic("implement me")
 }
 
-func (s *show) Report() func(error) {
+func (*show) Report() func(error) {
 	panic("implement me")
 }
 

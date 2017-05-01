@@ -1,33 +1,64 @@
 package materialize
 
 import (
+	"bytes"
+	"encoding/gob"
+	"net"
 	"octopus/exchange"
 	"services/broker"
 )
 
 type impression struct {
+	src   []byte
+	topic string
+	key   net.IP
+
+	imp exchange.Impression
 }
 
-func (i *impression) Encode() ([]byte, error) {
-	panic("implement me")
+// Encode encode
+func (i impression) Encode() ([]byte, error) {
+		themap := []interface{}{}
+		themap = append(themap, impressionToMap(i.imp))
+		var buffer bytes.Buffer
+		enc := gob.NewEncoder(&buffer)
+		err := enc.Encode(themap)
+		if err != nil {
+			return []byte{}, err
+		}
+		return  buffer.Bytes(), nil
 }
 
-func (i *impression) Length() int {
-	panic("implement me")
+// Length return length
+func (i impression) Length() int {
+	themap := []interface{}{}
+	themap = append(themap, impressionToMap(i.imp))
+	var buffer bytes.Buffer
+	enc := gob.NewEncoder(&buffer)
+	err := enc.Encode(themap)
+	if err != nil {
+		return 0
+	}
+	return  len(buffer.Bytes())
 }
 
-func (i *impression) Topic() string {
-	panic("implement me")
+// Topic return topic
+func (i impression) Topic() string {
+	return "materialize"
 }
 
-func (i *impression) Key() string {
-	panic("implement me")
+// Key return key
+func (i impression) Key() string {
+		return i.imp.IP().String()
 }
 
-func (i *impression) Report() func(error) {
+// Report report
+func (i impression) Report() func(error) {
 	panic("implement me")
 }
 
 func ImpressionJob(imp exchange.Impression) broker.Job {
-	return nil
+	return impression{
+		imp: imp,
+	}
 }

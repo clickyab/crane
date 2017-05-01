@@ -19,8 +19,7 @@ type demand struct {
 	ads []exchange.Advertise
 }
 
-func (d *demand) Encode() ([]byte, error) {
-	if d.src == nil {
+func (d demand) Encode() ([]byte, error) {
 		themap := []interface{}{}
 		advertizes := []map[string]interface{}{}
 		for i := range d.ads {
@@ -35,34 +34,36 @@ func (d *demand) Encode() ([]byte, error) {
 			return []byte{}, err
 		}
 
-		d.src = buf.Bytes()
-	}
-	return d.src, nil
+		return buf.Bytes(),nil
+
 }
 
-func (d *demand) Length() int {
-	if len(d.src) == 0 {
-		var err error
-		d.src, err = d.Encode()
-		if err != nil {
-			panic("asd")
-		}
+func (d demand) Length() int {
+	themap := []interface{}{}
+	advertizes := []map[string]interface{}{}
+	for i := range d.ads {
+		advertizes = append(advertizes, advertiseToMap(d.ads[i]))
 	}
-	return len(d.src)
+	themap = append(themap, demandToMap(d.dmn), impressionToMap(d.imp), advertizes)
+
+	var buf bytes.Buffer
+	enc := gob.NewEncoder(&buf)
+	err := enc.Encode(themap)
+	if err != nil {
+		return 0
+	}
+	return len(buf.Bytes())
 }
 
-func (d *demand) Topic() string {
+func (d demand) Topic() string {
 	return "materialize"
 }
 
-func (d *demand) Key() string {
-	if d.key == nil {
-		d.key = d.imp.IP()
-	}
-	return d.key.String()
+func (d demand) Key() string {
+	return d.imp.IP().String()
 }
 
-func (d *demand) Report() func(error) {
+func (d demand) Report() func(error) {
 	panic("implement me")
 }
 
