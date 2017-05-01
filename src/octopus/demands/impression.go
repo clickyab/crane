@@ -25,11 +25,11 @@ func getRawPub(in exchange.Publisher) rawPub {
 
 type rawLocation struct {
 	// Country get the country if available
-	Country exchange.Country
+	Country exchange.Country `json:"country"`
 	// Province get the province of request if available
-	Province exchange.Province
+	Province exchange.Province `json:"province"`
 	// LatLon return the latitude longitude if any
-	LatLon exchange.LatLon
+	LatLon exchange.LatLon `json:"lat_lon"`
 }
 
 func getRawLocation(in exchange.Location) rawLocation {
@@ -76,7 +76,7 @@ type rawImp struct {
 	// Category returns category obviously
 	Category []exchange.Category `json:"category"`
 	// Platform return the publisher Platform
-	Platform int `json:"platform"`
+	Platform string `json:"platform"`
 	// Is this publisher accept under floor ads or not ?
 	UnderFloor bool `json:"under_floor"`
 }
@@ -94,7 +94,7 @@ func getRawImpresssion(imp exchange.Impression) interface{} {
 		UserAgent:  imp.UserAgent(),
 		Attributes: imp.Attributes(),
 		Category:   imp.Category(),
-		Platform:   int(imp.Platform()),
+		Platform:   imp.Platform().String(),
 		UnderFloor: imp.UnderFloor(),
 		Slots:      getRawSlots(imp.Slots()),
 		Location:   getRawLocation(imp.Location()),
