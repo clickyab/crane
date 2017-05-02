@@ -18,7 +18,7 @@ import (
 )
 
 var (
-	validApps = []string{"octopus"}
+	validApps = []string{"octopus", "crane"}
 
 	action = flag.String("action", "up", "up/down is supported, default is up")
 	app    = flag.String("app", "", "application to handle migrations valids are "+strings.Join(validApps, ","))
@@ -61,6 +61,7 @@ func doMigration(dir migrate.MigrationDirection, max int) error {
 
 func main() {
 	flag.Parse()
+	// TODO : multi app support
 	config.Initialize(commands.Organization, commands.AppName, commands.Prefix, commands.DefaultConfig())
 
 	var err error

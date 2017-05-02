@@ -60,6 +60,20 @@ func RegisterInt64(key string, def int64) *int64 {
 	return &ref
 }
 
+// RegisterFloat64 add an int to config
+func RegisterFloat64(key string, def float64) *float64 {
+	lock.Lock()
+	defer lock.Unlock()
+	var ref float64
+	allVariables = append(allVariables, variable{
+		ref: &ref,
+		def: def,
+		key: key,
+	})
+
+	return &ref
+}
+
 // RegisterBoolean add a boolean to config
 func RegisterBoolean(key string, def bool) *bool {
 	lock.Lock()
@@ -109,6 +123,10 @@ func load(o *onion.Onion) {
 		case int64:
 			v := o.GetInt64Default(allVariables[i].key, t)
 			vs := allVariables[i].ref.(*int64)
+			*vs = v
+		case float64:
+			v := o.GetFloat64Default(allVariables[i].key, t)
+			vs := allVariables[i].ref.(*float64)
 			*vs = v
 		case time.Duration:
 			v := o.GetDurationDefault(allVariables[i].key, t)
