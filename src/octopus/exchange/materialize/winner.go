@@ -9,22 +9,28 @@ import (
 type winner struct {
 	data map[string]interface{}
 	key  string
+
+	src []byte
 }
 
 // Encode encode
 func (w *winner) Encode() ([]byte, error) {
-	return json.Marshal(w.data)
+	if w.src == nil {
+		w.src, _ = json.Marshal(w.data)
+	}
+
+	return w.src, nil
 }
 
 // Length return length
 func (w *winner) Length() int {
-	res, _ := w.Encode()
-	return len(res)
+	x, _ := w.Encode()
+	return len(x)
 }
 
 // Topic return topic
 func (w *winner) Topic() string {
-	panic("winner")
+	return "winner"
 }
 
 // Key return key
@@ -34,7 +40,7 @@ func (w *winner) Key() string {
 
 // Report report
 func (w *winner) Report() func(error) {
-	panic("implement me")
+	return func(error) {}
 }
 
 // WinnerJob return a broker job

@@ -2,7 +2,7 @@ package materialize
 
 import "octopus/exchange"
 
-func impressionToMap(imp exchange.Impression) map[string]interface{} {
+func impressionToMap(imp exchange.Impression, ads ...exchange.Advertise) map[string]interface{} {
 	return map[string]interface{}{
 		"track_id":    imp.TrackID(),
 		"ip":          imp.IP(),
@@ -10,7 +10,7 @@ func impressionToMap(imp exchange.Impression) map[string]interface{} {
 		"source":      sourceToMap(imp.Source()),
 		"location":    locationToMap(imp.Location()),
 		"attributes":  imp.Attributes(),
-		"slots":       slotsToMap(imp.Slots()),
+		"slots":       slotsToMap(imp.Slots(), ads...),
 		"category":    imp.Category(),
 		"platform":    imp.Platform(),
 		"under_floor": imp.UnderFloor(),
@@ -30,16 +30,17 @@ func demandToMap(dmn exchange.Demand) map[string]interface{} {
 
 func advertiseToMap(ad exchange.Advertise) map[string]interface{} {
 	return map[string]interface{}{
-		"demand":     demandToMap(ad.Demand()),
-		"height":     ad.Height(),
-		"id":         ad.ID(),
-		"landing":    ad.Landing(),
-		"max_cpm":    ad.MaxCPM(),
-		"rate":       ad.Rates(),
-		"track_id":   ad.TrackID(),
-		"url":        ad.URL(),
-		"width":      ad.Width(),
-		"winner_cpm": ad.WinnerCPM(),
+		"demand":        demandToMap(ad.Demand()),
+		"height":        ad.Height(),
+		"id":            ad.ID(),
+		"landing":       ad.Landing(),
+		"max_cpm":       ad.MaxCPM(),
+		"rate":          ad.Rates(),
+		"track_id":      ad.TrackID(),
+		"url":           ad.URL(),
+		"width":         ad.Width(),
+		"winner_cpm":    ad.WinnerCPM(),
+		"slot_track_id": ad.SlotTrackID(),
 	}
 }
 
@@ -71,7 +72,7 @@ func locationToMap(loc exchange.Location) map[string]interface{} {
 	}
 }
 
-func slotsToMap(slots []exchange.Slot) []map[string]interface{} {
+func slotsToMap(slots []exchange.Slot, ads ...exchange.Advertise) []map[string]interface{} {
 	resSlots := make([]map[string]interface{}, len(slots))
 	for i := range slots {
 		resSlots = append(resSlots, map[string]interface{}{
@@ -80,6 +81,14 @@ func slotsToMap(slots []exchange.Slot) []map[string]interface{} {
 			"width":    slots[i].Width(),
 		},
 		)
+		for a := range ads {
+			if slots[i].TrackID() == ads[a].SlotTrackID() {
+				resSlots = append(resSlots, map[string]interface{}{
+					"ads": advertiseToMap(ads[a]),
+				},
+				)
+			}
+		}
 	}
 	return resSlots
 }

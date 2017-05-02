@@ -14,6 +14,8 @@ type Advertise interface {
 	URL() string
 	// Landing return FQDN of ad
 	Landing() string
+	// SlotTrackID from slot
+	SlotTrackID() string
 	Rater
 
 	AdvertiseExtra

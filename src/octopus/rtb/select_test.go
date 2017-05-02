@@ -71,6 +71,8 @@ type Advertise struct {
 	demand exchange.Demand
 }
 
+func (a *Advertise) SlotTrackID() string { panic("SlotTrackID") }
+
 func (a *Advertise) ID() string              { panic("Advertise") }
 func (a *Advertise) MaxCPM() int64           { return a.cpm }
 func (a *Advertise) Width() int              { panic("Advertise") }

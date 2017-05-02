@@ -9,18 +9,24 @@ import (
 type impression struct {
 	data map[string]interface{}
 	key  string
+
+	src []byte
 }
 
 // Encode encode
 func (i impression) Encode() ([]byte, error) {
-	return json.Marshal(i.data)
+	if i.src == nil {
+		i.src, _ = json.Marshal(i.data)
+	}
+
+	return i.src, nil
 
 }
 
 // Length return length
 func (i impression) Length() int {
-	res, _ := i.Encode()
-	return len(res)
+	x, _ := i.Encode()
+	return len(x)
 }
 
 // Topic return topic
@@ -35,7 +41,7 @@ func (i impression) Key() string {
 
 // Report report
 func (i impression) Report() func(error) {
-	panic("implement me")
+	return func(error) {}
 }
 
 // ImpressionJob return a broker job

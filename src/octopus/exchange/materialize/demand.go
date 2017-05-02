@@ -10,23 +10,29 @@ type demand struct {
 	imp exchange.Impression
 	dmn exchange.Demand
 	ads []exchange.Advertise
+
+	src []byte
 }
 
 // Encode encode
 func (d demand) Encode() ([]byte, error) {
-	themap := []interface{}{}
-	advertizes := []map[string]interface{}{}
-	for i := range d.ads {
-		advertizes = append(advertizes, advertiseToMap(d.ads[i]))
+	if d.src == nil {
+		themap := []interface{}{}
+		advertizes := []map[string]interface{}{}
+		for i := range d.ads {
+			advertizes = append(advertizes, advertiseToMap(d.ads[i]))
+		}
+		themap = append(themap, demandToMap(d.dmn), impressionToMap(d.imp, d.ads...), advertizes)
+		d.src, _ = json.Marshal(themap)
 	}
-	themap = append(themap, demandToMap(d.dmn), impressionToMap(d.imp), advertizes)
-	return json.Marshal(themap)
+
+	return d.src, nil
 }
 
 // Length return length
 func (d demand) Length() int {
-	res, _ := d.Encode()
-	return len(res)
+	x, _ := d.Encode()
+	return len(x)
 }
 
 // Topic return topic
@@ -41,12 +47,12 @@ func (d demand) Key() string {
 
 // Report report
 func (d demand) Report() func(error) {
-	panic("implement me")
+	return func(error) {}
 }
 
 // DemandJob returns a job for demand
 func DemandJob(imp exchange.Impression, dmn exchange.Demand, ads []exchange.Advertise) broker.Job {
-	return demand{
+	return &demand{
 		imp: imp,
 		dmn: dmn,
 		ads: ads,

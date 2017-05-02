@@ -11,23 +11,29 @@ type show struct {
 	data map[string]interface{}
 	time time.Duration
 	key  string
+
+	src []byte
 }
 
 // Encode encode
 func (s *show) Encode() ([]byte, error) {
-	s.data["time"] = s.time
-	return json.Marshal(s.data)
+	if s.src == nil {
+		s.data["time"] = s.time
+		s.src, _ = json.Marshal(s.data)
+	}
+
+	return s.src, nil
 }
 
 // Length return length
 func (s *show) Length() int {
-	res, _ := s.Encode()
-	return len(res)
+	x, _ := s.Encode()
+	return len(x)
 }
 
 // Topic return topic
 func (*show) Topic() string {
-	panic("show")
+	return "show"
 }
 
 // Key return key
@@ -37,7 +43,7 @@ func (s *show) Key() string {
 
 // Report report
 func (*show) Report() func(error) {
-	panic("implement me")
+	return func(error) {}
 }
 
 // ShowJob return a broker job

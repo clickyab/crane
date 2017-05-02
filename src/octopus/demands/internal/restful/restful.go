@@ -78,7 +78,7 @@ func (d *demand) Provide(ctx context.Context, imp exchange.Impression, ch chan m
 		return
 	}
 
-	ads := map[string]*restAd{}
+	ads := []*restAd{}
 	dec := json.NewDecoder(resp.Body)
 	defer resp.Body.Close()
 	if err := dec.Decode(&ads); err != nil {
@@ -87,14 +87,11 @@ func (d *demand) Provide(ctx context.Context, imp exchange.Impression, ch chan m
 	}
 
 	adsInter := make(map[string]exchange.Advertise, len(ads))
-	for _, sl := range imp.Slots() {
-		tmp := ads[sl.TrackID()]
-		if tmp == nil {
-			continue
-		}
+	for a := range ads {
 		// set demand for win resp
+		tmp := ads[a]
 		tmp.demand = d
-		adsInter[sl.TrackID()] = tmp
+		adsInter[tmp.SlotTrackID()] = tmp
 	}
 
 	ch <- adsInter
