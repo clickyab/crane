@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+
+	"github.com/Sirupsen/logrus"
 )
 
 func demandDemo(w http.ResponseWriter, r *http.Request) {
@@ -30,6 +32,8 @@ func demandDemo(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 	}
 
+	logrus.WithField("request", temp)
+
 	var res response
 	for i := range temp.Slots {
 		a := singleResponse{
@@ -43,6 +47,7 @@ func demandDemo(w http.ResponseWriter, r *http.Request) {
 		res = append(res, a)
 	}
 
+	logrus.WithField("response", res)
 	b, _ := json.Marshal(res)
 	fmt.Println(string(b))
 
