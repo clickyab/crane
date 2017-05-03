@@ -14,7 +14,7 @@ import (
 )
 
 var (
-	listenAddress = config.RegisterString("exchange.ip2location.listen", ":8190")
+	listenAddress = config.RegisterString("exchange.ip2location.listen", ":8190", "exchange ip2location port")
 )
 
 func main() {

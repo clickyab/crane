@@ -26,10 +26,10 @@ var (
 	engine *echo.Echo
 	all    []Routes
 
-	cors = config.RegisterBoolean("services.httplib.controller.cors", true)
+	cors = config.RegisterBoolean("services.httplib.controller.cors", true, "http controller cors")
 	// this is development mode
-	devel      = config.RegisterBoolean("core.devel_mode", true)
-	mountPoint = config.RegisterString("services.httplib.controller.mount_point", "/api")
+	devel      = config.RegisterBoolean("core.devel_mode", true, "core developer mode")
+	mountPoint = config.RegisterString("services.httplib.controller.mount_point", "/api", "http controller mount point")
 	listen     *string
 )
 
@@ -86,5 +86,5 @@ func init() {
 	if port == "" {
 		port = "8000"
 	}
-	listen = config.RegisterString("services.httplib.controller.listen", fmt.Sprintf(":%s", port))
+	listen = config.RegisterString("services.httplib.controller.listen", fmt.Sprintf(":%s", port), "http controller port")
 }

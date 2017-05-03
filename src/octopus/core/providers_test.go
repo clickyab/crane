@@ -64,14 +64,12 @@ func TestProviders(t *testing.T) {
 				d1.EXPECT().Handicap().Return(int64(100)).AnyTimes()
 				d1.EXPECT().CallRate().Return(100).AnyTimes()
 				d1.EXPECT().Provide(gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
-					Do(func(ctx context.Context, imp exchange.Impression, ch chan map[string]exchange.Advertise) {
-						ads := make(map[string]exchange.Advertise)
+					Do(func(ctx context.Context, imp exchange.Impression, ch chan exchange.Advertise) {
 						for _, s := range imp.Slots() {
 							tmp := mock_entity.NewMockAdvertise(ctrl)
-
 							tmp.EXPECT().MaxCPM().Return(int64(200))
-							ads[s.TrackID()] = tmp
-							ch <- ads
+							tmp.EXPECT().SlotTrackID().Return(s.TrackID())
+							ch <- tmp
 						}
 						close(ch)
 					})
@@ -93,14 +91,13 @@ func TestProviders(t *testing.T) {
 				d1.EXPECT().Handicap().Return(int64(100)).AnyTimes()
 				d1.EXPECT().CallRate().Return(100).AnyTimes()
 				d1.EXPECT().Provide(gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
-					Do(func(ctx context.Context, imp exchange.Impression, ch chan map[string]exchange.Advertise) {
-						ads := make(map[string]exchange.Advertise)
+					Do(func(ctx context.Context, imp exchange.Impression, ch chan exchange.Advertise) {
 						time.Sleep(time.Millisecond * 150)
 						for _, s := range imp.Slots() {
 							tmp := mock_entity.NewMockAdvertise(ctrl)
 							tmp.EXPECT().MaxCPM().Return(int64(200))
-							ads[s.TrackID()] = tmp
-							ch <- ads
+							tmp.EXPECT().SlotTrackID().Return(s.TrackID())
+							ch <- tmp
 						}
 						close(ch)
 					})
@@ -120,15 +117,13 @@ func TestProviders(t *testing.T) {
 				d1.EXPECT().Handicap().Return(int64(100)).AnyTimes()
 				d1.EXPECT().CallRate().Return(100).AnyTimes()
 				d1.EXPECT().Provide(gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes().
-					Do(func(ctx context.Context, imp exchange.Impression, ch chan map[string]exchange.Advertise) {
-						ads := make(map[string]exchange.Advertise)
+					Do(func(ctx context.Context, imp exchange.Impression, ch chan exchange.Advertise) {
 						time.Sleep(time.Millisecond * 100)
 						for _, s := range imp.Slots() {
 							tmp := mock_entity.NewMockAdvertise(ctrl)
-
 							tmp.EXPECT().MaxCPM().Return(int64(200))
-							ads[s.TrackID()] = tmp
-							ch <- ads
+							tmp.EXPECT().SlotTrackID().Return(s.TrackID())
+							ch <- tmp
 						}
 						close(ch)
 					})
@@ -139,14 +134,13 @@ func TestProviders(t *testing.T) {
 				d2.EXPECT().Handicap().Return(int64(100)).AnyTimes()
 				d2.EXPECT().CallRate().Return(100).AnyTimes()
 				d2.EXPECT().Provide(gomock.Any(), gomock.Any(), gomock.Any()).
-					Do(func(ctx context.Context, imp exchange.Impression, ch chan map[string]exchange.Advertise) {
-						ads := make(map[string]exchange.Advertise)
+					Do(func(ctx context.Context, imp exchange.Impression, ch chan exchange.Advertise) {
 						time.Sleep(time.Millisecond * 10)
 						for _, s := range imp.Slots() {
 							tmp := mock_entity.NewMockAdvertise(ctrl)
 							tmp.EXPECT().MaxCPM().Return(int64(200))
-							ads[s.TrackID()] = tmp
-							ch <- ads
+							tmp.EXPECT().SlotTrackID().Return(s.TrackID())
+							ch <- tmp
 						}
 						close(ch)
 					})

@@ -18,4 +18,4 @@ test-gui: mockentity codegen convey
 	cd $(ROOT)/src && goconvey -host=0.0.0.0
 
 test: mockentity codegen convey
-	cd $(ROOT) && $(GB) test -v
+	cd $(ROOT) && $(GB) test -v -race

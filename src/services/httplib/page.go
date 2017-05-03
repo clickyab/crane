@@ -7,9 +7,9 @@ import (
 )
 
 var (
-	maxPerPage = config.RegisterInt("services.httplib.max_per_page", 100)
-	minPerPage = config.RegisterInt("services.httplib.min_per_page", 1)
-	perPage    = config.RegisterInt("services.httplib.per_page", 10)
+	maxPerPage = config.RegisterInt("services.httplib.max_per_page", 100, "http maximum item per page")
+	minPerPage = config.RegisterInt("services.httplib.min_per_page", 1, "http minimum item per page")
+	perPage    = config.RegisterInt("services.httplib.per_page", 10, "http default item per page")
 )
 
 // GetPageAndCount return the p and c variable from the request, if not available

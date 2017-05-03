@@ -64,7 +64,8 @@ func (l *layer) Add(description string, key string, value interface{}) {
 		l.defaltLayer = onion.NewDefaultLayer()
 	}
 	assert.Nil(l.defaltLayer.SetDefault(key, value))
-	configs[key] = description
+	setDescription(key, description)
+
 }
 
 // GetDescriptions return config key, description

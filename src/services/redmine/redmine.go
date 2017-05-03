@@ -13,11 +13,11 @@ import (
 )
 
 var (
-	url            = config.RegisterString("services.redmine.url", "")
-	apiKey         = config.RegisterString("services.redmine.apikey", "")
-	newIssueTypeID = config.RegisterInt("services.redmine.new_issue_type_id", 0)
-	projectID      = config.RegisterInt("services.redmine.project_id", 0)
-	active         = config.RegisterBoolean("services.redmine.active", false)
+	url            = config.RegisterString("services.redmine.url", "", "redmine endpoint url")
+	apiKey         = config.RegisterString("services.redmine.apikey", "", "redmine apikey")
+	newIssueTypeID = config.RegisterInt("services.redmine.new_issue_type_id", 0, "redmine new issue type id")
+	projectID      = config.RegisterInt("services.redmine.project_id", 0, "redmine project id")
+	active         = config.RegisterBoolean("services.redmine.active", false, "remine service status")
 )
 
 type reporter struct {

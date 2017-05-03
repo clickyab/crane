@@ -11,18 +11,22 @@ import (
 
 	"services/initializer"
 
+	"sync"
+
 	"github.com/Shopify/sarama"
 	"github.com/Sirupsen/logrus"
 )
 
 var (
 	// comma separated values
-	brokerList     = config.RegisterString("services.cluster.kafka.broker_list", "127.0.0.1")
-	flushFrequency = config.RegisterDuration("services.cluster.kafka.flush_frequency", 500*time.Millisecond)
+	brokerList     = config.RegisterString("services.cluster.kafka.broker_list", "127.0.0.1", "kafka cluster hosts")
+	flushFrequency = config.RegisterDuration("services.cluster.kafka.flush_frequency", 500*time.Millisecond, "kafka flush frequency")
 )
 
 type cluster struct {
 	async sarama.AsyncProducer
+
+	lock sync.RWMutex
 }
 
 func (b *cluster) Publish(j base.Job) {
@@ -34,11 +38,25 @@ func (b *cluster) Publish(j base.Job) {
 	}
 }
 
+func (b *cluster) setASync(sa sarama.AsyncProducer) {
+	b.lock.Lock()
+	defer b.lock.Unlock()
+
+	b.async = sa
+}
+
+func (b *cluster) getASync() sarama.AsyncProducer {
+	b.lock.RLock()
+	defer b.lock.RUnlock()
+
+	return b.async
+}
+
 func (b *cluster) errorLoop(ctx context.Context) {
 	d := ctx.Done()
 	for {
 		select {
-		case err, ok := <-b.async.Errors():
+		case err, ok := <-b.getASync().Errors():
 			if !ok {
 				return
 			}
@@ -59,7 +77,7 @@ func (b *cluster) successLoop(ctx context.Context) {
 	d := ctx.Done()
 	for {
 		select {
-		case msg, ok := <-b.async.Successes():
+		case msg, ok := <-b.getASync().Successes():
 			if !ok {
 				return
 			}
@@ -77,12 +95,12 @@ func (b *cluster) setKafka(ctx context.Context, sa sarama.AsyncProducer) {
 	done := ctx.Done()
 	assert.NotNil(done, "[BUG] context is not cancelable")
 
-	b.async = sa
+	b.setASync(sa)
 	go b.errorLoop(ctx)
 	go b.successLoop(ctx)
 	safe.GoRoutine(func() {
 		<-ctx.Done()
-		assert.Nil(b.async.Close())
+		assert.Nil(b.getASync().Close())
 	})
 
 }

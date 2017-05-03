@@ -43,7 +43,7 @@ func (p *providerData) watch(ctx context.Context, imp exchange.Impression) map[s
 	// the cancel is not required here. the parent is the hammer :)
 	rCtx, _ := context.WithTimeout(ctx, p.timeout)
 
-	chn := make(chan map[string]exchange.Advertise, len(imp.Slots()))
+	chn := make(chan exchange.Advertise, len(imp.Slots()))
 	go p.provider.Provide(rCtx, imp, chn)
 	for {
 		select {
@@ -51,8 +51,8 @@ func (p *providerData) watch(ctx context.Context, imp exchange.Impression) map[s
 			// request is canceled
 			return res
 		case data, open := <-chn:
-			for i := range data {
-				res[i] = data[i]
+			if data != nil {
+				res[data.SlotTrackID()] = data
 			}
 			if !open {
 				return res

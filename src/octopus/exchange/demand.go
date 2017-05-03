@@ -14,7 +14,7 @@ type Demand interface {
 	// a very important note about providers :
 	// they must return as soon as possible, waiting for result must be done
 	// in separate co-routine. just create a channel, run a co-routine, and return.
-	Provide(context.Context, Impression, chan map[string]Advertise)
+	Provide(context.Context, Impression, chan Advertise)
 	// Win return the win response to the demand. it happen only if the request is the winner
 	// the 2nd arg is the id of ad, the 3rd is the winner cpm bid
 	Win(context.Context, string, int64)

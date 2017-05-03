@@ -51,7 +51,7 @@ func (d *demand) Name() string {
 	return d.key
 }
 
-func (d *demand) Provide(ctx context.Context, imp exchange.Impression, ch chan map[string]exchange.Advertise) {
+func (d *demand) Provide(ctx context.Context, imp exchange.Impression, ch chan exchange.Advertise) {
 	defer close(ch)
 	if !d.hasLimits() {
 		return
@@ -86,15 +86,9 @@ func (d *demand) Provide(ctx context.Context, imp exchange.Impression, ch chan m
 		return
 	}
 
-	adsInter := make(map[string]exchange.Advertise, len(ads))
-	for a := range ads {
-		// set demand for win resp
-		tmp := ads[a]
-		tmp.demand = d
-		adsInter[tmp.SlotTrackID()] = tmp
+	for i := range ads {
+		ch <- ads[i]
 	}
-
-	ch <- adsInter
 }
 
 func (d *demand) Win(ctx context.Context, id string, cpm int64) {

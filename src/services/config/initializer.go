@@ -26,7 +26,7 @@ type Initializer interface {
 }
 
 //Initialize try to initialize config
-func Initialize(organization, appName, prefix string, layers ...DescriptiveLayer) {
+func Initialize(organization, appName, prefix string, layers ...onion.Layer) {
 	usr, err := user.Current()
 	if err != nil {
 		logrus.Warn(err)
@@ -41,8 +41,8 @@ func Initialize(organization, appName, prefix string, layers ...DescriptiveLayer
 	for i := range all {
 		nL := all[i].Initialize()
 		_ = o.AddLayer(nL)
-
 	}
+
 	// now add the layer provided by app
 	for i := range layers {
 		_ = o.AddLayer(layers[i])
@@ -94,6 +94,10 @@ func SetConfigParameter() {
 	if l, err := time.LoadLocation(cfg.TimeZone); err == nil {
 		time.Local = l
 	}
+}
+
+func setDescription(key, desc string) {
+	configs[key] = desc
 }
 
 // Register a config module

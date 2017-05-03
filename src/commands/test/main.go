@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	port = config.RegisterString("test.config", ":3412")
+	port = config.RegisterString("test.config", ":9898", "test config port")
 )
 
 func main() {
@@ -19,7 +19,6 @@ func main() {
 	http.HandleFunc("/", demandDemo)
 	fmt.Println(*port)
 	err := http.ListenAndServe(*port, nil)
-	fmt.Println("asd", err)
 	assert.Nil(err)
 	commands.WaitExitSignal()
 }

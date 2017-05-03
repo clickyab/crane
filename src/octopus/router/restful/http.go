@@ -14,7 +14,7 @@ import (
 )
 
 var (
-	listenAddress = config.RegisterString("exchange.router.listen", ":80")
+	listenAddress = config.RegisterString("exchange.router.listen", ":80", "exchnage router listen address")
 )
 
 type initRouter struct {

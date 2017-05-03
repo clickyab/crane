@@ -106,7 +106,7 @@ type Demand struct {
 }
 
 func (d *Demand) Name() string { panic("Demand") }
-func (d *Demand) Provide(context.Context, exchange.Impression, chan map[string]exchange.Advertise) {
+func (d *Demand) Provide(context.Context, exchange.Impression, chan exchange.Advertise) {
 	panic("Demand")
 }
 func (d *Demand) Win(context.Context, string, int64)                         { panic("Demand") }

@@ -13,11 +13,11 @@ import (
 )
 
 var (
-	userName   = config.RegisterString("services.slack.username", "")
-	postIcon   = config.RegisterString("services.slack.icon", ":shit:")
-	channel    = config.RegisterString("services.slack.channel", "")
-	webHookURL = config.RegisterString("services.slack.webhook_url", "")
-	active     = config.RegisterBoolean("services.slack.active", false)
+	userName   = config.RegisterString("services.slack.username", "", "slack username")
+	postIcon   = config.RegisterString("services.slack.icon", ":shit:", "slack icon")
+	channel    = config.RegisterString("services.slack.channel", "", "slack channel")
+	webHookURL = config.RegisterString("services.slack.webhook_url", "", "slack webhook url")
+	active     = config.RegisterBoolean("services.slack.active", false, "slack service status")
 )
 
 type reporter struct {

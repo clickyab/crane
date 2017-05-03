@@ -37,16 +37,16 @@ func (cl *cfgLoader) Initialize() config.DescriptiveLayer {
 	}
 	l := config.NewDescriptiveLayer()
 
-	l.Add("DESCRIPTION", "service.redis.network", "tcp")
-	l.Add("DESCRIPTION", "service.redis.address", fmt.Sprintf("%s:%s", host, port))
-	l.Add("DESCRIPTION", "service.redis.password", pass)
-	l.Add("DESCRIPTION", "service.redis.poolsize", 200)
-	l.Add("DESCRIPTION", "service.redis.db", 1)
+	l.Add("DESCRIPTION", "services.redis.network", "tcp")
+	l.Add("DESCRIPTION", "services.redis.address", fmt.Sprintf("%s:%s", host, port))
+	l.Add("DESCRIPTION", "services.redis.password", pass)
+	l.Add("DESCRIPTION", "services.redis.poolsize", 200)
+	l.Add("DESCRIPTION", "services.redis.db", 1)
 	return l
 }
 
 func (cl *cfgLoader) Loaded() {
-	config.GetStruct("service.redis", cl)
+	config.GetStruct("services.redis", cl)
 }
 
 func init() {

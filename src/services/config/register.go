@@ -19,10 +19,12 @@ var (
 )
 
 // RegisterString add an string to config
-func RegisterString(key string, def string) *string {
+func RegisterString(key string, def string, description string) *string {
 	lock.Lock()
 	defer lock.Unlock()
 	var ref string
+
+	setDescription(key, description)
 	allVariables = append(allVariables, variable{
 		ref: &ref,
 		def: def,
@@ -33,10 +35,12 @@ func RegisterString(key string, def string) *string {
 }
 
 // RegisterInt add an int to config
-func RegisterInt(key string, def int) *int {
+func RegisterInt(key string, def int, description string) *int {
 	lock.Lock()
 	defer lock.Unlock()
 	var ref int
+
+	setDescription(key, description)
 	allVariables = append(allVariables, variable{
 		ref: &ref,
 		def: def,
@@ -47,10 +51,12 @@ func RegisterInt(key string, def int) *int {
 }
 
 // RegisterInt64 add an int to config
-func RegisterInt64(key string, def int64) *int64 {
+func RegisterInt64(key string, def int64, description string) *int64 {
 	lock.Lock()
 	defer lock.Unlock()
 	var ref int64
+	setDescription(key, description)
+
 	allVariables = append(allVariables, variable{
 		ref: &ref,
 		def: def,
@@ -61,10 +67,12 @@ func RegisterInt64(key string, def int64) *int64 {
 }
 
 // RegisterFloat64 add an int to config
-func RegisterFloat64(key string, def float64) *float64 {
+func RegisterFloat64(key string, def float64, description string) *float64 {
 	lock.Lock()
 	defer lock.Unlock()
 	var ref float64
+	setDescription(key, description)
+
 	allVariables = append(allVariables, variable{
 		ref: &ref,
 		def: def,
@@ -75,10 +83,12 @@ func RegisterFloat64(key string, def float64) *float64 {
 }
 
 // RegisterBoolean add a boolean to config
-func RegisterBoolean(key string, def bool) *bool {
+func RegisterBoolean(key string, def bool, description string) *bool {
 	lock.Lock()
 	defer lock.Unlock()
 	var ref bool
+	setDescription(key, description)
+
 	allVariables = append(allVariables, variable{
 		ref: &ref,
 		def: def,
@@ -89,10 +99,12 @@ func RegisterBoolean(key string, def bool) *bool {
 }
 
 // RegisterDuration add an duration to config
-func RegisterDuration(key string, def time.Duration) *time.Duration {
+func RegisterDuration(key string, def time.Duration, description string) *time.Duration {
 	lock.Lock()
 	defer lock.Unlock()
 	var ref time.Duration
+	setDescription(key, description)
+
 	allVariables = append(allVariables, variable{
 		ref: &ref,
 		def: def,

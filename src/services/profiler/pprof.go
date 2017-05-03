@@ -15,8 +15,8 @@ import (
 
 var (
 	appDir, _ = expand.Pwd()
-	mode      = config.RegisterString("services.profiler.mode", "disable")
-	root      = config.RegisterString("services.profiler.root", appDir)
+	mode      = config.RegisterString("services.profiler.mode", "disable", "services profiler status")
+	root      = config.RegisterString("services.profiler.root", appDir, "services profiler root")
 )
 
 type initSystem struct {
