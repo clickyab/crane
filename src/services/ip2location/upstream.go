@@ -271,7 +271,7 @@ func readfloat(pos uint32) float32 {
 }
 
 // initialize the component with the database path
-func Open() error {
+func open() error {
 	maxIPv6Range.SetString("340282366920938463463374607431768211455", 10)
 
 	var err error
@@ -378,10 +378,6 @@ func Open() error {
 	return nil
 }
 
-// close database file handle
-func Close() {
-}
-
 // get api version
 func Api_version() string {
 	return api_version
@@ -413,7 +409,7 @@ func loadmessage(mesg string) IP2Locationrecord {
 }
 
 // get all fields
-func Get_all(ipaddress string) IP2Locationrecord {
+func GetAll(ipaddress string) IP2Locationrecord {
 	return query(ipaddress, all)
 }
 

@@ -20,10 +20,10 @@ var (
 func main() {
 	config.Initialize(commands.Organization, commands.AppName, commands.Prefix)
 	defer initializer.Initialize()()
-	ip2location.Open()
+
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		ip := strings.Trim(r.URL.String(), "/ ")
-		tmp := ip2location.Get_all(ip)
+		tmp := ip2location.GetAll(ip)
 		dec := json.NewEncoder(w)
 		assert.Nil(dec.Encode(tmp))
 	})
