@@ -47,7 +47,7 @@ func (i impression) Report() func(error) {
 // ImpressionJob return a broker job
 func ImpressionJob(imp exchange.Impression) broker.Job {
 	return impression{
-		data: impressionToMap(imp),
+		data: impressionToMap(imp, nil),
 		key:  imp.IP().String(),
 	}
 }

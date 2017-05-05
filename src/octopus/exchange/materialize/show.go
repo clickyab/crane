@@ -9,7 +9,7 @@ import (
 
 type show struct {
 	data map[string]interface{}
-	time time.Duration
+	time time.Time
 	key  string
 
 	src []byte
@@ -47,9 +47,10 @@ func (*show) Report() func(error) {
 }
 
 // ShowJob return a broker job
-func ShowJob(imp exchange.Impression, dmn exchange.Demand, ad exchange.Advertise, t time.Duration, slotID string) broker.Job {
+// TODO : its not possible to extract all of this data in show job, may be must make it easier
+func ShowJob(imp exchange.Impression, ad exchange.Advertise, t time.Time, slotID string) broker.Job {
 	return &show{
-		data: winnerToMap(imp, dmn, ad, slotID),
+		data: winnerToMap(imp, ad, slotID),
 		time: t,
 		key:  imp.IP().String(),
 	}

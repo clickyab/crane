@@ -15,6 +15,10 @@ import (
 
 	"services/httplib"
 
+	"octopus/exchange/materialize"
+	"services/broker"
+	"services/safe"
+
 	"github.com/fzerorubigd/xmux"
 )
 
@@ -31,6 +35,11 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
+	// OK push it to broker
+	safe.GoRoutine(func() {
+		jImp := materialize.ImpressionJob(imp)
+		broker.Publish(jImp)
+	}, r)
 	nCtx, cnl := context.WithCancel(ctx)
 	defer cnl()
 	ads := core.Call(nCtx, imp)

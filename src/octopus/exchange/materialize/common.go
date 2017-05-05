@@ -2,7 +2,7 @@ package materialize
 
 import "octopus/exchange"
 
-func impressionToMap(imp exchange.Impression, ads ...exchange.Advertise) map[string]interface{} {
+func impressionToMap(imp exchange.Impression, ads map[string]exchange.Advertise) map[string]interface{} {
 	return map[string]interface{}{
 		"track_id":    imp.TrackID(),
 		"ip":          imp.IP(),
@@ -10,7 +10,7 @@ func impressionToMap(imp exchange.Impression, ads ...exchange.Advertise) map[str
 		"source":      sourceToMap(imp.Source()),
 		"location":    locationToMap(imp.Location()),
 		"attributes":  imp.Attributes(),
-		"slots":       slotsToMap(imp.Slots(), ads...),
+		"slots":       slotsToMap(imp.Slots(), ads),
 		"category":    imp.Category(),
 		"platform":    imp.Platform(),
 		"under_floor": imp.UnderFloor(),
@@ -72,31 +72,29 @@ func locationToMap(loc exchange.Location) map[string]interface{} {
 	}
 }
 
-func slotsToMap(slots []exchange.Slot, ads ...exchange.Advertise) []map[string]interface{} {
+func slotsToMap(slots []exchange.Slot, ads map[string]exchange.Advertise) []map[string]interface{} {
 	resSlots := make([]map[string]interface{}, len(slots))
 	for i := range slots {
-		resSlots = append(resSlots, map[string]interface{}{
+		data := map[string]interface{}{
 			"height":   slots[i].Height(),
 			"track_id": slots[i].TrackID(),
 			"width":    slots[i].Width(),
-		},
-		)
-		for a := range ads {
-			if slots[i].TrackID() == ads[a].SlotTrackID() {
-				resSlots = append(resSlots, map[string]interface{}{
-					"ads": advertiseToMap(ads[a]),
-				},
-				)
+		}
+
+		if ads != nil {
+			if ad, ok := ads[slots[i].TrackID()]; ok {
+				data["ad"] = advertiseToMap(ad)
 			}
 		}
+		resSlots = append(resSlots, data)
 	}
 	return resSlots
 }
 
-func winnerToMap(imp exchange.Impression, dmn exchange.Demand, ad exchange.Advertise, slotID string) map[string]interface{} {
+func winnerToMap(imp exchange.Impression, ad exchange.Advertise, slotID string) map[string]interface{} {
 	return map[string]interface{}{
 		"track_id":    imp.TrackID(),
-		"demand_name": dmn.Name(),
+		"demand_name": ad.Demand().Name(),
 		"price":       ad.WinnerCPM(),
 		"slot_id":     slotID,
 	}

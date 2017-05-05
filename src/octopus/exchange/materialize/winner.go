@@ -44,9 +44,9 @@ func (w *winner) Report() func(error) {
 }
 
 // WinnerJob return a broker job
-func WinnerJob(imp exchange.Impression, dmn exchange.Demand, ad exchange.Advertise, slotID string) broker.Job {
+func WinnerJob(imp exchange.Impression, ad exchange.Advertise, slotID string) broker.Job {
 	return &winner{
-		data: winnerToMap(imp, dmn, ad, slotID),
+		data: winnerToMap(imp, ad, slotID),
 		key:  imp.IP().String(),
 	}
 }

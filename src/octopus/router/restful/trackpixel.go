@@ -10,6 +10,8 @@ import (
 
 	core2 "octopus/core"
 
+	"services/safe"
+
 	"github.com/fzerorubigd/xmux"
 )
 
@@ -20,7 +22,7 @@ var data []byte
 func trackPixel(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "image/png")
 	w.Write(data)
-	go func() {
+	safe.GoRoutine(func() {
 		demand := xmux.Param(ctx, "demand")
 		trackID := xmux.Param(ctx, "trackID")
 		if trackID == "" || demand == "" {
@@ -41,7 +43,10 @@ func trackPixel(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		d.Win(ctx, winnerID, winnerInt)
-	}()
+		//broker.Publish(materialize.ShowJob(
+		//
+		//))
+	})
 }
 
 func init() {

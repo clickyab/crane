@@ -11,6 +11,12 @@ import (
 
 	"errors"
 
+	"services/safe"
+
+	"octopus/exchange/materialize"
+
+	"services/broker"
+
 	"github.com/Sirupsen/logrus"
 )
 
@@ -33,13 +39,24 @@ func (p *providerData) Skip() bool {
 	return x%100 < int64(p.provider.CallRate())
 }
 
-func (p *providerData) watch(ctx context.Context, imp exchange.Impression) map[string]exchange.Advertise {
+func (p *providerData) watch(ctx context.Context, imp exchange.Impression) (res map[string]exchange.Advertise) {
+	//in := time.Now()
+	defer safe.GoRoutine(func() {
+		//out := time.Since(in)
+		jDem := materialize.DemandJob(
+			imp,
+			p.provider,
+			res,
+		)
+		broker.Publish(jDem)
+	})
+
 	logrus.Debugf("Watch in for %s", p.provider.Name())
 	defer logrus.Debugf("Watch out for %s", p.provider.Name())
 	done := ctx.Done()
 	assert.NotNil(done)
 
-	res := make(map[string]exchange.Advertise)
+	res = make(map[string]exchange.Advertise)
 	// the cancel is not required here. the parent is the hammer :)
 	rCtx, _ := context.WithTimeout(ctx, p.timeout)
 
