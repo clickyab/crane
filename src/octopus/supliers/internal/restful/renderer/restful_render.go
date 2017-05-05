@@ -50,8 +50,8 @@ func (rf restful) Render(in map[string]exchange.Advertise, w io.Writer) error {
 			win.RawQuery = q.Encode()
 			winURL = win.String()
 		}
-
-		d.Code = fmt.Sprintf("TODO , tracker code is %s, the actual route is %s", x.String(), winURL)
+		// TODO : add the track pixel too x.string()
+		d.Code = winURL
 		res[i] = d
 	}
 

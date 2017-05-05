@@ -76,10 +76,11 @@ func GetImpression(key string, r *http.Request) (exchange.Impression, error) {
 	if err != nil {
 		return nil, err
 	}
-
+	logrus.Warn("GetImpression ", sup)
 	// Make sure the profit margin is added to the request
 	switch sup.SType {
 	case "rest":
+		logrus.Warn("GetImpression ", "rest")
 		return restful.GetImpression(sup, r)
 	default:
 		logrus.Panicf("Not a supported type: %s", sup.SType)

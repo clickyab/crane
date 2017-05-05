@@ -7,6 +7,10 @@ import (
 	"services/config"
 	"services/initializer"
 
+	_ "services/eav/redis"
+	_ "services/statistic/redis"
+	_ "services/store/redis"
+
 	"github.com/Sirupsen/logrus"
 )
 
