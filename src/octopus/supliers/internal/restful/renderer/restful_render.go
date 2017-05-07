@@ -37,7 +37,7 @@ func (rf restful) Render(in map[string]exchange.Advertise, w io.Writer) error {
 			Height:  in[i].Height(),
 			Landing: in[i].Landing(),
 		}
-		var x url.URL = *rf.pixelPattern
+		x := *rf.pixelPattern
 		q := x.Query()
 		q.Set("id", i)
 		x.RawQuery = q.Encode()
