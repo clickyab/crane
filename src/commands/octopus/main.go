@@ -6,6 +6,7 @@ import (
 	_ "octopus/router/restful"
 	"services/config"
 	"services/initializer"
+	_ "services/statistic/redis"
 
 	_ "services/eav/redis"
 	_ "services/statistic/redis"

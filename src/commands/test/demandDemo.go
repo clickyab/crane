@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"services/random"
-
 	"github.com/Sirupsen/logrus"
 )
 
@@ -38,15 +36,13 @@ func demandDemo(w http.ResponseWriter, r *http.Request) {
 
 	var res response
 	for i := range temp.Slots {
-		f := <-random.ID
 		a := singleResponse{
-			ID:           f,
-			MaxCPM:       temp.Source.FloorCPM + 1,
-			Width:        temp.Slots[i].Width,
-			Height:       temp.Slots[i].Height,
-			URL:          fmt.Sprintf("http://a.clickyab.com/ads/?a=4471405272967&width=%d&height=%d&slot=2714989155&domainname=p30download.com&eventpage=715467088&loc=http://p30download.com/agahi/plan/e9i.php&ref=http://www.p30download.com/&adcount=1", temp.Slots[i].Width, temp.Slots[i].Height),
-			Landing:      "clickyab.com",
-			RSlotTrackID: temp.Slots[i].TrackID,
+			ID:      "1",
+			MaxCPM:  temp.Source.FloorCPM + 1,
+			Width:   temp.Slots[i].Width,
+			Height:  temp.Slots[i].Height,
+			URL:     fmt.Sprintf("http://a.clickyab.com/ads/?a=4471405272967&width=%d&height=%d&slot=71634138754&domainname=p30download.com&eventpage=416310534&loc=http://p30download.com/agahi/plan/a1i.php&ref=http://p30download.com/&adcount=1", temp.Slots[i].Width, temp.Slots[i].Height),
+			Landing: "clickyab.com",
 		}
 		res = append(res, a)
 	}
@@ -106,13 +102,12 @@ type payload struct {
 }
 
 type singleResponse struct {
-	ID           string `json:"id"`
-	MaxCPM       int    `json:"max_cpm"`
-	Width        int    `json:"width"`
-	Height       int    `json:"height"`
-	URL          string `json:"url"`
-	Landing      string `json:"landing"`
-	RSlotTrackID string `json:"slot_track_id"`
+	ID      string `json:"id"`
+	MaxCPM  int    `json:"max_cpm"`
+	Width   int    `json:"width"`
+	Height  int    `json:"height"`
+	URL     string `json:"url"`
+	Landing string `json:"landing"`
 }
 
 type response []singleResponse

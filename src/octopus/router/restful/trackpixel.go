@@ -26,6 +26,7 @@ func trackPixel(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "image/png")
 	w.Write(data)
 	safe.GoRoutine(func() {
+		// TODO demand name must be solid
 		demand := xmux.Param(ctx, "demand")
 		trackID := xmux.Param(ctx, "trackID")
 		if trackID == "" || demand == "" {

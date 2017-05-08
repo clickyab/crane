@@ -1,9 +1,14 @@
 package restful
 
 type slotRest struct {
-	W   int    `json:"width"`
-	H   int    `json:"height"`
-	TID string `json:"track_id"`
+	W           int    `json:"width"`
+	H           int    `json:"height"`
+	TID         string `json:"track_id"`
+	FallbackURL string `json:"fallback_url"`
+}
+
+func (sr slotRest) Fallback() string {
+	return sr.FallbackURL
 }
 
 func (sr slotRest) Width() int {

@@ -9,12 +9,13 @@ import (
 )
 
 type dumbAd struct {
-	ID      string `json:"id"`
-	Winner  int64  `json:"winner"`
-	Width   int    `json:"width"`
-	Height  int    `json:"height"`
-	Code    string `json:"code"`
-	Landing string `json:"land"`
+	TrackID  string `json:"track_id"`
+	Winner   int64  `json:"winner"`
+	Width    int    `json:"width"`
+	Height   int    `json:"height"`
+	Code     string `json:"code"`
+	IsFilled bool   `json:"is_filled"`
+	Landing  string `json:"land"`
 }
 
 type restful struct {
@@ -22,16 +23,27 @@ type restful struct {
 	sup          exchange.Supplier
 }
 
-func (rf restful) Render(in map[string]exchange.Advertise, w io.Writer) error {
-	res := make(map[string]*dumbAd, len(in))
+func (rf restful) Render(imp exchange.Impression, in map[string]exchange.Advertise, w io.Writer) error {
+	res := make([]*dumbAd, len(in))
 	for i := range in {
+		var fallback string
+		slots := imp.Slots()
+		for j := range slots {
+			if slots[j].TrackID() == i {
+				fallback = slots[j].Fallback()
+			}
+		}
 		if in[i] == nil {
-			res[i] = nil
-			continue
+
+			res = append(res, &dumbAd{
+				IsFilled: false,
+				Code:     fallback,
+				TrackID:  i,
+			})
 		}
 
 		d := &dumbAd{
-			ID:      in[i].ID(),
+			TrackID: i,
 			Winner:  in[i].WinnerCPM() * int64(100-rf.sup.Share()) / 100,
 			Width:   in[i].Width(),
 			Height:  in[i].Height(),

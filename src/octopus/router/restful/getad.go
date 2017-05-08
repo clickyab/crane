@@ -43,22 +43,6 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	nCtx, cnl := context.WithCancel(ctx)
 	defer cnl()
 	ads := core.Call(nCtx, imp)
-	var has bool
-	for i := range ads {
-		if len(ads[i]) > 0 {
-			has = true
-			break
-		}
-	}
-	if !has {
-		w.WriteHeader(http.StatusNoContent)
-		dec.Encode(struct {
-			Error string
-		}{
-			Error: "no data",
-		})
-		return
-	}
 	ads = rtb.Moderate(imp.Source(), ads)
 	res := rtb.SelectCPM(imp, ads)
 	// save winner in store
@@ -79,7 +63,7 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		).SetSubKey("TIME", fmt.Sprint(imp.Time().Unix()))
 		assert.Nil(store.Save(24 * time.Hour))
 	}
-	err = imp.Source().Supplier().Renderer().Render(res, w)
+	err = imp.Source().Supplier().Renderer().Render(imp, res, w)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		dec.Encode(struct {
