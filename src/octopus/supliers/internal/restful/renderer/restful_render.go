@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/url"
 	"octopus/exchange"
+	"services/config"
 )
 
 type dumbAd struct {
@@ -43,11 +44,12 @@ func (rf restful) Render(imp exchange.Impression, in map[string]exchange.Adverti
 		}
 
 		d := &dumbAd{
-			TrackID: i,
-			Winner:  in[i].WinnerCPM() * int64(100-rf.sup.Share()) / 100,
-			Width:   in[i].Width(),
-			Height:  in[i].Height(),
-			Landing: in[i].Landing(),
+			TrackID:  i,
+			Winner:   in[i].WinnerCPM() * int64(100-rf.sup.Share()) / 100,
+			Width:    in[i].Width(),
+			Height:   in[i].Height(),
+			Landing:  in[i].Landing(),
+			IsFilled: true,
 		}
 		x := *rf.pixelPattern
 		q := x.Query()
@@ -62,9 +64,24 @@ func (rf restful) Render(imp exchange.Impression, in map[string]exchange.Adverti
 			win.RawQuery = q.Encode()
 			winURL = win.String()
 		}
-		// TODO : add the track pixel too x.string()
-		d.Code = winURL
-		res[i] = d
+
+		host := config.GetStringDefault("exchange.host.name", "localhost:3412")
+		trackURL := fmt.Sprintf(`%s/pixel/%s/%s`, host, in[i].Demand().Name(), in[i].TrackID())
+
+		d.Code = fmt.Sprintf(`<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<iframe>
+    <img src="%s" alt="">
+    <iframe src="%s"></iframe>
+</iframe>
+</body>
+</html>`, trackURL, winURL)
+		res = append(res, d)
 	}
 
 	enc := json.NewEncoder(w)

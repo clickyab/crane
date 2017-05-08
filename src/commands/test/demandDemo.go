@@ -37,7 +37,7 @@ func demandDemo(w http.ResponseWriter, r *http.Request) {
 	var res response
 	for i := range temp.Slots {
 		a := singleResponse{
-			ID:      "1",
+			TrackID: temp.Slots[i].TrackID,
 			MaxCPM:  temp.Source.FloorCPM + 1,
 			Width:   temp.Slots[i].Width,
 			Height:  temp.Slots[i].Height,
@@ -102,7 +102,7 @@ type payload struct {
 }
 
 type singleResponse struct {
-	ID      string `json:"id"`
+	TrackID string `json:"track_id"`
 	MaxCPM  int    `json:"max_cpm"`
 	Width   int    `json:"width"`
 	Height  int    `json:"height"`
