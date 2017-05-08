@@ -12,6 +12,9 @@ import (
 
 	"services/safe"
 
+	"octopus/exchange/materialize"
+	"services/broker"
+
 	"github.com/fzerorubigd/xmux"
 )
 
@@ -32,7 +35,11 @@ func trackPixel(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		store := eav.NewEavStore(trackID).AllKeys()
 		winnerDemand := store["DEMAND"]
 		winnerID := store["ID"]
+		slotTrack := store["TRACK"]
+		AdID := store["ADID"]
 		winnerBID := store["BID"]
+		IP := store["IP"]
+		impTime := store["TIME"]
 		winnerInt, err := strconv.ParseInt(winnerBID, 10, 0)
 		if err != nil {
 			return
@@ -43,9 +50,9 @@ func trackPixel(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		d.Win(ctx, winnerID, winnerInt)
-		//broker.Publish(materialize.ShowJob(
-		//
-		//))
+		broker.Publish(materialize.ShowJob(
+			trackID, winnerDemand, slotTrack, AdID, IP, winnerInt, impTime,
+		))
 	})
 }
 

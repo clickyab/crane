@@ -2,14 +2,12 @@ package materialize
 
 import (
 	"encoding/json"
-	"octopus/exchange"
 	"services/broker"
-	"time"
 )
 
 type show struct {
 	data map[string]interface{}
-	time time.Time
+	time string
 	key  string
 
 	src []byte
@@ -47,11 +45,10 @@ func (*show) Report() func(error) {
 }
 
 // ShowJob return a broker job
-// TODO : its not possible to extract all of this data in show job, may be must make it easier
-func ShowJob(imp exchange.Impression, ad exchange.Advertise, t time.Time, slotID string) broker.Job {
+func ShowJob(trackID, demand, slotID, adID string, IP string, winner int64, t string) broker.Job {
 	return &show{
-		data: winnerToMap(imp, ad, slotID),
+		data: showToMap(trackID, demand, slotID, adID, winner),
 		time: t,
-		key:  imp.IP().String(),
+		key:  IP,
 	}
 }

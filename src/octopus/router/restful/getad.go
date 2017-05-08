@@ -64,7 +64,19 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	// save winner in store
 	for i := range res {
 		store := eav.NewEavStore(res[i].TrackID())
-		store.SetSubKey("IP", httplib.RealIP(r)).SetSubKey("ID", res[i].ID()).SetSubKey("DEMAND", res[i].Demand().Name()).SetSubKey("BID", fmt.Sprintf("%d", res[i].WinnerCPM()))
+		store.SetSubKey("IP",
+			httplib.RealIP(r),
+		).SetSubKey("SLOT",
+			res[i].ID(),
+		).SetSubKey("DEMAND",
+			res[i].Demand().Name(),
+		).SetSubKey("BID",
+			fmt.Sprintf("%d", res[i].WinnerCPM()),
+		).SetSubKey("TRACK",
+			res[i].TrackID(),
+		).SetSubKey("ADID",
+			res[i].ID(),
+		).SetSubKey("TIME", fmt.Sprint(imp.Time().Unix()))
 		assert.Nil(store.Save(24 * time.Hour))
 	}
 	err = imp.Source().Supplier().Renderer().Render(res, w)

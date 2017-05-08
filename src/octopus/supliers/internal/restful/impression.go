@@ -6,6 +6,7 @@ import (
 	"services/gmaps"
 	"services/ip2location/client"
 	"services/random"
+	"time"
 )
 
 type impressionRest struct {
@@ -18,6 +19,7 @@ type impressionRest struct {
 	Categories    []exchange.Category         `json:"categories"`
 	ImpPlatform   exchange.ImpressionPlatform `json:"platform"`
 	UnderFloorCPM bool                        `json:"under_floor"`
+	STime         time.Time                   `json:"time"`
 
 	Attr map[string]interface{} `json:"attributes"`
 
@@ -117,6 +119,10 @@ func (ir *impressionRest) extractData() {
 
 }
 
+func (ir *impressionRest) Time() time.Time {
+	return ir.STime
+}
+
 func newImpressionFromAppRequest(sup exchange.Supplier, r *requestBody) (*impressionRest, error) {
 	resp := impressionRest{
 		SIP:           r.IP,
@@ -147,6 +153,7 @@ func newImpressionFromAppRequest(sup exchange.Supplier, r *requestBody) (*impres
 		Lon:   lon,
 	}
 	resp.Pub.sup = sup
+	resp.STime = time.Now()
 	resp.extractData()
 	return &resp, nil
 }
@@ -168,6 +175,7 @@ func newImpressionFromVastRequest(sup exchange.Supplier, r *requestBody) (*impre
 		Pub: r.Publisher,
 	}
 	resp.Pub.sup = sup
+	resp.STime = time.Now()
 	resp.extractData()
 	return &resp, nil
 }
@@ -189,6 +197,7 @@ func newImpressionFromWebRequest(sup exchange.Supplier, r *requestBody) (*impres
 		Pub: r.Publisher,
 	}
 	resp.Pub.sup = sup
+	resp.STime = time.Now()
 	resp.extractData()
 	return &resp, nil
 }

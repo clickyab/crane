@@ -1,6 +1,8 @@
 package materialize
 
-import "octopus/exchange"
+import (
+	"octopus/exchange"
+)
 
 func impressionToMap(imp exchange.Impression, ads map[string]exchange.Advertise) map[string]interface{} {
 	return map[string]interface{}{
@@ -97,5 +99,15 @@ func winnerToMap(imp exchange.Impression, ad exchange.Advertise, slotID string) 
 		"demand_name": ad.Demand().Name(),
 		"price":       ad.WinnerCPM(),
 		"slot_id":     slotID,
+	}
+}
+
+func showToMap(trackID, demand, slotID, adID string, winner int64) map[string]interface{} {
+	return map[string]interface{}{
+		"track_id":    trackID,
+		"demand_name": demand,
+		"price":       winner,
+		"slot_id":     slotID,
+		"ad_id":       adID,
 	}
 }

@@ -1,6 +1,9 @@
 package exchange
 
-import "net"
+import (
+	"net"
+	"time"
+)
 
 // ImpressionPlatform is the publisher type
 type ImpressionPlatform int
@@ -46,4 +49,6 @@ type Impression interface {
 	Platform() ImpressionPlatform
 	// Is this publisher accept under floor ads or not ?
 	UnderFloor() bool
+	// Time time of the impression
+	Time() time.Time
 }

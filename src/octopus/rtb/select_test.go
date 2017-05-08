@@ -11,6 +11,8 @@ import (
 
 	x "github.com/smartystreets/assertions"
 
+	"time"
+
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -88,6 +90,10 @@ func (a *Advertise) Landing() string         { panic("publisher") }
 type Impression struct {
 	publisher  exchange.Publisher
 	underFloor bool
+}
+
+func (a *Impression) Time() time.Time {
+	panic("time")
 }
 
 func (i *Impression) TrackID() string                       { panic("Impression") }
