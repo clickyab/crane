@@ -30,7 +30,7 @@ type cluster struct {
 }
 
 func (b *cluster) Publish(j base.Job) {
-	b.async.Input() <- &sarama.ProducerMessage{
+	b.getASync().Input() <- &sarama.ProducerMessage{
 		Topic:    j.Topic(),
 		Key:      sarama.StringEncoder(j.Key()),
 		Metadata: j.Report(),
@@ -100,7 +100,10 @@ func (b *cluster) setKafka(ctx context.Context, sa sarama.AsyncProducer) {
 	go b.successLoop(ctx)
 	safe.GoRoutine(func() {
 		<-ctx.Done()
-		assert.Nil(b.getASync().Close())
+		// this is when we need to lock the async getter
+		b.lock.Lock()
+		defer b.lock.Unlock()
+		assert.Nil(b.async.Close())
 	})
 
 }
