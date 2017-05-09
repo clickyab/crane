@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 	"runtime"
 	"services/assert"
-	"time"
 
 	"github.com/Sirupsen/logrus"
 	onion "gopkg.in/fzerorubigd/onion.v2"
@@ -91,9 +90,9 @@ func SetConfigParameter() {
 	runtime.GOMAXPROCS(numcpu)
 
 	// Set global timezone
-	if l, err := time.LoadLocation(cfg.TimeZone); err == nil {
-		time.Local = l
-	}
+	//if l, err := time.LoadLocation(cfg.TimeZone); err == nil {
+	//	time.Local = l
+	//}
 }
 
 func setDescription(key, desc string) {

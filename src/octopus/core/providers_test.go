@@ -11,8 +11,14 @@ import (
 	"testing"
 	"time"
 
+	"services/config"
+
+	"services/broker"
+	"services/broker/mock"
+
 	"github.com/golang/mock/gomock"
 	. "github.com/smartystreets/goconvey/convey"
+	"gopkg.in/fzerorubigd/onion.v2"
 )
 
 func newPub(c *gomock.Controller) exchange.Publisher {
@@ -43,7 +49,11 @@ func newImp(c *gomock.Controller, count int) exchange.Impression {
 }
 
 func TestProviders(t *testing.T) {
+	def := onion.NewDefaultLayer()
+	def.SetDefault("octupos.exchange.materialize.driver", "empty")
+	config.Initialize("", "", "", def)
 	ctrl := gomock.NewController(t)
+	broker.SetActiveBroker(mock.GetChannelBroker())
 
 	Convey("The provider's", t, func() {
 		defer ctrl.Finish()

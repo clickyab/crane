@@ -2,23 +2,11 @@ package rtb
 
 import (
 	"octopus/exchange"
-	"octopus/exchange/materialize"
-	"services/broker"
-	"services/safe"
 	"sort"
 )
 
 // SelectCPM is the simplest way to bid. sort the value, return the
 func SelectCPM(imp exchange.Impression, all map[string][]exchange.Advertise) (res map[string]exchange.Advertise) {
-	defer safe.GoRoutine(func() {
-		for i := range res {
-			broker.Publish(materialize.WinnerJob(
-				imp,
-				res[i],
-				i,
-			))
-		}
-	})
 	res = make(map[string]exchange.Advertise, len(all))
 
 	for id := range all {

@@ -9,8 +9,6 @@ import (
 	"strings"
 	"time"
 
-	"services/initializer"
-
 	"sync"
 
 	"github.com/Shopify/sarama"
@@ -30,12 +28,14 @@ type cluster struct {
 }
 
 func (b *cluster) Publish(j base.Job) {
-	b.getASync().Input() <- &sarama.ProducerMessage{
-		Topic:    j.Topic(),
-		Key:      sarama.StringEncoder(j.Key()),
-		Metadata: j.Report(),
-		Value:    j,
-	}
+	safe.GoRoutine(func() {
+		b.getASync().Input() <- &sarama.ProducerMessage{
+			Topic:    j.Topic(),
+			Key:      sarama.StringEncoder(j.Key()),
+			Metadata: j.Report(),
+			Value:    j,
+		}
+	})
 }
 
 func (b *cluster) setASync(sa sarama.AsyncProducer) {
@@ -126,8 +126,8 @@ func (b *cluster) Initialize(ctx context.Context) {
 	b.setKafka(ctx, async)
 }
 
-func init() {
-	b := &cluster{}
-	initializer.Register(b, 0)
-	base.SetActiveBroker(b)
+// NewCluster This is not a good way. but for development i need this to be done in this way.
+// DEPRECATED you are not allowed to call this function
+func NewCluster() interface{} {
+	return &cluster{}
 }

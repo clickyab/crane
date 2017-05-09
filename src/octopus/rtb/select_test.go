@@ -13,6 +13,9 @@ import (
 
 	"time"
 
+	"services/broker"
+	"services/broker/mock"
+
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -135,7 +138,8 @@ func (p *Publisher) Supplier() exchange.Supplier        { panic("publisher") }
 func (p *Publisher) Rates() []exchange.Rate             { panic("publisher") }
 
 func TestSelect(t *testing.T) {
-
+	b := mock.GetChannelBroker()
+	broker.SetActiveBroker(b)
 	for _, u := range cases() {
 		Convey("SelectCPM function test with case number "+strconv.Itoa(u.Case), t, func() {
 			p := &Publisher{u.DCPMFloor, u.DSCPMFloor}

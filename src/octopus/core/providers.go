@@ -11,8 +11,6 @@ import (
 
 	"errors"
 
-	"services/safe"
-
 	"octopus/exchange/materialize"
 
 	"services/broker"
@@ -41,7 +39,7 @@ func (p *providerData) Skip() bool {
 
 func (p *providerData) watch(ctx context.Context, imp exchange.Impression) (res map[string]exchange.Advertise) {
 	//in := time.Now()
-	defer safe.GoRoutine(func() {
+	defer func() {
 		//out := time.Since(in)
 		jDem := materialize.DemandJob(
 			imp,
@@ -49,7 +47,7 @@ func (p *providerData) watch(ctx context.Context, imp exchange.Impression) (res 
 			res,
 		)
 		broker.Publish(jDem)
-	})
+	}()
 
 	logrus.Debugf("Watch in for %s", p.provider.Name())
 	defer logrus.Debugf("Watch out for %s", p.provider.Name())
