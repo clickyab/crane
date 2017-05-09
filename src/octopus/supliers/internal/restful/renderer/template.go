@@ -18,13 +18,11 @@ const tpl = `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{ .Landing }</title>
+    <title>{{ .Landing }}</title>
 </head>
 <body>
-<iframe>
     {{ if .IsFilled }}<img src="{{ .Pixel }}" alt="">{{ end }}
-    <iframe id="thirdad_frame" src="{{ .URL }}" class="thirdad{{ if .IsFilled }}thrdadok{{ else }}thirdadempty{{ end }}"></iframe>
-</iframe>
+    <iframe id="thirdad_frame" src="{{ .URL }}" class="thirdad{{ if .IsFilled }} thrdadok{{ else }} thirdadempty{{ end }}"></iframe>
 </body>
 </html>`
 

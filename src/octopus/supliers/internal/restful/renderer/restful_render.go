@@ -27,54 +27,50 @@ type restful struct {
 
 func (rf restful) Render(imp exchange.Impression, in map[string]exchange.Advertise, w io.Writer) error {
 	res := make([]*dumbAd, len(in))
-	for i := range in {
-		var fallback string
-		slots := imp.Slots()
-		for j := range slots {
-			if slots[j].TrackID() == i {
-				fallback = slots[j].Fallback()
-			}
-		}
-		if in[i] == nil {
+	slots := imp.Slots()
+	for k := range slots {
+		slotTrackID := slots[k].TrackID()
+		if in[slotTrackID] == nil {
 			ctx := templateContext{
-				URL: fallback,
+				URL: slots[k].Fallback(),
 			}
 
 			res = append(res, &dumbAd{
 				Code:    renderTemplate(ctx),
-				TrackID: i,
+				TrackID: slotTrackID,
 			})
+			continue
 		}
 
 		d := &dumbAd{
-			TrackID:   i,
-			AdTrackID: in[i].TrackID(),
-			Winner:    in[i].WinnerCPM() * int64(100-rf.sup.Share()) / 100,
-			Width:     in[i].Width(),
-			Height:    in[i].Height(),
-			Landing:   in[i].Landing(),
+			TrackID:   slotTrackID,
+			AdTrackID: in[slotTrackID].TrackID(),
+			Winner:    in[slotTrackID].WinnerCPM() * int64(100-rf.sup.Share()) / 100,
+			Width:     in[slotTrackID].Width(),
+			Height:    in[slotTrackID].Height(),
+			Landing:   in[slotTrackID].Landing(),
 			IsFilled:  true,
 		}
 		x := *rf.pixelPattern
 		q := x.Query()
-		q.Set("id", i)
+		q.Set("id", slotTrackID)
 		x.RawQuery = q.Encode()
 
-		winURL := in[i].URL()
+		winURL := in[slotTrackID].URL()
 		win, err := url.Parse(winURL)
 		if err == nil {
 			q := win.Query()
-			q.Set("win", fmt.Sprint(in[i].WinnerCPM()))
+			q.Set("win", fmt.Sprint(in[slotTrackID].WinnerCPM()))
 			win.RawQuery = q.Encode()
 			winURL = win.String()
 		}
 
 		host := config.GetStringDefault("exchange.host.name", "localhost:3412")
-		trackURL := fmt.Sprintf(`%s/pixel/%s/%s`, host, in[i].Demand().Name(), in[i].TrackID())
+		trackURL := fmt.Sprintf(`%s/pixel/%s/%s`, host, in[slotTrackID].Demand().Name(), in[slotTrackID].TrackID())
 		ctx := templateContext{
 			URL:      winURL,
 			IsFilled: true,
-			Landing:  in[i].Landing(),
+			Landing:  in[slotTrackID].Landing(),
 			Pixel:    trackURL,
 		}
 		d.Code = renderTemplate(ctx)

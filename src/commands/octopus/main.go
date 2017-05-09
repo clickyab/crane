@@ -4,11 +4,11 @@ import (
 	"commands"
 	_ "octopus/demands"
 	_ "octopus/router/restful"
+	_ "services/broker/selector"
 	"services/config"
+	_ "services/eav/redis"
 	"services/initializer"
 	_ "services/statistic/redis"
-
-	_ "services/eav/redis"
 	_ "services/store/redis"
 
 	"github.com/Sirupsen/logrus"

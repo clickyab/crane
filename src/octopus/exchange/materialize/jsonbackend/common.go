@@ -75,12 +75,13 @@ func locationToMap(loc exchange.Location) map[string]interface{} {
 }
 
 func slotsToMap(slots []exchange.Slot, ads map[string]exchange.Advertise) []map[string]interface{} {
-	resSlots := make([]map[string]interface{}, len(slots))
+	resSlots := make([]map[string]interface{}, 0)
 	for i := range slots {
 		data := map[string]interface{}{
 			"height":   slots[i].Height(),
 			"track_id": slots[i].TrackID(),
 			"width":    slots[i].Width(),
+			"fallback": slots[i].Fallback(),
 		}
 
 		if ads != nil {
