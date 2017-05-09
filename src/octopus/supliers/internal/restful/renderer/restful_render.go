@@ -10,13 +10,14 @@ import (
 )
 
 type dumbAd struct {
-	TrackID  string `json:"track_id"`
-	Winner   int64  `json:"winner"`
-	Width    int    `json:"width"`
-	Height   int    `json:"height"`
-	Code     string `json:"code"`
-	IsFilled bool   `json:"is_filled"`
-	Landing  string `json:"land"`
+	TrackID   string `json:"track_id"`
+	AdTrackID string `json:"ad_track_id"`
+	Winner    int64  `json:"winner"`
+	Width     int    `json:"width"`
+	Height    int    `json:"height"`
+	Code      string `json:"code"`
+	IsFilled  bool   `json:"is_filled"`
+	Landing   string `json:"landing"`
 }
 
 type restful struct {
@@ -35,21 +36,24 @@ func (rf restful) Render(imp exchange.Impression, in map[string]exchange.Adverti
 			}
 		}
 		if in[i] == nil {
+			ctx := templateContext{
+				URL: fallback,
+			}
 
 			res = append(res, &dumbAd{
-				IsFilled: false,
-				Code:     fallback,
-				TrackID:  i,
+				Code:    renderTemplate(ctx),
+				TrackID: i,
 			})
 		}
 
 		d := &dumbAd{
-			TrackID:  i,
-			Winner:   in[i].WinnerCPM() * int64(100-rf.sup.Share()) / 100,
-			Width:    in[i].Width(),
-			Height:   in[i].Height(),
-			Landing:  in[i].Landing(),
-			IsFilled: true,
+			TrackID:   i,
+			AdTrackID: in[i].TrackID(),
+			Winner:    in[i].WinnerCPM() * int64(100-rf.sup.Share()) / 100,
+			Width:     in[i].Width(),
+			Height:    in[i].Height(),
+			Landing:   in[i].Landing(),
+			IsFilled:  true,
 		}
 		x := *rf.pixelPattern
 		q := x.Query()
@@ -67,20 +71,13 @@ func (rf restful) Render(imp exchange.Impression, in map[string]exchange.Adverti
 
 		host := config.GetStringDefault("exchange.host.name", "localhost:3412")
 		trackURL := fmt.Sprintf(`%s/pixel/%s/%s`, host, in[i].Demand().Name(), in[i].TrackID())
-
-		d.Code = fmt.Sprintf(`<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<iframe>
-    <img src="%s" alt="">
-    <iframe src="%s"></iframe>
-</iframe>
-</body>
-</html>`, trackURL, winURL)
+		ctx := templateContext{
+			URL:      winURL,
+			IsFilled: true,
+			Landing:  in[i].Landing(),
+			Pixel:    trackURL,
+		}
+		d.Code = renderTemplate(ctx)
 		res = append(res, d)
 	}
 
