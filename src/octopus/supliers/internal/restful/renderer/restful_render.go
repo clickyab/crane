@@ -26,7 +26,7 @@ type restful struct {
 }
 
 func (rf restful) Render(imp exchange.Impression, in map[string]exchange.Advertise, w io.Writer) error {
-	res := make([]*dumbAd, len(in))
+	res := make([]*dumbAd, 0)
 	slots := imp.Slots()
 	for k := range slots {
 		slotTrackID := slots[k].TrackID()
