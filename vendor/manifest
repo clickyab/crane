@@ -543,6 +543,12 @@
 			"branch": "master"
 		},
 		{
+			"importpath": "gopkg.in/jarcoal/httpmock.v1",
+			"repository": "https://gopkg.in/jarcoal/httpmock.v1",
+			"revision": "cf52904a3cf0f78f199ecade6a6df8e245d5b25a",
+			"branch": "v1"
+		},
+		{
 			"importpath": "gopkg.in/labstack/echo.v3",
 			"repository": "https://gopkg.in/labstack/echo.v3",
 			"revision": "1049c9613cd371b7ea8f219404c9a821734781ed",
