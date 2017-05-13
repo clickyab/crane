@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+exit_message() {
+    echo ${1:-'exiting...'}
+    exit 1
+}
+
+#[[ ! -z "${ORIGIN_GIT_DIR// }" ]] || exit_message 'no ORIGIN_GIT_DIR is set. use https://github.com/fzerorubigd/dokku-git-env to set it'

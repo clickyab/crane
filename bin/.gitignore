@@ -1,4 +1,7 @@
 *
 !.gitignore
 !*.sh
-!*.yml
+!env_check
+!compile
+!detect
+!release

@@ -36,16 +36,16 @@ func (g gorpLogger) Printf(format string, v ...interface{}) {
 func (in *initMysql) Initialize(ctx context.Context) {
 	once.Do(func() {
 		var err error
-		rdb, err = sql.Open("mysql", cfg.RDSN)
+		rdb, err = sql.Open("mysql", *rdsn)
 		assert.Nil(err)
 
-		wdb, err = sql.Open("mysql", cfg.WDSN)
+		wdb, err = sql.Open("mysql", *wdsn)
 		assert.Nil(err)
 
-		rdb.SetMaxIdleConns(cfg.MaxIdleConnection)
-		rdb.SetMaxOpenConns(cfg.MaxConnection)
-		wdb.SetMaxIdleConns(cfg.MaxIdleConnection)
-		wdb.SetMaxOpenConns(cfg.MaxConnection)
+		rdb.SetMaxIdleConns(*maxIdleConnection)
+		rdb.SetMaxOpenConns(*maxConnection)
+		wdb.SetMaxIdleConns(*maxIdleConnection)
+		wdb.SetMaxOpenConns(*maxConnection)
 
 		err = rdb.Ping()
 		assert.Nil(err)
@@ -56,7 +56,7 @@ func (in *initMysql) Initialize(ctx context.Context) {
 		rdbmap = &gorp.DbMap{Db: rdb, Dialect: gorp.MySQLDialect{}}
 		wdbmap = &gorp.DbMap{Db: wdb, Dialect: gorp.MySQLDialect{}}
 
-		if cfg.DevelMode {
+		if *develMode {
 			logger := gorpLogger{}
 			rdbmap.TraceOn("[rdb]", logger)
 			wdbmap.TraceOn("[wdb]", logger)
@@ -184,7 +184,7 @@ func (m *Manager) GetWSQLDB() *sql.DB {
 
 // GetProperDBMap try to get the current writer for development mode
 func (m *Manager) GetProperDBMap() gorp.SqlExecutor {
-	if cfg.DevelMode {
+	if *develMode {
 		return m.GetWDbMap()
 	}
 	return m.GetRDbMap()

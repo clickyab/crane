@@ -4,7 +4,7 @@ import (
 	"net"
 	"octopus/exchange"
 	"services/gmaps"
-	"services/ip2location/client"
+	"services/ip2location"
 	"services/random"
 	"time"
 )
@@ -100,7 +100,7 @@ func (ir impressionRest) Raw() interface{} {
 }
 
 func (ir *impressionRest) extractData() {
-	d := client.IP2Location(ir.SIP)
+	d := ip2location.IP2Location(ir.SIP)
 	//logrus.Debug(d)
 	ir.Loc = location{
 		TheCountry: exchange.Country{

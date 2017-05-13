@@ -1,0 +1,102 @@
+#!/bin/bash -x
+set -eo pipefail
+
+steptxt="----->"
+YELLOW='\033[1;33m'
+RED='\033[1;31m'
+NC='\033[0m' # No Color
+
+export_env_dir() {
+  env_dir=$1
+  whitelist_regex=${2:-''}
+  blacklist_regex=${3:-'^(PATH|GIT_DIR|CPATH|CPPATH|LD_PRELOAD|LIBRARY_PATH|GOPATH|GOROOT|GOOS|GOBIN)$'}
+  if [ -d "$env_dir" ]; then
+    for e in $(ls $env_dir); do
+      echo "$e" | grep -E "$whitelist_regex" | grep -qvE "$blacklist_regex" &&
+      export "$e=$(cat $env_dir/$e)"
+      :
+    done
+  fi
+}
+
+warn() {
+    echo -e "${YELLOW} !!    $@${NC}"
+}
+
+err() {
+    echo -e >&2 "${RED} !!    $@${NC}"
+}
+
+step() {
+    echo "$steptxt $@"
+}
+
+start() {
+    echo -n "$steptxt $@... "
+}
+
+finished() {
+    echo "done"
+}
+
+mkdir -p "$1" "$2"
+BUILD=$(cd "$1/" && pwd)
+export CACHE=$(cd "$2/" && pwd)
+export WORK_DIR=${CACHE}
+export ROOT=${BUILD}
+
+export_env_dir $3
+source ${BUILD}/bin/env_check
+
+GOVERSION=${GOVERSION:-go1.8.1}
+
+install_go() {
+    start $1
+    step "Downloading ${GOVERSION}"
+    wget -c -O ${CACHE}/${GOVERSION}.linux-amd64.tar.gz https://storage.googleapis.com/golang/${GOVERSION}.linux-amd64.tar.gz 2>&1 >/dev/null
+
+    step "Install ${GOVERSION}"
+    mkdir -p "${CACHE}/${GOVERSION}"
+    tar -C "${CACHE}/${GOVERSION}" -xzf ${CACHE}/${GOVERSION}.linux-amd64.tar.gz
+}
+
+cache_vendor() {
+    cd ${ROOT}
+    gb vendor restore
+    rm -rf ${CACHE}/vendor
+    cp -R ${ROOT}/vendor ${CACHE}
+    rm -rf ${CACHE}/vendor/pkg
+}
+
+cache_ip2location() {
+    cd ${CACHE}
+    wget -c http://static.clickyab.com/IP-COUNTRY-REGION-CITY.BIN
+    mkdir -p ${ROOT}/contrib
+    cp ${CACHE}/IP-COUNTRY-REGION-CITY.BIN ${ROOT}/contrib/IP-COUNTRY-REGION-CITY.BIN
+    ls ${ROOT}/src/services/ip2location/
+    rm -f ${ROOT}/src/services/ip2location/data.gen.go
+}
+cache_ip2location
+
+export GOROOT=${CACHE}/${GOVERSION}/go
+export GOPATH=${CACHE}/gospace
+# Set the GOBIN make any executable build with go in the cache dir
+export GOBIN=${GOPATH}/bin
+export PATH=${PATH}:${GOROOT}/bin:${GOPATH}/bin:${ROOT}/bin
+
+go version || install_go "go is not installed"
+go version || grep ${GOVERSION} || install_go "go version is not ${GOVERSION}"
+
+step "Get gb"
+cd ${ROOT}
+make -f ${ROOT}/Makefile gb
+
+diff ${CACHE}/vendor/manifest ${ROOT}/vendor/manifest || cache_vendor
+cp -R ${CACHE}/vendor/src ${ROOT}/vendor/
+
+# Codegen with gb
+find . -name \*.gen.go -delete
+find . -name \*.a -delete
+
+make -f ${ROOT}/Makefile codegen
+make -f ${ROOT}/Makefile all

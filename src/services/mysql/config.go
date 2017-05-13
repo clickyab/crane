@@ -1,34 +1,40 @@
 package mysql
 
 import (
+	"fmt"
+	"os"
+	"regexp"
 	"services/config"
 )
 
-var cfg cfgLoader
+var mysqlPattern = regexp.MustCompile("^mysql://([^:]+):([^@]+)@([^:]+):([0-9]+)/([a-zA-Z0-9-_]+)$")
+var (
+	wdsn              *string
+	rdsn              *string
+	maxConnection     = config.RegisterInt("services.mysql.max_connection", 30, "max connection")
+	maxIdleConnection = config.RegisterInt("services.mysql.max_idle_connection", 5, "max idle connection")
 
-type cfgLoader struct {
-	WDSN              string `onion:"wdsn"`
-	RDSN              string `onion:"rdsn"`
-	MaxConnection     int    `onion:"max_connection"`
-	MaxIdleConnection int    `onion:"max_idle_connection"`
-
-	DevelMode bool `onion:"-"`
-}
-
-func (cl *cfgLoader) Initialize() config.DescriptiveLayer {
-	l := config.NewDescriptiveLayer()
-	l.Add("Write database", "service.mysql.wdsn", "root:bita123@tcp(127.0.0.1:3306)/clickyab?charset=utf8&parseTime=true&charset=utf8")
-	l.Add("Read database", "service.mysql.rdsn", "root:bita123@tcp(127.0.0.1:3306)/clickyab?charset=utf8&parseTime=true&charset=utf8")
-	l.Add("Mysql maximum connectio", "service.mysql.max_connection", 30)
-	l.Add("Mysql idle connection", "service.mysql.max_idle_connection", 5)
-	return l
-}
-
-func (cl *cfgLoader) Loaded() {
-	config.GetStruct("service.mysql", cl)
-	cl.DevelMode = config.GetBool("core.devel_mode")
-}
+	develMode = config.RegisterBoolean("core.devel_mode", true, "development mode")
+)
 
 func init() {
-	config.Register(&cfg)
+	var (
+		port     = "3306"
+		host     = "127.0.0.1"
+		database = "exchange"
+		user     = "root"
+		pass     = "bita123"
+	)
+
+	redisURL := os.Getenv("DATABASE_URL")
+	if all := mysqlPattern.FindStringSubmatch(redisURL); len(all) == 6 {
+		port = all[4]
+		host = all[3]
+		user = all[1]
+		pass = all[2]
+		database = all[5]
+	}
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=true", user, pass, host, port, database)
+	wdsn = config.RegisterString("services.mysql.wdsn", dsn, "write database dsn")
+	rdsn = config.RegisterString("services.mysql.wdsn", dsn, "read database dsn")
 }
