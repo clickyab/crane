@@ -12,6 +12,8 @@ type rawPub struct {
 	SoftFloorCPM int64 `json:"soft_floor_cpm"`
 	// Attributes is the generic attribute system
 	Attributes map[string]interface{} `json:"attributes"`
+	// Supplier the supplier
+	Supplier string `json:"supplier"`
 }
 
 func getRawPub(in exchange.Publisher) rawPub {
@@ -20,6 +22,7 @@ func getRawPub(in exchange.Publisher) rawPub {
 		Attributes:   in.Attributes(),
 		SoftFloorCPM: in.SoftFloorCPM(),
 		FloorCPM:     in.FloorCPM(),
+		Supplier:     in.Supplier().Name(),
 	}
 }
 

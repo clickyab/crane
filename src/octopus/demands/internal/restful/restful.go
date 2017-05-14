@@ -67,6 +67,7 @@ func (d *demand) Provide(ctx context.Context, imp exchange.Impression, ch chan e
 		logrus.Debug(err)
 		return
 	}
+	logrus.Debugf("calling demand %s", d.key)
 	resp, err := d.client.Do(req.WithContext(ctx))
 	if err != nil {
 		logrus.Debug(err)

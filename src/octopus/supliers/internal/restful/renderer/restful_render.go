@@ -32,7 +32,9 @@ func (rf restful) Render(imp exchange.Impression, in map[string]exchange.Adverti
 		slotTrackID := slots[k].TrackID()
 		if in[slotTrackID] == nil {
 			ctx := templateContext{
-				URL: slots[k].Fallback(),
+				URL:    slots[k].Fallback(),
+				Width:  slots[k].Width(),
+				Height: slots[k].Height(),
 			}
 
 			res = append(res, &dumbAd{
@@ -72,6 +74,8 @@ func (rf restful) Render(imp exchange.Impression, in map[string]exchange.Adverti
 			IsFilled: true,
 			Landing:  in[slotTrackID].Landing(),
 			Pixel:    trackURL,
+			Width:    slots[k].Width(),
+			Height:   slots[k].Height(),
 		}
 		d.Code = renderTemplate(ctx)
 		res = append(res, d)

@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"octopus/exchange"
 	"strings"
+
+	"github.com/Sirupsen/logrus"
 )
 
 type requestBody struct {
@@ -51,6 +53,7 @@ func GetImpression(sup exchange.Supplier, r *http.Request) (exchange.Impression,
 	rb := requestBody{}
 	err := dec.Decode(&rb)
 	if err != nil {
+		logrus.Debug(err)
 		return nil, err
 	}
 

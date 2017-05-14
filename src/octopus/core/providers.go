@@ -34,7 +34,7 @@ type providerData struct {
 // Skip decide if provider should responde to demand or not
 func (p *providerData) Skip() bool {
 	x := atomic.AddInt64(&p.callRateTracker, 1)
-	return x%100 < int64(p.provider.CallRate())
+	return x%100 > int64(p.provider.CallRate())
 }
 
 func (p *providerData) watch(ctx context.Context, imp exchange.Impression) (res map[string]exchange.Advertise) {
@@ -91,6 +91,8 @@ func Register(provider exchange.Demand, timeout time.Duration) {
 		timeout:         timeout,
 		callRateTracker: rand.Int63n(100),
 	}
+
+	logrus.Debugf("demand with name %s is registered", name)
 }
 
 // ResetProviders remove all providers
@@ -160,7 +162,10 @@ func isSameProvider(impression exchange.Impression, data providerData) bool {
 }
 
 func notwhitelistCountries(impression exchange.Impression, data providerData) bool {
-	return !contains(data.provider.WhiteListCountries(), impression.Location().Country().Name)
+	if len(data.provider.WhiteListCountries()) == 0 {
+		return false
+	}
+	return !contains(data.provider.WhiteListCountries(), impression.Location().Country().ISO)
 }
 
 func isExcludedDemands(impression exchange.Impression, data providerData) bool {

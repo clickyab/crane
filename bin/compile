@@ -71,6 +71,9 @@ cache_vendor() {
 cache_ip2location() {
     cd ${CACHE}
     wget -c http://static.clickyab.com/IP-COUNTRY-REGION-CITY.BIN
+    rm -f IP-COUNTRY-REGION-CITY.BIN.md5 || true
+    wget http://static.clickyab.com/IP-COUNTRY-REGION-CITY.BIN.md5
+    md5sum -c IP-COUNTRY-REGION-CITY.BIN.md5
     mkdir -p ${ROOT}/contrib
     cp ${CACHE}/IP-COUNTRY-REGION-CITY.BIN ${ROOT}/contrib/IP-COUNTRY-REGION-CITY.BIN
     ls ${ROOT}/src/services/ip2location/

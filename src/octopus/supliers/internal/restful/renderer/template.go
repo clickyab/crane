@@ -8,10 +8,11 @@ import (
 )
 
 type templateContext struct {
-	Landing  string
-	IsFilled bool
-	URL      string
-	Pixel    string
+	Landing       string
+	IsFilled      bool
+	URL           string
+	Pixel         string
+	Width, Height int
 }
 
 const tpl = `<!DOCTYPE html>
@@ -19,10 +20,13 @@ const tpl = `<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <title>{{ .Landing }}</title>
+    <style>
+    #adhere iframe {max-width:100%;margin: 0 auto;}
+    </style>
 </head>
-<body>
+<body style="margin: 0; padding: 0;">
     {{ if .IsFilled }}<img src="{{ .Pixel }}" alt="">{{ end }}
-    <iframe id="thirdad_frame" src="{{ .URL }}" class="thirdad{{ if .IsFilled }} thrdadok{{ else }} thirdadempty{{ end }}"></iframe>
+    <div id="adhere"><iframe id="thirdad_frame" width="{{ .Width }}" height="{{ .Height }}" frameborder=0 marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" src="{{ .URL }}" class="thirdad{{ if .IsFilled }} thrdadok{{ else }} thirdadempty{{ end }}"></iframe></div>
 </body>
 </html>`
 
