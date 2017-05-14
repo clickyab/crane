@@ -12,14 +12,14 @@ import (
 var host = config.RegisterString("octopus.host.name", "exchange-dev.3rdad.com", "the exchange root")
 
 type dumbAd struct {
-	TrackID   string `json:"track_id"`
-	AdTrackID string `json:"ad_track_id"`
-	Winner    int64  `json:"winner"`
-	Width     int    `json:"width"`
-	Height    int    `json:"height"`
-	Code      string `json:"code"`
-	IsFilled  bool   `json:"is_filled"`
-	Landing   string `json:"landing"`
+	TrackID   string `json:"track_id" structs:"track_id"`
+	AdTrackID string `json:"ad_track_id" structs:"ad_track_id"`
+	Winner    int64  `json:"winner" structs:"winner"`
+	Width     int    `json:"width" structs:"width"`
+	Height    int    `json:"height" structs:"height"`
+	Code      string `json:"code" structs:"code"`
+	IsFilled  bool   `json:"is_filled" structs:"is_filled"`
+	Landing   string `json:"landing" structs:"landing"`
 }
 
 type restful struct {

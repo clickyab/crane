@@ -134,6 +134,12 @@
 			"branch": "master"
 		},
 		{
+			"importpath": "github.com/fatih/structs",
+			"repository": "https://github.com/fatih/structs",
+			"revision": "a720dfa8df582c51dee1b36feabb906bde1588bd",
+			"branch": "master"
+		},
+		{
 			"importpath": "github.com/fzerorubigd/expand",
 			"repository": "https://github.com/fzerorubigd/expand",
 			"revision": "fd359294116f3987dc04c5987782f845e99e9f42",

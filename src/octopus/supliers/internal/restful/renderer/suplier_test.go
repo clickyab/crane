@@ -17,6 +17,7 @@ import (
 
 	"net/http"
 
+	"github.com/fatih/structs"
 	"github.com/golang/mock/gomock"
 	. "github.com/smartystreets/goconvey/convey"
 )
@@ -64,7 +65,7 @@ func TestSupplier(t *testing.T) {
 			ad.EXPECT().WinnerCPM().Return(int64(100)).AnyTimes()
 			ad.EXPECT().Width().Return(20).AnyTimes()
 			ad.EXPECT().Height().Return(15).AnyTimes()
-			ad.EXPECT().Landing().Return("clickyab").AnyTimes()
+			ad.EXPECT().Landing().Return("clickyab.ir").AnyTimes()
 			ad.EXPECT().Demand().Return(demand).AnyTimes()
 			ad.EXPECT().TrackID().Return(trackID).AnyTimes()
 			ad.EXPECT().URL().Return("www.ad_url.com").AnyTimes()
@@ -97,13 +98,16 @@ func TestSupplier(t *testing.T) {
 		err = rf.Render(impression, ads, &w)
 		underTable(t, err)
 
-		result := []*dumbAd{}
-		err = json.Unmarshal(w.buff.Bytes(), &result)
+		resultStruct := []*dumbAd{}
+		result := []map[string]interface{}{}
+		err = json.Unmarshal(w.buff.Bytes(), &resultStruct)
 		underTable(t, err)
-		// TODO : see the next todo :))
-		for i := range result {
-			result[i].Code = ""
+
+		for i := range resultStruct {
+			resultStruct[i].Code = ""
+			result = append(result, structs.New(*resultStruct[i]).Map())
 		}
+
 		So(result, ShouldResemble, expected)
 		So(w.status, ShouldEqual, http.StatusOK)
 	})
@@ -116,34 +120,35 @@ func underTable(t *testing.T, err error) {
 	}
 }
 
-// TODO : I'm going to ignore code for now. I appreciated if someone can fix it again with a good approach
-var expected = []*dumbAd{
+var expected = []map[string]interface{}{
 	{
-		IsFilled:  true,
-		Landing:   "clickyab",
-		TrackID:   "aaa",
-		Winner:    0,
-		Width:     20,
-		Height:    15,
-		Code:      ``,
-		AdTrackID: "aaa",
-	}, {
-		Height:    15,
-		Code:      ``,
-		Landing:   "clickyab",
-		IsFilled:  true,
-		TrackID:   "bbb",
-		AdTrackID: "bbb",
-		Winner:    0,
-		Width:     20,
-	}, {
-		Landing:   "clickyab",
-		TrackID:   "ccc",
-		AdTrackID: "ccc",
-		Winner:    0,
-		Width:     20,
-		Height:    15,
-		Code:      ``,
-		IsFilled:  true,
+		"is_filled":   true,
+		"landing":     "clickyab.ir",
+		"track_id":    "aaa",
+		"ad_track_id": "aaa",
+		"winner":      int64(0),
+		"width":       20,
+		"height":      15,
+		"code":        "",
+	},
+	{
+		"is_filled":   true,
+		"landing":     "clickyab.ir",
+		"track_id":    "bbb",
+		"ad_track_id": "bbb",
+		"winner":      int64(0),
+		"width":       20,
+		"height":      15,
+		"code":        "",
+	},
+	{
+		"is_filled":   true,
+		"landing":     "clickyab.ir",
+		"track_id":    "ccc",
+		"ad_track_id": "ccc",
+		"winner":      int64(0),
+		"width":       20,
+		"height":      15,
+		"code":        "",
 	},
 }
