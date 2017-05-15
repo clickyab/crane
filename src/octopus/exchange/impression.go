@@ -33,6 +33,8 @@ type Impression interface {
 	TrackID() string
 	// IP return the client ip
 	IP() net.IP
+	// Scheme return the clients scheme
+	Scheme() string
 	// UserAgent return the client user agent
 	UserAgent() string
 	// Source return the publisher that this client is going into system from that

@@ -10,6 +10,7 @@ import (
 )
 
 type impressionRest struct {
+	Schm          string                      `json:"scheme"`
 	SIP           string                      `json:"ip"`
 	Mega          string                      `json:"track_id"`
 	UA            string                      `json:"user_agent"`
@@ -55,6 +56,13 @@ func (ir *impressionRest) TrackID() string {
 
 func (ir impressionRest) IP() net.IP {
 	return net.ParseIP(ir.SIP)
+}
+
+func (ir impressionRest) Scheme() string {
+	if ir.Schm != "https" {
+		ir.Schm = "http"
+	}
+	return ir.Schm
 }
 
 func (ir impressionRest) UserAgent() string {
@@ -125,6 +133,7 @@ func (ir *impressionRest) Time() time.Time {
 
 func newImpressionFromAppRequest(sup exchange.Supplier, r *requestBody) (*impressionRest, error) {
 	resp := impressionRest{
+		Schm:          r.Scheme,
 		SIP:           r.IP,
 		UA:            r.App.UserAgent,
 		ImpPlatform:   exchange.ImpressionPlatformApp,
@@ -160,6 +169,7 @@ func newImpressionFromAppRequest(sup exchange.Supplier, r *requestBody) (*impres
 
 func newImpressionFromVastRequest(sup exchange.Supplier, r *requestBody) (*impressionRest, error) {
 	resp := impressionRest{
+		Schm:          r.Scheme,
 		SIP:           r.IP,
 		UA:            r.Vast.UserAgent,
 		ImpPlatform:   exchange.ImpressionPlatformVast,
@@ -182,6 +192,7 @@ func newImpressionFromVastRequest(sup exchange.Supplier, r *requestBody) (*impre
 
 func newImpressionFromWebRequest(sup exchange.Supplier, r *requestBody) (*impressionRest, error) {
 	resp := impressionRest{
+		Schm:          r.Scheme,
 		SIP:           r.IP,
 		UA:            r.Web.UserAgent,
 		ImpPlatform:   exchange.ImpressionPlatformWeb,

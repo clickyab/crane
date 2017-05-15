@@ -10,6 +10,7 @@ import (
 
 type requestBody struct {
 	IP         string              `json:"ip"`
+	Scheme     string              `json:"scheme"`
 	Publisher  *restPublisher      `json:"publisher"`
 	Categories []exchange.Category `json:"categories"`
 	Type       string              `json:"type"`

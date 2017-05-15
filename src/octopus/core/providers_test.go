@@ -41,10 +41,12 @@ func newImp(c *gomock.Controller, count int) exchange.Impression {
 	l := mock_entity.NewMockLocation(c)
 	l.EXPECT().Country().Return(exchange.Country{Name: "IRAN"}).AnyTimes()
 	m := mock_entity.NewMockImpression(c)
+	m.EXPECT().Scheme().Return("http").AnyTimes()
 	m.EXPECT().Location().Return(l).AnyTimes()
 	m.EXPECT().Slots().Return(tmp).AnyTimes()
 	m.EXPECT().Source().Return(newPub(c)).AnyTimes()
 	m.EXPECT().UnderFloor().Return(false).AnyTimes()
+
 	return m
 }
 
@@ -77,12 +79,12 @@ func TestProviders(t *testing.T) {
 					Do(func(ctx context.Context, imp exchange.Impression, ch chan exchange.Advertise) {
 						for _, s := range imp.Slots() {
 							tmp := mock_entity.NewMockAdvertise(ctrl)
-							tmp.EXPECT().MaxCPM().Return(int64(200))
-							tmp.EXPECT().SlotTrackID().Return(s.TrackID())
+							tmp.EXPECT().MaxCPM().Return(int64(200)).AnyTimes()
+							tmp.EXPECT().SlotTrackID().Return(s.TrackID()).AnyTimes()
 							ch <- tmp
 						}
 						close(ch)
-					})
+					}).AnyTimes()
 				Register(d1, time.Millisecond*100)
 				im := newImp(ctrl, 2)
 				bk := context.Background()
