@@ -69,7 +69,7 @@ func TestProviders(t *testing.T) {
 			Convey("Should return two ads", func() {
 
 				d1 := mock_entity.NewMockDemand(ctrl)
-				d1.EXPECT().WhiteListCountries().Return([]string{"IRAN"}).AnyTimes()
+				d1.EXPECT().WhiteListCountries().Return([]string{}).AnyTimes()
 
 				d1.EXPECT().Name().Return("d1").AnyTimes()
 
@@ -124,7 +124,7 @@ func TestProviders(t *testing.T) {
 
 			Convey("Should return one provider with three ads (timeout test)", func() {
 				d1 := mock_entity.NewMockDemand(ctrl)
-				d1.EXPECT().WhiteListCountries().Return([]string{"IRAN"}).AnyTimes()
+				d1.EXPECT().WhiteListCountries().Return([]string{}).AnyTimes()
 				d1.EXPECT().Name().Return("d1").AnyTimes()
 				d1.EXPECT().Handicap().Return(int64(100)).AnyTimes()
 				d1.EXPECT().CallRate().Return(100).AnyTimes()
@@ -141,7 +141,7 @@ func TestProviders(t *testing.T) {
 					})
 				Register(d1, time.Millisecond*100)
 				d2 := mock_entity.NewMockDemand(ctrl)
-				d2.EXPECT().WhiteListCountries().Return([]string{"IRAN"}).AnyTimes()
+				d2.EXPECT().WhiteListCountries().Return([]string{}).AnyTimes()
 				d2.EXPECT().Name().Return("d2").AnyTimes()
 				d2.EXPECT().Handicap().Return(int64(100)).AnyTimes()
 				d2.EXPECT().CallRate().Return(100).AnyTimes()
@@ -224,7 +224,7 @@ func TestProviders(t *testing.T) {
 				}()
 			}
 			wg.Wait()
-			So(tr, ShouldEqual, int64(float64(len(counter))*(float64(s)/100.)))
+			So(tr, ShouldEqual, 3000-int64(float64(len(counter))*(float64(s)/100.)))
 
 		})
 	}
@@ -266,25 +266,25 @@ func TestProviders(t *testing.T) {
 			Convey("false if impression country is not in provider white list ", func() {
 
 				pr := mock_entity.NewMockDemand(ctrl)
-				pr.EXPECT().WhiteListCountries().Return([]string{"UAE", "IRAN"})
+				pr.EXPECT().WhiteListCountries().Return([]string{"UAE", "IRAN"}).AnyTimes()
 				pd := providerData{provider: pr}
 				m := mock_entity.NewMockImpression(ctrl)
 				l := mock_entity.NewMockLocation(ctrl)
-				l.EXPECT().Country().Return(exchange.Country{Name: "IRAN"})
+				l.EXPECT().Country().Return(exchange.Country{ISO: "IRAN"})
 				m.EXPECT().Location().Return(l)
-				So(notwhitelistCountries(m, pd), ShouldBeFalse)
+				So(notWhitelistCountries(m, pd), ShouldBeFalse)
 			})
 
 			Convey("true if impression country is in provider white list ", func() {
 
 				pr := mock_entity.NewMockDemand(ctrl)
-				pr.EXPECT().WhiteListCountries().Return([]string{"UAE", "IRAN"})
+				pr.EXPECT().WhiteListCountries().Return([]string{"UAE", "IRAN"}).AnyTimes()
 				pd := providerData{provider: pr}
 				m := mock_entity.NewMockImpression(ctrl)
 				l := mock_entity.NewMockLocation(ctrl)
-				l.EXPECT().Country().Return(exchange.Country{Name: "USA"})
+				l.EXPECT().Country().Return(exchange.Country{ISO: "USA"})
 				m.EXPECT().Location().Return(l)
-				So(notwhitelistCountries(m, pd), ShouldBeTrue)
+				So(notWhitelistCountries(m, pd), ShouldBeTrue)
 			})
 		})
 

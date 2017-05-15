@@ -3,11 +3,13 @@ package renderer
 import (
 	"encoding/json"
 	"fmt"
-	"io"
+	"net/http"
 	"net/url"
 	"octopus/exchange"
 	"services/config"
 )
+
+var host = config.RegisterString("octopus.host.name", "exchange-dev.3rdad.com", "the exchange root")
 
 type dumbAd struct {
 	TrackID   string `json:"track_id"`
@@ -25,7 +27,7 @@ type restful struct {
 	sup          exchange.Supplier
 }
 
-func (rf restful) Render(imp exchange.Impression, in map[string]exchange.Advertise, w io.Writer) error {
+func (rf restful) Render(imp exchange.Impression, in map[string]exchange.Advertise, w http.ResponseWriter) error {
 	res := make([]*dumbAd, 0)
 	slots := imp.Slots()
 	for k := range slots {
@@ -67,13 +69,18 @@ func (rf restful) Render(imp exchange.Impression, in map[string]exchange.Adverti
 			winURL = win.String()
 		}
 
-		host := config.GetStringDefault("exchange.host.name", "localhost:3412")
-		trackURL := fmt.Sprintf(`%s/pixel/%s/%s`, host, in[slotTrackID].Demand().Name(), in[slotTrackID].TrackID())
+		// TODO : fix the scheme
+		trackURL := &url.URL{
+			Scheme: "http",
+			Host:   *host,
+			Path:   fmt.Sprintf(`/pixel/%s/%s`, in[slotTrackID].Demand().Name(), in[slotTrackID].TrackID()),
+		}
+
 		ctx := templateContext{
 			URL:      winURL,
 			IsFilled: true,
 			Landing:  in[slotTrackID].Landing(),
-			Pixel:    trackURL,
+			Pixel:    trackURL.String(),
 			Width:    slots[k].Width(),
 			Height:   slots[k].Height(),
 		}
@@ -82,6 +89,8 @@ func (rf restful) Render(imp exchange.Impression, in map[string]exchange.Adverti
 	}
 
 	enc := json.NewEncoder(w)
+	w.Header().Set("Content-Type", "application/json;charset=utf-8")
+	w.WriteHeader(http.StatusOK)
 	return enc.Encode(res)
 }
 

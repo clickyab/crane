@@ -22,7 +22,8 @@ const message = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEUAAACnej3
 
 var data []byte
 
-func trackPixel(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+// TrackPixel is a route to handle track pixel event
+func TrackPixel(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "image/png")
 	w.Write(data)
 	safe.GoRoutine(func() {

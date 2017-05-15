@@ -1,27 +1,20 @@
 package demands
 
 import (
-	"context"
-	"net/http"
 	"octopus/core"
 	"octopus/demands/internal/models"
 	"octopus/demands/internal/restful"
 	"os"
 	"os/signal"
-	"services/assert"
 	"services/mysql"
 	"sync"
 	"syscall"
-	"time"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/fzerorubigd/xhandler"
-	"github.com/fzerorubigd/xmux"
 )
 
 type demandManager struct {
 	activeDemands []models.Demand
-	server        *http.Server
 	lock          *sync.RWMutex
 }
 
@@ -33,28 +26,11 @@ func (dm *demandManager) loadDemands() {
 	for _, demand := range dm.activeDemands {
 		switch demand.Type {
 		case models.DemandTypeRest:
-			core.Register(restful.NewRestfulClient(demand, getRawImpresssion), demand.GetTimeout())
+			core.Register(restful.NewRestfulClient(demand, getRawImpression), demand.GetTimeout())
 		default:
 			logrus.Panicf("Not supported demand type : %s", demand.Type)
 		}
-
 	}
-
-	if dm.server != nil {
-		ctx, _ := context.WithTimeout(context.Background(), time.Second)
-		assert.Nil(dm.server.Shutdown(ctx))
-	}
-
-	mux := xmux.New()
-	core.Mount(mux)
-	// TODO : move to config
-	dm.server = &http.Server{Addr: ":8080", Handler: xhandler.New(context.Background(), mux)}
-	go func() {
-		<-time.After(time.Second)
-		if err := dm.server.ListenAndServe(); err != nil {
-			logrus.Warnf("listen: %s", err)
-		}
-	}()
 }
 
 func (dm *demandManager) Initialize() {

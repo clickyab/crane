@@ -68,6 +68,7 @@ type rawImp struct {
 	TrackID   string `json:"track_id"`
 	IP        string `json:"ip"`
 	UserAgent string `json:"user_agent"`
+	Scheme    string `json:"scheme"`
 	// Source return the publisher that this client is going into system from that
 	Source rawPub `json:"source"`
 	// Location of the request
@@ -84,7 +85,7 @@ type rawImp struct {
 	UnderFloor bool `json:"under_floor"`
 }
 
-func getRawImpresssion(imp exchange.Impression) interface{} {
+func getRawImpression(imp exchange.Impression) interface{} {
 	checkIP := func() string {
 		if i := imp.IP(); i != nil {
 			return i.String()
@@ -93,6 +94,7 @@ func getRawImpresssion(imp exchange.Impression) interface{} {
 	}
 	return rawImp{
 		TrackID:    imp.TrackID(),
+		Scheme:     imp.Scheme(),
 		IP:         checkIP(),
 		UserAgent:  imp.UserAgent(),
 		Attributes: imp.Attributes(),

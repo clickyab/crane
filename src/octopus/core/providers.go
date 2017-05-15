@@ -34,7 +34,7 @@ type providerData struct {
 // Skip decide if provider should responde to demand or not
 func (p *providerData) Skip() bool {
 	x := atomic.AddInt64(&p.callRateTracker, 1)
-	return x%100 > int64(p.provider.CallRate())
+	return x%100 >= int64(p.provider.CallRate())
 }
 
 func (p *providerData) watch(ctx context.Context, imp exchange.Impression) (res map[string]exchange.Advertise) {
@@ -135,11 +135,12 @@ func Call(ctx context.Context, imp exchange.Impression) map[string][]exchange.Ad
 	if !imp.UnderFloor() {
 		limit = imp.Source().FloorCPM()
 	}
-
+	logrus.Debugf("the limit is %d", limit)
 	res := make(map[string][]exchange.Advertise)
 	for provided := range allRes {
+		logrus.Debugf("get a result contain %d ads ", len(provided))
 		for j := range provided {
-			if provided[j].MaxCPM() > limit {
+			if provided[j].MaxCPM() >= limit {
 				res[j] = append(res[j], provided[j])
 			}
 		}
@@ -161,7 +162,7 @@ func isSameProvider(impression exchange.Impression, data providerData) bool {
 	return impression.Source().Name() == data.name
 }
 
-func notwhitelistCountries(impression exchange.Impression, data providerData) bool {
+func notWhitelistCountries(impression exchange.Impression, data providerData) bool {
 	if len(data.provider.WhiteListCountries()) == 0 {
 		return false
 	}
@@ -184,7 +185,7 @@ func contains(s []string, t string) bool {
 func init() {
 	filters = []func(exchange.Impression, providerData) bool{
 		isSameProvider,
-		notwhitelistCountries,
+		notWhitelistCountries,
 		isExcludedDemands,
 	}
 }

@@ -13,6 +13,8 @@ import (
 
 	"octopus/demands/internal/models"
 
+	"io/ioutil"
+
 	"github.com/Sirupsen/logrus"
 )
 
@@ -77,14 +79,21 @@ func (d *demand) Provide(ctx context.Context, imp exchange.Impression, ch chan e
 		logrus.Debugf("status code is %d", resp.StatusCode)
 		return
 	}
+	data, err := ioutil.ReadAll(resp.Body)
+	assert.Nil(err)
+	reader := bytes.NewReader(data)
+	logrus.Debugf("calling demand %s DONE", d.key)
+	logrus.Debugf("result was %s", string(data))
+
 	ads := []*restAd{}
-	dec := json.NewDecoder(resp.Body)
+	dec := json.NewDecoder(reader)
 	defer resp.Body.Close()
 	if err := dec.Decode(&ads); err != nil {
 		logrus.Debug(err)
 		return
 	}
 
+	logrus.Debugf("selected %d ad from pool", len(ads))
 	for i := range ads {
 		ads[i].demand = d
 		ch <- ads[i]

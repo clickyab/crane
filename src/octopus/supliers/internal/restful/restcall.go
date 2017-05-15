@@ -12,7 +12,7 @@ import (
 
 type requestBody struct {
 	IP         string              `json:"ip"`
-	Scheme     string              `json:"scheme"`
+	Scheme     string              `json:"scheme,omitempty"`
 	Publisher  *restPublisher      `json:"publisher"`
 	Categories []exchange.Category `json:"categories"`
 	Type       string              `json:"type"`

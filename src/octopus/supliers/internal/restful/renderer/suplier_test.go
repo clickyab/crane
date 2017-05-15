@@ -15,9 +15,29 @@ import (
 
 	"bytes"
 
+	"net/http"
+
 	"github.com/golang/mock/gomock"
 	. "github.com/smartystreets/goconvey/convey"
 )
+
+type testResponseWriter struct {
+	headers http.Header
+	status  int
+	buff    bytes.Buffer
+}
+
+func (rw *testResponseWriter) Header() http.Header {
+	return rw.headers
+}
+
+func (rw *testResponseWriter) Write(p []byte) (int, error) {
+	return rw.buff.Write(p)
+}
+
+func (rw *testResponseWriter) WriteHeader(i int) {
+	rw.status = i
+}
 
 func TestSupplier(t *testing.T) {
 	ctrl := gomock.NewController(t)
@@ -70,19 +90,22 @@ func TestSupplier(t *testing.T) {
 			sup:          supplier,
 		}
 
-		var w bytes.Buffer
+		var w = testResponseWriter{
+			headers: make(http.Header),
+		}
 
 		err = rf.Render(impression, ads, &w)
 		underTable(t, err)
 
 		result := []*dumbAd{}
-		err = json.Unmarshal(w.Bytes(), &result)
+		err = json.Unmarshal(w.buff.Bytes(), &result)
 		underTable(t, err)
-		// TODO : see the nex todo :))
+		// TODO : see the next todo :))
 		for i := range result {
 			result[i].Code = ""
 		}
 		So(result, ShouldResemble, expected)
+		So(w.status, ShouldEqual, http.StatusOK)
 	})
 }
 
