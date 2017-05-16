@@ -33,12 +33,12 @@ func (i initRouter) Initialize(ctx context.Context) {
 	mux.POST("/rest/get/:key", wrap(restful.GetAd))
 	mux.GET("/pixel/:demand/:trackID", wrap(restful.TrackPixel))
 	// The demand status routes
-	mux.GET("/demands/status/:name", wrap(demands.DemandStatus))
-	mux.POST("/demands/status/:name", wrap(demands.DemandStatus))
-	mux.DELETE("/demands/status/:name", wrap(demands.DemandStatus))
-	mux.HEAD("/demands/status/:name", wrap(demands.DemandStatus))
-	mux.PUT("/demands/status/:name", wrap(demands.DemandStatus))
-	mux.OPTIONS("/demands/status/:name", wrap(demands.DemandStatus))
+	mux.GET("/demands/status/:name", wrap(demands.Status))
+	mux.POST("/demands/status/:name", wrap(demands.Status))
+	mux.DELETE("/demands/status/:name", wrap(demands.Status))
+	mux.HEAD("/demands/status/:name", wrap(demands.Status))
+	mux.PUT("/demands/status/:name", wrap(demands.Status))
+	mux.OPTIONS("/demands/status/:name", wrap(demands.Status))
 
 	srv := &http.Server{Addr: *listenAddress, Handler: xhandler.New(ctx, mux)}
 	go func() {
@@ -46,13 +46,14 @@ func (i initRouter) Initialize(ctx context.Context) {
 			logrus.Debug(err)
 		}
 	}()
-
+	logrus.Debugf("Server started on %s", *listenAddress)
 	go func() {
 		done := ctx.Done()
 		if done != nil {
 			<-done
 			s, _ := context.WithTimeout(context.Background(), 100*time.Millisecond)
 			srv.Shutdown(s)
+			logrus.Debug("Server stopped")
 		}
 	}()
 

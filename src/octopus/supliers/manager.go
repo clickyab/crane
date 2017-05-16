@@ -3,14 +3,12 @@ package supliers
 import (
 	"fmt"
 	"net/http"
-	"net/url"
 	"octopus/exchange"
 	"octopus/supliers/internal/models"
 	"octopus/supliers/internal/restful"
 	"octopus/supliers/internal/restful/renderer"
 	"os"
 	"os/signal"
-	"services/assert"
 	"services/mysql"
 	"sync"
 	"syscall"
@@ -28,10 +26,7 @@ type supplierManager struct {
 func restRendererFactory(sup exchange.Supplier, in string) exchange.Renderer {
 	switch in {
 	case "rest":
-		// TODO : tracker url
-		pixel, err := url.Parse(fmt.Sprintf("http://%s/track", domain))
-		assert.Nil(err)
-		return renderer.NewRestfulRenderer(sup, pixel)
+		return renderer.NewRestfulRenderer(sup, "/pixel/%s/%s")
 	default:
 		logrus.Panicf("supplier with key %s not found", in)
 	}

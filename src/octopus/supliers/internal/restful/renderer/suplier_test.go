@@ -1,13 +1,11 @@
 package renderer
 
 import (
-	"services/config"
 	"testing"
 
 	"octopus/exchange/mock_exchange"
 
 	"fmt"
-	"net/url"
 
 	"octopus/exchange"
 
@@ -81,13 +79,10 @@ func TestSupplier(t *testing.T) {
 		}
 
 		impression.EXPECT().Slots().Return(slots).AnyTimes()
-
-		domain := config.GetStringDefault("exchange.supplier.domain", "localhost")
-		pixel, err := url.Parse(fmt.Sprintf("http://%s/track", domain))
-		underTable(t, err)
+		impression.EXPECT().Scheme().Return("http").AnyTimes()
 
 		rf := restful{
-			pixelPattern: pixel,
+			pixelPattern: "/pixel/%s/%s",
 			sup:          supplier,
 		}
 
@@ -95,13 +90,13 @@ func TestSupplier(t *testing.T) {
 			headers: make(http.Header),
 		}
 
-		err = rf.Render(impression, ads, &w)
-		underTable(t, err)
+		err := rf.Render(impression, ads, &w)
+		So(err, ShouldBeNil)
 
 		resultStruct := []*dumbAd{}
 		result := []map[string]interface{}{}
 		err = json.Unmarshal(w.buff.Bytes(), &resultStruct)
-		underTable(t, err)
+		So(err, ShouldBeNil)
 
 		for i := range resultStruct {
 			resultStruct[i].Code = ""
@@ -111,13 +106,6 @@ func TestSupplier(t *testing.T) {
 		So(result, ShouldResemble, expected)
 		So(w.status, ShouldEqual, http.StatusOK)
 	})
-}
-
-func underTable(t *testing.T, err error) {
-	if err != nil {
-		t.Error(err)
-		t.Fail()
-	}
 }
 
 var expected = []map[string]interface{}{

@@ -3,7 +3,7 @@ package main
 import (
 	"commands"
 	_ "octopus/demands"
-	_ "octopus/router/internal/restful"
+	_ "octopus/router"
 	_ "services/broker/selector"
 	"services/config"
 	_ "services/eav/redis"

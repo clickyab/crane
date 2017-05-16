@@ -8,8 +8,8 @@ import (
 	"github.com/fzerorubigd/xmux"
 )
 
-// DemandStatus is the demand status route
-func DemandStatus(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+// Status is the demand status route
+func Status(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	name := xmux.Param(ctx, "name")
 	demand, err := core.GetDemand(name)
 	if err != nil {

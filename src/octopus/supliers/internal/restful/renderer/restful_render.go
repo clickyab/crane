@@ -23,7 +23,7 @@ type dumbAd struct {
 }
 
 type restful struct {
-	pixelPattern *url.URL
+	pixelPattern string
 	sup          exchange.Supplier
 }
 
@@ -55,10 +55,6 @@ func (rf restful) Render(imp exchange.Impression, in map[string]exchange.Adverti
 			Landing:   in[slotTrackID].Landing(),
 			IsFilled:  true,
 		}
-		x := *rf.pixelPattern
-		q := x.Query()
-		q.Set("id", slotTrackID)
-		x.RawQuery = q.Encode()
 
 		winURL := in[slotTrackID].URL()
 		win, err := url.Parse(winURL)
@@ -69,11 +65,10 @@ func (rf restful) Render(imp exchange.Impression, in map[string]exchange.Adverti
 			winURL = win.String()
 		}
 
-		// TODO : fix the scheme
 		trackURL := &url.URL{
-			Scheme: "http",
+			Scheme: imp.Scheme(),
 			Host:   *host,
-			Path:   fmt.Sprintf(`/pixel/%s/%s`, in[slotTrackID].Demand().Name(), in[slotTrackID].TrackID()),
+			Path:   fmt.Sprintf(rf.pixelPattern, in[slotTrackID].Demand().Name(), in[slotTrackID].TrackID()),
 		}
 
 		ctx := templateContext{
@@ -95,7 +90,7 @@ func (rf restful) Render(imp exchange.Impression, in map[string]exchange.Adverti
 }
 
 // NewRestfulRenderer return a restful renderer
-func NewRestfulRenderer(sup exchange.Supplier, pixel *url.URL) exchange.Renderer {
+func NewRestfulRenderer(sup exchange.Supplier, pixel string) exchange.Renderer {
 	return &restful{
 		pixelPattern: pixel,
 		sup:          sup,

@@ -71,11 +71,11 @@ func (s Supplier) Share() int {
 	return s.SShare
 }
 
-// GetSuppliers return all suppliers @TODO manage active/disable
+// GetSuppliers return all suppliers
 func (m *Manager) GetSuppliers(factory RendererFactory) map[string]Supplier {
-	q := "SELECT * FROM suppliers WHERE active=?"
+	q := "SELECT * FROM suppliers WHERE active <> 0"
 	var res []Supplier
-	_, err := m.GetRDbMap().Select(&res, q, 1)
+	_, err := m.GetRDbMap().Select(&res, q)
 	assert.Nil(err)
 	ret := make(map[string]Supplier, len(res))
 	for i := range res {
