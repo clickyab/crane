@@ -33,12 +33,11 @@ func SelectCPM(imp exchange.Impression, all map[string][]exchange.Advertise) (re
 	set := dset.NewDistributedSet("EXC" + imp.Source().Supplier().Name() + imp.PageTrackID())
 	for id := range all {
 		this := moderate(imp.Source(), all[id])
-		if len(this) == 0 {
+		sorted := sortedAd(rmDuplicate(set, this))
+		if len(sorted) == 0 {
 			res[id] = nil
 			continue
 		}
-
-		sorted := sortedAd(rmDuplicate(set, this))
 		sort.Sort(sorted)
 
 		res[id] = sorted[0]

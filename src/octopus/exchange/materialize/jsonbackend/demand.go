@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"octopus/exchange"
 	"services/broker"
+
+	"github.com/Sirupsen/logrus"
 )
 
 type demand struct {
@@ -47,7 +49,11 @@ func (d demand) Key() string {
 
 // Report report
 func (d demand) Report() func(error) {
-	return func(error) {}
+	return func(err error) {
+		if err != nil {
+			logrus.Warn(err)
+		}
+	}
 }
 
 // DemandJob returns a job for demand

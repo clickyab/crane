@@ -3,6 +3,8 @@ package jsonbackend
 import (
 	"encoding/json"
 	"services/broker"
+
+	"github.com/Sirupsen/logrus"
 )
 
 type show struct {
@@ -41,7 +43,11 @@ func (s *show) Key() string {
 
 // Report report
 func (*show) Report() func(error) {
-	return func(error) {}
+	return func(err error) {
+		if err != nil {
+			logrus.Warn(err)
+		}
+	}
 }
 
 // ShowJob return a broker job

@@ -7,9 +7,8 @@ import (
 	"services/config"
 	"services/safe"
 	"strings"
-	"time"
-
 	"sync"
+	"time"
 
 	"github.com/Shopify/sarama"
 	"github.com/Sirupsen/logrus"
@@ -17,8 +16,11 @@ import (
 
 var (
 	// comma separated values
-	brokerList     = config.RegisterString("services.cluster.kafka.broker_list", "127.0.0.1", "kafka cluster hosts")
-	flushFrequency = config.RegisterDuration("services.cluster.kafka.flush_frequency", 500*time.Millisecond, "kafka flush frequency")
+	brokerList     = config.RegisterString("services.broker.kafka.broker_list", "127.0.0.1", "kafka cluster hosts")
+	flushFrequency = config.RegisterDuration("services.broker.kafka.flush_frequency", 500*time.Millisecond, "kafka flush frequency")
+	sasl           = config.RegisterBoolean("services.broker.kafka.sasl_auth", false, "use sasl authentication?")
+	userName       = config.RegisterString("services.broker.kafka.user", "alice", "kafka user name")
+	password       = config.RegisterString("services.broker.kafka.password", "alice123@A", "kafka password")
 )
 
 type cluster struct {
@@ -119,6 +121,11 @@ func (b *cluster) Initialize(ctx context.Context) {
 	cfg.Producer.Return.Successes = true
 	cfg.Producer.Return.Errors = true
 
+	if *sasl {
+		cfg.Net.SASL.Enable = true
+		cfg.Net.SASL.User = *userName
+		cfg.Net.SASL.Password = *password
+	}
 	bl := strings.Split(*brokerList, ",")
 	assert.True(len(bl) >= 1, "[CONFIGBUG] one node in kafka cluster")
 	async, err := sarama.NewAsyncProducer(bl, cfg)

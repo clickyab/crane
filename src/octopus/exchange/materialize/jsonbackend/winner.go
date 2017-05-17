@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"octopus/exchange"
 	"services/broker"
+
+	"github.com/Sirupsen/logrus"
 )
 
 type winner struct {
@@ -40,7 +42,11 @@ func (w *winner) Key() string {
 
 // Report report
 func (w *winner) Report() func(error) {
-	return func(error) {}
+	return func(err error) {
+		if err != nil {
+			logrus.Warn(err)
+		}
+	}
 }
 
 // WinnerJob return a broker job
