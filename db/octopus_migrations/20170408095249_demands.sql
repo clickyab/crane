@@ -8,7 +8,7 @@ CREATE TABLE demands
   name VARCHAR(40) NOT NULL,
   type VARCHAR(40) NOT NULL,
   get_url VARCHAR(300) NOT NULL,
-  win_url VARCHAR(300) NOT NULL,
+  win_url VARCHAR(300),
   white_countrie TEXT,
   excluded_suppliers TEXT,
   minute_limit INT,

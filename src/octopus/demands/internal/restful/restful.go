@@ -102,6 +102,9 @@ func (d *demand) Provide(ctx context.Context, imp exchange.Impression, ch chan e
 
 func (d *demand) Win(ctx context.Context, id string, cpm int64) {
 	incCPM(d.key, cpm)
+	if d.winPoint == nil {
+		return
+	}
 	u := *d.winPoint
 	tmp := u.Query()
 	tmp.Add("win", id)
@@ -171,8 +174,12 @@ func (d *demand) createConnection() {
 
 // NewRestfulClient return a new client for restful call
 func NewRestfulClient(d models.Demand, encoder func(exchange.Impression) interface{}) exchange.Demand {
-	win, err := url.Parse(d.WinURL)
-	assert.Nil(err)
+	var win *url.URL
+	var err error
+	if d.WinURL.Valid {
+		win, err = url.Parse(d.WinURL.String)
+		assert.Nil(err)
+	}
 	dm := &demand{
 		endPoint:           d.GetURL,
 		winPoint:           win,

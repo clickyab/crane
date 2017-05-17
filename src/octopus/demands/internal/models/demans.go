@@ -28,11 +28,11 @@ var (
 // Demand is a single structure to handle demand data from database. loaded on initialize and on
 // signals
 type Demand struct {
-	ID     int64      `db:"id" json:"id"`
-	Name   string     `db:"name" json:"name"`
-	Type   DemandType `db:"type" json:"type"`
-	GetURL string     `db:"get_url" json:"get_url"`
-	WinURL string     `db:"win_url" json:"win_url"`
+	ID     int64            `db:"id" json:"id"`
+	Name   string           `db:"name" json:"name"`
+	Type   DemandType       `db:"type" json:"type"`
+	GetURL string           `db:"get_url" json:"get_url"`
+	WinURL mysql.NullString `db:"win_url" json:"win_url"`
 
 	MinuteLimit int64 `db:"minute_limit" json:"minute_limit"`
 	HourLimit   int64 `db:"hour_limit" json:"hour_limit"`
