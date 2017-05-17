@@ -2,19 +2,24 @@ package rtb
 
 import (
 	"octopus/exchange"
+	"services/dset"
 	"sort"
+	"time"
 )
 
 // SelectCPM is the simplest way to bid. sort the value, return the
 func SelectCPM(imp exchange.Impression, all map[string][]exchange.Advertise) (res map[string]exchange.Advertise) {
 	res = make(map[string]exchange.Advertise, len(all))
 
+	set := dset.NewDistributedSet("EXC" + imp.Source().Supplier().Name() + imp.PageTrackID())
 	for id := range all {
-		if len(all[id]) == 0 {
+		this := moderate(imp.Source(), all[id])
+		if len(this) == 0 {
 			res[id] = nil
 			continue
 		}
-		sorted := sortedAd(all[id])
+
+		sorted := sortedAd(rmDuplicate(set, this))
 		sort.Sort(sorted)
 
 		res[id] = sorted[0]
@@ -31,22 +36,37 @@ func SelectCPM(imp exchange.Impression, all map[string][]exchange.Advertise) (re
 		} else {
 			res[id].SetWinnerCPM(res[id].MaxCPM())
 		}
+
+		set.Add(res[id].ID())
 	}
 
+	set.Save(time.Minute)
 	return res
 }
 
-// Moderate remove unacceptable ads for publisher
-func Moderate(imp exchange.Rater, ads map[string][]exchange.Advertise) map[string][]exchange.Advertise {
-	res := make(map[string][]exchange.Advertise)
+// moderate remove unacceptable ads for publisher
+func moderate(imp exchange.Rater, ads []exchange.Advertise) []exchange.Advertise {
+	rds := make([]exchange.Advertise, 0)
+	for _, ad := range ads {
+		if reduce(imp, ad) {
+			rds = append(rds, ad)
+		}
+	}
+
+	return rds
+}
+
+func rmDuplicate(set dset.DistributedSet, ads []exchange.Advertise) []exchange.Advertise {
+	all := set.Members()
+	var res []exchange.Advertise
+bigLoop:
 	for id := range ads {
-		rds := make([]exchange.Advertise, 0)
-		for _, ad := range ads[id] {
-			if reduce(imp, ad) {
-				rds = append(rds, ad)
+		for _, adID := range all {
+			if adID == ads[id].ID() {
+				continue bigLoop
 			}
 		}
-		res[id] = rds
+		res = append(res, ads[id])
 	}
 	return res
 }

@@ -43,8 +43,6 @@ func GetAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	defer cnl()
 	ads := core.Call(nCtx, imp)
 	logrus.Debugf("%d ads is passed the system from exchange calls", len(ads))
-	ads = rtb.Moderate(imp.Source(), ads)
-	logrus.Debugf("%d ads is passed the system from modorate", len(ads))
 	res := rtb.SelectCPM(imp, ads)
 	logrus.Debugf("%d ads is passed the system select", len(res))
 	// Publish them into message broker
