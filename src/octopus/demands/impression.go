@@ -65,10 +65,12 @@ func getRawSlots(in []exchange.Slot) []rawSlot {
 }
 
 type rawImp struct {
-	TrackID   string `json:"track_id"`
-	IP        string `json:"ip"`
-	UserAgent string `json:"user_agent"`
-	Scheme    string `json:"scheme"`
+	TrackID     string `json:"track_id"`
+	IP          string `json:"ip"`
+	UserAgent   string `json:"user_agent"`
+	Scheme      string `json:"scheme"`
+	PageTrackID string `json:"page_track_id"`
+	UserTrackID string `json:"user_track_id"`
 	// Source return the publisher that this client is going into system from that
 	Source rawPub `json:"source"`
 	// Location of the request
@@ -93,17 +95,19 @@ func getRawImpression(imp exchange.Impression) interface{} {
 		return ""
 	}
 	return rawImp{
-		TrackID:    imp.TrackID(),
-		Scheme:     imp.Scheme(),
-		IP:         checkIP(),
-		UserAgent:  imp.UserAgent(),
-		Attributes: imp.Attributes(),
-		Category:   imp.Category(),
-		Platform:   imp.Platform().String(),
-		UnderFloor: imp.UnderFloor(),
-		Slots:      getRawSlots(imp.Slots()),
-		Location:   getRawLocation(imp.Location()),
-		Source:     getRawPub(imp.Source()),
+		TrackID:     imp.TrackID(),
+		Scheme:      imp.Scheme(),
+		PageTrackID: imp.PageTrackID(),
+		UserTrackID: imp.UserTrackID(),
+		IP:          checkIP(),
+		UserAgent:   imp.UserAgent(),
+		Attributes:  imp.Attributes(),
+		Category:    imp.Category(),
+		Platform:    imp.Platform().String(),
+		UnderFloor:  imp.UnderFloor(),
+		Slots:       getRawSlots(imp.Slots()),
+		Location:    getRawLocation(imp.Location()),
+		Source:      getRawPub(imp.Source()),
 	}
 
 }

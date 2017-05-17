@@ -11,6 +11,8 @@ import (
 
 type impressionRest struct {
 	Schm          string                      `json:"scheme"`
+	PTI           string                      `json:"page_track_id"`
+	UTI           string                      `json:"user_track_id"`
 	SIP           string                      `json:"ip"`
 	Mega          string                      `json:"track_id"`
 	UA            string                      `json:"user_agent"`
@@ -26,6 +28,14 @@ type impressionRest struct {
 
 	dum    []exchange.Slot
 	latlon exchange.LatLon
+}
+
+func (ir *impressionRest) UserTrackID() string {
+	return ir.UTI
+}
+
+func (ir *impressionRest) PageTrackID() string {
+	return ir.PTI
 }
 
 type location struct {
@@ -134,6 +144,8 @@ func (ir *impressionRest) Time() time.Time {
 func newImpressionFromAppRequest(sup exchange.Supplier, r *requestBody) (*impressionRest, error) {
 	resp := impressionRest{
 		Schm:          r.Scheme,
+		UTI:           r.UserTrackID,
+		PTI:           r.PageTrackID,
 		SIP:           r.IP,
 		UA:            r.App.UserAgent,
 		ImpPlatform:   exchange.ImpressionPlatformApp,
@@ -170,6 +182,8 @@ func newImpressionFromAppRequest(sup exchange.Supplier, r *requestBody) (*impres
 func newImpressionFromVastRequest(sup exchange.Supplier, r *requestBody) (*impressionRest, error) {
 	resp := impressionRest{
 		Schm:          r.Scheme,
+		UTI:           r.UserTrackID,
+		PTI:           r.PageTrackID,
 		SIP:           r.IP,
 		UA:            r.Vast.UserAgent,
 		ImpPlatform:   exchange.ImpressionPlatformVast,
@@ -193,6 +207,8 @@ func newImpressionFromVastRequest(sup exchange.Supplier, r *requestBody) (*impre
 func newImpressionFromWebRequest(sup exchange.Supplier, r *requestBody) (*impressionRest, error) {
 	resp := impressionRest{
 		Schm:          r.Scheme,
+		UTI:           r.UserTrackID,
+		PTI:           r.PageTrackID,
 		SIP:           r.IP,
 		UA:            r.Web.UserAgent,
 		ImpPlatform:   exchange.ImpressionPlatformWeb,

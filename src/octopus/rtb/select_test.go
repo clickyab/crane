@@ -100,6 +100,8 @@ func (a *Impression) Time() time.Time {
 }
 
 func (i *Impression) TrackID() string                       { panic("Impression") }
+func (i *Impression) PageTrackID() string                   { panic("Impression") }
+func (i *Impression) UserTrackID() string                   { panic("Impression") }
 func (i *Impression) Scheme() string                        { panic("Impression") }
 func (i *Impression) IP() net.IP                            { panic("Impression") }
 func (i *Impression) UserAgent() string                     { panic("Impression") }

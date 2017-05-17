@@ -11,13 +11,15 @@ import (
 )
 
 type requestBody struct {
-	IP         string              `json:"ip"`
-	Scheme     string              `json:"scheme,omitempty"`
-	Publisher  *restPublisher      `json:"publisher"`
-	Categories []exchange.Category `json:"categories"`
-	Type       string              `json:"type"`
-	UnderFloor bool
-	App        struct {
+	IP          string              `json:"ip"`
+	Scheme      string              `json:"scheme,omitempty"`
+	PageTrackID string              `json:"page_track_id"`
+	UserTrackID string              `json:"user_track_id"`
+	Publisher   *restPublisher      `json:"publisher"`
+	Categories  []exchange.Category `json:"categories"`
+	Type        string              `json:"type"`
+	UnderFloor  bool
+	App         struct {
 		OSVersion  string `json:"os_version,omitempty"`
 		Operator   string `json:"operator,omitempty"`
 		Brand      string `json:"brand,omitempty"`
