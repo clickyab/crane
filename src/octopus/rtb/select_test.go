@@ -1,9 +1,6 @@
 package rtb
 
 import (
-	"context"
-	"net"
-	"net/http"
 	"octopus/exchange"
 	"services/random"
 	"strconv"
@@ -11,11 +8,15 @@ import (
 
 	x "github.com/smartystreets/assertions"
 
-	"time"
-
 	"services/broker"
 	"services/broker/mock"
 
+	"octopus/exchange/mock_exchange"
+
+	"services/dset"
+	dsetm "services/dset/mock"
+
+	"github.com/golang/mock/gomock"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -76,83 +77,43 @@ type Advertise struct {
 	demand exchange.Demand
 }
 
-func (a *Advertise) SlotTrackID() string { panic("SlotTrackID") }
-
-func (a *Advertise) ID() string              { panic("Advertise") }
-func (a *Advertise) MaxCPM() int64           { return a.cpm }
-func (a *Advertise) Width() int              { panic("Advertise") }
-func (a *Advertise) Height() int             { panic("Advertise") }
-func (a *Advertise) URL() string             { panic("Advertise") }
-func (a *Advertise) TrackID() string         { panic("Advertise") }
-func (a *Advertise) SetWinnerCPM(w int64)    { a.win = w }
-func (a *Advertise) WinnerCPM() int64        { return a.win }
-func (a *Advertise) Demand() exchange.Demand { return a.demand }
-func (a *Advertise) Rates() []exchange.Rate  { panic("publisher") }
-func (a *Advertise) Landing() string         { panic("publisher") }
-
-type Impression struct {
-	publisher  exchange.Publisher
-	underFloor bool
-}
-
-func (a *Impression) Time() time.Time {
-	panic("time")
-}
-
-func (i *Impression) TrackID() string                       { panic("Impression") }
-func (i *Impression) PageTrackID() string                   { panic("Impression") }
-func (i *Impression) UserTrackID() string                   { panic("Impression") }
-func (i *Impression) Scheme() string                        { panic("Impression") }
-func (i *Impression) IP() net.IP                            { panic("Impression") }
-func (i *Impression) UserAgent() string                     { panic("Impression") }
-func (i *Impression) Source() exchange.Publisher            { return i.publisher }
-func (i *Impression) Location() exchange.Location           { panic("Impression") }
-func (i *Impression) Attributes() map[string]interface{}    { panic("Impression") }
-func (i *Impression) Slots() []exchange.Slot                { panic("Impression") }
-func (i *Impression) Category() []exchange.Category         { panic("Impression") }
-func (i *Impression) Platform() exchange.ImpressionPlatform { panic("Impression") }
-func (i *Impression) UnderFloor() bool                      { return i.underFloor }
-
-type Demand struct {
-	handicap int64
-}
-
-func (d *Demand) Name() string { panic("Demand") }
-func (d *Demand) Provide(context.Context, exchange.Impression, chan exchange.Advertise) {
-	panic("Demand")
-}
-func (d *Demand) Win(context.Context, string, int64)                         { panic("Demand") }
-func (d *Demand) Status(context.Context, http.ResponseWriter, *http.Request) { panic("Demand") }
-func (d *Demand) Handicap() int64                                            { return d.handicap }
-func (d *Demand) CallRate() int                                              { panic("Demand") }
-func (d *Demand) WhiteListCountries() []string                               { return []string{} }
-func (d *Demand) ExcludedSuppliers() []string                                { return []string{} }
-
-type Publisher struct {
-	floorCPM,
-	softFloorCPM int64
-}
-
-func (p *Publisher) Name() string                       { panic("publisher") }
-func (p *Publisher) FloorCPM() int64                    { return p.floorCPM }
-func (p *Publisher) SoftFloorCPM() int64                { return p.softFloorCPM }
-func (p *Publisher) Attributes() map[string]interface{} { panic("publisher") }
-func (p *Publisher) Supplier() exchange.Supplier        { panic("publisher") }
-func (p *Publisher) Rates() []exchange.Rate             { panic("publisher") }
-
 func TestSelect(t *testing.T) {
+
+	dset.Register(dsetm.NewMockDsetStore)
+
+	ctrl := gomock.NewController(t)
+
 	b := mock.GetChannelBroker()
 	broker.SetActiveBroker(b)
 	for _, u := range cases() {
 		Convey("SelectCPM function test with case number "+strconv.Itoa(u.Case), t, func() {
-			p := &Publisher{u.DCPMFloor, u.DSCPMFloor}
-			m := &Impression{p, u.UnderFloor}
+
+			s := mock_exchange.NewMockSupplier(ctrl)
+			s.EXPECT().Name().Return("test").AnyTimes()
+			p := mock_exchange.NewMockPublisher(ctrl)
+			p.EXPECT().FloorCPM().Return(u.DCPMFloor).AnyTimes()
+			p.EXPECT().SoftFloorCPM().Return(u.DSCPMFloor).AnyTimes()
+			p.EXPECT().Supplier().Return(s).AnyTimes()
+
+			p.EXPECT().Rates().Return([]exchange.Rate{exchange.RateA}).AnyTimes()
+			m := mock_exchange.NewMockImpression(ctrl)
+			m.EXPECT().Source().Return(p).AnyTimes()
+
+			m.EXPECT().PageTrackID().Return(<-random.ID).AnyTimes()
+			m.EXPECT().UnderFloor().Return(u.UnderFloor)
 
 			ads := make([]exchange.Advertise, 0)
 
 			for _, a := range u.Demands {
-				d := &Demand{a.HandyCap}
-				ad := &Advertise{a.MaxCPM, u.WinnerDemand, d}
+				d := mock_exchange.NewMockDemand(ctrl)
+				d.EXPECT().Handicap().Return(a.HandyCap).AnyTimes()
+				ad := mock_exchange.NewMockAdvertise(ctrl)
+				ad.EXPECT().MaxCPM().Return(a.MaxCPM).AnyTimes()
+				ad.EXPECT().ID().Return(<-random.ID).AnyTimes()
+				ad.EXPECT().Rates().Return([]exchange.Rate{exchange.RateB}).AnyTimes()
+				ad.EXPECT().WinnerCPM().Return(u.WinnerDemand).AnyTimes()
+				ad.EXPECT().SetWinnerCPM(gomock.Any()).AnyTimes()
+				ad.EXPECT().Demand().Return(d).AnyTimes()
 				ads = append(ads, ad)
 			}
 
@@ -165,7 +126,14 @@ func TestSelect(t *testing.T) {
 	}
 
 	Convey("SelectCPM function Should return nil", t, func() {
-		m := &Impression{}
+		m := mock_exchange.NewMockImpression(ctrl)
+		m.EXPECT().PageTrackID().Return(<-random.ID).AnyTimes()
+		sup := mock_exchange.NewMockSupplier(ctrl)
+		sup.EXPECT().Name().Return(<-random.ID).AnyTimes()
+		p := mock_exchange.NewMockPublisher(ctrl)
+
+		p.EXPECT().Supplier().Return(sup).AnyTimes()
+		m.EXPECT().Source().Return(p).AnyTimes()
 		id := <-random.ID
 		s := make(map[string][]exchange.Advertise)
 		s[id] = nil
