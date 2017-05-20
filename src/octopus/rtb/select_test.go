@@ -16,6 +16,9 @@ import (
 	"services/dset"
 	dsetm "services/dset/mock"
 
+	"services/dlock"
+	dlockm "services/dlock/mock"
+
 	"github.com/golang/mock/gomock"
 	. "github.com/smartystreets/goconvey/convey"
 )
@@ -80,6 +83,7 @@ type Advertise struct {
 func TestSelect(t *testing.T) {
 
 	dset.Register(dsetm.NewMockDsetStore)
+	dlock.Register(dlockm.NewMockDistributedLocker)
 
 	ctrl := gomock.NewController(t)
 

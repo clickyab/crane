@@ -2,14 +2,33 @@ package rtb
 
 import (
 	"octopus/exchange"
+	"services/config"
+	"services/dlock"
 	"services/dset"
 	"sort"
 	"time"
 )
 
+var (
+	pageLock = config.RegisterDuration(
+		"exchange.rtb.lock_duration",
+		500*time.Millisecond,
+		"the time to lock one page for other requests",
+	)
+	pageLifeTime = config.RegisterDuration(
+		"exchange.rtb.page_lifetime",
+		5*time.Minute,
+		"the lifetime of the page key in redis to prevent duplicate ad in one page",
+	)
+)
+
 // SelectCPM is the simplest way to bid. sort the value, return the
 func SelectCPM(imp exchange.Impression, all map[string][]exchange.Advertise) (res map[string]exchange.Advertise) {
 	res = make(map[string]exchange.Advertise, len(all))
+
+	lock := dlock.NewDistributedLock("LOCK"+imp.Source().Supplier().Name()+imp.PageTrackID(), *pageLock)
+	lock.Lock()
+	defer lock.Unlock()
 
 	set := dset.NewDistributedSet("EXC" + imp.Source().Supplier().Name() + imp.PageTrackID())
 	for id := range all {
@@ -40,7 +59,7 @@ func SelectCPM(imp exchange.Impression, all map[string][]exchange.Advertise) (re
 		set.Add(res[id].ID())
 	}
 
-	set.Save(time.Minute)
+	set.Save(*pageLifeTime)
 	return res
 }
 
