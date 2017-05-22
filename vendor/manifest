@@ -58,6 +58,18 @@
 			"branch": "master"
 		},
 		{
+			"importpath": "github.com/codegangsta/inject",
+			"repository": "https://github.com/codegangsta/inject",
+			"revision": "33e0aa1cb7c019ccc3fbe049a8262a6403d30504",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/codeskyblue/go-sh",
+			"repository": "https://github.com/codeskyblue/go-sh",
+			"revision": "b097669b1569203c3ce05a6b8717d43140fdb3d5",
+			"branch": "master"
+		},
+		{
 			"importpath": "github.com/daaku/go.zipexe",
 			"repository": "https://github.com/daaku/go.zipexe",
 			"revision": "a5fe2436ffcb3236e175e5149162b41cd28bd27d",
@@ -170,6 +182,12 @@
 			"branch": "master"
 		},
 		{
+			"importpath": "github.com/gobuild/log",
+			"repository": "https://github.com/gobuild/log",
+			"revision": "f1f03dc733eb8acf247f889dd103ee1de1a06caa",
+			"branch": "master"
+		},
+		{
 			"importpath": "github.com/gocql/gocql",
 			"repository": "https://github.com/gocql/gocql",
 			"revision": "7e9748ccda7fd5135a7db13ba03f09cad0c86bed",
@@ -215,6 +233,12 @@
 			"branch": "master"
 		},
 		{
+			"importpath": "github.com/goraz/humanize",
+			"repository": "https://github.com/goraz/humanize",
+			"revision": "f0c01f25ff68ce2e754a3fa8e07dcddda7f5fed3",
+			"branch": "master"
+		},
+		{
 			"importpath": "github.com/gorilla/websocket",
 			"repository": "https://github.com/gorilla/websocket",
 			"revision": "a91eba7f97777409bc2c443f5534d41dd20c5720",
@@ -254,6 +278,12 @@
 			"branch": "master"
 		},
 		{
+			"importpath": "github.com/howeyc/fsnotify",
+			"repository": "https://github.com/howeyc/fsnotify",
+			"revision": "f0c08ee9c60704c1879025f2ae0ff3e000082c13",
+			"branch": "master"
+		},
+		{
 			"importpath": "github.com/influxdata/influxdb/client/v2",
 			"repository": "https://github.com/influxdata/influxdb",
 			"revision": "9bd7fcea3270512fbcdbbc6562773861a7efe9b3",
@@ -278,6 +308,12 @@
 			"importpath": "github.com/jessevdk/go-flags",
 			"repository": "https://github.com/jessevdk/go-flags",
 			"revision": "460c7bb0abd6e927f2767cadc91aa6ef776a98b4",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/jinzhu/inflection",
+			"repository": "https://github.com/jinzhu/inflection",
+			"revision": "1c35d901db3da928c72a72d8458480cc9ade058f",
 			"branch": "master"
 		},
 		{
@@ -393,6 +429,12 @@
 			"branch": "master"
 		},
 		{
+			"importpath": "github.com/ogier/pflag",
+			"repository": "https://github.com/ogier/pflag",
+			"revision": "45c278ab3607870051a2ea9040bb85fcb8557481",
+			"branch": "master"
+		},
+		{
 			"importpath": "github.com/olebedev/emitter",
 			"repository": "https://github.com/olebedev/emitter",
 			"revision": "9110dbae3d07cb26c2993dbf3bdbd0aad98329f9",
@@ -505,6 +547,20 @@
 			"revision": "da118f7b8e5954f39d0d2130ab35d4bf0e3cb344",
 			"branch": "master",
 			"path": "/websocket"
+		},
+		{
+			"importpath": "golang.org/x/tools/go/ast/astutil",
+			"repository": "https://go.googlesource.com/tools",
+			"revision": "bf4b54dc687c73b6ef63de8b8abf0ad3951e3edc",
+			"branch": "master",
+			"path": "/go/ast/astutil"
+		},
+		{
+			"importpath": "golang.org/x/tools/imports",
+			"repository": "https://go.googlesource.com/tools",
+			"revision": "bf4b54dc687c73b6ef63de8b8abf0ad3951e3edc",
+			"branch": "master",
+			"path": "/imports"
 		},
 		{
 			"importpath": "gopkg.in/Shopify/sarama.v1",
