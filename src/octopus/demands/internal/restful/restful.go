@@ -125,7 +125,7 @@ func (d *demand) Win(ctx context.Context, id string, cpm int64) {
 		return
 	}
 
-	logrus.Debug("winner call status was %d", resp.StatusCode)
+	logrus.Debugf("winner call status was %d", resp.StatusCode)
 }
 
 func (d demand) CallRate() int {

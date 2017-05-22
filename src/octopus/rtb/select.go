@@ -24,7 +24,7 @@ var (
 
 // SelectCPM is the simplest way to bid. sort the value, return the
 func SelectCPM(imp exchange.Impression, all map[string][]exchange.Advertise) (res map[string]exchange.Advertise) {
-	res = make(map[string]exchange.Advertise, len(all))
+	res = make(map[string]exchange.Advertise)
 
 	lock := dlock.NewDistributedLock("LOCK"+imp.Source().Supplier().Name()+imp.PageTrackID(), *pageLock)
 	lock.Lock()
@@ -64,7 +64,7 @@ func SelectCPM(imp exchange.Impression, all map[string][]exchange.Advertise) (re
 
 // moderate remove unacceptable ads for publisher
 func moderate(imp exchange.Rater, ads []exchange.Advertise) []exchange.Advertise {
-	rds := make([]exchange.Advertise, 0)
+	var rds []exchange.Advertise
 	for _, ad := range ads {
 		if reduce(imp, ad) {
 			rds = append(rds, ad)

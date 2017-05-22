@@ -47,29 +47,30 @@ func GetAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	logrus.Debugf("%d ads is passed the system select", len(res))
 	// Publish them into message broker
 	for i := range res {
-		broker.Publish(materialize.WinnerJob(
-			imp,
-			res[i],
-			i,
-		))
-	}
-	// save winner in store
-	for i := range res {
-		store := eav.NewEavStore(res[i].TrackID())
-		store.SetSubKey("IP",
-			httplib.RealIP(r),
-		).SetSubKey("SLOT",
-			res[i].ID(),
-		).SetSubKey("DEMAND",
-			res[i].Demand().Name(),
-		).SetSubKey("BID",
-			fmt.Sprintf("%d", res[i].WinnerCPM()),
-		).SetSubKey("TRACK",
-			res[i].TrackID(),
-		).SetSubKey("ADID",
-			res[i].ID(),
-		).SetSubKey("TIME", fmt.Sprint(imp.Time().Unix()))
-		assert.Nil(store.Save(24 * time.Hour))
+		// TODO : why this happen?
+		if res[i] != nil {
+			broker.Publish(materialize.WinnerJob(
+				imp,
+				res[i],
+				i,
+			))
+
+			store := eav.NewEavStore(res[i].TrackID())
+			store.SetSubKey("IP",
+				httplib.RealIP(r),
+			).SetSubKey("SLOT",
+				res[i].ID(),
+			).SetSubKey("DEMAND",
+				res[i].Demand().Name(),
+			).SetSubKey("BID",
+				fmt.Sprintf("%d", res[i].WinnerCPM()),
+			).SetSubKey("TRACK",
+				res[i].TrackID(),
+			).SetSubKey("ADID",
+				res[i].ID(),
+			).SetSubKey("TIME", fmt.Sprint(imp.Time().Unix()))
+			assert.Nil(store.Save(24 * time.Hour))
+		}
 	}
 	err = imp.Source().Supplier().Renderer().Render(imp, res, w)
 	if err != nil {

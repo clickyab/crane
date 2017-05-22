@@ -1,6 +1,7 @@
 package rabbitmq
 
 import (
+	"os"
 	"services/config"
 )
 
@@ -16,7 +17,11 @@ type cfgLoader struct {
 
 func (cl *cfgLoader) Initialize() config.DescriptiveLayer {
 	d := config.NewDescriptiveLayer()
-	d.Add("amqp dsn", "service.amqp.dsn", "amqp://server:bita123@127.0.0.1:5672/cy")
+	dsn := os.Getenv("RABBITMQ_URL")
+	if dsn == "" {
+		dsn = "amqp://server:bita123@127.0.0.1:5672/cy"
+	}
+	d.Add("amqp dsn", "service.amqp.dsn", dsn)
 	d.Add("amqp exchange to publish into", "service.amqp.exchange", "cy")
 	d.Add("amqp publisher to publish into", "service.ampq.publisher", 30)
 	d.Add("amqp confirm channel len", "service.amqp.confirm_len", 200)
