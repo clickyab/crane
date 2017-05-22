@@ -1,14 +1,12 @@
-package rabbit
+package rabbitmq
 
 import (
 	"container/ring"
+	"context"
 	"services/assert"
+	"services/initializer"
 	"sync"
 	"sync/atomic"
-
-	"context"
-
-	"services/initializer"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/streadway/amqp"
@@ -17,6 +15,7 @@ import (
 var (
 	conn *amqp.Connection
 	once = sync.Once{}
+	kill context.Context
 )
 
 // Channel opens a unique, concurrent server channel to process the bulk of AMQP
@@ -131,16 +130,7 @@ type Connection interface {
 	Channel() (Channel, error)
 }
 
-// Job interface
-type Job interface {
-	// GetTopic return the topic of the current message to publish
-	GetTopic() string
-	// GetQueue return the queue to publish in
-	GetQueue() string
-}
-
 var (
-	quit        = make(chan chan struct{})
 	hasConsumer int64
 )
 
@@ -151,6 +141,7 @@ type initRabbit struct {
 func (in *initRabbit) Initialize(ctx context.Context) {
 
 	once.Do(func() {
+		kill, _ = context.WithCancel(ctx)
 		var err error
 		conn, err = amqp.Dial(cfg.DSN)
 		assert.Nil(err)
@@ -169,29 +160,28 @@ func (in *initRabbit) Initialize(ctx context.Context) {
 				amqp.Table{},
 			),
 		)
-		assert.Nil(
-			chn.ExchangeDeclare(
-				cfg.Exchange+retryPostfix,
-				"topic",
-				true,
-				false,
-				false,
-				false,
-				amqp.Table{},
-			),
-		)
-		q, err := chn.QueueDeclare(
-			"publish"+retryPostfix,
-			true,
-			false,
-			false,
-			true,
-			amqp.Table{
-				"x-dead-letter-exchange": cfg.Exchange,
-			},
-		)
-		assert.Nil(err)
-		assert.Nil(chn.QueueBind(q.Name, "#", cfg.Exchange+retryPostfix, true, amqp.Table{}))
+
+		rng = ring.New(cfg.Publisher)
+		for i := 0; i < cfg.Publisher; i++ {
+			chn, err := conn.Channel()
+			assert.Nil(err)
+			rtrn := make(chan amqp.Confirmation, cfg.ConfirmLen)
+			err = chn.Confirm(false)
+			assert.Nil(err)
+			chn.NotifyPublish(rtrn)
+			tmp := chnlLock{
+				chn:    chn,
+				lock:   &sync.Mutex{},
+				wg:     &sync.WaitGroup{},
+				rtrn:   rtrn,
+				closed: false,
+			}
+			go publishConfirm(&tmp)
+			rng.Value = &tmp
+			rng = rng.Next()
+		}
+
+		logrus.Debug("Rabbit initialized")
 
 		go func() {
 			c := ctx.Done()
@@ -201,36 +191,14 @@ func (in *initRabbit) Initialize(ctx context.Context) {
 		}()
 	})
 
-	rng = ring.New(cfg.Publisher)
-	for i := 0; i < cfg.Publisher; i++ {
-		chn, err := conn.Channel()
-		assert.Nil(err)
-		rtrn := make(chan amqp.Confirmation, cfg.ConfirmLen)
-		err = chn.Confirm(false)
-		assert.Nil(err)
-		chn.NotifyPublish(rtrn)
-		tmp := chnlLock{
-			chn:    chn,
-			lock:   &sync.Mutex{},
-			wg:     &sync.WaitGroup{},
-			rtrn:   rtrn,
-			closed: false,
-		}
-		go publishConfirm(&tmp)
-		rng.Value = &tmp
-		rng = rng.Next()
-	}
-
-	logrus.Debug("Rabbit initialized")
 }
 
 // finalize try to close rabbitmq connection
 func finalize() {
 	if atomic.CompareAndSwapInt64(&hasConsumer, 1, 0) {
-		tmp := make(chan struct{})
-		quit <- tmp
-		<-tmp
+
 	}
+	finalizeWait()
 	logrus.Debug("Rabbit finalized.")
 }
 

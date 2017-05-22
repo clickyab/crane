@@ -2,11 +2,11 @@ package selector
 
 import (
 	"services/broker"
-	"services/broker/kafka"
 	"services/broker/mock"
 	"services/config"
-	"services/initializer"
 	"services/safe"
+
+	"services/broker/rabbitmq"
 
 	"github.com/Sirupsen/logrus"
 )
@@ -16,15 +16,19 @@ type cfg struct {
 
 func (cfg) Initialize() config.DescriptiveLayer {
 	layer := config.NewDescriptiveLayer()
-	layer.Add("application is in test mode and broker is not active", "services.broker.test_mode", true)
+	layer.Add("application is in test mode and broker is not active", "services.broker.provider", "mock")
 	return layer
 }
 
 func (cfg) Loaded() {
-	test := config.GetBool("services.broker.test_mode")
+	provider := config.GetString("services.broker.provider")
 	devel := config.GetBool("core.devel_mode")
 
-	if devel && test {
+	switch provider {
+	case "mock":
+		if !devel {
+			logrus.Panic("mock is not allowed when devel is not set")
+		}
 		p := mock.GetChannelBroker()
 		broker.SetActiveBroker(p)
 		safe.GoRoutine(
@@ -39,12 +43,11 @@ func (cfg) Loaded() {
 				}
 			},
 		)
-	} else {
-		// this is the only place allowed to call new cluster
-		// TODO : find a better way
-		c := kafka.NewCluster()
-		initializer.Register(c.(initializer.Interface), 0)
-		broker.SetActiveBroker(c.(broker.Interface))
+	case "rabbitmq":
+		p := rabbitmq.NewRabbitBroker()
+		broker.SetActiveBroker(p)
+	default:
+		logrus.Panicf("there is no valid broker configured , %s is not valid", provider)
 	}
 }
 

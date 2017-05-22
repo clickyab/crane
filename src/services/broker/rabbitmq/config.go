@@ -1,4 +1,4 @@
-package rabbit
+package rabbitmq
 
 import (
 	"services/config"
@@ -16,11 +16,11 @@ type cfgLoader struct {
 
 func (cl *cfgLoader) Initialize() config.DescriptiveLayer {
 	d := config.NewDescriptiveLayer()
-	d.Add("DESCRITION", "service.amqp.dsn", "amqp://server:bita123@127.0.0.1:5672/cy")
-	d.Add("DESCRITION", "service.amqp.exchange", "cy")
-	d.Add("DESCRITION", "service.ampq.publisher", 30)
-	d.Add("DESCRITION", "service.amqp.confirm_len", 200)
-	d.Add("DESCRITION", "service.amqp.debug", false)
+	d.Add("amqp dsn", "service.amqp.dsn", "amqp://server:bita123@127.0.0.1:5672/cy")
+	d.Add("amqp exchange to publish into", "service.amqp.exchange", "cy")
+	d.Add("amqp publisher to publish into", "service.ampq.publisher", 30)
+	d.Add("amqp confirm channel len", "service.amqp.confirm_len", 200)
+	d.Add("amqp debug mode", "service.amqp.debug", false)
 	return d
 }
 

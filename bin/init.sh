@@ -6,6 +6,7 @@ dpkg-reconfigure openssh-server
 
 /etc/init.d/mysql start
 /etc/init.d/redis-server start
+/etc/init.d/rabbitmq-server start
 /etc/init.d/ssh start
 EOGO
 chmod a+x /etc/my_init.d/services

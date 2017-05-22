@@ -46,6 +46,6 @@ func GetChannel(size int) <-chan broker.Job {
 }
 
 // GetChannelBroker return the current active broker
-func GetChannelBroker() broker.Interface {
+func GetChannelBroker() broker.Publisher {
 	return b
 }
