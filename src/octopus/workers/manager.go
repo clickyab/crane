@@ -16,11 +16,9 @@ type Acknowledger interface {
 	Ack(multiple bool) error
 	// Nack negatively acknowledge the delivery of message(s) identified by the delivery tag from either the client or server.
 	Nack(multiple, requeue bool) error
-	// Reject delegates a negatively acknowledgement through the Acknowledger interface.
-	Reject(requeue bool) error
 }
 
-func factID(tm time.Time) int {
+func factTableID(tm time.Time) int {
 
 	layout := "2006-01-02T15:04:05.000Z"
 	str := "2017-03-21T00:00:00.000Z"
@@ -36,78 +34,85 @@ func factID(tm time.Time) int {
 
 var dataChannel = make(chan tableModel)
 
-func manager() {
-	supDemSrcTable := make(map[string]tableModel)
-	supSrcTable := make(map[string]tableModel)
+func worker() {
+	supDemSrcTable := make(map[string]*tableModel)
+	supSrcTable := make(map[string]*tableModel)
+
+	//TODO Get this from timeout
 	h := time.After(2 * time.Minute)
 	var counter = 0
 	var ack Acknowledger
+
+	defer func() {
+		if ack != nil {
+			ack.Nack(true, true)
+		}
+	}()
+
+	flushAndClean := func() {
+		err := flush(supDemSrcTable, supSrcTable)
+		if err == nil {
+			ack.Ack(true)
+		} else {
+			ack.Nack(true, true)
+
+		}
+		counter = 0
+		supDemSrcTable = make(map[string]*tableModel)
+		supSrcTable = make(map[string]*tableModel)
+	}
 	for {
 		select {
 		case p := <-dataChannel:
+
+			if p.Time == 0 {
+				assert.NotNil(nil, "Time should not be equal 0")
+			}
+			if p.Source == "" || p.Supplier == "" {
+				assert.NotNil(nil, "Source and supplier can not be empty")
+			}
+			ack = p.Acknowledger
 			supDemSrcKey := fmt.Sprint(p.Time, p.Supplier, p.Source, p.Demand)
-			m, mk := supDemSrcTable[supDemSrcKey]
-			if !mk {
-				supDemSrcTable[supDemSrcKey] = p
+			supDemSrcTable[supDemSrcKey] = aggregate(supDemSrcTable[supDemSrcKey], p)
 
-			} else {
-				m = aggregator(m, p)
-				supDemSrcTable[supDemSrcKey] = m
+			if p.Demand != "" {
+				supSrcTableKey := fmt.Sprint(p.Time, p.Supplier, p.Source)
+				supSrcTable[supSrcTableKey] = aggregate(supSrcTable[supSrcTableKey], p)
 			}
 
-			supSrcTableKey := fmt.Sprint(p.Time, p.Supplier, p.Source)
-			u, uk := supSrcTable[supSrcTableKey]
-			if !uk {
-
-				supSrcTable[supSrcTableKey] = p
-
-			} else {
-				u = aggregator(u, p)
-				supSrcTable[supSrcTableKey] = u
-			}
 			counter++
+
 			if counter > limit {
-				err := flush(supDemSrcTable, supSrcTable)
-				if err == nil {
-					ack.Ack(true)
-				} else {
-					ack.Nack(true, true)
-
-				}
-				counter = 0
-				supDemSrcTable = make(map[string]tableModel)
-				supSrcTable = make(map[string]tableModel)
+				flushAndClean()
 			}
+
 		case <-h:
-			err := flush(supDemSrcTable, supSrcTable)
-			if err == nil {
-				ack.Ack(true)
-			} else {
-				ack.Nack(true, true)
 
-			}
-			counter = 0
-			supDemSrcTable = make(map[string]tableModel)
-			supSrcTable = make(map[string]tableModel)
-			h = time.After(2 * time.Minute)
-
+			flushAndClean()
 		}
 	}
 }
 
 func init() {
-	safe.GoRoutine(func(){
-		manager()
+
+	safe.GoRoutine(func() {
+		worker()
 	})
+
 }
 
 func timestampToTime(s string) time.Time {
+
 	i, err := strconv.ParseInt(s, 10, 0)
 	assert.Nil(err)
 	return time.Unix(i, 0)
+
 }
 
-func aggregator(a tableModel, b tableModel) tableModel {
+func aggregate(a *tableModel, b tableModel) *tableModel {
+	if a == nil {
+		a = &tableModel{}
+	}
 	res := tableModel{}
 	res.ShowBid = a.ShowBid + b.ShowBid
 	res.Show = a.Show + b.Show
@@ -120,5 +125,5 @@ func aggregator(a tableModel, b tableModel) tableModel {
 	} else {
 		res.Time = b.Time
 	}
-	return res
+	return &res
 }

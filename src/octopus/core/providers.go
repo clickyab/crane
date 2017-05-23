@@ -2,20 +2,16 @@ package core
 
 import (
 	"context"
+	"errors"
 	"math/rand"
-	"octopus/exchange"
-	"services/assert"
 	"sync"
 	"sync/atomic"
 	"time"
 
-	"errors"
-
+	"octopus/exchange"
 	"octopus/exchange/materialize"
-
+	"services/assert"
 	"services/broker"
-
-	"fmt"
 
 	"github.com/Sirupsen/logrus"
 )
@@ -47,7 +43,6 @@ func (p *providerData) watch(ctx context.Context, imp exchange.Impression) (res 
 			imp,
 			p.provider,
 			res,
-			fmt.Sprintf("%d", time.Now().Unix()),
 		)
 		broker.Publish(jDem)
 	}()

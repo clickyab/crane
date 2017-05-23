@@ -20,10 +20,10 @@ var (
 
 // DemandJob returns a job for demand
 // TODO : add a duration to this. for better view this is important
-func DemandJob(imp exchange.Impression, dmn exchange.Demand, ads map[string]exchange.Advertise, t string) broker.Job {
+func DemandJob(imp exchange.Impression, dmn exchange.Demand, ads map[string]exchange.Advertise) broker.Job {
 	switch *driver {
 	case jsonDriver:
-		return jsonbackend.DemandJob(imp, dmn, ads, t)
+		return jsonbackend.DemandJob(imp, dmn, ads)
 	case emptyDriver:
 		return job{
 			data:  []byte("demand job"),
