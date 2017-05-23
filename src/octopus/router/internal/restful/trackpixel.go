@@ -42,6 +42,8 @@ func TrackPixel(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		winnerBID := store["BID"]
 		IP := store["IP"]
 		impTime := store["TIME"]
+		supplier := store["SUPPLIER"]
+		publisher := store["PUBLISHER"]
 		winnerInt, err := strconv.ParseInt(winnerBID, 10, 0)
 		if err != nil {
 			return
@@ -53,7 +55,7 @@ func TrackPixel(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		}
 		d.Win(ctx, winnerID, winnerInt)
 		broker.Publish(materialize.ShowJob(
-			trackID, winnerDemand, slotTrack, AdID, IP, winnerInt, impTime,
+			trackID, winnerDemand, slotTrack, AdID, IP, winnerInt, impTime, supplier, publisher,
 		))
 	})
 }

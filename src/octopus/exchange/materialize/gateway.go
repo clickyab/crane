@@ -54,10 +54,10 @@ func WinnerJob(imp exchange.Impression, ad exchange.Advertise, slotID string) br
 }
 
 // ShowJob return a broker job
-func ShowJob(trackID, demand, slotID, adID string, IP string, winner int64, t string) broker.Job {
+func ShowJob(trackID, demand, slotID, adID string, IP string, winner int64, t string, supplier string, publisher string) broker.Job {
 	switch *driver {
 	case jsonDriver:
-		return jsonbackend.ShowJob(trackID, demand, slotID, adID, IP, winner, t)
+		return jsonbackend.ShowJob(trackID, demand, slotID, adID, IP, winner, t, supplier, publisher)
 	case emptyDriver:
 		return job{
 			data:  []byte("show job"),

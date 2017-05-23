@@ -103,12 +103,14 @@ func winnerToMap(imp exchange.Impression, ad exchange.Advertise, slotID string) 
 	}
 }
 
-func showToMap(trackID, demand, slotID, adID string, winner int64) map[string]interface{} {
+func showToMap(trackID, demand, slotID, adID string, winner int64, supplier string, publisher string) map[string]interface{} {
 	return map[string]interface{}{
 		"track_id":    trackID,
 		"demand_name": demand,
 		"price":       winner,
 		"slot_id":     slotID,
 		"ad_id":       adID,
+		"supplier":    supplier,
+		"publisher":   publisher,
 	}
 }

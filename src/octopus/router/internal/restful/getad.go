@@ -68,7 +68,13 @@ func GetAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 				res[i].TrackID(),
 			).SetSubKey("ADID",
 				res[i].ID(),
-			).SetSubKey("TIME", fmt.Sprint(imp.Time().Unix()))
+			).SetSubKey("TIME",
+				fmt.Sprint(imp.Time().Unix()),
+			).SetSubKey("PUBLISHER",
+				imp.Source().Name(),
+			).SetSubKey("SUPPLIER",
+				imp.Source().Supplier().Name(),
+			)
 			assert.Nil(store.Save(24 * time.Hour))
 		}
 	}
