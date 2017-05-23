@@ -114,27 +114,3 @@ func showToMap(trackID, demand, slotID, adID string, winner int64, supplier stri
 		"publisher":   publisher,
 	}
 }
-
-type supDemSrc struct {
-	Supplier      string
-	Source        string
-	Demand        string
-	Time          uint
-	Request       uint
-	Impression    uint
-	Win           uint
-	Show          uint
-	ImpressionBid int64
-	ShowBid       int64
-}
-
-type supSrc struct {
-	Supplier      string
-	Source        string
-	Time          int
-	Request       int64
-	Impression    int64
-	Show          int64
-	ImpressionBid int64
-	ShowBid       int64
-}

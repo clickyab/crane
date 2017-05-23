@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"services/assert"
+	"services/safe"
 )
 
 // TODO get this from config
@@ -17,11 +18,6 @@ type Acknowledger interface {
 	Nack(multiple, requeue bool) error
 	// Reject delegates a negatively acknowledgement through the Acknowledger interface.
 	Reject(requeue bool) error
-}
-
-func genID(t time.Time, s ...string) string {
-	m := t.Format("2006010203")
-	return fmt.Sprint(m, s)
 }
 
 func factID(tm time.Time) int {
@@ -38,8 +34,91 @@ func factID(tm time.Time) int {
 
 }
 
+var dataChannel = make(chan tableModel)
+
+func manager() {
+	supDemSrcTable := make(map[string]tableModel)
+	supSrcTable := make(map[string]tableModel)
+	h := time.After(2 * time.Minute)
+	var counter = 0
+	var ack Acknowledger
+	for {
+		select {
+		case p := <-dataChannel:
+			supDemSrcKey := fmt.Sprint(p.Time, p.Supplier, p.Source, p.Demand)
+			m, mk := supDemSrcTable[supDemSrcKey]
+			if !mk {
+				supDemSrcTable[supDemSrcKey] = p
+
+			} else {
+				m = aggregator(m, p)
+				supDemSrcTable[supDemSrcKey] = m
+			}
+
+			supSrcTableKey := fmt.Sprint(p.Time, p.Supplier, p.Source)
+			u, uk := supSrcTable[supSrcTableKey]
+			if !uk {
+
+				supSrcTable[supSrcTableKey] = p
+
+			} else {
+				u = aggregator(u, p)
+				supSrcTable[supSrcTableKey] = u
+			}
+			counter++
+			if counter > limit {
+				err := flush(supDemSrcTable, supSrcTable)
+				if err == nil {
+					ack.Ack(true)
+				} else {
+					ack.Nack(true, true)
+
+				}
+				counter = 0
+				supDemSrcTable = make(map[string]tableModel)
+				supSrcTable = make(map[string]tableModel)
+			}
+		case <-h:
+			err := flush(supDemSrcTable, supSrcTable)
+			if err == nil {
+				ack.Ack(true)
+			} else {
+				ack.Nack(true, true)
+
+			}
+			counter = 0
+			supDemSrcTable = make(map[string]tableModel)
+			supSrcTable = make(map[string]tableModel)
+			h = time.After(2 * time.Minute)
+
+		}
+	}
+}
+
+func init() {
+	safe.GoRoutine(func(){
+		manager()
+	})
+}
+
 func timestampToTime(s string) time.Time {
 	i, err := strconv.ParseInt(s, 10, 0)
 	assert.Nil(err)
 	return time.Unix(i, 0)
+}
+
+func aggregator(a tableModel, b tableModel) tableModel {
+	res := tableModel{}
+	res.ShowBid = a.ShowBid + b.ShowBid
+	res.Show = a.Show + b.Show
+	res.Request = a.Request + b.Request
+	res.Impression = a.Impression + b.Impression
+	res.ImpressionBid = a.ImpressionBid + b.ImpressionBid
+	res.Win = a.Win + b.Win
+	if a.Time != 0 {
+		res.Time = a.Time
+	} else {
+		res.Time = b.Time
+	}
+	return res
 }
