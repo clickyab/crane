@@ -15,6 +15,8 @@ import (
 
 	"services/broker"
 
+	"fmt"
+
 	"github.com/Sirupsen/logrus"
 )
 
@@ -45,6 +47,7 @@ func (p *providerData) watch(ctx context.Context, imp exchange.Impression) (res 
 			imp,
 			p.provider,
 			res,
+			fmt.Sprintf("%d", time.Now().Unix()),
 		)
 		broker.Publish(jDem)
 	}()

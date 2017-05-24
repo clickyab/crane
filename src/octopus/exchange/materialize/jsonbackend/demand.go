@@ -5,13 +5,17 @@ import (
 	"octopus/exchange"
 	"services/broker"
 
+	"fmt"
+	"time"
+
 	"github.com/Sirupsen/logrus"
 )
 
 type demand struct {
-	imp exchange.Impression
-	dmn exchange.Demand
-	ads map[string]exchange.Advertise
+	imp  exchange.Impression
+	dmn  exchange.Demand
+	ads  map[string]exchange.Advertise
+	time string
 
 	src []byte
 }
@@ -24,7 +28,7 @@ func (d demand) Encode() ([]byte, error) {
 		for i := range d.ads {
 			advertizes = append(advertizes, advertiseToMap(d.ads[i]))
 		}
-		themap = append(themap, demandToMap(d.dmn), impressionToMap(d.imp, d.ads), advertizes)
+		themap = append(themap, demandToMap(d.dmn), impressionToMap(d.imp, d.ads), advertizes, fmt.Sprintf("%d", time.Now().Unix()))
 		d.src, _ = json.Marshal(themap)
 	}
 
@@ -58,10 +62,11 @@ func (d demand) Report() func(error) {
 
 // DemandJob returns a job for demand
 // TODO : add a duration to this. for better view this is important
-func DemandJob(imp exchange.Impression, dmn exchange.Demand, ads map[string]exchange.Advertise) broker.Job {
+func DemandJob(imp exchange.Impression, dmn exchange.Demand, ads map[string]exchange.Advertise, t string) broker.Job {
 	return &demand{
-		imp: imp,
-		dmn: dmn,
-		ads: ads,
+		imp:  imp,
+		dmn:  dmn,
+		ads:  ads,
+		time: t,
 	}
 }
