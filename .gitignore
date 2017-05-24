@@ -1,6 +1,6 @@
 *.el
 *\#*
-pkg/
+*.a
 .env
 .idea/
 .vagrant/

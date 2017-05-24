@@ -1,0 +1,337 @@
+{
+	"ImportPath": "clickyab.com/exchange",
+	"GoVersion": "go1.8",
+	"GodepVersion": "v79",
+	"Packages": [
+		"./..."
+	],
+	"Deps": [
+		{
+			"ImportPath": "github.com/GeertJohan/go.rice",
+			"Rev": "c02ca9a983da5807ddf7d796784928f5be4afd09"
+		},
+		{
+			"ImportPath": "github.com/GeertJohan/go.rice/embedded",
+			"Rev": "c02ca9a983da5807ddf7d796784928f5be4afd09"
+		},
+		{
+			"ImportPath": "github.com/Shopify/sarama",
+			"Comment": "v1.12.0",
+			"Rev": "c01858abb625b73a3af51d0798e4ad42c8147093"
+		},
+		{
+			"ImportPath": "github.com/Shopify/sarama/mocks",
+			"Comment": "v1.12.0",
+			"Rev": "c01858abb625b73a3af51d0798e4ad42c8147093"
+		},
+		{
+			"ImportPath": "github.com/Sirupsen/logrus",
+			"Comment": "v0.11.5-46-g5e5dc89",
+			"Rev": "5e5dc898656f695e2a086b8e12559febbfc01562"
+		},
+		{
+			"ImportPath": "github.com/codegangsta/inject",
+			"Comment": "v1.0-rc1-10-g33e0aa1",
+			"Rev": "33e0aa1cb7c019ccc3fbe049a8262a6403d30504"
+		},
+		{
+			"ImportPath": "github.com/codeskyblue/go-sh",
+			"Comment": "v0.1-47-gb097669",
+			"Rev": "b097669b1569203c3ce05a6b8717d43140fdb3d5"
+		},
+		{
+			"ImportPath": "github.com/daaku/go.zipexe",
+			"Rev": "a5fe2436ffcb3236e175e5149162b41cd28bd27d"
+		},
+		{
+			"ImportPath": "github.com/davecgh/go-spew/spew",
+			"Comment": "v1.1.0",
+			"Rev": "346938d642f2ec3594ed81d874461961cd0faa76"
+		},
+		{
+			"ImportPath": "github.com/eapache/go-resiliency/breaker",
+			"Comment": "v1.0.0-4-gb86b1ec",
+			"Rev": "b86b1ec0dd4209a588dc1285cdd471e73525c0b3"
+		},
+		{
+			"ImportPath": "github.com/eapache/go-xerial-snappy",
+			"Rev": "bb955e01b9346ac19dc29eb16586c90ded99a98c"
+		},
+		{
+			"ImportPath": "github.com/eapache/queue",
+			"Comment": "v1.0.2-7-g44cc805",
+			"Rev": "44cc805cf13205b55f69e14bcb69867d1ae92f98"
+		},
+		{
+			"ImportPath": "github.com/fatih/structs",
+			"Comment": "v1.0-2-g74a29b9",
+			"Rev": "74a29b9fac7397d933f47e33eba94d2d83a464a2"
+		},
+		{
+			"ImportPath": "github.com/fzerorubigd/expand",
+			"Rev": "fd359294116f3987dc04c5987782f845e99e9f42"
+		},
+		{
+			"ImportPath": "github.com/fzerorubigd/go-redmine",
+			"Rev": "05bb0a08b5c20b45765553ca33aea5a2aea9f3a8"
+		},
+		{
+			"ImportPath": "github.com/fzerorubigd/xhandler",
+			"Comment": "v1.0-3-g6caa149",
+			"Rev": "6caa149442f4463464c45ccf8a9da031f4fddbce"
+		},
+		{
+			"ImportPath": "github.com/fzerorubigd/xmux",
+			"Rev": "63f4c0936ee5c986766735dfa557a4d3d6a53023"
+		},
+		{
+			"ImportPath": "github.com/go-sql-driver/mysql",
+			"Comment": "v1.3-18-g382e13d",
+			"Rev": "382e13d099fcf5f5994290892ab258fbebbdc5e3"
+		},
+		{
+			"ImportPath": "github.com/gobuild/log",
+			"Rev": "f1f03dc733eb8acf247f889dd103ee1de1a06caa"
+		},
+		{
+			"ImportPath": "github.com/golang/mock/gomock",
+			"Rev": "bd3c8e81be01eef76d4b503f5e687d2d1354d2d9"
+		},
+		{
+			"ImportPath": "github.com/golang/snappy",
+			"Rev": "553a641470496b2327abcac10b36396bd98e45c9"
+		},
+		{
+			"ImportPath": "github.com/gopherjs/gopherjs/js",
+			"Rev": "6997325cc76f13635f68ad9e1c38544966eb7de2"
+		},
+		{
+			"ImportPath": "github.com/goraz/humanize",
+			"Rev": "f0c01f25ff68ce2e754a3fa8e07dcddda7f5fed3"
+		},
+		{
+			"ImportPath": "github.com/howeyc/fsnotify",
+			"Comment": "v0.9.0-16-gf0c08ee",
+			"Rev": "f0c08ee9c60704c1879025f2ae0ff3e000082c13"
+		},
+		{
+			"ImportPath": "github.com/influxdata/influxdb/client/v2",
+			"Comment": "v1.2.2-560-g6608f97de",
+			"Rev": "6608f97de7ef6badf53a45dbedf4cf44744a1a01"
+		},
+		{
+			"ImportPath": "github.com/influxdata/influxdb/models",
+			"Comment": "v1.2.2-560-g6608f97de",
+			"Rev": "6608f97de7ef6badf53a45dbedf4cf44744a1a01"
+		},
+		{
+			"ImportPath": "github.com/influxdata/influxdb/pkg/escape",
+			"Comment": "v1.2.2-560-g6608f97de",
+			"Rev": "6608f97de7ef6badf53a45dbedf4cf44744a1a01"
+		},
+		{
+			"ImportPath": "github.com/jinzhu/inflection",
+			"Rev": "1c35d901db3da928c72a72d8458480cc9ade058f"
+		},
+		{
+			"ImportPath": "github.com/jtolds/gls",
+			"Comment": "v4.2.0-2-g77f1821",
+			"Rev": "77f18212c9c7edc9bd6a33d383a7b545ce62f064"
+		},
+		{
+			"ImportPath": "github.com/kardianos/osext",
+			"Rev": "ae77be60afb1dcacde03767a8c37337fad28ac14"
+		},
+		{
+			"ImportPath": "github.com/labstack/gommon/color",
+			"Comment": "v0.2.1",
+			"Rev": "1121fd3e243c202482226a7afe4dcd07ffc4139a"
+		},
+		{
+			"ImportPath": "github.com/labstack/gommon/log",
+			"Comment": "v0.2.1",
+			"Rev": "1121fd3e243c202482226a7afe4dcd07ffc4139a"
+		},
+		{
+			"ImportPath": "github.com/mattn/go-colorable",
+			"Comment": "v0.0.7-24-gded68f7",
+			"Rev": "ded68f7a9561c023e790de24279db7ebf473ea80"
+		},
+		{
+			"ImportPath": "github.com/mattn/go-isatty",
+			"Comment": "v0.0.2",
+			"Rev": "fc9e8d8ef48496124e79ae0df75490096eccf6fe"
+		},
+		{
+			"ImportPath": "github.com/mssola/user_agent",
+			"Comment": "v0.4.1-20-g07efe2b",
+			"Rev": "07efe2b857fb8c02d2dd85c12d0145f58554ec7c"
+		},
+		{
+			"ImportPath": "github.com/ogier/pflag",
+			"Comment": "v0.0.1-7-g45c278a",
+			"Rev": "45c278ab3607870051a2ea9040bb85fcb8557481"
+		},
+		{
+			"ImportPath": "github.com/olebedev/emitter",
+			"Rev": "9110dbae3d07cb26c2993dbf3bdbd0aad98329f9"
+		},
+		{
+			"ImportPath": "github.com/pierrec/lz4",
+			"Comment": "v1.0-8-g5a3d224",
+			"Rev": "5a3d2245f97fc249850e7802e3c01fad02a1c316"
+		},
+		{
+			"ImportPath": "github.com/pierrec/xxHash/xxHash32",
+			"Comment": "v0.1-4-g5a00444",
+			"Rev": "5a004441f897722c627870a981d02b29924215fa"
+		},
+		{
+			"ImportPath": "github.com/pkg/profile",
+			"Comment": "v1.2.1",
+			"Rev": "5b67d428864e92711fcbd2f8629456121a56d91f"
+		},
+		{
+			"ImportPath": "github.com/rcrowley/go-metrics",
+			"Rev": "1f30fe9094a513ce4c700b9a54458bbb0c96996c"
+		},
+		{
+			"ImportPath": "github.com/rubenv/sql-migrate",
+			"Rev": "42c30aabf72921b83678a3d0680fd6cd46682f1b"
+		},
+		{
+			"ImportPath": "github.com/rubenv/sql-migrate/sqlparse",
+			"Rev": "42c30aabf72921b83678a3d0680fd6cd46682f1b"
+		},
+		{
+			"ImportPath": "github.com/smartystreets/assertions",
+			"Comment": "1.6.0-24-gf8459f9",
+			"Rev": "f8459f92181409546d2762c9e9c4bedc23c92d76"
+		},
+		{
+			"ImportPath": "github.com/smartystreets/assertions/internal/go-render/render",
+			"Comment": "1.6.0-24-gf8459f9",
+			"Rev": "f8459f92181409546d2762c9e9c4bedc23c92d76"
+		},
+		{
+			"ImportPath": "github.com/smartystreets/assertions/internal/oglematchers",
+			"Comment": "1.6.0-24-gf8459f9",
+			"Rev": "f8459f92181409546d2762c9e9c4bedc23c92d76"
+		},
+		{
+			"ImportPath": "github.com/smartystreets/goconvey/convey",
+			"Comment": "1.6.2-19-gaf8e7d5",
+			"Rev": "af8e7d560364b90f732a1d119d17b5506e50447d"
+		},
+		{
+			"ImportPath": "github.com/smartystreets/goconvey/convey/gotest",
+			"Comment": "1.6.2-19-gaf8e7d5",
+			"Rev": "af8e7d560364b90f732a1d119d17b5506e50447d"
+		},
+		{
+			"ImportPath": "github.com/smartystreets/goconvey/convey/reporting",
+			"Comment": "1.6.2-19-gaf8e7d5",
+			"Rev": "af8e7d560364b90f732a1d119d17b5506e50447d"
+		},
+		{
+			"ImportPath": "github.com/streadway/amqp",
+			"Rev": "dfe15e36048539f4cda41f240b27a5ca25b9cd46"
+		},
+		{
+			"ImportPath": "github.com/valyala/bytebufferpool",
+			"Rev": "e746df99fe4a3986f4d4f79e13c1e0117ce9c2f7"
+		},
+		{
+			"ImportPath": "github.com/valyala/fasttemplate",
+			"Rev": "dcecefd839c4193db0d35b88ec65b4c12d360ab0"
+		},
+		{
+			"ImportPath": "golang.org/x/crypto/acme",
+			"Rev": "7e9105388ebff089b3f99f0ef676ea55a6da3a7e"
+		},
+		{
+			"ImportPath": "golang.org/x/crypto/acme/autocert",
+			"Rev": "7e9105388ebff089b3f99f0ef676ea55a6da3a7e"
+		},
+		{
+			"ImportPath": "golang.org/x/sys/unix",
+			"Rev": "dbc2be9168a660ef302e04b6ff6406de6f967473"
+		},
+		{
+			"ImportPath": "golang.org/x/tools/go/ast/astutil",
+			"Rev": "bf4b54dc687c73b6ef63de8b8abf0ad3951e3edc"
+		},
+		{
+			"ImportPath": "golang.org/x/tools/imports",
+			"Rev": "bf4b54dc687c73b6ef63de8b8abf0ad3951e3edc"
+		},
+		{
+			"ImportPath": "gopkg.in/fzerorubigd/onion.v2",
+			"Comment": "v1.0.0-13-g0789309",
+			"Rev": "078930955df67fe99807c7099902a5282796521f"
+		},
+		{
+			"ImportPath": "gopkg.in/fzerorubigd/onion.v2/extraenv",
+			"Comment": "v1.0.0-13-g0789309",
+			"Rev": "078930955df67fe99807c7099902a5282796521f"
+		},
+		{
+			"ImportPath": "gopkg.in/fzerorubigd/onion.v2/yamlloader",
+			"Comment": "v1.0.0-13-g0789309",
+			"Rev": "078930955df67fe99807c7099902a5282796521f"
+		},
+		{
+			"ImportPath": "gopkg.in/gorp.v1",
+			"Comment": "v1.7.1",
+			"Rev": "c87af80f3cc5036b55b83d77171e156791085e2e"
+		},
+		{
+			"ImportPath": "gopkg.in/gorp.v2",
+			"Comment": "v2.0.0",
+			"Rev": "4deece61034873cb5b5416e81abe4cea7bd0da72"
+		},
+		{
+			"ImportPath": "gopkg.in/jarcoal/httpmock.v1",
+			"Rev": "cf52904a3cf0f78f199ecade6a6df8e245d5b25a"
+		},
+		{
+			"ImportPath": "gopkg.in/labstack/echo.v3",
+			"Comment": "v3.1.0",
+			"Rev": "1049c9613cd371b7ea8f219404c9a821734781ed"
+		},
+		{
+			"ImportPath": "gopkg.in/redis.v5",
+			"Comment": "v5.2.9",
+			"Rev": "a16aeec10ff407b1e7be6dd35797ccf5426ef0f0"
+		},
+		{
+			"ImportPath": "gopkg.in/redis.v5/internal",
+			"Comment": "v5.2.9",
+			"Rev": "a16aeec10ff407b1e7be6dd35797ccf5426ef0f0"
+		},
+		{
+			"ImportPath": "gopkg.in/redis.v5/internal/consistenthash",
+			"Comment": "v5.2.9",
+			"Rev": "a16aeec10ff407b1e7be6dd35797ccf5426ef0f0"
+		},
+		{
+			"ImportPath": "gopkg.in/redis.v5/internal/hashtag",
+			"Comment": "v5.2.9",
+			"Rev": "a16aeec10ff407b1e7be6dd35797ccf5426ef0f0"
+		},
+		{
+			"ImportPath": "gopkg.in/redis.v5/internal/pool",
+			"Comment": "v5.2.9",
+			"Rev": "a16aeec10ff407b1e7be6dd35797ccf5426ef0f0"
+		},
+		{
+			"ImportPath": "gopkg.in/redis.v5/internal/proto",
+			"Comment": "v5.2.9",
+			"Rev": "a16aeec10ff407b1e7be6dd35797ccf5426ef0f0"
+		},
+		{
+			"ImportPath": "gopkg.in/yaml.v2",
+			"Rev": "cd8b52f8269e0feb286dfeef29f8fe4d5b397e0b"
+		}
+	]
+}

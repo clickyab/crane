@@ -1,1 +1,0 @@
-codegen: $(ROOT)/src/services/ip2location/data.gen.go migration

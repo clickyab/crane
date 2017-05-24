@@ -5,3 +5,5 @@
 !compile
 !detect
 !release
+!build
+!build/*
