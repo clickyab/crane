@@ -1,0 +1,407 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: Exchange API
+  description: >-
+    A sample API that uses a Demand API as an example to use
+    features in the swagger-2.0 specification
+  termsOfService: 'http://3rdad.ir/terms/'
+  contact:
+    name: 3rd Ad
+    email: info@3rdad.ir
+    url: 'http://swagger.io'
+  license:
+    name: MIT
+    url: 'http://opensource.org/licenses/MIT'
+host: 3rdad.ir
+schemes:
+  - https
+consumes:
+  - application/json
+  - application/xml
+produces:
+  - application/text
+paths:
+  /demand/request:
+    post:
+      tags:
+        - Request Ads Exchange to Demand
+      produces:
+        - text
+      parameters:
+        - name: payload_data
+          schema:
+            $ref: '#/definitions/request_ad_demand'
+          description: success response demand
+          in: body
+          required: false
+      responses:
+        '200':
+          scheme:
+             type: array
+             items:
+               type: object
+               $ref: '#/definitions/response_ad_demand'
+          description: success response supplier
+  /supplier/request:
+    post:
+      tags:
+        - Request Ads supplier to Exchange
+      produces:
+        - text
+      parameters:
+        - name: payload_data
+          schema:
+            $ref: '#/definitions/request_ad_supplier'
+          in: body
+          required: false
+      responses:
+        '200':
+          description: success response
+          schema:
+            $ref: '#/definitions/response_ad_supplier'
+securityDefinitions:
+  internalApiKey:
+    type: apiKey
+    in: header
+    name: X-Mashape-Key
+definitions:
+  request_ad_demand:
+    properties:
+      track_id:
+        format: string
+        type: string
+      ip:
+        format: ip
+        type: string
+      user_agent:
+        format: string
+        type: string
+      scheme:
+        type: string
+        example: http
+      page_track_id:
+        type: string
+      user_track_id:
+        type: string
+      publisher:
+        $ref: '#/definitions/source'
+      location:
+        $ref: '#/definitions/location'
+      attributes:
+        format: string
+        type: array
+        description: Attributes is the generic attribute system
+      slots:
+        items:
+          $ref: '#/definitions/slot_demand'
+      category:
+        items:
+          type: string
+          example:  "cat1"
+      platform:
+        format: impressionplatform
+        type: integer
+        description: Platform return the publisher Platform (app,web,vast)
+        example: web
+      underfloor:
+        description: Is this publisher accept under floor ads or not
+        example: false
+        type: boolean
+    type: object
+
+  request_ad_supplier:
+    properties:
+      ip:
+        format: ip
+        type: string
+        example:  127.0.0.1
+      scheme:
+        type: string
+        example:  http
+      page_track_id:
+        type: string
+      user_track_id:
+        type: string
+      source:
+        $ref: '#/definitions/publisher'
+      categories:
+        items:
+          type: string
+          example:  "cat1"
+      type:
+        type: string
+        example: rest
+      underfloor:
+        description: Is this publisher accept under floor ads or not
+        example: false
+        type: boolean
+      app:
+        $ref:   '#/definitions/app'
+      web:
+        $ref: '#/definitions/web'
+      vast:
+        $ref: '#/definitions/vast'
+      slots:
+        items:
+          $ref: '#/definitions/slot_supplier'
+    type: object
+
+  source:
+    description: Source return the publisher that this client is going into system from that
+    properties:
+      name:
+        description: Name of publisher
+        format: string
+        type: string
+      floor_cpm  :
+        description: FloorCPM is the floor cpm for publisher
+        type: integer
+      soft_floor_cpm:
+        description: SoftFloorCPM is the soft version of floor cpm. if the publisher ahs it, then the system.try to use this as floor, but if this is not available, the FloorCPM is used
+        type: integer
+        example: 150
+      attributes:
+        description: Attributes is the generic attribute system
+        type: array
+      supplier:
+        type: string
+        example: adad
+    type: object
+
+  location:
+    description: Location of the request
+    properties:
+      country:
+        $ref: '#/definitions/country'
+      province  :
+        $ref : '#/definitions/province'
+      latlon:
+        $ref: '#/definitions/latlong'
+    type: object
+
+  slot_demand:
+    description: Slots is the slot for this request
+    properties:
+      with:
+        type: integer
+        example: 300
+        description: Size return the primary size of this slot
+      height:
+        description: Size return the primary size of this slot
+        type: integer
+        example: 250
+      track_id:
+        description: TrackID is an string for this slot, its a random at first but the value is not changed at all other calls
+        type: string
+    type: object
+  slot_supplier:
+    description: Slots is the slot for this request
+    properties:
+      with:
+        type: integer
+        example: 300
+        description: Size return the primary size of this slot
+      height:
+        description: Size return the primary size of this slot
+        type: integer
+        example: 250
+      track_id:
+        description: TrackID is an string for this slot, its a random at first but the value is not changed at all other calls
+        type: string
+      fallback_url:
+        type: string
+        description: fallback_url for not exist ad for this slot
+    type: object
+
+  country:
+    description: Country get the country if available
+    properties:
+      valid:
+        example: true
+        type: boolean
+      name:
+        example: Iran
+        type: string
+      iso:
+        example: IR
+        type: string
+    type: object
+
+  
+
+  province:
+    description: Province get the province of request if available
+    properties:
+      valid:
+        example: true
+        type: boolean
+      name:
+        example: tehran
+        type: string
+    type: object
+
+  latlong:
+    description: LatLon return the latitude longitude if any
+    properties:
+      valid:
+        example: true
+        type: boolean
+        description: valid type
+      lat:
+        example:   38.898648
+        type: integer
+      long:
+        example: 77.037692
+        type: integer
+    type: object
+
+  web:
+    description: platform struct web
+    properties:
+      referrer:
+        format: url
+        example: http://example.com
+        type: string
+      parent:
+        format: url
+        example: http://example.com
+        type: string
+      user_agent:
+        type: string
+        example: Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/42.0
+    type: object
+
+  vast:
+    description:  platform struct web
+    properties:
+      referrer:
+        format: url
+        example: http://example.com
+        type: string
+      parent:
+        format: url
+        example: http://example.com
+        type: string
+      user_agent:
+        type: string
+        example: Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/42.0
+    type: object
+
+  app:
+    description:  platform struct app
+    properties:
+      os_version:
+        type: string
+        example: 10.0.3
+      operator:
+        type: string
+        example: IR-MCI
+      brand:
+        example: samsung
+        description: company create cellphone
+        type: string
+      model:
+        type: string
+        example: P9
+      language:
+        type: string
+        example: us
+      network:
+        type: string
+        example: 4G
+      os_identity:
+        type: string
+        example: ios
+      mcc:
+        type: integer
+        description: a Mobile Country Code. This code identifies the country. For example, in China MCC is equal to 460, in USA - 310, Hungary - 216, Belorussia - 257
+        example: 257
+      mnc:
+        type: integer
+        description:  a Mobile Network Code. This code identifies the mobile operator. The detailed table with MCC and MNC codes
+        example: 02
+      lac:
+        type: integer
+        description: Location Area Code is a unique number of current location area. A location area is a set of base stations that are grouped together to optimize signalling
+        example: 16
+      cid:
+        type: integer
+        description: is a generally unique number used to identify each Base transceiver station (BTS) or sector of a BTS within a Location area code.
+        example: 2224
+      user_agent:
+        type: string
+        example: Mozilla/5.0 (Macintosh; Intel Mac OS X x.y; rv:42.0) Gecko/20100101 Firefox/42.0
+    type: object
+
+  publisher:
+    properties:
+      name:
+        description: Name of publisher
+        format: string
+        type: string
+      floor_cpm  :
+        description: FloorCPM is the floor cpm for publisher
+        type: integer
+      soft_floor_cpm:
+        description: SoftFloorCPM is the soft version of floor cpm. if the publisher ahs it, then the system.try to use this as floor, but if this is not available, the FloorCPM is used
+        type: integer
+        example: 150
+    type: object
+
+
+  response_ad_demand:
+    properties:
+      id:
+        type: string
+        example: 101
+      max_cpm:
+        type: integer
+        example: 500
+      width:
+        type: integer
+        example: 250
+      height:
+        example: 300
+        type: integer
+      url:
+        format: url
+        example: http://your-site.com/ad/show
+        type: string
+      landing:
+        format: domain
+        type: string
+        example: example.com
+        description: excluded pulisher request per ad
+      slot_track_id:
+        type: string
+    type: object
+
+  response_ad_supplier:
+    properties:
+      ad_track_id:
+        type: string
+        example: 101
+      winner:
+        type: integer
+        example: 500
+      width:
+        type: integer
+        example: 250
+      height:
+        example: 300
+        type: integer
+      code:
+        format: url
+        example: http://your-site.com/ad/show
+        type: string
+      landing:
+        type: string
+        example: clickyab.com
+      is_filled:
+        type: boolean
+        example: true  
+      track_id:
+        format: string
+        type: string
+    type: object
