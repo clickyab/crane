@@ -2,15 +2,18 @@ package main
 
 import (
 	"commands"
-	_ "octopus/demands"
-	_ "octopus/router"
-	_ "services/broker/selector"
 	"services/config"
 	_ "services/dset/redis"
 	_ "services/eav/redis"
 	"services/initializer"
 	_ "services/statistic/redis"
 	_ "services/store/redis"
+
+	// TODO each worker must be in separate binary. all in one is just for testing
+	_ "octopus/workers/demand"
+	_ "octopus/workers/impression"
+	_ "octopus/workers/show"
+	_ "octopus/workers/winner"
 
 	"services/dlock"
 	"services/dlock/mock"
@@ -19,6 +22,7 @@ import (
 )
 
 func main() {
+
 	// TODO : after implementing dlock backend remove the next line
 	dlock.Register(mock.NewMockDistributedLocker)
 

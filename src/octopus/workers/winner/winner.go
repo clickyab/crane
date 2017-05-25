@@ -1,13 +1,16 @@
-package workers
+package winner
 
 import (
+	"context"
+	"octopus/workers/internal/manager"
 	"services/assert"
 	"services/broker"
+	"services/initializer"
 	"services/safe"
 	"time"
 )
 
-type winnerModel struct {
+type model struct {
 	Impression struct {
 		Source struct {
 			Name     string `json:"name"`
@@ -25,35 +28,44 @@ type winnerModel struct {
 	}
 }
 
-// winnerConsumer
-type winnerConsumer struct {
+// consumer
+type consumer struct {
+	ctx context.Context
 }
 
-func (*winnerConsumer) Topic() string {
+func (s *consumer) Initialize(ctx context.Context) {
+	s.ctx = ctx
+	broker.RegisterConsumer(s)
+}
+
+func (consumer) Topic() string {
 	return "winner"
 }
 
-func (*winnerConsumer) Queue() string {
-	return "winner_que"
+func (consumer) Queue() string {
+	return "winner_aggregate"
 }
 
-func (w *winnerConsumer) Consume() chan<- broker.Delivery {
+func (s *consumer) Consume() chan<- broker.Delivery {
 	chn := make(chan broker.Delivery)
+	done := s.ctx.Done()
 	safe.GoRoutine(func() {
 		for {
 			select {
 			case del := <-chn:
-				obj := winnerModel{}
+				obj := model{}
 				err := del.Decode(&obj)
 				assert.Nil(err)
-				dataChannel <- tableModel{
+				manager.DataChannel <- manager.TableModel{
 					Supplier:      obj.Impression.Source.Supplier.Name,
 					Source:        obj.Impression.Source.Name,
 					Demand:        obj.Advertise.Demand.Name,
 					ImpressionBid: obj.Advertise.ImpressionBid,
-					Time:          factTableID(obj.Impression.Time),
+					Time:          manager.FactTableID(obj.Impression.Time),
 					Acknowledger:  &del,
 				}
+			case <-done:
+				return
 			}
 		}
 	})
@@ -62,5 +74,5 @@ func (w *winnerConsumer) Consume() chan<- broker.Delivery {
 }
 
 func init() {
-	broker.RegisterConsumer(&winnerConsumer{})
+	initializer.Register(&consumer{}, 10000)
 }

@@ -4,27 +4,29 @@ import "services/assert"
 
 // SupplierSourceDemand supplier_source_demand
 type SupplierSourceDemand struct {
+	ID         int64  `json:"id" db:"id"`
 	Supplier   string `json:"supplier" db:"supplier"`
 	Demand     string `json:"demand" db:"demand"`
 	Source     string `json:"source" db:"source"`
 	TimeID     int64  `json:"time_id" db:"time_id"`
-	Request    int64  `json:"request" db:"request"`
-	Impression int64  `json:"impression" db:"impression"`
-	ShowTime   int64  `json:"show_time" db:"show_time"`
+	Request    int64  `json:"request_count" db:"request_count"`
+	Impression int64  `json:"impression_count" db:"impression_count"`
+	ShowTime   int64  `json:"show_count" db:"show_count"`
 	ImpBid     int64  `json:"imp_bid" db:"imp_bid"`
 	ShowBid    int64  `json:"show_bid" db:"show_bid"`
 	WinBid     int64  `json:"win_bid" db:"win_bid"`
-	Win        int64  `json:"win" db:"win"`
+	Win        int64  `json:"win_count" db:"win_count"`
 }
 
 // SupplierSource supplier_source
 type SupplierSource struct {
+	ID         int64  `json:"id" db:"id"`
 	Supplier   string `json:"supplier" db:"supplier"`
 	Source     string `json:"source" db:"source"`
 	TimeID     int64  `json:"time_id" db:"time_id"`
-	Request    int64  `json:"request" db:"request"`
-	Impression int64  `json:"impression" db:"impression"`
-	ShowTime   int64  `json:"show_time" db:"show_time"`
+	Request    int64  `json:"request_count" db:"request_count"`
+	Impression int64  `json:"impression_count" db:"impression_count"`
+	ShowTime   int64  `json:"show_count" db:"show_count"`
 	ImpBid     int64  `json:"imp_bid" db:"imp_bid"`
 	ShowBid    int64  `json:"show_bid" db:"show_bid"`
 }
@@ -41,8 +43,14 @@ type TimeTable struct {
 	JDay   int64 `json:"j_day" db:"j_day"`
 }
 
-// UpdateConsume try to update the proper report tables
-func (m *Manager) UpdateConsume(q1, q2 string) (err error) {
+// Parts is a multi query trick
+type Parts struct {
+	Query  string
+	Params []interface{}
+}
+
+// MultiQuery is a hack to run multiple query in one transaction
+func (m *Manager) MultiQuery(parts ...Parts) (err error) {
 	err = m.Begin()
 	if err != nil {
 		return err
@@ -54,13 +62,12 @@ func (m *Manager) UpdateConsume(q1, q2 string) (err error) {
 			err = m.Commit()
 		}
 	}()
-	_, err = m.GetProperDBMap().Exec(q1)
-	if err != nil {
-		return
+
+	for i := range parts {
+		_, err = m.GetProperDBMap().Exec(parts[i].Query, parts[i].Params...)
+		if err != nil {
+			return
+		}
 	}
-	_, err = m.GetProperDBMap().Exec(q2)
-	if err != nil {
-		return
-	}
-	return
+	return nil
 }

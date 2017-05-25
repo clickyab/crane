@@ -1,40 +1,34 @@
-package workers
+package manager
 
 import (
 	"fmt"
-	"strconv"
 	"time"
 
 	"services/assert"
 	"services/broker"
+	"services/config"
 	"services/safe"
 )
 
-// TODO get this from config
-const limit = 1000
+var (
+	limit   = config.RegisterInt("octopus.worker.manager.limit", 1000, "the limit for points in manager")
+	timeout = config.RegisterDuration("octopus.worker.manager.timeout", time.Minute, "the timeout to flush data")
+	epoch   time.Time
+)
 
-func factTableID(tm time.Time) int {
-
-	layout := "2006-01-02T15:04:05.000Z"
-	str := "2017-03-21T00:00:00.000Z"
-	t, err := time.Parse(layout, str)
-
-	if err != nil {
-		fmt.Println(err)
-	}
-	assert.Nil(err)
-	return int(tm.Sub(t).Hours()) + 1
-
+// FactTableID is a helper function to get the fact table id from time
+func FactTableID(tm time.Time) int64 {
+	return int64(tm.Sub(epoch).Hours()) + 1
 }
 
-var dataChannel = make(chan tableModel)
+// DataChannel is a channel to handle data entry for workers without lock
+var DataChannel = make(chan TableModel)
 
 func worker() {
-	supDemSrcTable := make(map[string]*tableModel)
-	supSrcTable := make(map[string]*tableModel)
+	supDemSrcTable := make(map[string]*TableModel)
+	supSrcTable := make(map[string]*TableModel)
 
-	//TODO Get this from timeout
-	h := time.After(2 * time.Minute)
+	h := time.After(*timeout)
 	var counter = 0
 	var ack broker.Delivery
 
@@ -53,12 +47,12 @@ func worker() {
 
 		}
 		counter = 0
-		supDemSrcTable = make(map[string]*tableModel)
-		supSrcTable = make(map[string]*tableModel)
+		supDemSrcTable = make(map[string]*TableModel)
+		supSrcTable = make(map[string]*TableModel)
 	}
 	for {
 		select {
-		case p := <-dataChannel:
+		case p := <-DataChannel:
 
 			if p.Time == 0 {
 				assert.NotNil(nil, "Time should not be equal 0")
@@ -77,38 +71,21 @@ func worker() {
 
 			counter++
 
-			if counter > limit {
+			if counter > *limit {
 				flushAndClean()
 			}
 
 		case <-h:
-
 			flushAndClean()
 		}
 	}
 }
 
-func init() {
-
-	safe.GoRoutine(func() {
-		worker()
-	})
-
-}
-
-func timestampToTime(s string) time.Time {
-
-	i, err := strconv.ParseInt(s, 10, 0)
-	assert.Nil(err)
-	return time.Unix(i, 0)
-
-}
-
-func aggregate(a *tableModel, b tableModel) *tableModel {
+func aggregate(a *TableModel, b TableModel) *TableModel {
 	if a == nil {
-		a = &tableModel{}
+		a = &TableModel{}
 	}
-	res := tableModel{}
+	res := TableModel{}
 	res.ShowBid = a.ShowBid + b.ShowBid
 	res.Show = a.Show + b.Show
 	res.Request = a.Request + b.Request
@@ -121,4 +98,16 @@ func aggregate(a *tableModel, b tableModel) *tableModel {
 		res.Time = b.Time
 	}
 	return &res
+}
+
+func init() {
+	layout := "2006-01-02T15:04:05.000Z"
+	str := "2017-03-21T00:00:00.000Z"
+	var err error
+	epoch, err = time.Parse(layout, str)
+	assert.Nil(err)
+
+	safe.GoRoutine(func() {
+		worker()
+	})
 }
