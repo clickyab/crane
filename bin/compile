@@ -60,46 +60,40 @@ install_go() {
     tar -C "${CACHE}/${GOVERSION}" -xzf ${CACHE}/${GOVERSION}.linux-amd64.tar.gz
 }
 
-cache_vendor() {
-    cd ${ROOT}
-    gb vendor restore
-    rm -rf ${CACHE}/vendor
-    cp -R ${ROOT}/vendor ${CACHE}
-    rm -rf ${CACHE}/vendor/pkg
+# Sets up GOPATH (and posibly other GO* env vars) and returns the location of
+# the source code as $src. The output of this function is meant to be eval'd'
+setupGOPATH() {
+    local name="${1}"
+    local t="$(mktemp -d)"
+
+    cp -R ${BUILD}/* ${t}
+    GOPATH="${t}/"
+    echo export GOBIN="${BUILD}/bin"
+
+    local src="${GOPATH}/src/${name}"
+    mkdir -p "${src}"
+    mkdir -p "${BUILD}/bin"
+    mv -t "${src}" "${t}"/*
+
+    echo "GOPATH=${GOPATH}"
+    echo "src=${src}"
 }
 
-cache_ip2location() {
-    cd ${CACHE}
-    wget -c http://static.clickyab.com/IP-COUNTRY-REGION-CITY.BIN
-    rm -f IP-COUNTRY-REGION-CITY.BIN.md5 || true
-    wget http://static.clickyab.com/IP-COUNTRY-REGION-CITY.BIN.md5
-    md5sum -c IP-COUNTRY-REGION-CITY.BIN.md5
-    mkdir -p ${ROOT}/contrib
-    cp ${CACHE}/IP-COUNTRY-REGION-CITY.BIN ${ROOT}/contrib/IP-COUNTRY-REGION-CITY.BIN
-    ls ${ROOT}/src/services/ip2location/
-    rm -f ${ROOT}/src/services/ip2location/data.gen.go
-}
-cache_ip2location
+name="clickyab.com/exchange"
 
 export GOROOT=${CACHE}/${GOVERSION}/go
-export GOPATH=${CACHE}/gospace
+# Prepare
+cd ${ROOT} && make prepare
+
+eval "$(setupGOPATH ${name})"
 # Set the GOBIN make any executable build with go in the cache dir
-export GOBIN=${GOPATH}/bin
+export GOBIN=${ROOT}/bin
 export PATH=${PATH}:${GOROOT}/bin:${GOPATH}/bin:${ROOT}/bin
 
 go version || install_go "go is not installed"
 go version || grep ${GOVERSION} || install_go "go version is not ${GOVERSION}"
 
-step "Get gb"
-cd ${ROOT}
-make -f ${ROOT}/Makefile gb
+cd ${src}
 
-diff ${CACHE}/vendor/manifest ${ROOT}/vendor/manifest || cache_vendor
-cp -R ${CACHE}/vendor/src ${ROOT}/vendor/
-
-# Codegen with gb
-find . -name \*.gen.go -delete
-find . -name \*.a -delete
-
-make -f ${ROOT}/Makefile codegen
-make -f ${ROOT}/Makefile all
+make -f ${src}/Makefile codegen
+make -f ${src}/Makefile all

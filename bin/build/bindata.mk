@@ -1,6 +1,6 @@
 go-bindata:
-	$(GO) get -v github.com/jteeuwen/go-bindata/go-bindata
-	$(GO) install -v github.com/jteeuwen/go-bindata/go-bindata
+	GOBIN=$(BIN) $(GO) get -v github.com/jteeuwen/go-bindata/go-bindata
+	GOBIN=$(BIN) $(GO) install -v github.com/jteeuwen/go-bindata/go-bindata
 
 $(ROOT)/contrib/IP-COUNTRY-REGION-CITY.BIN:
 	mkdir -p $(ROOT)/contrib
