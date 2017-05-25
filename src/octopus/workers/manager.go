@@ -6,17 +6,12 @@ import (
 	"time"
 
 	"services/assert"
+	"services/broker"
 	"services/safe"
 )
 
 // TODO get this from config
 const limit = 1000
-
-type Acknowledger interface {
-	Ack(multiple bool) error
-	// Nack negatively acknowledge the delivery of message(s) identified by the delivery tag from either the client or server.
-	Nack(multiple, requeue bool) error
-}
 
 func factTableID(tm time.Time) int {
 
@@ -41,7 +36,7 @@ func worker() {
 	//TODO Get this from timeout
 	h := time.After(2 * time.Minute)
 	var counter = 0
-	var ack Acknowledger
+	var ack broker.Delivery
 
 	defer func() {
 		if ack != nil {
@@ -71,7 +66,7 @@ func worker() {
 			if p.Source == "" || p.Supplier == "" {
 				assert.NotNil(nil, "Source and supplier can not be empty")
 			}
-			ack = p.Acknowledger
+			ack = *p.Acknowledger
 			supDemSrcKey := fmt.Sprint(p.Time, p.Supplier, p.Source, p.Demand)
 			supDemSrcTable[supDemSrcKey] = aggregate(supDemSrcTable[supDemSrcKey], p)
 

@@ -51,9 +51,9 @@ func (*show) Report() func(error) {
 }
 
 // ShowJob return a broker job
-func ShowJob(trackID, demand, slotID, adID string, IP string, winner int64, t string,supplier string,publisher string) broker.Job {
+func ShowJob(trackID, demand, slotID, adID string, IP string, winner int64, t string, supplier string, publisher string) broker.Job {
 	return &show{
-		data: showToMap(trackID, demand, slotID, adID, winner,supplier,publisher),
+		data: showToMap(trackID, demand, slotID, adID, winner, supplier, publisher),
 		time: t,
 		key:  IP,
 	}

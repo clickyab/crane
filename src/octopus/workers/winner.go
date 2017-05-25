@@ -52,7 +52,7 @@ func (w *winnerConsumer) Consume() chan<- broker.Delivery {
 					Demand:        obj.Advertise.Demand.Name,
 					ImpressionBid: obj.Advertise.ImpressionBid,
 					Time:          factTableID(obj.Impression.Time),
-					Acknowledger:  &del.(Acknowledger),
+					Acknowledger:  &del,
 				}
 			}
 		}
@@ -62,5 +62,5 @@ func (w *winnerConsumer) Consume() chan<- broker.Delivery {
 }
 
 func init() {
-	broker.RegisterConsumer(winnerConsumer{})
+	broker.RegisterConsumer(&winnerConsumer{})
 }

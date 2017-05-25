@@ -44,7 +44,7 @@ func (s *showConsumer) Consume() chan<- broker.Delivery {
 					ShowBid:      obj.Price,
 					Show:         1,
 					Time:         factTableID(timestampToTime(obj.Time)),
-					Acknowledger: &del.(Acknowledger),
+					Acknowledger: &del,
 				}
 			}
 		}
@@ -52,5 +52,5 @@ func (s *showConsumer) Consume() chan<- broker.Delivery {
 	return chn
 }
 func init() {
-	broker.RegisterConsumer(showConsumer{})
+	broker.RegisterConsumer(&showConsumer{})
 }

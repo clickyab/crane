@@ -8,8 +8,9 @@ import (
 	"services/safe"
 )
 
+// Ad Ad
 type Ad struct {
-	Winner_cpm int64 `json:"winner_cpm"`
+	WinnerCPM int64 `json:"winner_cpm"`
 }
 
 type demandModel struct {
@@ -28,16 +29,16 @@ type demandModel struct {
 	Ads map[string]Ad `json:"ads"`
 }
 
-// winnerConsumer asd
+// demandConsumer asd
 type demandConsumer struct {
 }
 
 func (*demandConsumer) Topic() string {
-	return "winner"
+	return "demand"
 }
 
 func (*demandConsumer) Queue() string {
-	return "winner_que"
+	return "demand_que"
 }
 
 func (s *demandConsumer) Consume() chan<- broker.Delivery {
@@ -59,8 +60,12 @@ func (s *demandConsumer) fillChan(chn chan broker.Delivery) {
 				Time:         factTableID(obj.Impression.Time),
 				Demand:       obj.Demand.Name,
 				Win:          len(obj.Ads),
-				Acknowledger: &del.(Acknowledger),
+				Acknowledger: &del,
 			}
 		}
 	}
+}
+
+func init() {
+	broker.RegisterConsumer(&demandConsumer{})
 }

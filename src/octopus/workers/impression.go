@@ -46,7 +46,7 @@ func (s *impressionConsumer) Consume() chan<- broker.Delivery {
 					Source:       obj.Source.Name,
 					Supplier:     obj.Source.Supplier.Name,
 					Time:         factTableID(obj.Time),
-					Acknowledger: &del.(Acknowledger),
+					Acknowledger: &del,
 				}
 			}
 		}
@@ -56,5 +56,5 @@ func (s *impressionConsumer) Consume() chan<- broker.Delivery {
 }
 
 func init() {
-	broker.RegisterConsumer(impressionConsumer{})
+	broker.RegisterConsumer(&impressionConsumer{})
 }
