@@ -107,10 +107,12 @@ func flush(supDemSrc map[string]*TableModel, supSrc map[string]*TableModel) erro
 		models.Parts{
 			Query:  q1,
 			Params: params1,
+			Do:     len(params1) > 0,
 		},
 		models.Parts{
 			Query:  q2,
 			Params: params2,
+			Do:     len(params2) > 0,
 		},
 	)
 

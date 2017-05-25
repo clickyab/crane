@@ -8,6 +8,7 @@ import (
 	"clickyab.com/exchange/services/initializer"
 	_ "clickyab.com/exchange/services/statistic/redis"
 	_ "clickyab.com/exchange/services/store/redis"
+	_ "clickyab.com/exchange/services/broker/selector"
 
 	// TODO each worker must be in separate binary. all in one is just for testing
 	_ "clickyab.com/exchange/octopus/workers/demand"

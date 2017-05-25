@@ -47,6 +47,7 @@ type TimeTable struct {
 type Parts struct {
 	Query  string
 	Params []interface{}
+	Do     bool
 }
 
 // MultiQuery is a hack to run multiple query in one transaction
@@ -64,9 +65,11 @@ func (m *Manager) MultiQuery(parts ...Parts) (err error) {
 	}()
 
 	for i := range parts {
-		_, err = m.GetProperDBMap().Exec(parts[i].Query, parts[i].Params...)
-		if err != nil {
-			return
+		if parts[i].Do {
+			_, err = m.GetProperDBMap().Exec(parts[i].Query, parts[i].Params...)
+			if err != nil {
+				return
+			}
 		}
 	}
 	return nil

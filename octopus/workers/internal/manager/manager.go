@@ -7,6 +7,7 @@ import (
 	"clickyab.com/exchange/services/assert"
 	"clickyab.com/exchange/services/broker"
 	"clickyab.com/exchange/services/config"
+	"clickyab.com/exchange/services/mysql"
 	"clickyab.com/exchange/services/safe"
 )
 
@@ -15,6 +16,15 @@ var (
 	timeout = config.RegisterDuration("octopus.worker.manager.timeout", time.Minute, "the timeout to flush data")
 	epoch   time.Time
 )
+
+type starter struct {
+}
+
+func (starter) Initialize() {
+	safe.GoRoutine(func() {
+		worker()
+	})
+}
 
 // FactTableID is a helper function to get the fact table id from time
 func FactTableID(tm time.Time) int64 {
@@ -28,7 +38,10 @@ func worker() {
 	supDemSrcTable := make(map[string]*TableModel)
 	supSrcTable := make(map[string]*TableModel)
 
-	h := time.After(*timeout)
+	t := *timeout
+	if t < 10*time.Second {
+		t = 10 * time.Second
+	}
 	var counter = 0
 	var ack broker.Delivery
 
@@ -40,16 +53,19 @@ func worker() {
 
 	flushAndClean := func() {
 		err := flush(supDemSrcTable, supSrcTable)
-		if err == nil {
-			ack.Ack(true)
-		} else {
-			ack.Nack(true, true)
-
+		if ack != nil {
+			if err == nil {
+				ack.Ack(true)
+			} else {
+				ack.Nack(true, true)
+			}
 		}
 		counter = 0
 		supDemSrcTable = make(map[string]*TableModel)
 		supSrcTable = make(map[string]*TableModel)
 	}
+	ticker := time.NewTicker(t)
+
 	for {
 		select {
 		case p := <-DataChannel:
@@ -75,7 +91,7 @@ func worker() {
 				flushAndClean()
 			}
 
-		case <-h:
+		case <-ticker.C:
 			flushAndClean()
 		}
 	}
@@ -107,7 +123,6 @@ func init() {
 	epoch, err = time.Parse(layout, str)
 	assert.Nil(err)
 
-	safe.GoRoutine(func() {
-		worker()
-	})
+	//make sure worker start after mysql
+	mysql.Register(&starter{})
 }
