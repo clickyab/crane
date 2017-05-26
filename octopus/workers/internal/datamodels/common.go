@@ -34,7 +34,7 @@ type TableModel struct {
 	Impression    int64  // impression slot
 	Win           int64  // demand
 	Show          int64  // show
-	ImpressionBid int64  // winner
+	ImpressionBid int64  // demand impression
 	ShowBid       int64  // show
 	WinnerBid     int64  // Winner
 	Acknowledger  Acknowledger

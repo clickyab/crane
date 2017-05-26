@@ -46,7 +46,8 @@ func (cn consumer) RegisterConsumer(consumer broker.Consumer) error {
 	// If ignore this, then there is a problem with rabbit. prefetch all jobs for this worker then.
 	// the next worker get nothing at all!
 	// **WARNING**
-	err = c.Qos(1, 0, false)
+	// TODO : limit on workers must match with this prefetch
+	err = c.Qos(100, 0, false)
 	if err != nil {
 		return err
 	}

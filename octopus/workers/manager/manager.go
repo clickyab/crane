@@ -74,12 +74,13 @@ func worker(c chan datamodels.TableModel) {
 				assert.NotNil(nil, "Source and supplier can not be empty")
 			}
 			ack = p.Acknowledger
-			supDemSrcKey := fmt.Sprint(p.Time, p.Supplier, p.Source, p.Demand)
-			supDemSrcTable[supDemSrcKey] = aggregate(supDemSrcTable[supDemSrcKey], p)
+
+			supSrcTableKey := fmt.Sprint(p.Time, p.Supplier, p.Source)
+			supSrcTable[supSrcTableKey] = aggregate(supSrcTable[supSrcTableKey], p)
 
 			if p.Demand != "" {
-				supSrcTableKey := fmt.Sprint(p.Time, p.Supplier, p.Source)
-				supSrcTable[supSrcTableKey] = aggregate(supSrcTable[supSrcTableKey], p)
+				supDemSrcKey := fmt.Sprint(p.Time, p.Supplier, p.Source, p.Demand)
+				supDemSrcTable[supDemSrcKey] = aggregate(supDemSrcTable[supDemSrcKey], p)
 			}
 
 			counter++
@@ -96,21 +97,17 @@ func worker(c chan datamodels.TableModel) {
 
 func aggregate(a *datamodels.TableModel, b datamodels.TableModel) *datamodels.TableModel {
 	if a == nil {
-		a = &datamodels.TableModel{}
+		return &b
 	}
-	res := datamodels.TableModel{}
-	res.ShowBid = a.ShowBid + b.ShowBid
-	res.Show = a.Show + b.Show
-	res.Request = a.Request + b.Request
-	res.Impression = a.Impression + b.Impression
-	res.ImpressionBid = a.ImpressionBid + b.ImpressionBid
-	res.Win = a.Win + b.Win
-	if a.Time != 0 {
-		res.Time = a.Time
-	} else {
-		res.Time = b.Time
-	}
-	return &res
+	assert.True(a.Time == b.Time, "[BUG] times are not same")
+	a.ShowBid += b.ShowBid
+	a.Show += b.Show
+	a.Request += b.Request
+	a.Impression += b.Impression
+	a.ImpressionBid += b.ImpressionBid
+	a.Win += b.Win
+	a.WinnerBid += b.WinnerBid
+	return a
 }
 
 func init() {

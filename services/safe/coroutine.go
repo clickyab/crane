@@ -7,6 +7,8 @@ import (
 
 	"clickyab.com/exchange/services/version"
 
+	"time"
+
 	"github.com/Sirupsen/logrus"
 )
 
@@ -42,6 +44,24 @@ func GoRoutine(f func(), extra ...interface{}) context.Context {
 	}()
 
 	return ctx
+}
+
+// ContinuesGoRoutine is a safe go routine system with recovery, its continue after recovery
+func ContinuesGoRoutine(f func(context.CancelFunc), delay time.Duration, extra ...interface{}) {
+	parent, cnl := context.WithCancel(context.Background())
+	go func() {
+		for i := 1; ; i++ {
+			ctx := GoRoutine(func() { f(cnl) }, extra...)
+			select {
+			case <-ctx.Done():
+				time.Sleep(delay)
+				logrus.Debugf("restart the routine for %d time", i)
+			case <-parent.Done():
+				logrus.Debugf("finalize function and exit")
+				return
+			}
+		}
+	}()
 }
 
 // Routine is a safe routine system with recovery

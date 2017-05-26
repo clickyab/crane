@@ -44,10 +44,16 @@ func (consumer) Queue() string {
 func (s *consumer) Consume() chan<- broker.Delivery {
 	chn := make(chan broker.Delivery, 0)
 	done := s.ctx.Done()
-	safe.GoRoutine(func() {
+	safe.ContinuesGoRoutine(func(cnl context.CancelFunc) {
+		var del broker.Delivery
+		defer func() {
+			if del != nil {
+				del.Reject(false)
+			}
+		}()
 		for {
 			select {
-			case del := <-chn:
+			case del = <-chn:
 				obj := model{}
 				err := del.Decode(&obj)
 				assert.Nil(err)
@@ -62,10 +68,12 @@ func (s *consumer) Consume() chan<- broker.Delivery {
 					Acknowledger: del,
 				}
 			case <-done:
+				cnl()
+				del = nil
 				return
 			}
 		}
-	})
+	}, time.Second)
 	return chn
 }
 

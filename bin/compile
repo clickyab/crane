@@ -83,7 +83,9 @@ name="clickyab.com/exchange"
 
 export GOROOT=${CACHE}/${GOVERSION}/go
 # Prepare
+cp ${CACHE}/IP-COUNTRY-REGION-CITY.BIN ${ROOT}/contrib/IP-COUNTRY-REGION-CITY.BIN || true
 cd ${ROOT} && make prepare
+cp ${ROOT}/contrib/IP-COUNTRY-REGION-CITY.BIN ${CACHE}/
 
 eval "$(setupGOPATH ${name})"
 # Set the GOBIN make any executable build with go in the cache dir

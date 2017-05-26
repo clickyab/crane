@@ -3,6 +3,7 @@ package rabbitmq
 import (
 	"encoding/json"
 
+	"github.com/Sirupsen/logrus"
 	"github.com/streadway/amqp"
 )
 
@@ -11,7 +12,11 @@ type jsonDelivery struct {
 }
 
 func (jd jsonDelivery) Decode(v interface{}) error {
-	return json.Unmarshal(jd.delivery.Body, v)
+	err := json.Unmarshal(jd.delivery.Body, v)
+	if err != nil {
+		logrus.Debugf("Convert %s ====> %T , err was %s", string(jd.delivery.Body), v, err.Error())
+	}
+	return err
 }
 
 func (jd jsonDelivery) Ack(multiple bool) error {
