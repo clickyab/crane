@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"clickyab.com/exchange/octopus/workers/internal/manager"
+	"clickyab.com/exchange/octopus/workers/internal/datamodels"
 	"clickyab.com/exchange/services/assert"
 	"clickyab.com/exchange/services/broker"
 	"clickyab.com/exchange/services/initializer"
@@ -56,13 +56,13 @@ func (s *consumer) Consume() chan<- broker.Delivery {
 				obj := model{}
 				err := del.Decode(&obj)
 				assert.Nil(err)
-				manager.DataChannel <- manager.TableModel{
+				datamodels.ActiveAggregator().Channel() <- datamodels.TableModel{
 					Supplier:     obj.Impression.Source.Supplier.Name,
 					Source:       obj.Impression.Source.Name,
-					Time:         manager.FactTableID(obj.Impression.Time),
+					Time:         datamodels.FactTableID(obj.Impression.Time),
 					Demand:       obj.Demand.Name,
 					Win:          int64(len(obj.Ads)),
-					Acknowledger: &del,
+					Acknowledger: del,
 				}
 			case <-done:
 				return

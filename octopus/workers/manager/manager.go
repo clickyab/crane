@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
+	"clickyab.com/exchange/octopus/workers/internal/datamodels"
 	"clickyab.com/exchange/services/assert"
-	"clickyab.com/exchange/services/broker"
 	"clickyab.com/exchange/services/config"
 	"clickyab.com/exchange/services/mysql"
 	"clickyab.com/exchange/services/safe"
@@ -14,36 +14,33 @@ import (
 var (
 	limit   = config.RegisterInt("octopus.worker.manager.limit", 1000, "the limit for points in manager")
 	timeout = config.RegisterDuration("octopus.worker.manager.timeout", time.Minute, "the timeout to flush data")
-	epoch   time.Time
 )
 
 type starter struct {
+	channel chan datamodels.TableModel
 }
 
-func (starter) Initialize() {
+func (s *starter) Initialize() {
+	datamodels.RegisterAggregator(s)
 	safe.GoRoutine(func() {
-		worker()
+		worker(s.channel)
 	})
 }
 
-// FactTableID is a helper function to get the fact table id from time
-func FactTableID(tm time.Time) int64 {
-	return int64(tm.Sub(epoch).Hours()) + 1
+func (s *starter) Channel() chan<- datamodels.TableModel {
+	return s.channel
 }
 
-// DataChannel is a channel to handle data entry for workers without lock
-var DataChannel = make(chan TableModel)
-
-func worker() {
-	supDemSrcTable := make(map[string]*TableModel)
-	supSrcTable := make(map[string]*TableModel)
+func worker(c chan datamodels.TableModel) {
+	supDemSrcTable := make(map[string]*datamodels.TableModel)
+	supSrcTable := make(map[string]*datamodels.TableModel)
 
 	t := *timeout
 	if t < 10*time.Second {
 		t = 10 * time.Second
 	}
 	var counter = 0
-	var ack broker.Delivery
+	var ack datamodels.Acknowledger
 
 	defer func() {
 		if ack != nil {
@@ -61,14 +58,14 @@ func worker() {
 			}
 		}
 		counter = 0
-		supDemSrcTable = make(map[string]*TableModel)
-		supSrcTable = make(map[string]*TableModel)
+		supDemSrcTable = make(map[string]*datamodels.TableModel)
+		supSrcTable = make(map[string]*datamodels.TableModel)
 	}
 	ticker := time.NewTicker(t)
 
 	for {
 		select {
-		case p := <-DataChannel:
+		case p := <-c:
 
 			if p.Time == 0 {
 				assert.NotNil(nil, "Time should not be equal 0")
@@ -76,7 +73,7 @@ func worker() {
 			if p.Source == "" || p.Supplier == "" {
 				assert.NotNil(nil, "Source and supplier can not be empty")
 			}
-			ack = *p.Acknowledger
+			ack = p.Acknowledger
 			supDemSrcKey := fmt.Sprint(p.Time, p.Supplier, p.Source, p.Demand)
 			supDemSrcTable[supDemSrcKey] = aggregate(supDemSrcTable[supDemSrcKey], p)
 
@@ -97,11 +94,11 @@ func worker() {
 	}
 }
 
-func aggregate(a *TableModel, b TableModel) *TableModel {
+func aggregate(a *datamodels.TableModel, b datamodels.TableModel) *datamodels.TableModel {
 	if a == nil {
-		a = &TableModel{}
+		a = &datamodels.TableModel{}
 	}
-	res := TableModel{}
+	res := datamodels.TableModel{}
 	res.ShowBid = a.ShowBid + b.ShowBid
 	res.Show = a.Show + b.Show
 	res.Request = a.Request + b.Request
@@ -117,12 +114,6 @@ func aggregate(a *TableModel, b TableModel) *TableModel {
 }
 
 func init() {
-	layout := "2006-01-02T15:04:05.000Z"
-	str := "2017-03-21T00:00:00.000Z"
-	var err error
-	epoch, err = time.Parse(layout, str)
-	assert.Nil(err)
-
 	//make sure worker start after mysql
-	mysql.Register(&starter{})
+	mysql.Register(&starter{channel: make(chan datamodels.TableModel)})
 }

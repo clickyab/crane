@@ -15,7 +15,7 @@ const (
 )
 
 var (
-	driver = config.RegisterString("octupos.exchange.materialize.driver", jsonDriver, "driver for materialize")
+	driver = config.RegisterString("octopus.exchange.materialize.driver", jsonDriver, "driver for materialize")
 )
 
 // DemandJob returns a job for demand
@@ -31,7 +31,7 @@ func DemandJob(imp exchange.Impression, dmn exchange.Demand, ads map[string]exch
 			topic: "demand_job",
 		}
 	default:
-		logrus.Panic("invalid driver")
+		logrus.Panicf("invalid driver %s", *driver)
 		return nil
 	}
 }
@@ -48,7 +48,7 @@ func WinnerJob(imp exchange.Impression, ad exchange.Advertise, slotID string) br
 			topic: "winner_job",
 		}
 	default:
-		logrus.Panic("invalid driver")
+		logrus.Panicf("invalid driver %s", *driver)
 		return nil
 	}
 }
@@ -65,7 +65,7 @@ func ShowJob(trackID, demand, slotID, adID string, IP string, winner int64, t st
 			topic: "show_job",
 		}
 	default:
-		logrus.Panic("invalid driver")
+		logrus.Panicf("invalid driver %s", *driver)
 		return nil
 	}
 }
@@ -82,7 +82,7 @@ func ImpressionJob(imp exchange.Impression) broker.Job {
 			topic: "impression_job",
 		}
 	default:
-		logrus.Panic("invalid driver")
+		logrus.Panicf("invalid driver %s", *driver)
 		return nil
 	}
 }
