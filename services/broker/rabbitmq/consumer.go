@@ -10,6 +10,9 @@ import (
 
 	"context"
 
+	"time"
+
+	"clickyab.com/exchange/services/assert"
 	"github.com/Sirupsen/logrus"
 	"github.com/streadway/amqp"
 )
@@ -66,30 +69,39 @@ func (cn consumer) RegisterConsumer(consumer broker.Consumer) error {
 	if err != nil {
 		return err
 	}
-	consumerTag := <-random.ID
-	delivery, err := c.Consume(q.Name, consumerTag, false, false, false, false, nil)
-	if err != nil {
-		return err
-	}
-	logrus.Debug("Worker started")
-	safe.GoRoutine(func() {
-		cn.consume(kill, consumer.Consume(), c, delivery, consumerTag)
-	})
+	safe.ContinuesGoRoutine(func(cnl context.CancelFunc) {
+		consumerTag := <-random.ID
+		delivery, err := c.Consume(q.Name, consumerTag, false, false, false, false, nil)
+		if err != nil {
+			cnl()
+			assert.Nil(err) // I know its somehow redundant.
+			return
+		}
+		logrus.Debug("Worker started")
+		cn.consume(kill, cnl, consumer.Consume(), c, delivery, consumerTag)
+	}, time.Second)
 	return nil
 }
 
-func (consumer) consume(ctx context.Context, consumer chan<- broker.Delivery, c *amqp.Channel, delivery <-chan amqp.Delivery, consumerTag string) {
+func (consumer) consume(ctx context.Context, cnl context.CancelFunc, consumer chan<- broker.Delivery, c *amqp.Channel, delivery <-chan amqp.Delivery, consumerTag string) {
 	atomic.SwapInt64(&hasConsumer, 1)
 	done := ctx.Done()
+
+	cErr := c.NotifyClose(make(chan *amqp.Error))
 bigLoop:
 	for {
 		select {
-		case job := <-delivery:
-			d := jsonDelivery{delivery: &job}
-			consumer <- d
+		case job, ok := <-delivery:
+			assert.True(ok, "[BUG] Channel is closed! why??")
+			consumer <- &jsonDelivery{delivery: &job}
 		case <-done:
+			logrus.Debug("closing channel")
+			// break the continues loop
+			cnl()
 			_ = c.Cancel(consumerTag, true)
 			break bigLoop
+		case e := <-cErr:
+			logrus.Errorf("%T => %+v", *e, *e)
 		}
 	}
 }

@@ -44,7 +44,7 @@ func worker(c chan datamodels.TableModel) {
 
 	defer func() {
 		if ack != nil {
-			ack.Nack(true, true)
+			assert.Nil(ack.Nack(true, true))
 		}
 	}()
 
@@ -52,11 +52,12 @@ func worker(c chan datamodels.TableModel) {
 		err := flush(supDemSrcTable, supSrcTable)
 		if ack != nil {
 			if err == nil {
-				ack.Ack(true)
+				assert.Nil(ack.Ack(true))
 			} else {
-				ack.Nack(true, true)
+				assert.Nil(ack.Nack(true, true))
 			}
 		}
+		ack = nil
 		counter = 0
 		supDemSrcTable = make(map[string]*datamodels.TableModel)
 		supSrcTable = make(map[string]*datamodels.TableModel)

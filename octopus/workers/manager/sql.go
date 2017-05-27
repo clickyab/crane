@@ -61,7 +61,7 @@ ON DUPLICATE KEY UPDATE
  win_bid=win_bid+VALUES(win_bid)
 `
 
-const supSrcTable = `INSERT INTO sup_dem_src
+const supSrcTable = `INSERT INTO sup_src
 (supplier,source,time_id,request_count,impression_count,show_count,imp_bid,show_bid) VALUES
 %s
 ON DUPLICATE KEY UPDATE

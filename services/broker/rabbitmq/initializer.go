@@ -164,14 +164,14 @@ func (in *initRabbit) Initialize(ctx context.Context) {
 
 		rng = ring.New(cfg.Publisher)
 		for i := 0; i < cfg.Publisher; i++ {
-			chn, err := conn.Channel()
+			pchn, err := conn.Channel()
 			assert.Nil(err)
 			rtrn := make(chan amqp.Confirmation, cfg.ConfirmLen)
-			err = chn.Confirm(false)
+			err = pchn.Confirm(false)
 			assert.Nil(err)
-			chn.NotifyPublish(rtrn)
+			pchn.NotifyPublish(rtrn)
 			tmp := chnlLock{
-				chn:    chn,
+				chn:    pchn,
 				lock:   &sync.Mutex{},
 				wg:     &sync.WaitGroup{},
 				rtrn:   rtrn,
