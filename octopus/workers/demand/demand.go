@@ -22,7 +22,7 @@ type model struct {
 		Time  time.Time `json:"time"`
 		Slots []struct {
 			Ad struct {
-				WinnerCPM int64 `json:"winner_cpm,omitempty"`
+				MaxCPM int64 `json:"max_cpm,omitempty"`
 			} `json:"ad,omitempty"`
 		} `json:"slots"`
 	} `json:"impression"`
@@ -66,7 +66,7 @@ func (s *consumer) Consume() chan<- broker.Delivery {
 				assert.Nil(err)
 				var win, winCPM int64
 				for i := range obj.Impression.Slots {
-					if cpm := obj.Impression.Slots[i].Ad.WinnerCPM; cpm > 0 {
+					if cpm := obj.Impression.Slots[i].Ad.MaxCPM; cpm > 0 {
 						win++
 						winCPM += cpm
 					}
