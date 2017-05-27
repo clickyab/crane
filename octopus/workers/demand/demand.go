@@ -74,9 +74,10 @@ func (s *consumer) Consume() chan<- broker.Delivery {
 				datamodels.ActiveAggregator().Channel() <- datamodels.TableModel{
 					Supplier:      obj.Impression.Source.Supplier.Name,
 					Source:        obj.Impression.Source.Name,
-					Time:          datamodels.FactTableID(obj.Impression.Time),
 					Demand:        obj.Demand.Name,
-					Win:           win,
+					Time:          datamodels.FactTableID(obj.Impression.Time),
+					DemandAds:     win,
+					DemandRequest: 1,
 					ImpressionBid: winCPM,
 					Acknowledger:  del,
 				}

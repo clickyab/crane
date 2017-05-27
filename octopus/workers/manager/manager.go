@@ -100,14 +100,19 @@ func aggregate(a *datamodels.TableModel, b datamodels.TableModel) *datamodels.Ta
 	if a == nil {
 		return &b
 	}
+
 	assert.True(a.Time == b.Time, "[BUG] times are not same")
-	a.ShowBid += b.ShowBid
-	a.Show += b.Show
-	a.Request += b.Request
-	a.Impression += b.Impression
+
+	a.ImpressionRequest += b.ImpressionRequest
+	a.ImpressionSlots += b.ImpressionSlots
+	a.DemandRequest += b.DemandRequest
+	a.DemandAds += b.DemandAds
+	a.WinCount += b.WinCount
+	a.ShowCount += b.ShowCount
 	a.ImpressionBid += b.ImpressionBid
-	a.Win += b.Win
-	a.WinnerBid += b.WinnerBid
+	a.WinBid += b.WinBid
+	a.ShowBid += b.ShowBid
+
 	return a
 }
 

@@ -10,17 +10,17 @@ import (
 func TestAggregateFunc(t *testing.T) {
 	Convey("the demand test with the impression job", t, func() {
 		a := datamodels.TableModel{
-			Time:          1,
-			Demand:        "Demand",
-			Supplier:      "Supplier",
-			Source:        "Source",
-			Show:          1,
-			ShowBid:       100,
-			Win:           2,
-			WinnerBid:     200,
-			Impression:    3,
-			ImpressionBid: 300,
-			Request:       4,
+			Time:              1,
+			Demand:            "Demand",
+			Supplier:          "Supplier",
+			Source:            "Source",
+			ShowCount:         1,
+			ShowBid:           100,
+			WinCount:          2,
+			WinBid:            200,
+			ImpressionSlots:   3,
+			ImpressionBid:     300,
+			ImpressionRequest: 4,
 		}
 
 		b := aggregate(nil, a)
@@ -31,11 +31,11 @@ func TestAggregateFunc(t *testing.T) {
 		So(c.Demand, ShouldEqual, a.Demand)
 		So(c.Supplier, ShouldEqual, a.Supplier)
 		So(c.Source, ShouldEqual, a.Source)
-		So(c.Show, ShouldEqual, 2)
+		So(c.ShowCount, ShouldEqual, 2)
 		So(c.ShowBid, ShouldEqual, 200)
-		So(c.Win, ShouldEqual, 4)
-		So(c.WinnerBid, ShouldEqual, 400)
-		So(c.Impression, ShouldEqual, 6)
+		So(c.WinCount, ShouldEqual, 4)
+		So(c.WinBid, ShouldEqual, 400)
+		So(c.ImpressionSlots, ShouldEqual, 6)
 		So(c.ImpressionBid, ShouldEqual, 600)
 
 		a.Time = 3

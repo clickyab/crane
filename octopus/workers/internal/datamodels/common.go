@@ -1,9 +1,8 @@
 package datamodels
 
 import (
-	"time"
-
 	"sync"
+	"time"
 
 	"clickyab.com/exchange/services/assert"
 )
@@ -26,18 +25,22 @@ type Acknowledger interface {
 
 // TableModel is the model for counting data and aggregate them into on query
 type TableModel struct {
-	Supplier      string // all
-	Source        string // all
-	Demand        string // all except impression
-	Time          int64  // all
-	Request       int64  // impression
-	Impression    int64  // impression slot
-	Win           int64  // demand
-	Show          int64  // show
-	ImpressionBid int64  // demand impression
-	ShowBid       int64  // show
-	WinnerBid     int64  // Winner
-	Acknowledger  Acknowledger
+	Supplier string // All
+	Source   string // All
+	Demand   string // All
+	Time     int64  // All
+
+	ImpressionRequest int64 // Impression
+	ImpressionSlots   int64 // Impression
+	DemandRequest     int64 // Demand
+	DemandAds         int64 // Demand
+	WinCount          int64 // Winner
+	ShowCount         int64 // Winner
+	ImpressionBid     int64 // Demand
+	WinBid            int64 // Winner
+	ShowBid           int64 // Show
+
+	Acknowledger Acknowledger
 }
 
 // Aggregator is a helper type to handle the entire process, and hey, its mock-able!

@@ -22,8 +22,8 @@ type model struct {
 		Time time.Time `json:"time"`
 	} `json:"impression"`
 	Advertise struct {
-		ImpressionBid int64 `json:"winner_cpm"`
-		Demand        struct {
+		WinnerCpm int64 `json:"winner_cpm"`
+		Demand    struct {
 			Name string `json:"name"`
 		} `json:"demand"`
 	}
@@ -64,12 +64,13 @@ func (s *consumer) Consume() chan<- broker.Delivery {
 				err := del.Decode(&obj)
 				assert.Nil(err)
 				datamodels.ActiveAggregator().Channel() <- datamodels.TableModel{
-					Supplier:      obj.Impression.Source.Supplier.Name,
-					Source:        obj.Impression.Source.Name,
-					Demand:        obj.Advertise.Demand.Name,
-					ImpressionBid: obj.Advertise.ImpressionBid,
-					Time:          datamodels.FactTableID(obj.Impression.Time),
-					Acknowledger:  del,
+					Supplier:     obj.Impression.Source.Supplier.Name,
+					Source:       obj.Impression.Source.Name,
+					Demand:       obj.Advertise.Demand.Name,
+					Time:         datamodels.FactTableID(obj.Impression.Time),
+					WinCount:     1,
+					WinBid:       obj.Advertise.WinnerCpm,
+					Acknowledger: del,
 				}
 			case <-done:
 				cnl()
