@@ -8,11 +8,12 @@ CREATE TABLE sup_src
     supplier VARCHAR(25),
     source VARCHAR(50),
     time_id INT,
-    imp_bid INT COMMENT 'imp_bid returns total price of winner requests',
-    show_bid INT COMMENT 'imp_bid returns total price of winner requests that has been showed',
-    request_count INT COMMENT 'impression returns the times of request comes from supplier',
-    impression_count INT COMMENT 'impression returns the times of request comes from supplier for each slot, by default its more or equal to request',
-    show_count INT COMMENT 'show returns the number of times impressions has been shown',
+    request_in_count INT COMMENT 'total http request comes to exchange',
+    imp_in_count INT COMMENT 'total imp comes into exchange',
+    imp_out_count INT COMMENT 'total imp comes from exchange',
+    deliver_count INT COMMENT 'total show count of winner request',
+    deliver_bid INT COMMENT 'total show of winner requests',
+    profit INT COMMENT 'profit',
     CONSTRAINT sup_src_time_table_id_fk FOREIGN KEY (time_id) REFERENCES time_table (id)
 );
 CREATE UNIQUE INDEX sup_src_index_gp ON sup_src (time_id,supplier,source);
