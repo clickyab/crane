@@ -4,31 +4,32 @@ import "clickyab.com/exchange/services/assert"
 
 // SupplierSourceDemand supplier_source_demand
 type SupplierSourceDemand struct {
-	ID         int64  `json:"id" db:"id"`
-	Supplier   string `json:"supplier" db:"supplier"`
-	Demand     string `json:"demand" db:"demand"`
-	Source     string `json:"source" db:"source"`
-	TimeID     int64  `json:"time_id" db:"time_id"`
-	Request    int64  `json:"request_count" db:"request_count"`
-	Impression int64  `json:"impression_count" db:"impression_count"`
-	ShowTime   int64  `json:"show_count" db:"show_count"`
-	ImpBid     int64  `json:"imp_bid" db:"imp_bid"`
-	ShowBid    int64  `json:"show_bid" db:"show_bid"`
-	WinBid     int64  `json:"win_bid" db:"win_bid"`
-	Win        int64  `json:"win_count" db:"win_count"`
+	ID              int64  `json:"id" db:"id"`
+	Demand          string `json:"demand" db:"demand"`
+	Supplier        string `json:"supplier" db:"supplier"`
+	Source          string `json:"source" db:"source"`
+	TimeID          int64  `json:"time_id" db:"time_id"`
+	RequestOutCount int64  `json:"request_out_count" db:"request_out_count"`
+	ImpInCount      int64  `json:"imp_in_count" db:"imp_in_count"`
+	ImpOutCount     int64  `json:"imp_out_count" db:"imp_out_count"`
+	WinCount        int64  `json:"win_count" db:"win_count"`
+	WinBid          int64  `json:"win_bid" db:"win_bid"`
+	DeliverCount    int64  `json:"deliver_count" db:"deliver_count"`
+	DeliverBid      int64  `json:"deliver_bid" db:"deliver_bid"`
 }
 
 // SupplierSource supplier_source
 type SupplierSource struct {
-	ID         int64  `json:"id" db:"id"`
-	Supplier   string `json:"supplier" db:"supplier"`
-	Source     string `json:"source" db:"source"`
-	TimeID     int64  `json:"time_id" db:"time_id"`
-	Request    int64  `json:"request_count" db:"request_count"`
-	Impression int64  `json:"impression_count" db:"impression_count"`
-	ShowTime   int64  `json:"show_count" db:"show_count"`
-	ImpBid     int64  `json:"imp_bid" db:"imp_bid"`
-	ShowBid    int64  `json:"show_bid" db:"show_bid"`
+	ID             int64  `json:"id" db:"id"`
+	Supplier       string `json:"supplier" db:"supplier"`
+	Source         string `json:"source" db:"source"`
+	TimeID         int64  `json:"time_id" db:"time_id"`
+	RequestInCount int64  `json:"request_in_count" db:"request_in_count"`
+	ImpInCount     int64  `json:"imp_in_count" db:"imp_in_count"`
+	ImpOutCount    int64  `json:"imp_out_count" db:"imp_out_count"`
+	DeliverCount   int64  `json:"deliver_count" db:"deliver_count"`
+	DeliverBid     int64  `json:"deliver_bid" db:"deliver_bid"`
+	Profit         int64  `json:"profit" db:"profit"`
 }
 
 // TimeTable TimeTable

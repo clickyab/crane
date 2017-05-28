@@ -15,21 +15,17 @@ func (m *Manager) Initialize() {
 		SupplierSourceDemand{},
 		"sup_dem_src",
 	).SetKeys(
-		false,
-		"Supplier",
-		"Demand",
-		"Source",
-		"TimeID",
+		true,
+		"ID",
 	)
 	m.AddTableWithName(
 		SupplierSource{},
 		"sup_src",
 	).SetKeys(
-		false,
-		"Supplier",
-		"Source",
-		"TimeID",
+		true,
+		"ID",
 	)
+
 }
 
 // NewManager return a new manager object
