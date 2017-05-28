@@ -2,6 +2,20 @@ package models
 
 import "clickyab.com/exchange/services/assert"
 
+// DemandReport demand_report
+type DemandReport struct {
+	ID              int64  `json:"id" db:"id"`
+	Demand          string `json:"demand" db:"demand"`
+	TargetDate      int64  `json:"target_date" db:"target_date"`
+	RequestOutCount int64  `json:"request_out_count" db:"request_out_count"`
+	ImpInCount      int64  `json:"imp_in_count" db:"imp_in_count"`
+	ImpOutCount     int64  `json:"imp_out_count" db:"imp_out_count"`
+	WinCount        int64  `json:"win_count" db:"win_count"`
+	WinBid          int64  `json:"win_bid" db:"win_bid"`
+	DeliverCount    int64  `json:"deliver_count" db:"deliver_count"`
+	DeliverBid      int64  `json:"deliver_bid" db:"deliver_bid"`
+}
+
 // SupplierSourceDemand supplier_source_demand
 type SupplierSourceDemand struct {
 	ID              int64  `json:"id" db:"id"`

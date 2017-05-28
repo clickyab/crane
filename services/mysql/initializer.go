@@ -10,7 +10,6 @@ import (
 	"clickyab.com/exchange/services/initializer"
 
 	"github.com/Sirupsen/logrus"
-	_ "github.com/go-sql-driver/mysql" // the mysql driver, make it available for this import
 	gorp "gopkg.in/gorp.v2"
 )
 

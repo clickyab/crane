@@ -3,7 +3,6 @@ package mysql
 import (
 	"database/sql"
 
-	"clickyab.com/exchange/services/assert"
 	"clickyab.com/exchange/services/mysql"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 )
@@ -15,8 +14,6 @@ var (
 
 func newConnection(string) (db *sql.DB, err error) {
 	db, Mock, err = sqlmock.New()
-	assert.Nil(err)
-
 	return
 }
 

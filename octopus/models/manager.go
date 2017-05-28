@@ -26,6 +26,8 @@ func (m *Manager) Initialize() {
 		"ID",
 	)
 
+	m.AddTableWithName(DemandReport{}, "demand_report").
+		SetKeys(true, "ID")
 }
 
 // NewManager return a new manager object
