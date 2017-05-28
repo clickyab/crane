@@ -1,18 +1,20 @@
 package demand
 
 import (
+	"testing"
+	"time"
+
 	"clickyab.com/exchange/octopus/exchange"
 	"clickyab.com/exchange/octopus/exchange/materialize"
 	"clickyab.com/exchange/octopus/workers/internal/datamodels"
 	"clickyab.com/exchange/octopus/workers/mocks"
 	"clickyab.com/exchange/services/assert"
 	"clickyab.com/exchange/services/broker"
-	"testing"
-	"time"
+
+	"context"
 
 	"clickyab.com/exchange/services/config"
 	"clickyab.com/exchange/services/random"
-	"context"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -117,8 +119,8 @@ func TestDemand(t *testing.T) {
 		}
 		So(t.Demand, ShouldEqual, "test_demand")
 		So(t.Time, ShouldEqual, 1)
-		So(t.Request, ShouldEqual, 0)
-		So(t.Impression, ShouldEqual, 0)
+		So(t.DemandRequest, ShouldEqual, 1)
+		So(t.ImpressionSlots, ShouldEqual, 0)
 		So(t.ImpressionBid, ShouldEqual, 680)
 		So(t.Source, ShouldEqual, "test_source")
 		So(t.Supplier, ShouldEqual, "test_supplier")
