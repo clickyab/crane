@@ -266,6 +266,11 @@
 			"Rev": "bf4b54dc687c73b6ef63de8b8abf0ad3951e3edc"
 		},
 		{
+			"ImportPath": "gopkg.in/DATA-DOG/go-sqlmock.v1",
+			"Comment": "v1.2.0",
+			"Rev": "b983233bc0bbea4dc6e8ec8c8c923d935765ffec"
+		},
+		{
 			"ImportPath": "gopkg.in/fzerorubigd/onion.v2",
 			"Comment": "v1.0.0-13-g0789309",
 			"Rev": "078930955df67fe99807c7099902a5282796521f"
