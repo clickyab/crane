@@ -16,7 +16,7 @@ import (
 )
 
 var (
-	raw = `{"ad_id":"64675","demand_name":"clickyab-demo","price":5050,"publisher":"entekhab.ir","slot_id":"e14bd6611055d69fb8883a016474e99787175f37","supplier":"clickyab","time":"1495869393","track_id":"e14bd6611055d69fb8883a016474e99787175f37"}`
+	raw = `{"ad_id":"64675","demand_name":"clickyab-demo","price":3600,"publisher":"entekhab.ir","slot_id":"e14bd6611055d69fb8883a016474e99787175f37","supplier":"clickyab","time":"1495869393","track_id":"e14bd6611055d69fb8883a016474e99787175f37","profit":600}`
 )
 
 type agg struct {
@@ -65,7 +65,14 @@ func TestImpression(t *testing.T) {
 		So(t.Supplier, ShouldEqual, "clickyab")
 		So(t.Source, ShouldEqual, "entekhab.ir")
 		So(t.Demand, ShouldEqual, "clickyab-demo")
-		So(t.ShowCount, ShouldEqual, 1)
-		So(t.ShowBid, ShouldEqual, 5050)
+		So(t.DeliverCount, ShouldEqual, 1)
+		So(t.DeliverBid, ShouldEqual, 3600)
+		So(t.Profit, ShouldEqual, 600)
+		So(t.WinCount, ShouldEqual, 0)
+		So(t.WinBid, ShouldEqual, 0)
+		So(t.RequestInCount, ShouldEqual, 0)
+		So(t.RequestOutCount, ShouldEqual, 0)
+		So(t.ImpressionOutCount, ShouldEqual, 0)
+		So(t.ImpressionInCount, ShouldEqual, 0)
 	})
 }

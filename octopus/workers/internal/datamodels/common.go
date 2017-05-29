@@ -30,15 +30,15 @@ type TableModel struct {
 	Demand   string // All
 	Time     int64  // All
 
-	ImpressionRequest int64 // Impression
-	ImpressionSlots   int64 // Impression
-	DemandRequest     int64 // Demand
-	DemandAds         int64 // Demand
-	WinCount          int64 // Winner
-	ShowCount         int64 // Winner
-	ImpressionBid     int64 // Demand
-	WinBid            int64 // Winner
-	ShowBid           int64 // Show
+	RequestInCount     int64 //demand
+	RequestOutCount    int64 //demand
+	ImpressionInCount  int64 //imp,demand
+	ImpressionOutCount int64 //demand,win
+	WinCount           int64 //win
+	WinBid             int64 //win
+	DeliverCount       int64 //show
+	DeliverBid         int64 //show
+	Profit             int64 //show
 
 	Acknowledger Acknowledger
 }

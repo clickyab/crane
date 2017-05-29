@@ -64,22 +64,23 @@ func (s *consumer) Consume() chan<- broker.Delivery {
 				obj := model{}
 				err := del.Decode(&obj)
 				assert.Nil(err)
-				var win, winCPM int64
+				var win int64
+				var winOut int64
 				for i := range obj.Impression.Slots {
+					winOut++
 					if cpm := obj.Impression.Slots[i].Ad.MaxCPM; cpm > 0 {
 						win++
-						winCPM += cpm
 					}
 				}
 				datamodels.ActiveAggregator().Channel() <- datamodels.TableModel{
-					Supplier:      obj.Impression.Source.Supplier.Name,
-					Source:        obj.Impression.Source.Name,
-					Demand:        obj.Demand.Name,
-					Time:          datamodels.FactTableID(obj.Impression.Time),
-					DemandAds:     win,
-					DemandRequest: 1,
-					ImpressionBid: winCPM,
-					Acknowledger:  del,
+					Supplier:           obj.Impression.Source.Supplier.Name,
+					Source:             obj.Impression.Source.Name,
+					Demand:             obj.Demand.Name,
+					Time:               datamodels.FactTableID(obj.Impression.Time),
+					ImpressionInCount:  win,
+					RequestOutCount:    1,
+					ImpressionOutCount: winOut,
+					Acknowledger:       del,
 				}
 			case <-done:
 				cnl()

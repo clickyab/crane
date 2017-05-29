@@ -22,6 +22,7 @@ type model struct {
 	Supplier   string `json:"supplier"`
 	Publisher  string `json:"publisher"`
 	Time       string `json:"time"`
+	Profit     int    `json:"profit"`
 }
 
 type consumer struct {
@@ -57,12 +58,14 @@ func (s *consumer) Consume() chan<- broker.Delivery {
 				obj := model{}
 				err := del.Decode(&obj)
 				assert.Nil(err)
+
 				datamodels.ActiveAggregator().Channel() <- datamodels.TableModel{
-					Supplier:  obj.Supplier,
-					Source:    obj.Publisher,
-					Demand:    obj.DemandName,
-					ShowBid:   obj.Price,
-					ShowCount: 1,
+					Supplier:     obj.Supplier,
+					Source:       obj.Publisher,
+					Demand:       obj.DemandName,
+					DeliverBid:   obj.Price,
+					DeliverCount: 1,
+					Profit:       int64(obj.Profit),
 					// TODO : why this is different with other?? make it same.
 					Time:         datamodels.FactTableID(timestampToTime(obj.Time)),
 					Acknowledger: del,

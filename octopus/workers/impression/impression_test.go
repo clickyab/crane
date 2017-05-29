@@ -90,12 +90,13 @@ func TestImpression(t *testing.T) {
 		So(t.Supplier, ShouldEqual, "test_sup")
 		So(t.Source, ShouldEqual, "test_source")
 		So(t.Time, ShouldEqual, 1)
-		So(t.ImpressionRequest, ShouldEqual, 1)
-		So(t.ImpressionSlots, ShouldEqual, 10)
+		So(t.RequestInCount, ShouldEqual, 1)
+		So(t.ImpressionInCount, ShouldEqual, 10)
 
 		So(t.WinBid, ShouldBeZeroValue)
-		So(t.ShowBid, ShouldBeZeroValue)
-		So(t.ShowCount, ShouldBeZeroValue)
+		So(t.DeliverBid, ShouldBeZeroValue)
+		So(t.DeliverCount, ShouldBeZeroValue)
 		So(t.Demand, ShouldBeZeroValue)
+		So(t.Profit, ShouldBeZeroValue)
 	})
 }

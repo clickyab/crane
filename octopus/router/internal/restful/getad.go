@@ -76,6 +76,8 @@ func GetAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 				imp.Source().Name(),
 			).SetSubKey("SUPPLIER",
 				imp.Source().Supplier().Name(),
+			).SetSubKey("PROFIT",
+				fmt.Sprintf("%d", int64(imp.Source().Supplier().Share())*res[i].WinnerCPM()/100),
 			)
 			assert.Nil(store.Save(24 * time.Hour))
 		}

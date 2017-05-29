@@ -119,9 +119,9 @@ func TestDemand(t *testing.T) {
 		}
 		So(t.Demand, ShouldEqual, "test_demand")
 		So(t.Time, ShouldEqual, 1)
-		So(t.DemandRequest, ShouldEqual, 1)
-		So(t.ImpressionSlots, ShouldEqual, 0)
-		So(t.ImpressionBid, ShouldEqual, 680)
+		So(t.RequestOutCount, ShouldEqual, 1)
+		So(t.ImpressionInCount, ShouldEqual, 2)
+		So(t.ImpressionOutCount, ShouldEqual, 2)
 		So(t.Source, ShouldEqual, "test_source")
 		So(t.Supplier, ShouldEqual, "test_supplier")
 	})

@@ -9,39 +9,41 @@ import (
 )
 
 func hasDataSupplierDemand(tm *datamodels.TableModel) (bool, string) {
-	b := tm.DemandRequest+tm.DemandAds+tm.WinCount+tm.ShowCount+tm.ImpressionBid+tm.WinBid+tm.ShowBid > 0
+	b := tm.RequestOutCount+tm.ImpressionOutCount+tm.ImpressionInCount+tm.WinCount+tm.WinBid+tm.DeliverCount+tm.DeliverBid+tm.Profit > 0
 	if b {
-		//(supplier,demand,source,time_id,request_count,impression_count,win_count,show_count,imp_bid,show_bid,win_bid)
-		return true, fmt.Sprintf(`("%s", "%s", "%s", %d, %d, %d , %d, %d, %d, %d, %d)`,
+		//(supplier,demand,source,time_id,request_out_count,imp_out_count,imp_in_count,win_count,win_bid,deliver_count,deliver_bid,profit)
+		return true, fmt.Sprintf(`("%s", "%s", "%s", %d, %d, %d, %d, %d, %d, %d,%d,%d)`,
 			tm.Supplier,
 			tm.Demand,
 			tm.Source,
 			tm.Time,
-			tm.DemandRequest,
-			tm.DemandAds,
+			tm.RequestOutCount,
+			tm.ImpressionOutCount,
+			tm.ImpressionInCount,
 			tm.WinCount,
-			tm.ShowCount,
-			tm.ImpressionBid,
-			tm.ShowBid,
 			tm.WinBid,
+			tm.DeliverCount,
+			tm.DeliverBid,
+			tm.Profit,
 		)
 	}
 	return false, ""
 }
 
 func hasDataSupplier(tm *datamodels.TableModel) (bool, string) {
-	b := tm.ImpressionRequest+tm.ImpressionSlots+tm.ShowCount+tm.ImpressionBid+tm.ShowBid > 0
+	b := tm.RequestInCount+tm.ImpressionInCount+tm.ImpressionOutCount+tm.DeliverCount+tm.DeliverBid+tm.Profit > 0
 	if b {
-		// (supplier,source,time_id,request_count,impression_count,show_count,imp_bid,show_bid)
-		return true, fmt.Sprintf(`("%s","%s",%d,%d,%d,%d,%d,%d)`,
+		// (supplier,source,time_id,request_in_count,imp_in_count,imp_out_count,deliver_count,deliver_bid,profit)
+		return true, fmt.Sprintf(`("%s","%s",%d,%d,%d,%d,%d,%d,%d)`,
 			tm.Supplier,
 			tm.Source,
 			tm.Time,
-			tm.ImpressionRequest,
-			tm.ImpressionSlots,
-			tm.ShowCount,
-			tm.ImpressionBid,
-			tm.ShowBid,
+			tm.RequestInCount,
+			tm.ImpressionInCount,
+			tm.ImpressionOutCount,
+			tm.DeliverCount,
+			(tm.DeliverBid)-(tm.Profit),
+			tm.Profit,
 		)
 	}
 
@@ -49,27 +51,28 @@ func hasDataSupplier(tm *datamodels.TableModel) (bool, string) {
 }
 
 const supDemSrcTable = `INSERT INTO sup_dem_src
-(supplier,demand,source,time_id,request_count,impression_count,win_count,show_count,imp_bid,show_bid,win_bid) VALUES
+(supplier,demand,source,time_id,request_out_count,imp_out_count,imp_in_count,win_count,win_bid,deliver_count,deliver_bid,profit) VALUES
 %s
 ON DUPLICATE KEY UPDATE
- request_count=request_count+VALUES(request_count),
- impression_count=impression_count+VALUES(impression_count),
+ request_out_count=request_out_count+VALUES(request_out_count),
+ imp_out_count=imp_out_count+VALUES(imp_out_count),
+ imp_in_count=imp_in_count+VALUES(imp_in_count),
  win_count=win_count+VALUES(win_count),
- show_count=show_count+VALUES(show_count),
- imp_bid=imp_bid+VALUES(imp_bid),
- show_bid=show_bid+VALUES(show_bid),
- win_bid=win_bid+VALUES(win_bid)
+ win_bid=win_bid+VALUES(win_bid),
+ deliver_count=show_count+VALUES(deliver_count),
+ deliver_bid=deliver_bid+VALUES(deliver_bid),
+ profit=profit+VALUES(profit)
 `
-
 const supSrcTable = `INSERT INTO sup_src
-(supplier,source,time_id,request_count,impression_count,show_count,imp_bid,show_bid) VALUES
+(supplier,source,time_id,request_in_count,imp_in_count,imp_out_count,deliver_count,deliver_bid,profit) VALUES
 %s
 ON DUPLICATE KEY UPDATE
- request_count=request_count+VALUES(request_count),
- impression_count=impression_count+VALUES(impression_count),
- show_count=show_count+VALUES(show_count),
- imp_bid=imp_bid+VALUES(imp_bid),
- show_bid=show_bid+VALUES(show_bid)
+ request_in_count=request_in_count+VALUES(request_in_count),
+ imp_in_count=imp_in_count+VALUES(imp_in_count),
+ imp_out_count=imp_out_count+VALUES(imp_out_count),
+ deliver_count=deliver_count+VALUES(deliver_count),
+ deliver_bid=deliver_bid+VALUES(deliver_bid),
+ profit=profit+VALUES(profit)
 `
 
 func flush(supDemSrc map[string]*datamodels.TableModel, supSrc map[string]*datamodels.TableModel) error {

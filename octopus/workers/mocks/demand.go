@@ -1,9 +1,10 @@
 package mocks
 
 import (
-	"clickyab.com/exchange/octopus/exchange"
 	"context"
 	"net/http"
+
+	"clickyab.com/exchange/octopus/exchange"
 )
 
 type Demand struct {

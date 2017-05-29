@@ -60,8 +60,8 @@ func (s *consumer) Consume() chan<- broker.Delivery {
 					Source:            obj.Source.Name,
 					Supplier:          obj.Source.Supplier.Name,
 					Time:              datamodels.FactTableID(obj.Time),
-					ImpressionRequest: 1,
-					ImpressionSlots:   int64(len(obj.Slots)),
+					RequestInCount:    1,
+					ImpressionInCount: int64(len(obj.Slots)),
 					Acknowledger:      del,
 				}
 			case <-done:
