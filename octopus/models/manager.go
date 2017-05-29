@@ -25,6 +25,13 @@ func (m *Manager) Initialize() {
 		true,
 		"ID",
 	)
+	m.AddTableWithName(
+		SupplierSource{},
+		"exchange_report",
+	).SetKeys(
+		true,
+		"ID",
+	)
 
 	m.AddTableWithName(DemandReport{}, "demand_report").
 		SetKeys(true, "ID")

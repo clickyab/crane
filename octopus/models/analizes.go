@@ -1,6 +1,19 @@
 package models
 
-import "clickyab.com/exchange/services/assert"
+import (
+	"time"
+
+	"clickyab.com/exchange/services/assert"
+)
+
+const (
+	// ExchangeTableName table name exchange
+	ExchangeTableName = "exchange_report"
+	// DemandTableName table name demand
+	DemandTableName = "supplier_source_demand"
+	// SuplierTableName table supplier
+	SuplierTableName = "supplier_source"
+)
 
 // DemandReport demand_report
 type DemandReport struct {
@@ -56,6 +69,19 @@ type TimeTable struct {
 	JYear  int64 `json:"j_year" db:"j_year"`
 	JMonth int64 `json:"j_month" db:"j_month"`
 	JDay   int64 `json:"j_day" db:"j_day"`
+}
+
+// Exchange exchange_report
+type Exchange struct {
+	ID                    int64     `json:"id" db:"id"`
+	Date                  time.Time `json:"target_date" db:"target_date"`
+	SupplierImpressionIN  int64     `json:"supplier_impression_in" db:"supplier_impression_in"`
+	SupplierImpressionOUT int64     `json:"supplier_impression_out" db:"supplier_impression_out"`
+	DemandImpressionIN    int64     `json:"demand_impression_in" db:"demand_impression_in"`
+	DemandImpressionOUT   int64     `json:"demand_impression_out" db:"demand_impression_out"`
+	Earn                  int64     `json:"earn" db:"earn"`
+	Spent                 int64     `json:"spent" db:"spent"`
+	Income                int64     `json:"income" db:"income"`
 }
 
 // Parts is a multi query trick
