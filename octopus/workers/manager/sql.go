@@ -59,7 +59,7 @@ ON DUPLICATE KEY UPDATE
  imp_in_count=imp_in_count+VALUES(imp_in_count),
  win_count=win_count+VALUES(win_count),
  win_bid=win_bid+VALUES(win_bid),
- deliver_count=show_count+VALUES(deliver_count),
+ deliver_count=deliver_count+VALUES(deliver_count),
  deliver_bid=deliver_bid+VALUES(deliver_bid),
  profit=profit+VALUES(profit)
 `
