@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"clickyab.com/exchange/commands"
 	"clickyab.com/exchange/services/config"
+	"clickyab.com/exchange/services/shell"
 )
 
 var (
@@ -18,5 +18,5 @@ func main() {
 	http.HandleFunc("/send", postSupplierDemo)
 	fmt.Println(*port)
 	http.ListenAndServe(*port, nil)
-	commands.WaitExitSignal()
+	shell.WaitExitSignal()
 }

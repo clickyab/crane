@@ -15,12 +15,13 @@ import (
 )
 
 var (
-	rdbmap *gorp.DbMap
-	wdbmap *gorp.DbMap
-	rdb    *sql.DB
-	wdb    *sql.DB
-	once   = sync.Once{}
-	all    []Initializer
+	rdbmap  *gorp.DbMap
+	wdbmap  *gorp.DbMap
+	rdb     *sql.DB
+	wdb     *sql.DB
+	once    = sync.Once{}
+	all     []Initializer
+	factory func(string) (*sql.DB, error)
 )
 
 type initMysql struct {
@@ -37,10 +38,11 @@ func (g gorpLogger) Printf(format string, v ...interface{}) {
 func (in *initMysql) Initialize(ctx context.Context) {
 	once.Do(func() {
 		var err error
-		rdb, err = sql.Open("mysql", *rdsn)
+		assert.NotNil(factory)
+		rdb, err = factory(*rdsn)
 		assert.Nil(err)
 
-		wdb, err = sql.Open("mysql", *wdsn)
+		wdb, err = factory(*wdsn)
 		assert.Nil(err)
 
 		rdb.SetMaxIdleConns(*maxIdleConnection)
@@ -244,6 +246,11 @@ func (m *Manager) TruncateTables(tbl string) error {
 // Register a new initMysql module
 func Register(m ...Initializer) {
 	all = append(all, m...)
+}
+
+// RegisterConnectionFactory register a connection factory for sql connection.
+func RegisterConnectionFactory(f func(string) (*sql.DB, error)) {
+	factory = f
 }
 
 func init() {

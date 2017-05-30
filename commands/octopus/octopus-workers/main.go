@@ -7,6 +7,7 @@ import (
 	_ "clickyab.com/exchange/services/dset/redis"
 	_ "clickyab.com/exchange/services/eav/redis"
 	"clickyab.com/exchange/services/initializer"
+	"clickyab.com/exchange/services/shell"
 	_ "clickyab.com/exchange/services/statistic/redis"
 	_ "clickyab.com/exchange/services/store/redis"
 
@@ -21,6 +22,7 @@ import (
 	"clickyab.com/exchange/services/dlock"
 	"clickyab.com/exchange/services/dlock/mock"
 
+	_ "clickyab.com/exchange/services/mysql/connection/mysql"
 	"github.com/Sirupsen/logrus"
 )
 
@@ -32,6 +34,6 @@ func main() {
 	config.Initialize(commands.Organization, commands.AppName, commands.Prefix, commands.DefaultConfig())
 	defer initializer.Initialize()()
 
-	sig := commands.WaitExitSignal()
+	sig := shell.WaitExitSignal()
 	logrus.Debugf("%s received, exiting...", sig.String())
 }

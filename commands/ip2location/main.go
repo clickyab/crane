@@ -11,6 +11,7 @@ import (
 	"clickyab.com/exchange/services/ip2location"
 
 	"clickyab.com/exchange/commands"
+	"clickyab.com/exchange/services/shell"
 	"github.com/Sirupsen/logrus"
 )
 
@@ -32,6 +33,6 @@ func main() {
 		http.ListenAndServe(*listenAddress, nil)
 	}()
 
-	sig := commands.WaitExitSignal()
+	sig := shell.WaitExitSignal()
 	logrus.Debugf("%s received, exiting...", sig.String())
 }

@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"net/http"
 
-	"clickyab.com/exchange/commands"
 	"clickyab.com/exchange/services/assert"
 	"clickyab.com/exchange/services/config"
+	_ "clickyab.com/exchange/services/mysql/connection/mysql"
+	"clickyab.com/exchange/services/shell"
 )
 
 var (
@@ -20,5 +21,5 @@ func main() {
 	fmt.Println(*port)
 	err := http.ListenAndServe(*port, nil)
 	assert.Nil(err)
-	commands.WaitExitSignal()
+	shell.WaitExitSignal()
 }
