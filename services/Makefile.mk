@@ -3,7 +3,7 @@ export GO?=$(shell which go)
 export UPDATE?=
 export GOPATH?=$(shell mktemp -d)
 export SERVICES_LINTER=$(GOPATH)/bin/gometalinter.v1
-export SERVICES_LINTERCMD?=$(SERVICES_LINTER) -e ".*.gen.go" -e "upstream.go" -e "tmp" --cyclo-over=19 --line-length=120 --deadline=100s --disable-all --enable=structcheck --enable=deadcode --enable=gocyclo --enable=ineffassign --enable=golint --enable=goimports --enable=errcheck --enable=varcheck --enable=goconst --enable=gosimple --enable=staticcheck --enable=misspell
+export SERVICES_LINTERCMD?=$(SERVICES_LINTER) -e ".*.gen.go" -e "tmp" --cyclo-over=19 --line-length=120 --deadline=100s --disable-all --enable=structcheck --enable=deadcode --enable=gocyclo --enable=ineffassign --enable=golint --enable=goimports --enable=errcheck --enable=varcheck --enable=goconst --enable=gosimple --enable=staticcheck --enable=misspell
 
 $(SERVICES_ROOT)/tmp/ip2l/IP-COUNTRY-REGION-CITY.BIN:
 	mkdir -p $(SERVICES_ROOT)/tmp/ip2l

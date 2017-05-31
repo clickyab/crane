@@ -12,8 +12,8 @@ type IP2lData struct {
 func IP2Location(ip string) IP2lData {
 	rec := GetAll(ip)
 	return IP2lData{
-		CountryShort: rec.Country_short,
-		CountryLong:  rec.Country_long,
+		CountryShort: rec.CountryShort,
+		CountryLong:  rec.CountryLong,
 		Region:       rec.Region,
 		City:         rec.City,
 	}

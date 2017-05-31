@@ -78,7 +78,7 @@ func collect(_ context.Context, w http.ResponseWriter, r *http.Request) {
 				"campaign":       fmt.Sprint(p.CampaignID),
 				"publisher":      p.PublisherID,
 				"publisher_type": p.PublisherType,
-				"country":        rec.Country_long,
+				"country":        rec.CountryLong,
 				"province":       rec.Region,
 				"city":           rec.City,
 				"mobile":         fmt.Sprint(ua.Mobile()),
