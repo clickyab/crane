@@ -80,8 +80,16 @@ func (*modelsPlugin) GetOrder() int {
 }
 
 const tmpl = `
+// Code generated build with models DO NOT EDIT.
+
+
 package {{ .PackageName }}
 // AUTO GENERATED CODE. DO NOT EDIT!
+
+import 	(
+	gorp "gopkg.in/gorp.v2"
+)
+
 {{ range $m := .Data }}
 {{ if $m.Primaries }}
 // Create{{ $m.StructName }} try to save a new {{ $m.StructName }} in database
@@ -90,12 +98,12 @@ func (m *Manager) Create{{ $m.StructName }}({{ $m.StructName|getvar }} *{{ $m.St
 	{{ if $m.CreatedAt }}{{ $m.StructName|getvar }}.CreatedAt = &now{{ end }}
 	{{ if $m.UpdatedAt }}{{ $m.StructName|getvar }}.UpdatedAt = &now{{ end }}
 	func(in interface{}) {
-		if ii, ok := in.(common.Initializer); ok {
+		if ii, ok := in.(initializer.Simple); ok {
 			ii.Initialize()
 		}
 	}({{ $m.StructName|getvar }})
 
-	return m.GetDbMap().Insert({{ $m.StructName|getvar }})
+	return m.GetWDbMap().Insert({{ $m.StructName|getvar }})
 }
 
 // Update{{ $m.StructName }} try to update {{ $m.StructName }} in database
@@ -103,12 +111,12 @@ func (m *Manager) Update{{ $m.StructName }}({{ $m.StructName|getvar }} *{{ $m.St
 	{{ if $m.UpdatedAt }}now := time.Now(){{ end }}
 	{{ if $m.UpdatedAt }}{{ $m.StructName|getvar }}.UpdatedAt = &now{{ end }}
 	func(in interface{}) {
-		if ii, ok := in.(common.Initializer); ok {
+		if ii, ok := in.(initializer.Simple); ok {
 			ii.Initialize()
 		}
 	}({{ $m.StructName|getvar }})
 
-	_, err := m.GetDbMap().Update({{ $m.StructName|getvar }})
+	_, err := m.GetWDbMap().Update({{ $m.StructName|getvar }})
 	return err
 }
 {{ end }}
@@ -121,7 +129,7 @@ func (m *Manager) List{{ $m.StructName|plural }}WithFilter(filter string, params
 		filter = "WHERE " + filter
 	}
 	var res []{{ $m.StructName }}
-	_, err := m.GetDbMap().Select(
+	_, err := m.GetRDbMap().Select(
 		&res,
 		fmt.Sprintf("SELECT * FROM %s %s", {{ $m.StructName }}TableFull, filter),
 		params...,
@@ -143,7 +151,7 @@ func (m *Manager) Count{{ $m.StructName|plural }}WithFilter(filter string, param
 	if filter != "" {
 		filter = "WHERE " + filter
 	}
-	cnt, err := m.GetDbMap().SelectInt(
+	cnt, err := m.GetRDbMap().SelectInt(
 		fmt.Sprintf("SELECT COUNT(*) FROM %s %s", {{ $m.StructName }}TableFull, filter),
 		params...,
 	)
@@ -170,7 +178,7 @@ offset, perPage int, filter string, params ...interface{}) []{{ $m.StructName }}
 	params = append(params, offset, perPage)
 
 	// TODO : better pagination without offset and limit
-	_, err := m.GetDbMap().Select(
+	_, err := m.GetRDbMap().Select(
 		&res,
 		fmt.Sprintf("SELECT * FROM %s %s", {{ $m.StructName }}TableFull, filter),
 		params...,
@@ -189,7 +197,7 @@ func (m *Manager) List{{ $m.StructName|plural }}WithPagination(offset, perPage i
 // Find{{ $m.StructName }}By{{ $by.Name }} return the {{ $m.StructName }} base on its {{ $by.DB }}
 func (m* Manager) Find{{ $m.StructName }}By{{ $by.Name }}({{ $by.DB|getvar }} {{ $by.Type }}) (*{{ $m.StructName }}, error) {
 	var res {{ $m.StructName }}
-	err := m.GetDbMap().SelectOne(
+	err := m.GetRDbMap().SelectOne(
 		&res,
 		fmt.Sprintf("SELECT * FROM %s WHERE {{ $by.DB }}=?", {{ $m.StructName }}TableFull),
 		{{ $by.DB|getvar }},
@@ -206,7 +214,7 @@ func (m* Manager) Find{{ $m.StructName }}By{{ $by.Name }}({{ $by.DB|getvar }} {{
 // Filter{{ $m.StructName|plural }}By{{ $by.Name }} return all {{ $m.StructName|plural }} base on its {{ $by.DB }}, panic on query error
 func (m *Manager) Filter{{ $m.StructName|plural }}By{{ $by.Name }}({{ $by.DB|getvar }} {{ $by.Type }}) []{{ $m.StructName }} {
 	var res []{{ $m.StructName }}
-	_, err := m.GetDbMap().Select(
+	_, err := m.GetRDbMap().Select(
 		&res,
 		fmt.Sprintf("SELECT * FROM %s WHERE {{ $by.DB }}=?", {{ $m.StructName }}TableFull),
 		{{ $by.DB|getvar }},
@@ -221,7 +229,7 @@ func (m *Manager) Filter{{ $m.StructName|plural }}By{{ $by.Name }}({{ $by.DB|get
 // Get{{ .St1|base }}{{ .St2|plural }} return all {{ .St2|plural }} belong to {{ .St1 }} (many to many with {{ .Base }})
 func (m *Manager) Get{{ .St1|base }}{{ .St2|plural }}({{ .St1|getvar }} *{{ .St1 }}) []{{ .St2 }} {
 	var res []{{ .St2 }}
-	_, err := m.GetDbMap().Select(
+	_, err := m.GetRDbMap().Select(
 		&res,
 		fmt.Sprintf(
 			"SELECT {{ .St2|getvar }}.* FROM %s {{ .Base|getvar }} JOIN %s {{ .St2|getvar }} ON {{ .Base|getvar }}.{{ .Field2.DB }} = {{ .St2|getvar }}.id WHERE {{ .Base|getvar }}.{{ .Field1.DB }}=$1",
@@ -238,7 +246,7 @@ func (m *Manager) Get{{ .St1|base }}{{ .St2|plural }}({{ .St1|getvar }} *{{ .St1
 // Get{{ .St2|base }}{{ .St1|plural }} return all {{ .St1|plural }} belong to {{ .St2 }} (many to many with {{ .Base }})
 func (m *Manager) Get{{ .St2|base }}{{ .St1|plural }}({{ .St2|getvar }} *{{ .St2 }}) []{{ .St1 }} {
 	var res []{{ .St1 }}
-	_, err := m.GetDbMap().Select(
+	_, err := m.GetRDbMap().Select(
 		&res,
 		fmt.Sprintf(
 			"SELECT {{ .St1|getvar }}.* FROM %s {{ .Base|getvar }} JOIN %s {{ .St1|getvar }} ON {{ .Base|getvar }}.{{ .Field1.DB }} = {{ .St1|getvar }}.id WHERE {{ .Base|getvar }}.{{ .Field2.DB }}=$1",
@@ -254,7 +262,7 @@ func (m *Manager) Get{{ .St2|base }}{{ .St1|plural }}({{ .St2|getvar }} *{{ .St2
 
 // Count{{ .St1|base }}{{ .St2|plural }} return count {{ .St2|plural }} belong to {{ .St1 }} (many to many with {{ .Base }})
 func (m *Manager) Count{{ .St1|base }}{{ .St2|plural }}({{ .St1|getvar }} *{{ .St1 }}) int64 {
-	res, err := m.GetDbMap().SelectInt(
+	res, err := m.GetRDbMap().SelectInt(
 		fmt.Sprintf(
 			"SELECT COUNT(*) FROM %s WHERE {{ .Field1.DB }}=?",
 			{{ .Base  }}TableFull,
@@ -268,7 +276,7 @@ func (m *Manager) Count{{ .St1|base }}{{ .St2|plural }}({{ .St1|getvar }} *{{ .S
 
 // Count{{ .St2|base }}{{ .St1|plural }} return all {{ .St1|plural }} belong to {{ .St2 }} (many to many with {{ .Base }})
 func (m *Manager) Count{{ .St2|base }}{{ .St1|plural }}({{ .St2|getvar }} *{{ .St2 }}) int64 {
-	res, err := m.GetDbMap().SelectInt(
+	res, err := m.GetRDbMap().SelectInt(
 		fmt.Sprintf(
 			"SELECT COUNT(*) FROM %s WHERE {{ .Field2.DB }}=?",
 			{{ .Base  }}TableFull,
@@ -285,7 +293,7 @@ func (m *Manager) Count{{ .St2|base }}{{ .St1|plural }}({{ .St2|getvar }} *{{ .S
 // Get{{ .St|base }}{{ .Base|plural }} return all {{ .Base|plural }} belong to {{ .St|base }}
 func (m *Manager) Get{{ .St|base }}{{ .Base|plural }}({{ .St|getvar }} *{{ .St }}) []{{ .Base }} {
 	var res []{{ .Base }}
-	_, err := m.GetDbMap().Select(
+	_, err := m.GetRDbMap().Select(
 		&res,
 		fmt.Sprintf(
 			"SELECT * FROM %s WHERE {{ .Field.DB }}=?",
@@ -300,7 +308,7 @@ func (m *Manager) Get{{ .St|base }}{{ .Base|plural }}({{ .St|getvar }} *{{ .St }
 
 // Count{{ .St|base }}{{ .Base|plural }} return count {{ .Base|plural }} belong to {{ .St|base }}
 func (m *Manager) Count{{ .St|base }}{{ .Base|plural }}({{ .St|getvar }} *{{ .St }}) int64 {
-	res, err := m.GetDbMap().SelectInt(
+	res, err := m.GetRDbMap().SelectInt(
 		fmt.Sprintf(
 			"SELECT COUNT(*) FROM %s WHERE {{ .Field.DB }}=?",
 			{{ .Base }}TableFull,
@@ -317,7 +325,7 @@ func (m *Manager) Count{{ .St|base }}{{ .Base|plural }}({{ .St|getvar }} *{{ .St
 // Get{{ .Base|base }}{{ .St|plural }} return all {{ .St|plural }} belong to {{ .Base|base }} (has many)
 func (m *Manager) Get{{ .Base|base }}{{ .St|plural }}({{ .Base|getvar }} *{{ .Base }}) []{{ .St }} {
 	var res []{{ .St }}
-	_, err := m.GetDbMap().Select(
+	_, err := m.GetRDbMap().Select(
 		&res,
 		fmt.Sprintf(
 			"SELECT * FROM %s WHERE {{ .Field.DB }}=?",
@@ -347,7 +355,14 @@ func ({{ $m.StructName|getvar }} *{{ $m.StructName }}) Pre{{ $byT }}(q gorp.SqlE
 `
 
 const base = `
+// Code generated build with models DO NOT EDIT.
+
+
 package {{ .PackageName }}
+
+import 	(
+	gorp "gopkg.in/gorp.v2"
+)
 // AUTO GENERATED CODE. DO NOT EDIT!
 
 const ({{ range $m := .Data }}
@@ -357,7 +372,7 @@ const ({{ range $m := .Data }}
 
 // Manager is the model manager for {{ .PackageName }} package
 type Manager struct {
-	common.Manager
+	mysql.Manager
 }
 
 // New{{ .PackageName|ucfirst }}Manager create and return a manager for this module
@@ -390,7 +405,7 @@ func (m *Manager) Initialize() {
 {{ end }}
 }
 func init() {
-	models.Register(New{{ .PackageName|ucfirst }}Manager())
+	mysql.Register(New{{ .PackageName|ucfirst }}Manager())
 }
 
 
@@ -766,17 +781,26 @@ func (r *modelsPlugin) Finalize(c interface{}, _ humanize.Package) error {
 	//s, _ := json.MarshalIndent(ctx.data, "", "\t")
 	//fmt.Print(string(s))
 
-	var all []dataModel
+	var all dataModels
 	last := ""
+
+	keys := make([]string, 0)
 	for i := range ctx.data {
-		sort.Sort(ctx.data[i])
+		keys = append(keys, i)
+	}
+
+	sort.Strings(keys)
+
+	for _, i := range keys {
+		cda := ctx.data[i]
+		sort.Sort(cda)
 		buf := &bytes.Buffer{}
 		err := tpl.Execute(buf, struct {
 			PackageName string
-			Data        []dataModel
+			Data        dataModels
 		}{
 			PackageName: ctx.packageName,
-			Data:        ctx.data[i],
+			Data:        cda,
 		})
 		if err != nil {
 			return err
@@ -798,9 +822,10 @@ func (r *modelsPlugin) Finalize(c interface{}, _ humanize.Package) error {
 		if err != nil {
 			return err
 		}
-		all = append(all, ctx.data[i]...)
+		all = append(all, cda...)
 	}
 
+	sort.Sort(all)
 	last = filepath.Join(filepath.Dir(last), ctx.packageName+".gen.go")
 	buf := &bytes.Buffer{}
 	err := tpl2.Execute(buf, struct {

@@ -3,7 +3,7 @@ package routes
 import (
 	"net/http"
 
-	"clickyab.com/exchange/octopus/console/internal/manager"
+	"clickyab.com/exchange/octopus/console/internal/aaa"
 	"clickyab.com/exchange/services/eav"
 	"clickyab.com/exchange/services/safe"
 	"gopkg.in/labstack/echo.v3"
@@ -18,7 +18,7 @@ func auth(next echo.HandlerFunc) echo.HandlerFunc {
 		if token != "" {
 			val := eav.NewEavStore(token).SubKey("token")
 			if val != "" {
-				user, err := manager.NewManager().GetUserByToken(val)
+				user, err := aaa.NewAaaManager().GetUserByToken(val)
 				if err == nil {
 					c.Set(userData, user)
 					c.Set(tokenData, token)
