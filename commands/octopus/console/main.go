@@ -10,6 +10,7 @@ import (
 	_ "clickyab.com/exchange/services/eav/redis"
 	"clickyab.com/exchange/services/shell"
 	"github.com/Sirupsen/logrus"
+	_ "golang.org/x/crypto/bcrypt"
 )
 
 func main() {
