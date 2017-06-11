@@ -1,14 +1,8 @@
 package datamodels
 
-import (
-	"sync"
-	"time"
-
-	"clickyab.com/exchange/services/assert"
-)
+import "sync"
 
 var (
-	epoch     time.Time
 	singleton Aggregator
 	lock      sync.RWMutex
 )
@@ -48,11 +42,6 @@ type Aggregator interface {
 	Channel() chan<- TableModel
 }
 
-// FactTableID is a helper function to get the fact table id from time
-func FactTableID(tm time.Time) int64 {
-	return int64(tm.Sub(epoch).Hours()) + 1
-}
-
 // RegisterAggregator to register an aggregator
 func RegisterAggregator(a Aggregator) {
 	lock.Lock()
@@ -67,12 +56,4 @@ func ActiveAggregator() Aggregator {
 	defer lock.RUnlock()
 
 	return singleton
-}
-
-func init() {
-	layout := "2006-01-02T15:04:05.000Z"
-	str := "2017-03-21T00:00:00.000Z"
-	var err error
-	epoch, err = time.Parse(layout, str)
-	assert.Nil(err)
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"clickyab.com/exchange/octopus/models"
 	"clickyab.com/exchange/octopus/workers/internal/datamodels"
 	"clickyab.com/exchange/services/assert"
 	"clickyab.com/exchange/services/broker"
@@ -67,7 +68,7 @@ func (s *consumer) Consume() chan<- broker.Delivery {
 					Supplier:     obj.Impression.Source.Supplier.Name,
 					Source:       obj.Impression.Source.Name,
 					Demand:       obj.Advertise.Demand.Name,
-					Time:         datamodels.FactTableID(obj.Impression.Time),
+					Time:         models.FactTableID(obj.Impression.Time),
 					WinCount:     1,
 					WinBid:       obj.Advertise.WinnerCpm,
 					Acknowledger: del,

@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"time"
 
+	"clickyab.com/exchange/octopus/models"
 	"clickyab.com/exchange/octopus/workers/internal/datamodels"
 	"clickyab.com/exchange/services/assert"
 	"clickyab.com/exchange/services/broker"
@@ -67,7 +68,7 @@ func (s *consumer) Consume() chan<- broker.Delivery {
 					DeliverCount: 1,
 					Profit:       int64(obj.Profit),
 					// TODO : why this is different with other?? make it same.
-					Time:         datamodels.FactTableID(timestampToTime(obj.Time)),
+					Time:         models.FactTableID(timestampToTime(obj.Time)),
 					Acknowledger: del,
 				}
 			case <-done:

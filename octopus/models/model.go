@@ -1,10 +1,6 @@
-package internal
+package models
 
-import (
-	"time"
-
-	"clickyab.com/exchange/services/mysql"
-)
+import "time"
 
 // SupplierReporter table
 type SupplierReporter struct {
@@ -15,28 +11,4 @@ type SupplierReporter struct {
 	ImpressionOut       int64     `json:"impression_out" db:"impression_out"`
 	DeliveredImpression int64     `json:"delivered_impression" db:"delivered_impression"`
 	Earn                int64     `json:"earn" db:"earn"`
-}
-
-// Manager manager
-type Manager struct {
-	mysql.Manager
-}
-
-// Initialize initialize
-func (m *Manager) Initialize() {
-	m.AddTableWithName(
-		SupplierReporter{},
-		"supplier_report",
-	).SetKeys(
-		true,
-		"ID")
-}
-
-// NewManager returns manager
-func NewManager() *Manager {
-	return &Manager{}
-}
-
-func init() {
-	mysql.Register(&Manager{})
 }
