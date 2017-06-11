@@ -48,54 +48,10 @@ export ROOT=${BUILD}
 export_env_dir $3
 source ${BUILD}/bin/env_check
 
-GOVERSION=${GOVERSION:-go1.8.1}
+cd ${CACHE}
+wget -c http://static.clickyab.com/IP-COUNTRY-REGION-CITY.BIN.gz
+gunzip -k IP-COUNTRY-REGION-CITY.BIN.gz
+rm -f IP-COUNTRY-REGION-CITY.BIN.md5 && wget -c http://static.clickyab.com/IP-COUNTRY-REGION-CITY.BIN.md5
+md5sum -c IP-COUNTRY-REGION-CITY.BIN.md5
 
-install_go() {
-    start $1
-    step "Downloading ${GOVERSION}"
-    wget -c -O ${CACHE}/${GOVERSION}.linux-amd64.tar.gz https://storage.googleapis.com/golang/${GOVERSION}.linux-amd64.tar.gz 2>&1 >/dev/null
-
-    step "Install ${GOVERSION}"
-    mkdir -p "${CACHE}/${GOVERSION}"
-    tar -C "${CACHE}/${GOVERSION}" -xzf ${CACHE}/${GOVERSION}.linux-amd64.tar.gz
-}
-
-# Sets up GOPATH (and posibly other GO* env vars) and returns the location of
-# the source code as $src. The output of this function is meant to be eval'd'
-setupGOPATH() {
-    local name="${1}"
-    local t="$(mktemp -d)"
-
-    cp -R ${BUILD}/* ${t}
-    GOPATH="${t}/"
-    echo export GOBIN="${BUILD}/bin"
-
-    local src="${GOPATH}/src/${name}"
-    mkdir -p "${src}"
-    mkdir -p "${BUILD}/bin"
-    mv -t "${src}" "${t}"/*
-
-    echo "GOPATH=${GOPATH}"
-    echo "src=${src}"
-}
-
-name="clickyab.com/exchange"
-
-export GOROOT=${CACHE}/${GOVERSION}/go
-# Prepare
-cp ${CACHE}/IP-COUNTRY-REGION-CITY.BIN ${ROOT}/contrib/IP-COUNTRY-REGION-CITY.BIN || true
-cd ${ROOT} && make prepare
-cp ${ROOT}/contrib/IP-COUNTRY-REGION-CITY.BIN ${CACHE}/
-
-eval "$(setupGOPATH ${name})"
-# Set the GOBIN make any executable build with go in the cache dir
-export GOBIN=${ROOT}/bin
-export PATH=${PATH}:${GOROOT}/bin:${GOPATH}/bin:${ROOT}/bin
-
-go version || install_go "go is not installed"
-go version || grep ${GOVERSION} || install_go "go version is not ${GOVERSION}"
-
-cd ${src}
-
-make -f ${src}/Makefile codegen
-make -f ${src}/Makefile all
+mv ${CACHE}/IP-COUNTRY-REGION-CITY.BIN ${BUILD}/bin/IP-COUNTRY-REGION-CITY.BIN

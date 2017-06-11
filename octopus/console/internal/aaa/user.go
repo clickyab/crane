@@ -2,8 +2,6 @@ package aaa
 
 import "fmt"
 
-const usersTable string = "users"
-
 // User user model in database
 // @Model {
 //		table = users
@@ -22,7 +20,7 @@ type User struct {
 // GetUserByToken returns user by its token
 func (m *Manager) GetUserByToken(token string) (*User, error) {
 	query := `SELECT * FROM %s WHERE token=?`
-	query = fmt.Sprintf(query, usersTable)
+	query = fmt.Sprintf(query, UserTableFull)
 	holder := &User{}
 	err := m.GetRDbMap().SelectOne(holder, query, token)
 	if err != nil {
