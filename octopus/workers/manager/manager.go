@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"time"
 
+	"context"
+
 	"clickyab.com/exchange/octopus/workers/internal/datamodels"
 	"clickyab.com/exchange/services/assert"
 	"clickyab.com/exchange/services/config"
@@ -22,16 +24,16 @@ type starter struct {
 
 func (s *starter) Initialize() {
 	datamodels.RegisterAggregator(s)
-	safe.GoRoutine(func() {
-		worker(s.channel)
-	})
+	safe.ContinuesGoRoutine(func(context.CancelFunc) {
+		s.worker()
+	}, time.Second)
 }
 
 func (s *starter) Channel() chan<- datamodels.TableModel {
 	return s.channel
 }
 
-func worker(c chan datamodels.TableModel) {
+func (s *starter) worker() {
 	supDemSrcTable := make(map[string]*datamodels.TableModel)
 	supSrcTable := make(map[string]*datamodels.TableModel)
 
@@ -44,7 +46,9 @@ func worker(c chan datamodels.TableModel) {
 
 	defer func() {
 		if ack != nil {
-			assert.Nil(ack.Nack(true, true))
+			// Make sure the packet is rejected to prevent another requeue of an invalid
+			// job
+			assert.Nil(ack.Reject(false))
 		}
 	}()
 
@@ -64,17 +68,22 @@ func worker(c chan datamodels.TableModel) {
 	}
 	ticker := time.NewTicker(t)
 
+bigLoop:
 	for {
 		select {
-		case p := <-c:
+		case p := <-s.channel:
 
+			ack = p.Acknowledger
 			if p.Time == 0 {
-				assert.NotNil(nil, "Time should not be equal 0")
+				//assert.NotNil(nil, "Time should not be equal 0")
+				assert.Nil(ack.Reject(false))
+				continue bigLoop
 			}
 			if p.Source == "" || p.Supplier == "" {
-				assert.NotNil(nil, "Source and supplier can not be empty")
+				//assert.NotNil(nil, "Source and supplier can not be empty")
+				assert.Nil(ack.Reject(false))
+				continue bigLoop
 			}
-			ack = p.Acknowledger
 
 			supSrcTableKey := fmt.Sprint(p.Time, p.Supplier, p.Source)
 			supSrcTable[supSrcTableKey] = aggregate(supSrcTable[supSrcTableKey], p)

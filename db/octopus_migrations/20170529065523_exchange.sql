@@ -1,6 +1,7 @@
 
 -- +migrate Up
 -- SQL in section 'Up' is executed when this migration is applied
+
 CREATE TABLE exchange_report
 (
     id INT PRIMARY KEY AUTO_INCREMENT,
@@ -13,10 +14,11 @@ CREATE TABLE exchange_report
     spent INT DEFAULT 0 NOT NULL,
     income INT DEFAULT 0 NOT NULL
 );
-CREATE UNIQUE INDEX exchange_date_uindex ON clickyab.exchange (target_date);
+CREATE UNIQUE INDEX exchange_date_uindex ON exchange_report (target_date);
 
 
 -- +migrate Down
 -- SQL section 'Down' is executed when this migration is rolled back
 
 
+DROP TABLE exchange_report;

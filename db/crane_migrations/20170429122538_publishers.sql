@@ -27,5 +27,5 @@ create index publishers_users_id_fk
 -- +migrate Down
 -- SQL section 'Down' is executed when this migration is rolled back
 
-DROP TABLE publishers
+DROP TABLE publishers;
 

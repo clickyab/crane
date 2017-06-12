@@ -16,6 +16,7 @@ import (
 	"clickyab.com/exchange/octopus/exchange/materialize"
 	"clickyab.com/exchange/services/broker"
 
+	"github.com/Sirupsen/logrus"
 	"github.com/fzerorubigd/xmux"
 )
 
@@ -32,11 +33,16 @@ func TrackPixel(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		demand := xmux.Param(ctx, "demand")
 		trackID := xmux.Param(ctx, "trackID")
 		if trackID == "" || demand == "" {
+			logrus.Debug("both track id and demand are empty")
 			return
 		}
 		//get from store
-		store := eav.NewEavStore(trackID).AllKeys()
+		store := eav.NewEavStore("PIXEL_" + trackID).AllKeys()
 		winnerDemand := store["DEMAND"]
+		if winnerDemand != demand {
+			logrus.Debugf("stored demand `%s`!=request demand `%s`", winnerDemand, demand)
+			return
+		}
 		winnerID := store["ID"]
 		slotTrack := store["TRACK"]
 		AdID := store["ADID"]
@@ -48,21 +54,24 @@ func TrackPixel(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		profit := store["PROFIT"]
 		profitInt, err := strconv.ParseInt(profit, 10, 0)
 		if err != nil {
+			logrus.Debugf("profit key is not integer : %s", err)
 			return
 		}
 		winnerInt, err := strconv.ParseInt(winnerBID, 10, 0)
 		if err != nil {
+			logrus.Debugf("winner key is not integer : %s", err)
 			return
 		}
 		//set winner
 		d, err := core2.GetDemand(winnerDemand)
 		if err != nil {
+			logrus.Debugf("can not find winner demand `%s` : %s", winnerDemand, err)
 			return
 		}
-		d.Win(ctx, winnerID, winnerInt)
 		broker.Publish(materialize.ShowJob(
 			trackID, winnerDemand, slotTrack, AdID, IP, winnerInt, impTime, supplier, publisher, profitInt,
 		))
+		d.Win(ctx, winnerID, winnerInt)
 	})
 }
 

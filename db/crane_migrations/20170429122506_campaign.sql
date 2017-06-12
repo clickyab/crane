@@ -23,4 +23,4 @@ create index campaign_users_id_fk
 -- +migrate Down
 -- SQL section 'Down' is executed when this migration is rolled back
 
-DROP TABLE campaign
+DROP TABLE campaign;

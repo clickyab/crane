@@ -11,12 +11,7 @@ import (
 	_ "clickyab.com/exchange/services/statistic/redis"
 	_ "clickyab.com/exchange/services/store/redis"
 
-	// TODO each worker must be in separate binary. all in one is just for testing
-	_ "clickyab.com/exchange/octopus/workers/demand"
-	_ "clickyab.com/exchange/octopus/workers/impression"
 	_ "clickyab.com/exchange/octopus/workers/manager"
-	_ "clickyab.com/exchange/octopus/workers/show"
-	// Now the manager
 	_ "clickyab.com/exchange/octopus/workers/winner"
 
 	"clickyab.com/exchange/services/dlock"

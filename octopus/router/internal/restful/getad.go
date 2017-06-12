@@ -15,8 +15,6 @@ import (
 	"clickyab.com/exchange/services/assert"
 	"clickyab.com/exchange/services/eav"
 
-	"clickyab.com/exchange/services/httplib"
-
 	"clickyab.com/exchange/octopus/exchange/materialize"
 	"clickyab.com/exchange/services/broker"
 
@@ -57,9 +55,9 @@ func GetAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 				i,
 			))
 
-			store := eav.NewEavStore(res[i].TrackID())
+			store := eav.NewEavStore("PIXEL_" + res[i].TrackID())
 			store.SetSubKey("IP",
-				httplib.RealIP(r),
+				imp.IP().String(),
 			).SetSubKey("SLOT",
 				res[i].ID(),
 			).SetSubKey("DEMAND",

@@ -77,7 +77,9 @@ func (d *demand) Provide(ctx context.Context, imp exchange.Impression, ch chan e
 		return
 	}
 	if resp.StatusCode != http.StatusOK {
-		logrus.Debugf("status code is %d", resp.StatusCode)
+		body, _ := ioutil.ReadAll(resp.Body)
+		resp.Body.Close()
+		logrus.Debugf("status code is %d, message was %s", resp.StatusCode, string(body))
 		return
 	}
 	data, err := ioutil.ReadAll(resp.Body)

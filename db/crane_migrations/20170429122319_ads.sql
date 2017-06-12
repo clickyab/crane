@@ -24,4 +24,5 @@ create index ads_users_id_fk
 
 -- +migrate Down
 -- SQL section 'Down' is executed when this migration is rolled back
-DROP TABLE ads
+
+DROP TABLE ads;
