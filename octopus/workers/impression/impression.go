@@ -8,7 +8,9 @@ import (
 	"clickyab.com/exchange/octopus/workers/internal/datamodels"
 	"clickyab.com/exchange/services/assert"
 	"clickyab.com/exchange/services/broker"
+	"clickyab.com/exchange/services/config"
 	"clickyab.com/exchange/services/initializer"
+	"clickyab.com/exchange/services/random"
 	"clickyab.com/exchange/services/safe"
 )
 
@@ -24,13 +26,25 @@ type model struct {
 	Slots []struct{} `json:"slots"`
 }
 
+var extraCount = config.RegisterInt("octopus.workers.extra.count", 10, "the consumer count for a worker")
+
 type consumer struct {
-	ctx context.Context
+	ctx      context.Context
+	workerID string
 }
 
 func (s *consumer) Initialize(ctx context.Context) {
 	s.ctx = ctx
 	broker.RegisterConsumer(s)
+
+	for i := 1; i < *extraCount; i++ {
+		broker.RegisterConsumer(
+			&consumer{
+				ctx:      ctx,
+				workerID: <-random.ID,
+			},
+		)
+	}
 }
 
 func (consumer) Topic() string {
@@ -64,6 +78,7 @@ func (s *consumer) Consume() chan<- broker.Delivery {
 					RequestInCount:    1,
 					ImpressionInCount: int64(len(obj.Slots)),
 					Acknowledger:      del,
+					WorkerID:          s.workerID,
 				}
 			case <-done:
 				cnl()
@@ -78,5 +93,5 @@ func (s *consumer) Consume() chan<- broker.Delivery {
 }
 
 func init() {
-	initializer.Register(&consumer{}, 10000)
+	initializer.Register(&consumer{workerID: <-random.ID}, 10000)
 }

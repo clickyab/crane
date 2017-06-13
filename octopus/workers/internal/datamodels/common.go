@@ -35,6 +35,7 @@ type TableModel struct {
 	Profit             int64 //show
 
 	Acknowledger Acknowledger
+	WorkerID     string
 }
 
 // Aggregator is a helper type to handle the entire process, and hey, its mock-able!

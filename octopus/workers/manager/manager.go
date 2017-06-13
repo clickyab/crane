@@ -42,26 +42,29 @@ func (s *starter) worker() {
 		t = 10 * time.Second
 	}
 	var counter = 0
-	var ack datamodels.Acknowledger
+	var allAck = make(map[string]datamodels.Acknowledger)
 
 	defer func() {
-		if ack != nil {
-			// Make sure the packet is rejected to prevent another requeue of an invalid
-			// job
-			assert.Nil(ack.Reject(false))
+		if e := recover(); e != nil {
+			for i := range allAck {
+				// Make sure the packet is rejected to prevent another requeue of an invalid
+				// job
+				assert.Nil(allAck[i].Reject(false))
+
+			}
 		}
 	}()
 
 	flushAndClean := func() {
 		err := flush(supDemSrcTable, supSrcTable)
-		if ack != nil {
+		for i := range allAck {
 			if err == nil {
-				assert.Nil(ack.Ack(true))
+				assert.Nil(allAck[i].Ack(true))
 			} else {
-				assert.Nil(ack.Nack(true, true))
+				assert.Nil(allAck[i].Nack(true, true))
 			}
 		}
-		ack = nil
+		allAck = make(map[string]datamodels.Acknowledger)
 		counter = 0
 		supDemSrcTable = make(map[string]*datamodels.TableModel)
 		supSrcTable = make(map[string]*datamodels.TableModel)
@@ -73,15 +76,15 @@ bigLoop:
 		select {
 		case p := <-s.channel:
 
-			ack = p.Acknowledger
+			allAck[p.WorkerID] = p.Acknowledger
 			if p.Time == 0 {
 				//assert.NotNil(nil, "Time should not be equal 0")
-				assert.Nil(ack.Reject(false))
+				assert.Nil(p.Acknowledger.Reject(false))
 				continue bigLoop
 			}
 			if p.Source == "" || p.Supplier == "" {
 				//assert.NotNil(nil, "Source and supplier can not be empty")
-				assert.Nil(ack.Reject(false))
+				assert.Nil(p.Acknowledger.Reject(false))
 				continue bigLoop
 			}
 

@@ -13,9 +13,12 @@ import (
 	"time"
 
 	"clickyab.com/exchange/services/assert"
+	"clickyab.com/exchange/services/config"
 	"github.com/Sirupsen/logrus"
 	"github.com/streadway/amqp"
 )
+
+var prefetchCount = config.RegisterInt("services.broker.rabbitmq.prefetch", 100, "the prefetch count")
 
 func (cn consumer) RegisterConsumer(consumer broker.Consumer) error {
 	c, err := conn.Channel()
@@ -50,7 +53,7 @@ func (cn consumer) RegisterConsumer(consumer broker.Consumer) error {
 	// the next worker get nothing at all!
 	// **WARNING**
 	// TODO : limit on workers must match with this prefetch
-	err = c.Qos(100, 0, false)
+	err = c.Qos(*prefetchCount, 0, false)
 	if err != nil {
 		return err
 	}
