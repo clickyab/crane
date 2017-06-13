@@ -120,7 +120,7 @@ func TestDemand(t *testing.T) {
 		So(t.Demand, ShouldEqual, "test_demand")
 		So(t.Time, ShouldEqual, 1)
 		So(t.RequestOutCount, ShouldEqual, 1)
-		So(t.ImpressionInCount, ShouldEqual, 2)
+		So(t.ImpressionInCount, ShouldEqual, 0)
 		So(t.ImpressionOutCount, ShouldEqual, 2)
 		So(t.Source, ShouldEqual, "test_source")
 		So(t.Supplier, ShouldEqual, "test_supplier")

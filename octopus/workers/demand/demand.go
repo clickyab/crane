@@ -80,9 +80,7 @@ func (s *consumer) Consume() chan<- broker.Delivery {
 				err := del.Decode(&obj)
 				assert.Nil(err)
 				var win int64
-				var winOut int64
 				for i := range obj.Impression.Slots {
-					winOut++
 					if cpm := obj.Impression.Slots[i].Ad.MaxCPM; cpm > 0 {
 						win++
 					}
@@ -92,9 +90,8 @@ func (s *consumer) Consume() chan<- broker.Delivery {
 					Source:             obj.Impression.Source.Name,
 					Demand:             obj.Demand.Name,
 					Time:               models.FactTableID(obj.Impression.Time),
-					ImpressionInCount:  win,
 					RequestOutCount:    1,
-					ImpressionOutCount: winOut,
+					ImpressionOutCount: win,
 					Acknowledger:       del,
 					WorkerID:           s.workerID,
 				}
