@@ -44,7 +44,6 @@ func TrackPixel(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		winnerID := store["ID"]
-		slotTrack := store["TRACK"]
 		AdID := store["ADID"]
 		winnerBID := store["BID"]
 		IP := store["IP"]

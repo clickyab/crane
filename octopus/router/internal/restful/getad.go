@@ -58,14 +58,10 @@ func GetAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 			store := eav.NewEavStore("PIXEL_" + res[i].TrackID())
 			store.SetSubKey("IP",
 				imp.IP().String(),
-			).SetSubKey("SLOT",
-				res[i].ID(),
 			).SetSubKey("DEMAND",
 				res[i].Demand().Name(),
 			).SetSubKey("BID",
 				fmt.Sprintf("%d", res[i].WinnerCPM()),
-			).SetSubKey("TRACK",
-				res[i].TrackID(),
 			).SetSubKey("ADID",
 				res[i].ID(),
 			).SetSubKey("TIME",
@@ -77,7 +73,7 @@ func GetAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 			).SetSubKey("PROFIT",
 				fmt.Sprintf("%d", int64(imp.Source().Supplier().Share())*res[i].WinnerCPM()/100),
 			)
-			assert.Nil(store.Save(24 * time.Hour))
+			assert.Nil(store.Save(1 * time.Hour))
 		}
 	}
 	err = imp.Source().Supplier().Renderer().Render(imp, res, w)
