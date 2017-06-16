@@ -93,7 +93,7 @@ func TestImpression(t *testing.T) {
 		So(t.RequestInCount, ShouldEqual, 1)
 		So(t.ImpressionInCount, ShouldEqual, 10)
 
-		So(t.WinBid, ShouldBeZeroValue)
+		So(t.AdOutBid, ShouldBeZeroValue)
 		So(t.DeliverBid, ShouldBeZeroValue)
 		So(t.DeliverCount, ShouldBeZeroValue)
 		So(t.Demand, ShouldBeZeroValue)

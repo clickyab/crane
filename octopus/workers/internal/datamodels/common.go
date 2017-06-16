@@ -27,9 +27,10 @@ type TableModel struct {
 	RequestInCount     int64 //demand
 	RequestOutCount    int64 //demand
 	ImpressionInCount  int64 //imp,demand
-	ImpressionOutCount int64 //demand,win
-	WinCount           int64 //win
-	WinBid             int64 //win
+	ImpressionOutCount int64 //demand
+	AdInCount          int64 //demand
+	AdOutCount         int64 //win
+	AdOutBid           int64 //win
 	DeliverCount       int64 //show
 	DeliverBid         int64 //show
 	Profit             int64 //show

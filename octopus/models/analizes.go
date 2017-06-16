@@ -37,10 +37,10 @@ type SupplierSourceDemand struct {
 	Source          string `json:"source" db:"source"`
 	TimeID          int64  `json:"time_id" db:"time_id"`
 	RequestOutCount int64  `json:"request_out_count" db:"request_out_count"`
-	ImpInCount      int64  `json:"imp_in_count" db:"imp_in_count"`
+	AdInCount       int64  `json:"ad_in_count" db:"ad_in_count"`
 	ImpOutCount     int64  `json:"imp_out_count" db:"imp_out_count"`
-	WinCount        int64  `json:"win_count" db:"win_count"`
-	WinBid          int64  `json:"win_bid" db:"win_bid"`
+	AdOutCount      int64  `json:"ad_out_count" db:"ad_out_count"`
+	AdOutBid        int64  `json:"ad_out_bid" db:"ad_out_bid"`
 	DeliverCount    int64  `json:"deliver_count" db:"deliver_count"`
 	DeliverBid      int64  `json:"deliver_bid" db:"deliver_bid"`
 }
@@ -53,7 +53,7 @@ type SupplierSource struct {
 	TimeID         int64  `json:"time_id" db:"time_id"`
 	RequestInCount int64  `json:"request_in_count" db:"request_in_count"`
 	ImpInCount     int64  `json:"imp_in_count" db:"imp_in_count"`
-	ImpOutCount    int64  `json:"imp_out_count" db:"imp_out_count"`
+	AdOutCount     int64  `json:"ad_out_count" db:"ad_out_count"`
 	DeliverCount   int64  `json:"deliver_count" db:"deliver_count"`
 	DeliverBid     int64  `json:"deliver_bid" db:"deliver_bid"`
 	Profit         int64  `json:"profit" db:"profit"`

@@ -98,8 +98,8 @@ func TestImpression(t *testing.T) {
 		So(t.Supplier, ShouldEqual, "clickyab")
 		So(t.Source, ShouldEqual, "entekhab.ir")
 		So(t.Demand, ShouldEqual, "clickyab-demo")
-		So(t.WinCount, ShouldEqual, 1)
-		So(t.WinBid, ShouldEqual, 5050)
+		So(t.AdOutCount, ShouldEqual, 1)
+		So(t.AdOutBid, ShouldEqual, 5050)
 
 		//So(t.Time, ShouldEqual, 1)
 		//So(t.Request, ShouldEqual, 1)

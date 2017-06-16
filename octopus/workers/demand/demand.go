@@ -91,7 +91,8 @@ func (s *consumer) Consume() chan<- broker.Delivery {
 					Demand:             obj.Demand.Name,
 					Time:               models.FactTableID(obj.Impression.Time),
 					RequestOutCount:    1,
-					ImpressionOutCount: win,
+					ImpressionOutCount: int64(len(obj.Impression.Slots)),
+					AdInCount:          win,
 					Acknowledger:       del,
 					WorkerID:           s.workerID,
 				}

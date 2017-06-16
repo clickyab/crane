@@ -9,7 +9,7 @@ import (
 )
 
 func hasDataSupplierDemand(tm *datamodels.TableModel) (bool, string) {
-	b := tm.RequestOutCount+tm.ImpressionOutCount+tm.ImpressionInCount+tm.WinCount+tm.WinBid+tm.DeliverCount+tm.DeliverBid+tm.Profit > 0
+	b := tm.RequestOutCount+tm.ImpressionOutCount+tm.AdInCount+tm.AdOutCount+tm.AdOutBid+tm.DeliverCount+tm.DeliverBid+tm.Profit > 0
 	if b {
 		//(supplier,demand,source,time_id,request_out_count,imp_out_count,imp_in_count,win_count,win_bid,deliver_count,deliver_bid,profit)
 		return true, fmt.Sprintf(`("%s", "%s", "%s", %d, %d, %d, %d, %d, %d, %d,%d,%d)`,
@@ -19,9 +19,9 @@ func hasDataSupplierDemand(tm *datamodels.TableModel) (bool, string) {
 			tm.Time,
 			tm.RequestOutCount,
 			tm.ImpressionOutCount,
-			tm.ImpressionInCount,
-			tm.WinCount,
-			tm.WinBid,
+			tm.AdInCount,
+			tm.AdOutCount,
+			tm.AdOutBid,
 			tm.DeliverCount,
 			tm.DeliverBid,
 			tm.Profit,
@@ -31,7 +31,7 @@ func hasDataSupplierDemand(tm *datamodels.TableModel) (bool, string) {
 }
 
 func hasDataSupplier(tm *datamodels.TableModel) (bool, string) {
-	b := tm.RequestInCount+tm.ImpressionInCount+tm.ImpressionOutCount+tm.DeliverCount+tm.DeliverBid+tm.Profit > 0
+	b := tm.RequestInCount+tm.ImpressionInCount+tm.AdOutCount+tm.DeliverCount+tm.DeliverBid+tm.Profit > 0
 	if b {
 		// (supplier,source,time_id,request_in_count,imp_in_count,imp_out_count,deliver_count,deliver_bid,profit)
 		return true, fmt.Sprintf(`("%s","%s",%d,%d,%d,%d,%d,%d,%d)`,
@@ -40,7 +40,7 @@ func hasDataSupplier(tm *datamodels.TableModel) (bool, string) {
 			tm.Time,
 			tm.RequestInCount,
 			tm.ImpressionInCount,
-			tm.ImpressionOutCount,
+			tm.AdOutCount,
 			tm.DeliverCount,
 			(tm.DeliverBid)-(tm.Profit),
 			tm.Profit,
@@ -51,25 +51,25 @@ func hasDataSupplier(tm *datamodels.TableModel) (bool, string) {
 }
 
 const supDemSrcTable = `INSERT INTO sup_dem_src
-(supplier,demand,source,time_id,request_out_count,imp_out_count,imp_in_count,win_count,win_bid,deliver_count,deliver_bid,profit) VALUES
+(supplier,demand,source,time_id,request_out_count,imp_out_count,ad_in_count,ad_out_count,ad_out_bid,deliver_count,deliver_bid,profit) VALUES
 %s
 ON DUPLICATE KEY UPDATE
  request_out_count=request_out_count+VALUES(request_out_count),
  imp_out_count=imp_out_count+VALUES(imp_out_count),
- imp_in_count=imp_in_count+VALUES(imp_in_count),
- win_count=win_count+VALUES(win_count),
- win_bid=win_bid+VALUES(win_bid),
+ ad_in_count=ad_in_count+VALUES(ad_in_count),
+ ad_out_count=ad_out_count+VALUES(ad_out_count),
+ ad_out_bid=ad_out_bid+VALUES(ad_out_bid),
  deliver_count=deliver_count+VALUES(deliver_count),
  deliver_bid=deliver_bid+VALUES(deliver_bid),
  profit=profit+VALUES(profit)
 `
 const supSrcTable = `INSERT INTO sup_src
-(supplier,source,time_id,request_in_count,imp_in_count,imp_out_count,deliver_count,deliver_bid,profit) VALUES
+(supplier,source,time_id,request_in_count,imp_in_count,ad_out_count,deliver_count,deliver_bid,profit) VALUES
 %s
 ON DUPLICATE KEY UPDATE
  request_in_count=request_in_count+VALUES(request_in_count),
  imp_in_count=imp_in_count+VALUES(imp_in_count),
- imp_out_count=imp_out_count+VALUES(imp_out_count),
+ ad_out_count=ad_out_count+VALUES(ad_out_count),
  deliver_count=deliver_count+VALUES(deliver_count),
  deliver_bid=deliver_bid+VALUES(deliver_bid),
  profit=profit+VALUES(profit)

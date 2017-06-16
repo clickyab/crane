@@ -16,8 +16,8 @@ func TestAggregateFunc(t *testing.T) {
 			Source:             "Source",
 			DeliverCount:       1,
 			DeliverBid:         100,
-			WinCount:           2,
-			WinBid:             200,
+			AdOutCount:         2,
+			AdOutBid:           200,
 			RequestOutCount:    3,
 			RequestInCount:     4,
 			ImpressionInCount:  6,
@@ -34,8 +34,8 @@ func TestAggregateFunc(t *testing.T) {
 		So(c.Source, ShouldEqual, a.Source)
 		So(c.DeliverCount, ShouldEqual, 2)
 		So(c.DeliverBid, ShouldEqual, 200)
-		So(c.WinCount, ShouldEqual, 4)
-		So(c.WinBid, ShouldEqual, 400)
+		So(c.AdOutCount, ShouldEqual, 4)
+		So(c.AdOutBid, ShouldEqual, 400)
 		So(c.ImpressionInCount, ShouldEqual, 12)
 		So(c.ImpressionOutCount, ShouldEqual, 4)
 		So(c.RequestOutCount, ShouldEqual, 6)
