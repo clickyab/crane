@@ -4,12 +4,13 @@
 package mock_exchange
 
 import (
-	exchange "clickyab.com/exchange/octopus/exchange"
 	context "context"
-	gomock "github.com/golang/mock/gomock"
 	net "net"
 	http "net/http"
 	time "time"
+
+	exchange "clickyab.com/exchange/octopus/exchange"
+	gomock "github.com/golang/mock/gomock"
 )
 
 // Mock of Impression interface

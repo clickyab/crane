@@ -12,6 +12,7 @@ import (
 	"strconv"
 	"strings"
 
+	"clickyab.com/exchange/services/assert"
 	"github.com/Sirupsen/logrus"
 )
 
@@ -23,24 +24,23 @@ func getSupplierDemo(w http.ResponseWriter, r *http.Request) {
 		logrus.Fatal(err)
 	}
 	fmt.Println(dir)
-	t, err := template.ParseFiles("../src/commands/tessup/index.html")
-	if err != nil {
-		return
-	}
-	logrus.Debug(t.Execute(w, nil))
+	t, err := template.ParseFiles("../commands/tessup/index.html")
+	assert.Nil(err)
+	t.Execute(w, nil)
 }
 
 type dumbAd struct {
-	ID      string `json:"id"`
-	Winner  int64  `json:"winner"`
-	Width   int    `json:"width"`
-	Height  int    `json:"height"`
-	Code    string `json:"code"`
-	Landing string `json:"land"`
+	TrackID  string `json:"track_id"`
+	Winner   int64  `json:"winner"`
+	Width    int    `json:"width"`
+	Height   int    `json:"height"`
+	Code     string `json:"code"`
+	Landing  string `json:"landing"`
+	IsFilled bool   `json:"is_filled"`
 }
 
 func postSupplierDemo(w http.ResponseWriter, r *http.Request) {
-	var respon map[string]dumbAd
+	var respon []dumbAd
 	var cats []categories
 	var resSlots = make([]*slotRest, 0)
 	if r.Method != "POST" {
@@ -58,9 +58,10 @@ func postSupplierDemo(w http.ResponseWriter, r *http.Request) {
 			wi, _ := strconv.ParseInt(data["width[]"][i], 10, 0)
 			he, _ := strconv.ParseInt(data["height[]"][i], 10, 0)
 			resSlots = append(resSlots, &slotRest{
-				W:   int(wi),
-				H:   int(he),
-				TID: data["track[]"][i],
+				W:    int(wi),
+				H:    int(he),
+				TID:  data["track[]"][i],
+				Fall: "example.com",
 			})
 		}
 
@@ -77,30 +78,25 @@ func postSupplierDemo(w http.ResponseWriter, r *http.Request) {
 	res.UnderFloor = true
 	res.IP = data["ip"][0]
 	res.Categories = cats
-	res.Publisher = &restPublisher{
+	res.Source = &restPublisher{
 		PubFloorCPM:     floorCPM,
 		PubName:         data["publisher_name"][0],
 		PubSoftFloorCPM: softFloor,
 	}
-	res.IP = "46.209.239.51"
 	res.Type = rType
+	res.PageTrackID = data["page_track_id"][0]
+	res.UserTrackID = data["user_track_id"][0]
+	res.Scheme = "http"
 	switch rType {
 	case "web":
 		res.Web.Referrer = refferer
 		res.Web.Parent = parent
 		res.Web.UserAgent = userAgent
-	case "vast":
-		res.Vast.Referrer = refferer
-		res.Vast.Parent = parent
-		res.Vast.UserAgent = userAgent
 	}
 	res.Slots = resSlots
 	resData, err := json.Marshal(res)
-	if err != nil {
-
-	}
-	logrus.Warn(string(resData))
-	request, err := http.NewRequest("POST", "http://127.0.0.1:8090/get/randomhash", bytes.NewBuffer(resData))
+	assert.Nil(err)
+	request, err := http.NewRequest("POST", "http://127.0.0.1:8090/rest/get/0dba30250c24738bd7a7acbf31b859de", bytes.NewBuffer(resData))
 	if err != nil {
 		return
 	}
@@ -117,52 +113,39 @@ func postSupplierDemo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	err = json.Unmarshal(responseData, &respon)
-	logrus.Warn(err)
-	logrus.Warnf("%+v", respon)
-	t, err := template.ParseFiles("../src/commands/tessup/show.tmpl")
+	assert.Nil(err)
+	t, err := template.ParseFiles("../commands/tessup/show.tmpl")
+	assert.Nil(err)
 	w.Header().Set("Content-Type", "text/html")
 	logrus.Warn(t.Execute(w, respon))
-	fmt.Println(err)
-}
-
-type supplier struct {
-	Name            string   `json:"name"`
-	FloorCPM        int64    `json:"floor_cpm"`
-	SoftFloorCPM    int64    `json:"soft_floor_cpm"`
-	ExcludedDemands []string `json:"excluded_demands"`
-	Share           int      `json:"share"`
 }
 
 type slotRest struct {
-	W   int    `json:"width"`
-	H   int    `json:"height"`
-	TID string `json:"track_id"`
+	W    int    `json:"width"`
+	H    int    `json:"height"`
+	TID  string `json:"track_id"`
+	Fall string `json:"fallback_url"`
 }
 
 type restPublisher struct {
 	PubName         string `json:"name"`
 	PubFloorCPM     int64  `json:"floor_cpm"`
 	PubSoftFloorCPM int64  `json:"soft_floor_cpm"`
-
-	Sup supplier `json:"sup"`
 }
 
 type requestBody struct {
-	IP         string         `json:"ip"`
-	Publisher  *restPublisher `json:"publisher"`
-	Categories []categories   `json:"categories"`
-	Type       string         `json:"type"`
-	UnderFloor bool
-	Web        struct {
+	IP          string         `json:"ip"`
+	PageTrackID string         `json:"page_track_id"`
+	UserTrackID string         `json:"user_track_id"`
+	Scheme      string         `json:"scheme"`
+	Source      *restPublisher `json:"publisher"`
+	Categories  []categories   `json:"categories"`
+	Type        string         `json:"type"`
+	UnderFloor  bool
+	Web         struct {
 		Referrer  string `json:"referrer,omitempty"`
 		Parent    string `json:"parent,omitempty"`
 		UserAgent string `json:"user_agent,omitempty"`
 	} `json:"web,omitempty"`
-	Vast struct {
-		Referrer  string `json:"referrer,omitempty"`
-		Parent    string `json:"parent,omitempty"`
-		UserAgent string `json:"user_agent,omitempty"`
-	} `json:"vast,omitempty"`
-
 	Slots []*slotRest `json:"slots"`
 }

@@ -41,6 +41,10 @@ func (p *chnBroker) getChannel(size int) <-chan broker.Job {
 	return c
 }
 
+func (p *chnBroker) RegisterConsumer(consumer broker.Consumer) error {
+	return nil
+}
+
 // GetChannel return a channel for getting messages on
 func GetChannel(size int) <-chan broker.Job {
 	return b.getChannel(size)

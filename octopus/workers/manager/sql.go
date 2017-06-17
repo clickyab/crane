@@ -92,7 +92,9 @@ func flush(supDemSrc map[string]*datamodels.TableModel, supSrc map[string]*datam
 		}
 	}
 	q2 := fmt.Sprintf(supSrcTable, strings.Join(parts2, ",\n"))
-
+	if len(parts1)+len(parts2) == 0 {
+		return nil
+	}
 	return models.NewManager().MultiQuery(
 		models.Parts{
 			Query: q1,

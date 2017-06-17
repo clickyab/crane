@@ -21,11 +21,6 @@ type demand struct {
 func (d demand) Encode() ([]byte, error) {
 	if d.src == nil {
 		themap := make(map[string]interface{})
-		//advertizes := []map[string]interface{}{}
-		//for i := range d.ads {
-		//	advertizes = append(advertizes, advertiseToMap(d.ads[i]))
-		//}
-		//themap["ads"] = advertizes
 		themap["demand"] = demandToMap(d.dmn)
 		themap["impression"] = impressionToMap(d.imp, d.ads)
 		d.src, _ = json.Marshal(themap)

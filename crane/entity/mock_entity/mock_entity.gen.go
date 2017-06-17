@@ -4,11 +4,12 @@
 package mock_entity
 
 import (
-	entity "clickyab.com/exchange/crane/entity"
 	context "context"
-	gomock "github.com/golang/mock/gomock"
 	net "net"
 	http "net/http"
+
+	entity "clickyab.com/exchange/crane/entity"
+	gomock "github.com/golang/mock/gomock"
 )
 
 // Mock of Impression interface

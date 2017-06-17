@@ -16,7 +16,6 @@ var (
 
 func main() {
 	config.Initialize("test", "test", "test")
-	http.HandleFunc("/getad", getAdd)
 	http.HandleFunc("/", demandDemo)
 	fmt.Println(*port)
 	err := http.ListenAndServe(*port, nil)

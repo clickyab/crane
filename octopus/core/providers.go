@@ -13,9 +13,7 @@ import (
 	"errors"
 
 	"clickyab.com/exchange/octopus/exchange/materialize"
-
 	"clickyab.com/exchange/services/broker"
-
 	"github.com/Sirupsen/logrus"
 )
 

@@ -206,6 +206,7 @@ func newImpressionFromVastRequest(sup exchange.Supplier, r *requestBody) (*impre
 }
 
 func newImpressionFromWebRequest(sup exchange.Supplier, r *requestBody) (*impressionRest, error) {
+	r.Publisher.sup = sup
 	resp := impressionRest{
 		Schm:          r.Scheme,
 		UTI:           r.UserTrackID,
@@ -224,7 +225,6 @@ func newImpressionFromWebRequest(sup exchange.Supplier, r *requestBody) (*impres
 		},
 		Pub: r.Publisher,
 	}
-	resp.Pub.sup = sup
 	resp.STime = time.Now()
 	resp.extractData()
 	return &resp, nil

@@ -4,7 +4,6 @@
 // db/crane_migrations/20170429122506_campaign.sql
 // db/crane_migrations/20170429122538_publishers.sql
 // db/crane_migrations/20170429122604_users.sql
-// db/migrations/20170614070757_sup_dem_src.sql
 // db/octopus_migrations/20170408095249_demands.sql
 // db/octopus_migrations/20170412072713_supplier.sql
 // db/octopus_migrations/20170521085135_timetable.sql
@@ -97,7 +96,7 @@ func dbCrane_migrations20170429122319_adsSql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "db/crane_migrations/20170429122319_ads.sql", size: 656, mode: os.FileMode(420), modTime: time.Unix(1497420798, 0)}
+	info := bindataFileInfo{name: "db/crane_migrations/20170429122319_ads.sql", size: 656, mode: os.FileMode(436), modTime: time.Unix(1497609309, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -117,7 +116,7 @@ func dbCrane_migrations20170429122506_campaignSql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "db/crane_migrations/20170429122506_campaign.sql", size: 633, mode: os.FileMode(420), modTime: time.Unix(1497420798, 0)}
+	info := bindataFileInfo{name: "db/crane_migrations/20170429122506_campaign.sql", size: 633, mode: os.FileMode(436), modTime: time.Unix(1497609309, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -137,7 +136,7 @@ func dbCrane_migrations20170429122538_publishersSql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "db/crane_migrations/20170429122538_publishers.sql", size: 778, mode: os.FileMode(420), modTime: time.Unix(1497420798, 0)}
+	info := bindataFileInfo{name: "db/crane_migrations/20170429122538_publishers.sql", size: 778, mode: os.FileMode(436), modTime: time.Unix(1497609309, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -157,27 +156,7 @@ func dbCrane_migrations20170429122604_usersSql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "db/crane_migrations/20170429122604_users.sql", size: 526, mode: os.FileMode(420), modTime: time.Unix(1497420798, 0)}
-	a := &asset{bytes: bytes, info: info}
-	return a, nil
-}
-
-var _dbMigrations20170614070757_sup_dem_srcSql = "\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x8c\xcc\x31\x0a\x02\x31\x14\x04\xd0\xfe\x9f\x62\xba\x2d\x64\x6f\x61\x69\x23\xb2\x07\x88\xc9\xe0\x7e\x8c\x49\xd8\xff\x25\x1e\x5f\x82\x28\xd8\x6d\x39\xc3\xcc\x93\x79\xc6\xe1\xa1\xb7\x2d\x38\xb1\xb4\x11\x2f\xe7\x13\xb4\xc0\x18\x5d\x6b\xc1\xb4\xb4\x09\x6a\xe0\x8b\xf1\xe9\x4c\xe8\x2b\x0b\x7c\x55\xc3\xe7\x37\x46\x6a\x08\xad\x65\x65\x12\xf9\x23\x8f\xb5\x97\x2f\xfa\x13\x47\xb9\xcb\xdc\x6a\xce\x4c\xb8\x86\x78\x17\x91\x77\x00\x00\x00\xff\xff\x45\xac\x97\x00\xac\x00\x00\x00"
-
-func dbMigrations20170614070757_sup_dem_srcSqlBytes() ([]byte, error) {
-	return bindataRead(
-		_dbMigrations20170614070757_sup_dem_srcSql,
-		"db/migrations/20170614070757_sup_dem_src.sql",
-	)
-}
-
-func dbMigrations20170614070757_sup_dem_srcSql() (*asset, error) {
-	bytes, err := dbMigrations20170614070757_sup_dem_srcSqlBytes()
-	if err != nil {
-		return nil, err
-	}
-
-	info := bindataFileInfo{name: "db/migrations/20170614070757_sup_dem_src.sql", size: 172, mode: os.FileMode(436), modTime: time.Unix(1497424077, 0)}
+	info := bindataFileInfo{name: "db/crane_migrations/20170429122604_users.sql", size: 526, mode: os.FileMode(436), modTime: time.Unix(1497609309, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -197,7 +176,7 @@ func dbOctopus_migrations20170408095249_demandsSql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "db/octopus_migrations/20170408095249_demands.sql", size: 746, mode: os.FileMode(420), modTime: time.Unix(1496041039, 0)}
+	info := bindataFileInfo{name: "db/octopus_migrations/20170408095249_demands.sql", size: 746, mode: os.FileMode(436), modTime: time.Unix(1495863428, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -217,7 +196,7 @@ func dbOctopus_migrations20170412072713_supplierSql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "db/octopus_migrations/20170412072713_supplier.sql", size: 574, mode: os.FileMode(420), modTime: time.Unix(1496041039, 0)}
+	info := bindataFileInfo{name: "db/octopus_migrations/20170412072713_supplier.sql", size: 574, mode: os.FileMode(436), modTime: time.Unix(1495863428, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -237,7 +216,7 @@ func dbOctopus_migrations20170521085135_timetableSql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "db/octopus_migrations/20170521085135_timetable.sql", size: 445621, mode: os.FileMode(420), modTime: time.Unix(1496816411, 0)}
+	info := bindataFileInfo{name: "db/octopus_migrations/20170521085135_timetable.sql", size: 445621, mode: os.FileMode(436), modTime: time.Unix(1495971908, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -257,7 +236,7 @@ func dbOctopus_migrations20170522070131_sup_src_demSql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "db/octopus_migrations/20170522070131_sup_src_dem.sql", size: 1007, mode: os.FileMode(420), modTime: time.Unix(1496816411, 0)}
+	info := bindataFileInfo{name: "db/octopus_migrations/20170522070131_sup_src_dem.sql", size: 1007, mode: os.FileMode(436), modTime: time.Unix(1497269127, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -277,7 +256,7 @@ func dbOctopus_migrations20170522071914_sup_srcSql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "db/octopus_migrations/20170522071914_sup_src.sql", size: 856, mode: os.FileMode(420), modTime: time.Unix(1496816411, 0)}
+	info := bindataFileInfo{name: "db/octopus_migrations/20170522071914_sup_src.sql", size: 856, mode: os.FileMode(436), modTime: time.Unix(1497269127, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -297,7 +276,7 @@ func dbOctopus_migrations20170528044947_demand_reportSql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "db/octopus_migrations/20170528044947_demand_report.sql", size: 1139, mode: os.FileMode(420), modTime: time.Unix(1496816411, 0)}
+	info := bindataFileInfo{name: "db/octopus_migrations/20170528044947_demand_report.sql", size: 1139, mode: os.FileMode(436), modTime: time.Unix(1497359908, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -317,7 +296,7 @@ func dbOctopus_migrations20170528071610_consoleSql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "db/octopus_migrations/20170528071610_console.sql", size: 511, mode: os.FileMode(420), modTime: time.Unix(1497176593, 0)}
+	info := bindataFileInfo{name: "db/octopus_migrations/20170528071610_console.sql", size: 511, mode: os.FileMode(436), modTime: time.Unix(1497609309, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -337,7 +316,7 @@ func dbOctopus_migrations20170529060748_supplier_reportSql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "db/octopus_migrations/20170529060748_supplier_report.sql", size: 603, mode: os.FileMode(420), modTime: time.Unix(1497176593, 0)}
+	info := bindataFileInfo{name: "db/octopus_migrations/20170529060748_supplier_report.sql", size: 603, mode: os.FileMode(436), modTime: time.Unix(1497609309, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -357,7 +336,7 @@ func dbOctopus_migrations20170529065523_exchangeSql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "db/octopus_migrations/20170529065523_exchange.sql", size: 682, mode: os.FileMode(420), modTime: time.Unix(1497420798, 0)}
+	info := bindataFileInfo{name: "db/octopus_migrations/20170529065523_exchange.sql", size: 682, mode: os.FileMode(436), modTime: time.Unix(1497609309, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -377,7 +356,7 @@ func dbOctopus_migrations20170614070757_sup_dem_srcSql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "db/octopus_migrations/20170614070757_sup_dem_src.sql", size: 666, mode: os.FileMode(420), modTime: time.Unix(1497609358, 0)}
+	info := bindataFileInfo{name: "db/octopus_migrations/20170614070757_sup_dem_src.sql", size: 666, mode: os.FileMode(436), modTime: time.Unix(1497609429, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -438,7 +417,6 @@ var _bindata = map[string]func() (*asset, error){
 	"db/crane_migrations/20170429122506_campaign.sql": dbCrane_migrations20170429122506_campaignSql,
 	"db/crane_migrations/20170429122538_publishers.sql": dbCrane_migrations20170429122538_publishersSql,
 	"db/crane_migrations/20170429122604_users.sql": dbCrane_migrations20170429122604_usersSql,
-	"db/migrations/20170614070757_sup_dem_src.sql": dbMigrations20170614070757_sup_dem_srcSql,
 	"db/octopus_migrations/20170408095249_demands.sql": dbOctopus_migrations20170408095249_demandsSql,
 	"db/octopus_migrations/20170412072713_supplier.sql": dbOctopus_migrations20170412072713_supplierSql,
 	"db/octopus_migrations/20170521085135_timetable.sql": dbOctopus_migrations20170521085135_timetableSql,
@@ -497,9 +475,6 @@ var _bintree = &bintree{nil, map[string]*bintree{
 			"20170429122506_campaign.sql": &bintree{dbCrane_migrations20170429122506_campaignSql, map[string]*bintree{}},
 			"20170429122538_publishers.sql": &bintree{dbCrane_migrations20170429122538_publishersSql, map[string]*bintree{}},
 			"20170429122604_users.sql": &bintree{dbCrane_migrations20170429122604_usersSql, map[string]*bintree{}},
-		}},
-		"migrations": &bintree{nil, map[string]*bintree{
-			"20170614070757_sup_dem_src.sql": &bintree{dbMigrations20170614070757_sup_dem_srcSql, map[string]*bintree{}},
 		}},
 		"octopus_migrations": &bintree{nil, map[string]*bintree{
 			"20170408095249_demands.sql": &bintree{dbOctopus_migrations20170408095249_demandsSql, map[string]*bintree{}},

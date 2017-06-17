@@ -124,6 +124,7 @@ func aggregate(a *datamodels.TableModel, b datamodels.TableModel) *datamodels.Ta
 	a.AdOutBid += b.AdOutBid
 	a.DeliverBid += b.DeliverBid
 	a.Profit += b.Profit
+	a.AdInCount += b.AdInCount
 
 	return a
 }
