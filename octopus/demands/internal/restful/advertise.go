@@ -2,7 +2,7 @@ package restful
 
 import (
 	"clickyab.com/exchange/octopus/exchange"
-	"clickyab.com/exchange/services/random"
+	"github.com/clickyab/services/random"
 )
 
 type restAd struct {

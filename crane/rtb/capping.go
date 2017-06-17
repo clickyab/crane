@@ -6,11 +6,11 @@ import (
 	"strconv"
 	"time"
 
-	"clickyab.com/exchange/services/eav"
+	"github.com/clickyab/services/eav"
 
 	"context"
 
-	"clickyab.com/exchange/services/assert"
+	"github.com/clickyab/services/assert"
 
 	"clickyab.com/exchange/crane/entity"
 )

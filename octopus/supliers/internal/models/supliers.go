@@ -2,8 +2,8 @@ package models
 
 import (
 	"clickyab.com/exchange/octopus/exchange"
-	"clickyab.com/exchange/services/assert"
-	"clickyab.com/exchange/services/mysql"
+	"github.com/clickyab/services/assert"
+	"github.com/clickyab/services/mysql"
 )
 
 // RendererFactory is a factory function for a supplier base on its type

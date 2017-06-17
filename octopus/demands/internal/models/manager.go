@@ -1,6 +1,6 @@
 package models
 
-import "clickyab.com/exchange/services/mysql"
+import "github.com/clickyab/services/mysql"
 
 // Manager is the model manager
 type Manager struct {

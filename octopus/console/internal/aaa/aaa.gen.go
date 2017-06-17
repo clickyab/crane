@@ -3,7 +3,7 @@
 package aaa
 
 import (
-	"clickyab.com/exchange/services/mysql"
+	"github.com/clickyab/services/mysql"
 	gorp "gopkg.in/gorp.v2"
 )
 

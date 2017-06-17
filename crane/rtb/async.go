@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"clickyab.com/exchange/crane/entity"
-	"clickyab.com/exchange/services/store"
+	"github.com/clickyab/services/store"
 )
 
 // AsyncCTR is the selection of ads in async mode

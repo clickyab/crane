@@ -8,8 +8,8 @@ import (
 	"fmt"
 	"strings"
 
-	"clickyab.com/exchange/services/assert"
-	"clickyab.com/exchange/services/initializer"
+	"github.com/clickyab/services/assert"
+	"github.com/clickyab/services/initializer"
 	gorp "gopkg.in/gorp.v2"
 )
 

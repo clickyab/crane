@@ -5,13 +5,13 @@ import (
 	"net/http"
 	"strings"
 
-	"clickyab.com/exchange/services/assert"
-	"clickyab.com/exchange/services/config"
-	"clickyab.com/exchange/services/initializer"
-	"clickyab.com/exchange/services/ip2location"
+	"github.com/clickyab/services/assert"
+	"github.com/clickyab/services/config"
+	"github.com/clickyab/services/initializer"
+	"github.com/clickyab/services/ip2location"
 
 	"clickyab.com/exchange/commands"
-	"clickyab.com/exchange/services/shell"
+	"github.com/clickyab/services/shell"
 	"github.com/Sirupsen/logrus"
 )
 

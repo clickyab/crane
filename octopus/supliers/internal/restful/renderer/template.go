@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"html/template"
 
-	"clickyab.com/exchange/services/assert"
+	"github.com/clickyab/services/assert"
 )
 
 type templateContext struct {

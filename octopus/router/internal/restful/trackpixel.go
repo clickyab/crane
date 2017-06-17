@@ -6,15 +6,15 @@ import (
 	"net/http"
 	"strconv"
 
-	"clickyab.com/exchange/services/assert"
-	"clickyab.com/exchange/services/eav"
+	"github.com/clickyab/services/assert"
+	"github.com/clickyab/services/eav"
 
 	core2 "clickyab.com/exchange/octopus/core"
 
-	"clickyab.com/exchange/services/safe"
+	"github.com/clickyab/services/safe"
 
 	"clickyab.com/exchange/octopus/exchange/materialize"
-	"clickyab.com/exchange/services/broker"
+	"github.com/clickyab/services/broker"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/fzerorubigd/xmux"

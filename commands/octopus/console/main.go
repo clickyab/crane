@@ -2,13 +2,13 @@ package main
 
 import (
 	"clickyab.com/exchange/commands"
-	_ "clickyab.com/exchange/octopus/console/routes"
-	"clickyab.com/exchange/services/config"
+	_ "clickyab.com/exchange/octopus/console/internal/routes"
+	"github.com/clickyab/services/config"
 
-	"clickyab.com/exchange/services/initializer"
+	"github.com/clickyab/services/initializer"
 
-	_ "clickyab.com/exchange/services/eav/redis"
-	"clickyab.com/exchange/services/shell"
+	_ "github.com/clickyab/services/eav/redis"
+	"github.com/clickyab/services/shell"
 	"github.com/Sirupsen/logrus"
 	_ "golang.org/x/crypto/bcrypt"
 )

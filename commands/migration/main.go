@@ -6,13 +6,13 @@ import (
 	"os"
 	"text/tabwriter"
 
-	"clickyab.com/exchange/services/config"
-	"clickyab.com/exchange/services/initializer"
+	"github.com/clickyab/services/config"
+	"github.com/clickyab/services/initializer"
 
 	"strings"
 
-	"clickyab.com/exchange/services/mysql"
-	_ "clickyab.com/exchange/services/mysql/connection/mysql"
+	"github.com/clickyab/services/mysql"
+	_ "github.com/clickyab/services/mysql/connection/mysql"
 
 	"clickyab.com/exchange/commands"
 	"github.com/Sirupsen/logrus"

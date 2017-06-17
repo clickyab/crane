@@ -10,12 +10,12 @@ import (
 
 	"clickyab.com/exchange/octopus/exchange"
 	mock_entity "clickyab.com/exchange/octopus/exchange/mock_exchange"
-	"clickyab.com/exchange/services/random"
+	"github.com/clickyab/services/random"
 
-	"clickyab.com/exchange/services/config"
+	"github.com/clickyab/services/config"
 
-	"clickyab.com/exchange/services/broker"
-	"clickyab.com/exchange/services/broker/mock"
+	"github.com/clickyab/services/broker"
+	"github.com/clickyab/services/broker/mock"
 
 	"github.com/golang/mock/gomock"
 	. "github.com/smartystreets/goconvey/convey"

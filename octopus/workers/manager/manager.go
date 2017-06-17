@@ -7,10 +7,10 @@ import (
 	"context"
 
 	"clickyab.com/exchange/octopus/workers/internal/datamodels"
-	"clickyab.com/exchange/services/assert"
-	"clickyab.com/exchange/services/config"
-	"clickyab.com/exchange/services/mysql"
-	"clickyab.com/exchange/services/safe"
+	"github.com/clickyab/services/assert"
+	"github.com/clickyab/services/config"
+	"github.com/clickyab/services/mysql"
+	"github.com/clickyab/services/safe"
 )
 
 var (

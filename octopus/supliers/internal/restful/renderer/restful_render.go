@@ -7,7 +7,7 @@ import (
 	"net/url"
 
 	"clickyab.com/exchange/octopus/exchange"
-	"clickyab.com/exchange/services/config"
+	"github.com/clickyab/services/config"
 )
 
 var host = config.RegisterString("octopus.host.name", "exchange-dev.3rdad.com", "the exchange root")

@@ -3,8 +3,8 @@ package core
 import (
 	"time"
 
-	"clickyab.com/exchange/services/assert"
-	"clickyab.com/exchange/services/config"
+	"github.com/clickyab/services/assert"
+	"github.com/clickyab/services/config"
 )
 
 var maximumTimeout time.Duration

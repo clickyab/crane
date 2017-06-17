@@ -11,8 +11,8 @@ import (
 
 	"clickyab.com/exchange/octopus/workers/internal/datamodels"
 	"clickyab.com/exchange/octopus/workers/mocks"
-	"clickyab.com/exchange/services/broker"
-	"clickyab.com/exchange/services/config"
+	"github.com/clickyab/services/broker"
+	"github.com/clickyab/services/config"
 )
 
 var (

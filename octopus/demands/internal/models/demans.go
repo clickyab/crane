@@ -5,8 +5,8 @@ import (
 	"errors"
 	"time"
 
-	"clickyab.com/exchange/services/assert"
-	"clickyab.com/exchange/services/mysql"
+	"github.com/clickyab/services/assert"
+	"github.com/clickyab/services/mysql"
 )
 
 type (

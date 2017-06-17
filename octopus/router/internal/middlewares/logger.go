@@ -6,7 +6,7 @@ import (
 
 	"context"
 
-	"clickyab.com/exchange/services/httplib"
+	"github.com/clickyab/services/framework"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/fzerorubigd/xhandler"
@@ -35,7 +35,7 @@ func Logger(next xhandler.HandlerFuncC) xhandler.HandlerFuncC {
 	return func(c context.Context, w http.ResponseWriter, r *http.Request) {
 		// Start timer
 		start := time.Now()
-		ip := httplib.RealIP(r)
+		ip := framework.RealIP(r)
 		// Process request
 		logrus.WithFields(
 			logrus.Fields{

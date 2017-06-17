@@ -7,12 +7,12 @@ import (
 
 	"clickyab.com/exchange/octopus/models"
 	"clickyab.com/exchange/octopus/workers/internal/datamodels"
-	"clickyab.com/exchange/services/assert"
-	"clickyab.com/exchange/services/broker"
-	"clickyab.com/exchange/services/config"
-	"clickyab.com/exchange/services/initializer"
-	"clickyab.com/exchange/services/random"
-	"clickyab.com/exchange/services/safe"
+	"github.com/clickyab/services/assert"
+	"github.com/clickyab/services/broker"
+	"github.com/clickyab/services/config"
+	"github.com/clickyab/services/initializer"
+	"github.com/clickyab/services/random"
+	"github.com/clickyab/services/safe"
 )
 
 // TODO : is this model is correct? remove this tod if it is.

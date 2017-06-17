@@ -9,8 +9,8 @@ import (
 	"clickyab.com/exchange/octopus/router/internal/demands"
 	"clickyab.com/exchange/octopus/router/internal/middlewares"
 	"clickyab.com/exchange/octopus/router/internal/restful"
-	"clickyab.com/exchange/services/config"
-	"clickyab.com/exchange/services/initializer"
+	"github.com/clickyab/services/config"
+	"github.com/clickyab/services/initializer"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/fzerorubigd/xhandler"
@@ -18,7 +18,7 @@ import (
 )
 
 var (
-	listenAddress = config.RegisterString("exchange.router.listen", ":80", "exchnage router listen address")
+	listenAddress = config.RegisterString("exchange.router.listen", ":80", "exchange router listen address")
 )
 
 type initRouter struct {

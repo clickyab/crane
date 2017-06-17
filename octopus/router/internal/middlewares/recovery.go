@@ -6,7 +6,7 @@ import (
 
 	"encoding/json"
 
-	"clickyab.com/exchange/services/safe"
+	"github.com/clickyab/services/safe"
 
 	"github.com/fzerorubigd/xhandler"
 )

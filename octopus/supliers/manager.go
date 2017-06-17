@@ -12,7 +12,7 @@ import (
 	"clickyab.com/exchange/octopus/supliers/internal/models"
 	"clickyab.com/exchange/octopus/supliers/internal/restful"
 	"clickyab.com/exchange/octopus/supliers/internal/restful/renderer"
-	"clickyab.com/exchange/services/mysql"
+	"github.com/clickyab/services/mysql"
 
 	"github.com/Sirupsen/logrus"
 )

@@ -3,7 +3,7 @@ package jsonbackend
 import (
 	"encoding/json"
 
-	"clickyab.com/exchange/services/broker"
+	"github.com/clickyab/services/broker"
 
 	"github.com/Sirupsen/logrus"
 )

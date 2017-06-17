@@ -3,7 +3,7 @@ package commands
 import (
 	"os"
 
-	"clickyab.com/exchange/services/config"
+	"github.com/clickyab/services/config"
 )
 
 // DefaultConfig for this set of apps

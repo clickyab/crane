@@ -8,12 +8,12 @@ import (
 	"os"
 	"time"
 
-	"clickyab.com/exchange/services/config"
-	"clickyab.com/exchange/services/influx"
-	"clickyab.com/exchange/services/initializer"
-	"clickyab.com/exchange/services/ip2location"
-	"clickyab.com/exchange/services/safe"
-	"clickyab.com/exchange/services/shell"
+	"github.com/clickyab/services/config"
+	"github.com/clickyab/services/influx"
+	"github.com/clickyab/services/initializer"
+	"github.com/clickyab/services/ip2location"
+	"github.com/clickyab/services/safe"
+	"github.com/clickyab/services/shell"
 
 	"io/ioutil"
 

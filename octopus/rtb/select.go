@@ -5,9 +5,9 @@ import (
 	"time"
 
 	"clickyab.com/exchange/octopus/exchange"
-	"clickyab.com/exchange/services/config"
-	"clickyab.com/exchange/services/dlock"
-	"clickyab.com/exchange/services/dset"
+	"github.com/clickyab/services/config"
+	"github.com/clickyab/services/dlock"
+	"github.com/clickyab/services/dset"
 )
 
 var (

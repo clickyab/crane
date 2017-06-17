@@ -8,9 +8,9 @@ import (
 	"time"
 
 	"clickyab.com/exchange/crane/entity"
-	"clickyab.com/exchange/services/assert"
-	"clickyab.com/exchange/services/eav"
-	"clickyab.com/exchange/services/store"
+	"github.com/clickyab/services/assert"
+	"github.com/clickyab/services/eav"
+	"github.com/clickyab/services/store"
 )
 
 const (

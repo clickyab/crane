@@ -9,7 +9,7 @@ import (
 	"clickyab.com/exchange/octopus/core"
 	"clickyab.com/exchange/octopus/demands/internal/models"
 	"clickyab.com/exchange/octopus/demands/internal/restful"
-	"clickyab.com/exchange/services/mysql"
+	"github.com/clickyab/services/mysql"
 
 	"github.com/Sirupsen/logrus"
 )

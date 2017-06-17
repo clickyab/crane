@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"clickyab.com/exchange/octopus/exchange"
-	"clickyab.com/exchange/services/assert"
+	"github.com/clickyab/services/assert"
 
 	"clickyab.com/exchange/octopus/demands/internal/models"
 

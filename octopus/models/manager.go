@@ -1,7 +1,7 @@
 package models
 
 import (
-	"clickyab.com/exchange/services/mysql"
+	"github.com/clickyab/services/mysql"
 )
 
 // Manager is the model manager

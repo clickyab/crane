@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"clickyab.com/exchange/services/statistic"
+	"github.com/clickyab/services/statistic"
 )
 
 const (

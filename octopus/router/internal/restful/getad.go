@@ -12,11 +12,11 @@ import (
 	"fmt"
 	"time"
 
-	"clickyab.com/exchange/services/assert"
-	"clickyab.com/exchange/services/eav"
+	"github.com/clickyab/services/assert"
+	"github.com/clickyab/services/eav"
 
 	"clickyab.com/exchange/octopus/exchange/materialize"
-	"clickyab.com/exchange/services/broker"
+	"github.com/clickyab/services/broker"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/fzerorubigd/xmux"

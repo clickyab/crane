@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"clickyab.com/exchange/octopus/exchange"
-	"clickyab.com/exchange/services/assert"
+	"github.com/clickyab/services/assert"
 
 	"errors"
 

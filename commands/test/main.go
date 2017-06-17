@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"net/http"
 
-	"clickyab.com/exchange/services/assert"
-	"clickyab.com/exchange/services/config"
-	_ "clickyab.com/exchange/services/mysql/connection/mysql"
-	"clickyab.com/exchange/services/shell"
+	"github.com/clickyab/services/assert"
+	"github.com/clickyab/services/config"
+	_ "github.com/clickyab/services/mysql/connection/mysql"
+	"github.com/clickyab/services/shell"
 )
 
 var (

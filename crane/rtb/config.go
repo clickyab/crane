@@ -3,7 +3,7 @@ package rtb
 import (
 	"time"
 
-	"clickyab.com/exchange/services/config"
+	"github.com/clickyab/services/config"
 )
 
 var (

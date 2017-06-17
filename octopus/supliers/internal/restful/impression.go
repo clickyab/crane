@@ -5,9 +5,9 @@ import (
 	"time"
 
 	"clickyab.com/exchange/octopus/exchange"
-	"clickyab.com/exchange/services/gmaps"
-	"clickyab.com/exchange/services/ip2location"
-	"clickyab.com/exchange/services/random"
+	"github.com/clickyab/services/gmaps"
+	"github.com/clickyab/services/ip2location"
+	"github.com/clickyab/services/random"
 )
 
 type impressionRest struct {

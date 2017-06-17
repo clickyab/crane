@@ -6,14 +6,14 @@ import (
 	"runtime"
 	"strings"
 
-	"clickyab.com/exchange/services/assert"
-	_ "clickyab.com/exchange/services/codegen/datatable" // Datatable
-	_ "clickyab.com/exchange/services/codegen/enums"     // Enums plugin
-	_ "clickyab.com/exchange/services/codegen/gin"       // Gin plugin
-	_ "clickyab.com/exchange/services/codegen/models"    // Models plugin
-	"clickyab.com/exchange/services/codegen/plugins"
-	_ "clickyab.com/exchange/services/codegen/swagger"  // Raml plugin
-	_ "clickyab.com/exchange/services/codegen/validate" // Validateor
+	"github.com/clickyab/services/assert"
+	_ "github.com/clickyab/services/codegen/datatable" // Datatable
+	_ "github.com/clickyab/services/codegen/enums"     // Enums plugin
+	_ "github.com/clickyab/services/codegen/gin"       // Gin plugin
+	_ "github.com/clickyab/services/codegen/models"    // Models plugin
+	"github.com/clickyab/services/codegen/plugins"
+	_ "github.com/clickyab/services/codegen/swagger"  // Raml plugin
+	_ "github.com/clickyab/services/codegen/validate" // Validateor
 
 	"github.com/Sirupsen/logrus"
 	"github.com/goraz/humanize"

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"clickyab.com/exchange/services/assert"
+	"github.com/clickyab/services/assert"
 )
 
 // updateDemandReport will update demand report (inclusive)

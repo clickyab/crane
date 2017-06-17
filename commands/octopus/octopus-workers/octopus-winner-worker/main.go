@@ -2,22 +2,22 @@ package main
 
 import (
 	"clickyab.com/exchange/commands"
-	_ "clickyab.com/exchange/services/broker/selector"
-	"clickyab.com/exchange/services/config"
-	_ "clickyab.com/exchange/services/dset/redis"
-	_ "clickyab.com/exchange/services/eav/redis"
-	"clickyab.com/exchange/services/initializer"
-	"clickyab.com/exchange/services/shell"
-	_ "clickyab.com/exchange/services/statistic/redis"
-	_ "clickyab.com/exchange/services/store/redis"
+	_ "github.com/clickyab/services/broker/selector"
+	"github.com/clickyab/services/config"
+	_ "github.com/clickyab/services/dset/redis"
+	_ "github.com/clickyab/services/eav/redis"
+	"github.com/clickyab/services/initializer"
+	"github.com/clickyab/services/shell"
+	_ "github.com/clickyab/services/statistic/redis"
+	_ "github.com/clickyab/services/store/redis"
 
 	_ "clickyab.com/exchange/octopus/workers/manager"
 	_ "clickyab.com/exchange/octopus/workers/winner"
 
-	"clickyab.com/exchange/services/dlock"
-	"clickyab.com/exchange/services/dlock/mock"
+	"github.com/clickyab/services/dlock"
+	"github.com/clickyab/services/dlock/mock"
 
-	_ "clickyab.com/exchange/services/mysql/connection/mysql"
+	_ "github.com/clickyab/services/mysql/connection/mysql"
 	"github.com/Sirupsen/logrus"
 )
 

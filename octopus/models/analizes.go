@@ -3,7 +3,7 @@ package models
 import (
 	"time"
 
-	"clickyab.com/exchange/services/assert"
+	"github.com/clickyab/services/assert"
 )
 
 const (

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"clickyab.com/exchange/services/config"
-	"clickyab.com/exchange/services/shell"
+	"github.com/clickyab/services/config"
+	"github.com/clickyab/services/shell"
 )
 
 var (

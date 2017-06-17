@@ -3,8 +3,8 @@ package materialize
 import (
 	"clickyab.com/exchange/octopus/exchange"
 	"clickyab.com/exchange/octopus/exchange/materialize/jsonbackend"
-	"clickyab.com/exchange/services/broker"
-	"clickyab.com/exchange/services/config"
+	"github.com/clickyab/services/broker"
+	"github.com/clickyab/services/config"
 
 	"github.com/Sirupsen/logrus"
 )

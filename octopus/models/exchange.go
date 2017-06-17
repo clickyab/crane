@@ -5,7 +5,7 @@ import (
 
 	"fmt"
 
-	"clickyab.com/exchange/services/assert"
+	"github.com/clickyab/services/assert"
 )
 
 // fetchDemand select demand side

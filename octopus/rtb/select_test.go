@@ -5,20 +5,20 @@ import (
 	"testing"
 
 	"clickyab.com/exchange/octopus/exchange"
-	"clickyab.com/exchange/services/random"
+	"github.com/clickyab/services/random"
 
 	x "github.com/smartystreets/assertions"
 
-	"clickyab.com/exchange/services/broker"
-	"clickyab.com/exchange/services/broker/mock"
+	"github.com/clickyab/services/broker"
+	"github.com/clickyab/services/broker/mock"
 
 	"clickyab.com/exchange/octopus/exchange/mock_exchange"
 
-	"clickyab.com/exchange/services/dset"
-	dsetm "clickyab.com/exchange/services/dset/mock"
+	"github.com/clickyab/services/dset"
+	dsetm "github.com/clickyab/services/dset/mock"
 
-	"clickyab.com/exchange/services/dlock"
-	dlockm "clickyab.com/exchange/services/dlock/mock"
+	"github.com/clickyab/services/dlock"
+	dlockm "github.com/clickyab/services/dlock/mock"
 
 	"github.com/golang/mock/gomock"
 	. "github.com/smartystreets/goconvey/convey"

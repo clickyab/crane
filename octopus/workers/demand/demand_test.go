@@ -8,13 +8,13 @@ import (
 	"clickyab.com/exchange/octopus/exchange/materialize"
 	"clickyab.com/exchange/octopus/workers/internal/datamodels"
 	"clickyab.com/exchange/octopus/workers/mocks"
-	"clickyab.com/exchange/services/assert"
-	"clickyab.com/exchange/services/broker"
+	"github.com/clickyab/services/assert"
+	"github.com/clickyab/services/broker"
 
 	"context"
 
-	"clickyab.com/exchange/services/config"
-	"clickyab.com/exchange/services/random"
+	"github.com/clickyab/services/config"
+	"github.com/clickyab/services/random"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
