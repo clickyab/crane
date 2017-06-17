@@ -16,8 +16,8 @@ import (
 	"github.com/clickyab/services/dlock"
 	"github.com/clickyab/services/dlock/mock"
 
-	_ "github.com/clickyab/services/mysql/connection/mysql"
 	"github.com/Sirupsen/logrus"
+	_ "github.com/clickyab/services/mysql/connection/mysql"
 )
 
 func main() {

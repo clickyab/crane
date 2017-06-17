@@ -1,9 +1,8 @@
 package user
 
 import (
-	"net/http"
-
 	"context"
+	"net/http"
 
 	"clickyab.com/exchange/octopus/console/internal/aaa"
 	"github.com/clickyab/services/eav"
@@ -12,14 +11,16 @@ import (
 	"github.com/clickyab/services/trans"
 )
 
-const dataKey = "__user_data__"
+type dataType string
 
 type data struct {
 	user  *aaa.User
 	token string
 }
 
-// Authorize is a middleware used for authorization in exchange console
+const dataKey dataType = "__user_data__"
+
+// Authenticate is a middleware used for authorization in exchange console
 func Authenticate(next framework.Handler) framework.Handler {
 	return func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		token := r.Header.Get("token")

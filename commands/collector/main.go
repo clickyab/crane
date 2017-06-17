@@ -18,9 +18,9 @@ import (
 	"io/ioutil"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/mssola/user_agent"
 	"github.com/rs/xhandler"
 	"github.com/rs/xmux"
-	"github.com/mssola/user_agent"
 	"gopkg.in/fzerorubigd/onion.v3"
 )
 

@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 )
 
@@ -20,5 +21,9 @@ type responseLoginOK struct {
 //		400 = controller.ErrorResponseSimple
 // }
 func (c Controller) login(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+	payload := c.MustGetPayload(ctx).(*loginPayload)
+	fmt.Println(payload)
 
+	resp := responseLoginOK{}
+	c.OKResponse(w, resp)
 }

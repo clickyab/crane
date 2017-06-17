@@ -12,8 +12,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/clickyab/services/assert"
 	"github.com/Sirupsen/logrus"
+	"github.com/clickyab/services/assert"
 )
 
 type categories string

@@ -7,9 +7,9 @@ import (
 
 	"github.com/clickyab/services/initializer"
 
+	"github.com/Sirupsen/logrus"
 	_ "github.com/clickyab/services/eav/redis"
 	"github.com/clickyab/services/shell"
-	"github.com/Sirupsen/logrus"
 	_ "golang.org/x/crypto/bcrypt"
 )
 
