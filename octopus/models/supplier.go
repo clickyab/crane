@@ -8,74 +8,46 @@ import (
 	"clickyab.com/exchange/services/assert"
 )
 
-const (
-	supSrcTable    string = `sup_src`
-	supReportTable string = `supplier_report`
+// updateSupplierReport will update supplier report (inclusive)
+func updateSupplierReport(t time.Time) {
+	td := t.Format("2006-01-02")
+	from, to := factTableRange(t)
+	var q = fmt.Sprintf(`INSERT INTO %s (
+								supplier,
+								target_date,
+								impression_in,
+								ad_out_count,
+								delivered_count,
+								earn
+								)
+							SELECT supplier,
+							"%s",
+							sum(imp_in_count),
+							sum(ad_out_count),
+							sum(deliver_count),
+							sum(deliver_bid)
+								FROM %s WHERE time_id BETWEEN %d AND %d
+							GROUP BY supplier
+							 ON DUPLICATE KEY UPDATE
+							  supplier=VALUES(supplier),
+							  target_date=VALUES(target_date),
+							  impression_in_count=VALUES(impression_in_count),
+							  ad_out_count=VALUES(ad_out_count),
+							  delivered_count=VALUES(delivered_count),
+							  earn=VALUES(earn)`, SupplierReportTableName, td, SupplierTableName, from, to)
 
-	insertQ = `INSERT INTO %s
-	(supplier, date, impression_out, impression_in, delivered_impression, earn) VALUES %s
-	ON DUPLICATE KEY UPDATE
-	  impression_in=values(impression_in),
-	  impression_out=values(impression_out),
-	  earn=values(earn),
-	  delivered_impression=values(delivered_impression)`
-
-	getQ = `SELECT supplier,
-      	sum(imp_in_count) as impression_in,
-      	sum(imp_out_count) as impression_out,
-      	sum(deliver_count) as delivered_impression,
-      	sum(deliver_bid) as earn
-		FROM %s
-		where time_id BETWEEN %d AND %d
-		GROUP BY supplier`
-)
-
-// SupplierReport is the func for chron
-func SupplierReport(date time.Time) {
-	id := FactTableID(date)
-
-	reports := getData(id)
-
-	parts := []string{}
-	for i := range reports {
-		reports[i].Date = date
-		parts = append(parts, translator(reports[i]))
-	}
-
-	insertData(parts)
-
-}
-
-func getData(id int64) []SupplierReporter {
-	getQuery := fmt.Sprintf(getQ, supSrcTable, id, id+23)
-
-	reports := []SupplierReporter{}
-	_, err := NewManager().GetRDbMap().Select(&reports, getQuery)
+	_, err := NewManager().GetRDbMap().Exec(q)
 	assert.Nil(err)
-
-	return reports
 }
 
-func insertData(parts []string) {
-
-	m := NewManager()
-	err := m.Begin()
-	defer func() {
-		if err != nil {
-			assert.Nil(m.Rollback())
-		} else {
-			err = m.Commit()
-		}
-	}()
-	if err != nil {
-		return
+// UpdateSupplierRange will update supplier report in range of two date (inclusive)
+func UpdateSupplierRange(from time.Time, to time.Time) {
+	if from.Unix() > to.Unix() {
+		from, to = to, from
 	}
-
-	for i := range parts {
-		insertQuery := fmt.Sprintf(insertQ, supReportTable, parts[i])
-		_, err := m.GetProperDBMap().Exec(insertQuery)
-		if err != nil {
-			return
-		}
+	to = to.Add(24 * time.Hour)
+	for from.Unix() < to.Unix() {
+		updateSupplierReport(from)
+		from = from.Add(time.Hour * 24)
 	}
 }

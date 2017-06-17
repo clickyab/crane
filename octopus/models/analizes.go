@@ -7,27 +7,17 @@ import (
 )
 
 const (
-	// ExchangeTableName table name exchange
-	ExchangeTableName = "exchange_report"
+	// ExchangeReportTableName table name exchange
+	ExchangeReportTableName = "exchange_report"
 	// DemandTableName table name demand
 	DemandTableName = "supplier_source_demand"
-	// SuplierTableName table supplier
-	SuplierTableName = "supplier_source"
+	// SupplierTableName table supplier
+	SupplierTableName = "supplier_source"
+	// DemandReportTableName demand report table
+	DemandReportTableName = "demand_report"
+	// SupplierReportTableName table supplier report
+	SupplierReportTableName = "supplier_report"
 )
-
-// DemandReport demand_report
-type DemandReport struct {
-	ID              int64  `json:"id" db:"id"`
-	Demand          string `json:"demand" db:"demand"`
-	TargetDate      int64  `json:"target_date" db:"target_date"`
-	RequestOutCount int64  `json:"request_out_count" db:"request_out_count"`
-	ImpInCount      int64  `json:"imp_in_count" db:"imp_in_count"`
-	ImpOutCount     int64  `json:"imp_out_count" db:"imp_out_count"`
-	WinCount        int64  `json:"win_count" db:"win_count"`
-	WinBid          int64  `json:"win_bid" db:"win_bid"`
-	DeliverCount    int64  `json:"deliver_count" db:"deliver_count"`
-	DeliverBid      int64  `json:"deliver_bid" db:"deliver_bid"`
-}
 
 // SupplierSourceDemand supplier_source_demand
 type SupplierSourceDemand struct {
@@ -71,8 +61,8 @@ type TimeTable struct {
 	JDay   int64 `json:"j_day" db:"j_day"`
 }
 
-// Exchange exchange_report
-type Exchange struct {
+// ExchangeReport exchange_report
+type ExchangeReport struct {
 	ID                    int64     `json:"id" db:"id"`
 	Date                  time.Time `json:"target_date" db:"target_date"`
 	SupplierImpressionIN  int64     `json:"supplier_impression_in" db:"supplier_impression_in"`
@@ -89,6 +79,34 @@ type Parts struct {
 	Query  string
 	Params []interface{}
 	Do     bool
+}
+
+// DemandReport demand_report
+type DemandReport struct {
+	ID              int64  `json:"id" db:"id"`
+	Demand          string `json:"demand" db:"demand"`
+	TargetDate      int64  `json:"target_date" db:"target_date"`
+	RequestOutCount int64  `json:"request_out_count" db:"request_out_count"`
+	AdInCount       int64  `json:"ad_in_count" db:"ad_in_count"`
+	ImpOutCount     int64  `json:"imp_out_count" db:"imp_out_count"`
+	AdOutCount      int64  `json:"ad_out_count" db:"ad_out_count"`
+	AdOutBid        int64  `json:"ad_out_bid" db:"ad_out_bid"`
+	DeliverCount    int64  `json:"deliver_count" db:"deliver_count"`
+	DeliverBid      int64  `json:"deliver_bid" db:"deliver_bid"`
+	SuccessRate     int64  `json:"success_rate" db:"-"`
+	DeliverRate     int64  `json:"deliver_rate" db:"-"`
+	WinRate         int64  `json:"win_rate" db:"-"`
+}
+
+// SupplierReporter table
+type SupplierReporter struct {
+	ID             int64     `json:"id" db:"id"`
+	Supplier       string    `json:"supplier" db:"supplier"`
+	Date           time.Time `json:"target_date" db:"target_date"`
+	ImpressionIn   int64     `json:"impression_in" db:"impression_in"`
+	AdOutCount     int64     `json:"ad_out_count" db:"ad_out_count"`
+	DeliveredCount int64     `json:"delivered_count" db:"delivered_count"`
+	Earn           int64     `json:"earn" db:"earn"`
 }
 
 // MultiQuery is a hack to run multiple query in one transaction
