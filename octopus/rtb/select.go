@@ -27,7 +27,7 @@ var (
 func SelectCPM(imp exchange.Impression, all map[string][]exchange.Advertise) (res map[string]exchange.Advertise) {
 	res = make(map[string]exchange.Advertise)
 
-	lock := dlock.NewDistributedLock("LOCK"+imp.Source().Supplier().Name()+imp.PageTrackID(), *pageLock)
+	lock := dlock.NewDistributedLock("LOCK"+imp.Source().Supplier().Name()+imp.PageTrackID(), pageLock.Duration())
 	lock.Lock()
 	defer lock.Unlock()
 
@@ -59,7 +59,7 @@ func SelectCPM(imp exchange.Impression, all map[string][]exchange.Advertise) (re
 		set.Add(res[id].ID())
 	}
 
-	set.Save(*pageLifeTime)
+	set.Save(pageLifeTime.Duration())
 	return res
 }
 

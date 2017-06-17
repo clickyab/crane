@@ -37,7 +37,7 @@ func (s *starter) worker() {
 	supDemSrcTable := make(map[string]*datamodels.TableModel)
 	supSrcTable := make(map[string]*datamodels.TableModel)
 
-	t := *timeout
+	t := timeout.Duration()
 	if t < 10*time.Second {
 		t = 10 * time.Second
 	}
@@ -98,7 +98,7 @@ bigLoop:
 
 			counter++
 
-			if counter > *limit {
+			if counter > limit.Int() {
 				flushAndClean()
 			}
 

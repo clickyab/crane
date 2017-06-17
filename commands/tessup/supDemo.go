@@ -12,7 +12,7 @@ import (
 	"strconv"
 	"strings"
 
-	"clickyab.com/exchange/services/assert"
+	"github.com/clickyab/services/assert"
 	"github.com/Sirupsen/logrus"
 )
 

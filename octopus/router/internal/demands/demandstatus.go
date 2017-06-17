@@ -6,7 +6,7 @@ import (
 
 	"clickyab.com/exchange/octopus/core"
 
-	"github.com/fzerorubigd/xmux"
+	"github.com/rs/xmux"
 )
 
 // Status is the demand status route

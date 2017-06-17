@@ -63,7 +63,7 @@ func createMegaStore(imp entity.Impression) eav.Kiwi {
 		SetSubKey(MegaUserAgent, imp.UserAgent()).
 		SetSubKey(MegaPubID, fmt.Sprint(imp.Source().ID())).
 		SetSubKey(MegaTimeUnix, fmt.Sprint(time.Now().Unix())).
-		Save(*megaImpressionTTL))
+		Save(megaImpressionTTL.Duration()))
 	return kiwi
 }
 
@@ -129,7 +129,7 @@ func selectCTR(
 
 		kiwi.SetSubKey(fmt.Sprintf("%s_%d", MegaAdvertise, sorted[0].ID()), fmt.Sprint(sorted[0].WinnerBID()))
 		kiwi.SetSubKey(fmt.Sprintf("%s_%d", MegaSlot, sorted[0].ID()), fmt.Sprint(slots[i].ID()))
-		assert.Nil(kiwi.Save(*megaImpressionTTL))
+		assert.Nil(kiwi.Save(megaImpressionTTL.Duration()))
 
 		wg.Add(1)
 		go func() {
@@ -174,7 +174,7 @@ func doBid(ad entity.Advertise, pub entity.Publisher, slot entity.Slot) (bool, b
 
 // CalculateCtr calculate ctr
 func calculateCTR(ad entity.Advertise, slot entity.Slot) float64 {
-	return (ad.AdCTR()*float64(*adCtrEffect)/100 + slot.SlotCTR()*float64(*slotCtrEffect)/100) / float64(100)
+	return (ad.AdCTR()*float64(adCtrEffect.Int())/100 + slot.SlotCTR()*float64(slotCtrEffect.Int())/100) / float64(100)
 }
 
 //Cpm calculate cpm

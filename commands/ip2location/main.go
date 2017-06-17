@@ -11,8 +11,8 @@ import (
 	"github.com/clickyab/services/ip2location"
 
 	"clickyab.com/exchange/commands"
-	"github.com/clickyab/services/shell"
 	"github.com/Sirupsen/logrus"
+	"github.com/clickyab/services/shell"
 )
 
 var (
@@ -30,7 +30,7 @@ func main() {
 		assert.Nil(dec.Encode(tmp))
 	})
 	go func() {
-		http.ListenAndServe(*listenAddress, nil)
+		http.ListenAndServe(listenAddress.String(), nil)
 	}()
 
 	sig := shell.WaitExitSignal()

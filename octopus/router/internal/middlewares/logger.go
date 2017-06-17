@@ -9,7 +9,7 @@ import (
 	"github.com/clickyab/services/framework"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/fzerorubigd/xhandler"
+	"github.com/rs/xhandler"
 )
 
 type dummyWriter struct {

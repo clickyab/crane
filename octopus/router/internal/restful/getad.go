@@ -19,7 +19,7 @@ import (
 	"github.com/clickyab/services/broker"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/fzerorubigd/xmux"
+	"github.com/rs/xmux"
 )
 
 // GetAd is route to get the ad from a restful endpoint

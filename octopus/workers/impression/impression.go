@@ -37,7 +37,7 @@ func (s *consumer) Initialize(ctx context.Context) {
 	s.ctx = ctx
 	broker.RegisterConsumer(s)
 
-	for i := 1; i < *extraCount; i++ {
+	for i := 1; i < extraCount.Int(); i++ {
 		broker.RegisterConsumer(
 			&consumer{
 				ctx:      ctx,

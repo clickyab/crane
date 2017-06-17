@@ -8,7 +8,7 @@ import (
 
 	"github.com/clickyab/services/safe"
 
-	"github.com/fzerorubigd/xhandler"
+	"github.com/rs/xhandler"
 )
 
 // Recovery is the middleware to prevent the panic to crash the app

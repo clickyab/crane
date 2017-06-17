@@ -20,7 +20,7 @@ func (cl *cfgLoader) Initialize() config.DescriptiveLayer {
 	d := config.NewDescriptiveLayer()
 	dsn := os.Getenv("RABBITMQ_URL")
 	if dsn == "" {
-		dsn = "amqp://exchange:bita123@127.0.0.1:5672/cy"
+		dsn = "amqp://server:bita123@127.0.0.1:5672/cy"
 	}
 	d.Add("amqp dsn", "service.amqp.dsn", dsn)
 	d.Add("amqp exchange to publish into", "service.amqp.exchange", "cy")

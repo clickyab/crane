@@ -18,9 +18,10 @@ import (
 	"io/ioutil"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/fzerorubigd/xhandler"
-	"github.com/fzerorubigd/xmux"
+	"github.com/rs/xhandler"
+	"github.com/rs/xmux"
 	"github.com/mssola/user_agent"
+	"gopkg.in/fzerorubigd/onion.v3"
 )
 
 // Point is the impression point
@@ -34,7 +35,7 @@ type Point struct {
 }
 
 var (
-	port *string
+	port onion.String
 )
 
 func main() {
@@ -44,7 +45,7 @@ func main() {
 	mux := xmux.New()
 	mux.POST("/", xhandler.HandlerFuncC(collect))
 
-	srv := &http.Server{Addr: *port, Handler: xhandler.New(context.Background(), mux)}
+	srv := &http.Server{Addr: port.String(), Handler: xhandler.New(context.Background(), mux)}
 	go func() {
 		if err := srv.ListenAndServe(); err != nil {
 			logrus.Debug(err)

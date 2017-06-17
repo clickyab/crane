@@ -17,8 +17,8 @@ var (
 func main() {
 	config.Initialize("test", "test", "test")
 	http.HandleFunc("/", demandDemo)
-	fmt.Println(*port)
-	err := http.ListenAndServe(*port, nil)
+	fmt.Println(port.String())
+	err := http.ListenAndServe(port.String(), nil)
 	assert.Nil(err)
 	shell.WaitExitSignal()
 }

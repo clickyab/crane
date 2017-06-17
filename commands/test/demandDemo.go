@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"clickyab.com/exchange/services/random"
+	"github.com/clickyab/services/random"
 )
 
 func demandDemo(w http.ResponseWriter, r *http.Request) {

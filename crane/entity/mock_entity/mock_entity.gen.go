@@ -4,313 +4,367 @@
 package mock_entity
 
 import (
+	entity "clickyab.com/exchange/crane/entity"
 	context "context"
+	gomock "github.com/golang/mock/gomock"
 	net "net"
 	http "net/http"
-
-	entity "clickyab.com/exchange/crane/entity"
-	gomock "github.com/golang/mock/gomock"
 )
 
-// Mock of Impression interface
+// MockImpression is a mock of Impression interface
 type MockImpression struct {
 	ctrl     *gomock.Controller
-	recorder *_MockImpressionRecorder
+	recorder *MockImpressionMockRecorder
 }
 
-// Recorder for MockImpression (not exported)
-type _MockImpressionRecorder struct {
+// MockImpressionMockRecorder is the mock recorder for MockImpression
+type MockImpressionMockRecorder struct {
 	mock *MockImpression
 }
 
+// NewMockImpression creates a new mock instance
 func NewMockImpression(ctrl *gomock.Controller) *MockImpression {
 	mock := &MockImpression{ctrl: ctrl}
-	mock.recorder = &_MockImpressionRecorder{mock}
+	mock.recorder = &MockImpressionMockRecorder{mock}
 	return mock
 }
 
-func (_m *MockImpression) EXPECT() *_MockImpressionRecorder {
+// EXPECT returns an object that allows the caller to indicate expected use
+func (_m *MockImpression) EXPECT() *MockImpressionMockRecorder {
 	return _m.recorder
 }
 
+// Attributes mocks base method
 func (_m *MockImpression) Attributes(_param0 entity.ImpressionAttributes) interface{} {
 	ret := _m.ctrl.Call(_m, "Attributes", _param0)
 	ret0, _ := ret[0].(interface{})
 	return ret0
 }
 
-func (_mr *_MockImpressionRecorder) Attributes(arg0 interface{}) *gomock.Call {
+// Attributes indicates an expected call of Attributes
+func (_mr *MockImpressionMockRecorder) Attributes(arg0 interface{}) *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "Attributes", arg0)
 }
 
+// Category mocks base method
 func (_m *MockImpression) Category() []entity.Category {
 	ret := _m.ctrl.Call(_m, "Category")
 	ret0, _ := ret[0].([]entity.Category)
 	return ret0
 }
 
-func (_mr *_MockImpressionRecorder) Category() *gomock.Call {
+// Category indicates an expected call of Category
+func (_mr *MockImpressionMockRecorder) Category() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "Category")
 }
 
+// ClientID mocks base method
 func (_m *MockImpression) ClientID() int64 {
 	ret := _m.ctrl.Call(_m, "ClientID")
 	ret0, _ := ret[0].(int64)
 	return ret0
 }
 
-func (_mr *_MockImpressionRecorder) ClientID() *gomock.Call {
+// ClientID indicates an expected call of ClientID
+func (_mr *MockImpressionMockRecorder) ClientID() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "ClientID")
 }
 
+// IP mocks base method
 func (_m *MockImpression) IP() net.IP {
 	ret := _m.ctrl.Call(_m, "IP")
 	ret0, _ := ret[0].(net.IP)
 	return ret0
 }
 
-func (_mr *_MockImpressionRecorder) IP() *gomock.Call {
+// IP indicates an expected call of IP
+func (_mr *MockImpressionMockRecorder) IP() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "IP")
 }
 
+// Location mocks base method
 func (_m *MockImpression) Location() entity.Location {
 	ret := _m.ctrl.Call(_m, "Location")
 	ret0, _ := ret[0].(entity.Location)
 	return ret0
 }
 
-func (_mr *_MockImpressionRecorder) Location() *gomock.Call {
+// Location indicates an expected call of Location
+func (_mr *MockImpressionMockRecorder) Location() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "Location")
 }
 
+// MegaIMP mocks base method
 func (_m *MockImpression) MegaIMP() string {
 	ret := _m.ctrl.Call(_m, "MegaIMP")
 	ret0, _ := ret[0].(string)
 	return ret0
 }
 
-func (_mr *_MockImpressionRecorder) MegaIMP() *gomock.Call {
+// MegaIMP indicates an expected call of MegaIMP
+func (_mr *MockImpressionMockRecorder) MegaIMP() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "MegaIMP")
 }
 
+// OS mocks base method
 func (_m *MockImpression) OS() entity.OS {
 	ret := _m.ctrl.Call(_m, "OS")
 	ret0, _ := ret[0].(entity.OS)
 	return ret0
 }
 
-func (_mr *_MockImpressionRecorder) OS() *gomock.Call {
+// OS indicates an expected call of OS
+func (_mr *MockImpressionMockRecorder) OS() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "OS")
 }
 
+// Request mocks base method
 func (_m *MockImpression) Request() *http.Request {
 	ret := _m.ctrl.Call(_m, "Request")
 	ret0, _ := ret[0].(*http.Request)
 	return ret0
 }
 
-func (_mr *_MockImpressionRecorder) Request() *gomock.Call {
+// Request indicates an expected call of Request
+func (_mr *MockImpressionMockRecorder) Request() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "Request")
 }
 
+// Slots mocks base method
 func (_m *MockImpression) Slots() []entity.Slot {
 	ret := _m.ctrl.Call(_m, "Slots")
 	ret0, _ := ret[0].([]entity.Slot)
 	return ret0
 }
 
-func (_mr *_MockImpressionRecorder) Slots() *gomock.Call {
+// Slots indicates an expected call of Slots
+func (_mr *MockImpressionMockRecorder) Slots() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "Slots")
 }
 
+// Source mocks base method
 func (_m *MockImpression) Source() entity.Publisher {
 	ret := _m.ctrl.Call(_m, "Source")
 	ret0, _ := ret[0].(entity.Publisher)
 	return ret0
 }
 
-func (_mr *_MockImpressionRecorder) Source() *gomock.Call {
+// Source indicates an expected call of Source
+func (_mr *MockImpressionMockRecorder) Source() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "Source")
 }
 
+// UserAgent mocks base method
 func (_m *MockImpression) UserAgent() string {
 	ret := _m.ctrl.Call(_m, "UserAgent")
 	ret0, _ := ret[0].(string)
 	return ret0
 }
 
-func (_mr *_MockImpressionRecorder) UserAgent() *gomock.Call {
+// UserAgent indicates an expected call of UserAgent
+func (_mr *MockImpressionMockRecorder) UserAgent() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "UserAgent")
 }
 
-// Mock of Demand interface
+// MockDemand is a mock of Demand interface
 type MockDemand struct {
 	ctrl     *gomock.Controller
-	recorder *_MockDemandRecorder
+	recorder *MockDemandMockRecorder
 }
 
-// Recorder for MockDemand (not exported)
-type _MockDemandRecorder struct {
+// MockDemandMockRecorder is the mock recorder for MockDemand
+type MockDemandMockRecorder struct {
 	mock *MockDemand
 }
 
+// NewMockDemand creates a new mock instance
 func NewMockDemand(ctrl *gomock.Controller) *MockDemand {
 	mock := &MockDemand{ctrl: ctrl}
-	mock.recorder = &_MockDemandRecorder{mock}
+	mock.recorder = &MockDemandMockRecorder{mock}
 	return mock
 }
 
-func (_m *MockDemand) EXPECT() *_MockDemandRecorder {
+// EXPECT returns an object that allows the caller to indicate expected use
+func (_m *MockDemand) EXPECT() *MockDemandMockRecorder {
 	return _m.recorder
 }
 
+// Provide mocks base method
 func (_m *MockDemand) Provide(_param0 context.Context, _param1 entity.Impression, _param2 chan map[string]entity.Advertise) {
 	_m.ctrl.Call(_m, "Provide", _param0, _param1, _param2)
 }
 
-func (_mr *_MockDemandRecorder) Provide(arg0, arg1, arg2 interface{}) *gomock.Call {
+// Provide indicates an expected call of Provide
+func (_mr *MockDemandMockRecorder) Provide(arg0, arg1, arg2 interface{}) *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "Provide", arg0, arg1, arg2)
 }
 
+// Status mocks base method
 func (_m *MockDemand) Status(_param0 context.Context, _param1 http.ResponseWriter, _param2 *http.Request) {
 	_m.ctrl.Call(_m, "Status", _param0, _param1, _param2)
 }
 
-func (_mr *_MockDemandRecorder) Status(arg0, arg1, arg2 interface{}) *gomock.Call {
+// Status indicates an expected call of Status
+func (_mr *MockDemandMockRecorder) Status(arg0, arg1, arg2 interface{}) *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "Status", arg0, arg1, arg2)
 }
 
-// Mock of Advertise interface
+// MockAdvertise is a mock of Advertise interface
 type MockAdvertise struct {
 	ctrl     *gomock.Controller
-	recorder *_MockAdvertiseRecorder
+	recorder *MockAdvertiseMockRecorder
 }
 
-// Recorder for MockAdvertise (not exported)
-type _MockAdvertiseRecorder struct {
+// MockAdvertiseMockRecorder is the mock recorder for MockAdvertise
+type MockAdvertiseMockRecorder struct {
 	mock *MockAdvertise
 }
 
+// NewMockAdvertise creates a new mock instance
 func NewMockAdvertise(ctrl *gomock.Controller) *MockAdvertise {
 	mock := &MockAdvertise{ctrl: ctrl}
-	mock.recorder = &_MockAdvertiseRecorder{mock}
+	mock.recorder = &MockAdvertiseMockRecorder{mock}
 	return mock
 }
 
-func (_m *MockAdvertise) EXPECT() *_MockAdvertiseRecorder {
+// EXPECT returns an object that allows the caller to indicate expected use
+func (_m *MockAdvertise) EXPECT() *MockAdvertiseMockRecorder {
 	return _m.recorder
 }
 
+// AdCTR mocks base method
 func (_m *MockAdvertise) AdCTR() float64 {
 	ret := _m.ctrl.Call(_m, "AdCTR")
 	ret0, _ := ret[0].(float64)
 	return ret0
 }
 
-func (_mr *_MockAdvertiseRecorder) AdCTR() *gomock.Call {
+// AdCTR indicates an expected call of AdCTR
+func (_mr *MockAdvertiseMockRecorder) AdCTR() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "AdCTR")
 }
 
+// AllowedOS mocks base method
 func (_m *MockAdvertise) AllowedOS() []int64 {
 	ret := _m.ctrl.Call(_m, "AllowedOS")
 	ret0, _ := ret[0].([]int64)
 	return ret0
 }
 
-func (_mr *_MockAdvertiseRecorder) AllowedOS() *gomock.Call {
+// AllowedOS indicates an expected call of AllowedOS
+func (_mr *MockAdvertiseMockRecorder) AllowedOS() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "AllowedOS")
 }
 
+// BlackListPublisher mocks base method
 func (_m *MockAdvertise) BlackListPublisher() []int64 {
 	ret := _m.ctrl.Call(_m, "BlackListPublisher")
 	ret0, _ := ret[0].([]int64)
 	return ret0
 }
 
-func (_mr *_MockAdvertiseRecorder) BlackListPublisher() *gomock.Call {
+// BlackListPublisher indicates an expected call of BlackListPublisher
+func (_mr *MockAdvertiseMockRecorder) BlackListPublisher() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "BlackListPublisher")
 }
 
+// CPM mocks base method
 func (_m *MockAdvertise) CPM() int64 {
 	ret := _m.ctrl.Call(_m, "CPM")
 	ret0, _ := ret[0].(int64)
 	return ret0
 }
 
-func (_mr *_MockAdvertiseRecorder) CPM() *gomock.Call {
+// CPM indicates an expected call of CPM
+func (_mr *MockAdvertiseMockRecorder) CPM() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "CPM")
 }
 
+// CTR mocks base method
 func (_m *MockAdvertise) CTR() float64 {
 	ret := _m.ctrl.Call(_m, "CTR")
 	ret0, _ := ret[0].(float64)
 	return ret0
 }
 
-func (_mr *_MockAdvertiseRecorder) CTR() *gomock.Call {
+// CTR indicates an expected call of CTR
+func (_mr *MockAdvertiseMockRecorder) CTR() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "CTR")
 }
 
+// Campaign mocks base method
 func (_m *MockAdvertise) Campaign() entity.Campaign {
 	ret := _m.ctrl.Call(_m, "Campaign")
 	ret0, _ := ret[0].(entity.Campaign)
 	return ret0
 }
 
-func (_mr *_MockAdvertiseRecorder) Campaign() *gomock.Call {
+// Campaign indicates an expected call of Campaign
+func (_mr *MockAdvertiseMockRecorder) Campaign() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "Campaign")
 }
 
+// Capping mocks base method
 func (_m *MockAdvertise) Capping() entity.Capping {
 	ret := _m.ctrl.Call(_m, "Capping")
 	ret0, _ := ret[0].(entity.Capping)
 	return ret0
 }
 
-func (_mr *_MockAdvertiseRecorder) Capping() *gomock.Call {
+// Capping indicates an expected call of Capping
+func (_mr *MockAdvertiseMockRecorder) Capping() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "Capping")
 }
 
+// Category mocks base method
 func (_m *MockAdvertise) Category() []entity.Category {
 	ret := _m.ctrl.Call(_m, "Category")
 	ret0, _ := ret[0].([]entity.Category)
 	return ret0
 }
 
-func (_mr *_MockAdvertiseRecorder) Category() *gomock.Call {
+// Category indicates an expected call of Category
+func (_mr *MockAdvertiseMockRecorder) Category() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "Category")
 }
 
+// Copy mocks base method
 func (_m *MockAdvertise) Copy() entity.Advertise {
 	ret := _m.ctrl.Call(_m, "Copy")
 	ret0, _ := ret[0].(entity.Advertise)
 	return ret0
 }
 
-func (_mr *_MockAdvertiseRecorder) Copy() *gomock.Call {
+// Copy indicates an expected call of Copy
+func (_mr *MockAdvertiseMockRecorder) Copy() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "Copy")
 }
 
+// Country mocks base method
 func (_m *MockAdvertise) Country() []int64 {
 	ret := _m.ctrl.Call(_m, "Country")
 	ret0, _ := ret[0].([]int64)
 	return ret0
 }
 
-func (_mr *_MockAdvertiseRecorder) Country() *gomock.Call {
+// Country indicates an expected call of Country
+func (_mr *MockAdvertiseMockRecorder) Country() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "Country")
 }
 
+// ID mocks base method
 func (_m *MockAdvertise) ID() int64 {
 	ret := _m.ctrl.Call(_m, "ID")
 	ret0, _ := ret[0].(int64)
 	return ret0
 }
 
-func (_mr *_MockAdvertiseRecorder) ID() *gomock.Call {
+// ID indicates an expected call of ID
+func (_mr *MockAdvertiseMockRecorder) ID() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "ID")
 }
 
+// LanLon mocks base method
 func (_m *MockAdvertise) LanLon() (float64, float64) {
 	ret := _m.ctrl.Call(_m, "LanLon")
 	ret0, _ := ret[0].(float64)
@@ -318,549 +372,650 @@ func (_m *MockAdvertise) LanLon() (float64, float64) {
 	return ret0, ret1
 }
 
-func (_mr *_MockAdvertiseRecorder) LanLon() *gomock.Call {
+// LanLon indicates an expected call of LanLon
+func (_mr *MockAdvertiseMockRecorder) LanLon() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "LanLon")
 }
 
+// Province mocks base method
 func (_m *MockAdvertise) Province() []int64 {
 	ret := _m.ctrl.Call(_m, "Province")
 	ret0, _ := ret[0].([]int64)
 	return ret0
 }
 
-func (_mr *_MockAdvertiseRecorder) Province() *gomock.Call {
+// Province indicates an expected call of Province
+func (_mr *MockAdvertiseMockRecorder) Province() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "Province")
 }
 
+// SetCPM mocks base method
 func (_m *MockAdvertise) SetCPM(_param0 int64) {
 	_m.ctrl.Call(_m, "SetCPM", _param0)
 }
 
-func (_mr *_MockAdvertiseRecorder) SetCPM(arg0 interface{}) *gomock.Call {
+// SetCPM indicates an expected call of SetCPM
+func (_mr *MockAdvertiseMockRecorder) SetCPM(arg0 interface{}) *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "SetCPM", arg0)
 }
 
+// SetCTR mocks base method
 func (_m *MockAdvertise) SetCTR(_param0 float64) {
 	_m.ctrl.Call(_m, "SetCTR", _param0)
 }
 
-func (_mr *_MockAdvertiseRecorder) SetCTR(arg0 interface{}) *gomock.Call {
+// SetCTR indicates an expected call of SetCTR
+func (_mr *MockAdvertiseMockRecorder) SetCTR(arg0 interface{}) *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "SetCTR", arg0)
 }
 
+// SetCapping mocks base method
 func (_m *MockAdvertise) SetCapping(_param0 entity.Capping) {
 	_m.ctrl.Call(_m, "SetCapping", _param0)
 }
 
-func (_mr *_MockAdvertiseRecorder) SetCapping(arg0 interface{}) *gomock.Call {
+// SetCapping indicates an expected call of SetCapping
+func (_mr *MockAdvertiseMockRecorder) SetCapping(arg0 interface{}) *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "SetCapping", arg0)
 }
 
+// SetWinnerBID mocks base method
 func (_m *MockAdvertise) SetWinnerBID(_param0 int64) {
 	_m.ctrl.Call(_m, "SetWinnerBID", _param0)
 }
 
-func (_mr *_MockAdvertiseRecorder) SetWinnerBID(arg0 interface{}) *gomock.Call {
+// SetWinnerBID indicates an expected call of SetWinnerBID
+func (_mr *MockAdvertiseMockRecorder) SetWinnerBID(arg0 interface{}) *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "SetWinnerBID", arg0)
 }
 
+// Size mocks base method
 func (_m *MockAdvertise) Size() int {
 	ret := _m.ctrl.Call(_m, "Size")
 	ret0, _ := ret[0].(int)
 	return ret0
 }
 
-func (_mr *_MockAdvertiseRecorder) Size() *gomock.Call {
+// Size indicates an expected call of Size
+func (_mr *MockAdvertiseMockRecorder) Size() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "Size")
 }
 
+// Type mocks base method
 func (_m *MockAdvertise) Type() entity.AdType {
 	ret := _m.ctrl.Call(_m, "Type")
 	ret0, _ := ret[0].(entity.AdType)
 	return ret0
 }
 
-func (_mr *_MockAdvertiseRecorder) Type() *gomock.Call {
+// Type indicates an expected call of Type
+func (_mr *MockAdvertiseMockRecorder) Type() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "Type")
 }
 
+// WhiteListPublisher mocks base method
 func (_m *MockAdvertise) WhiteListPublisher() []int64 {
 	ret := _m.ctrl.Call(_m, "WhiteListPublisher")
 	ret0, _ := ret[0].([]int64)
 	return ret0
 }
 
-func (_mr *_MockAdvertiseRecorder) WhiteListPublisher() *gomock.Call {
+// WhiteListPublisher indicates an expected call of WhiteListPublisher
+func (_mr *MockAdvertiseMockRecorder) WhiteListPublisher() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "WhiteListPublisher")
 }
 
+// WinnerBID mocks base method
 func (_m *MockAdvertise) WinnerBID() int64 {
 	ret := _m.ctrl.Call(_m, "WinnerBID")
 	ret0, _ := ret[0].(int64)
 	return ret0
 }
 
-func (_mr *_MockAdvertiseRecorder) WinnerBID() *gomock.Call {
+// WinnerBID indicates an expected call of WinnerBID
+func (_mr *MockAdvertiseMockRecorder) WinnerBID() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "WinnerBID")
 }
 
-// Mock of Campaign interface
+// MockCampaign is a mock of Campaign interface
 type MockCampaign struct {
 	ctrl     *gomock.Controller
-	recorder *_MockCampaignRecorder
+	recorder *MockCampaignMockRecorder
 }
 
-// Recorder for MockCampaign (not exported)
-type _MockCampaignRecorder struct {
+// MockCampaignMockRecorder is the mock recorder for MockCampaign
+type MockCampaignMockRecorder struct {
 	mock *MockCampaign
 }
 
+// NewMockCampaign creates a new mock instance
 func NewMockCampaign(ctrl *gomock.Controller) *MockCampaign {
 	mock := &MockCampaign{ctrl: ctrl}
-	mock.recorder = &_MockCampaignRecorder{mock}
+	mock.recorder = &MockCampaignMockRecorder{mock}
 	return mock
 }
 
-func (_m *MockCampaign) EXPECT() *_MockCampaignRecorder {
+// EXPECT returns an object that allows the caller to indicate expected use
+func (_m *MockCampaign) EXPECT() *MockCampaignMockRecorder {
 	return _m.recorder
 }
 
+// Frequency mocks base method
 func (_m *MockCampaign) Frequency() int {
 	ret := _m.ctrl.Call(_m, "Frequency")
 	ret0, _ := ret[0].(int)
 	return ret0
 }
 
-func (_mr *_MockCampaignRecorder) Frequency() *gomock.Call {
+// Frequency indicates an expected call of Frequency
+func (_mr *MockCampaignMockRecorder) Frequency() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "Frequency")
 }
 
+// ID mocks base method
 func (_m *MockCampaign) ID() int64 {
 	ret := _m.ctrl.Call(_m, "ID")
 	ret0, _ := ret[0].(int64)
 	return ret0
 }
 
-func (_mr *_MockCampaignRecorder) ID() *gomock.Call {
+// ID indicates an expected call of ID
+func (_mr *MockCampaignMockRecorder) ID() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "ID")
 }
 
+// MaxBID mocks base method
 func (_m *MockCampaign) MaxBID() int64 {
 	ret := _m.ctrl.Call(_m, "MaxBID")
 	ret0, _ := ret[0].(int64)
 	return ret0
 }
 
-func (_mr *_MockCampaignRecorder) MaxBID() *gomock.Call {
+// MaxBID indicates an expected call of MaxBID
+func (_mr *MockCampaignMockRecorder) MaxBID() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "MaxBID")
 }
 
+// Name mocks base method
 func (_m *MockCampaign) Name() string {
 	ret := _m.ctrl.Call(_m, "Name")
 	ret0, _ := ret[0].(string)
 	return ret0
 }
 
-func (_mr *_MockCampaignRecorder) Name() *gomock.Call {
+// Name indicates an expected call of Name
+func (_mr *MockCampaignMockRecorder) Name() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "Name")
 }
 
+// Target mocks base method
 func (_m *MockCampaign) Target() []entity.Target {
 	ret := _m.ctrl.Call(_m, "Target")
 	ret0, _ := ret[0].([]entity.Target)
 	return ret0
 }
 
-func (_mr *_MockCampaignRecorder) Target() *gomock.Call {
+// Target indicates an expected call of Target
+func (_mr *MockCampaignMockRecorder) Target() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "Target")
 }
 
-// Mock of Publisher interface
+// MockPublisher is a mock of Publisher interface
 type MockPublisher struct {
 	ctrl     *gomock.Controller
-	recorder *_MockPublisherRecorder
+	recorder *MockPublisherMockRecorder
 }
 
-// Recorder for MockPublisher (not exported)
-type _MockPublisherRecorder struct {
+// MockPublisherMockRecorder is the mock recorder for MockPublisher
+type MockPublisherMockRecorder struct {
 	mock *MockPublisher
 }
 
+// NewMockPublisher creates a new mock instance
 func NewMockPublisher(ctrl *gomock.Controller) *MockPublisher {
 	mock := &MockPublisher{ctrl: ctrl}
-	mock.recorder = &_MockPublisherRecorder{mock}
+	mock.recorder = &MockPublisherMockRecorder{mock}
 	return mock
 }
 
-func (_m *MockPublisher) EXPECT() *_MockPublisherRecorder {
+// EXPECT returns an object that allows the caller to indicate expected use
+func (_m *MockPublisher) EXPECT() *MockPublisherMockRecorder {
 	return _m.recorder
 }
 
+// AcceptedTarget mocks base method
 func (_m *MockPublisher) AcceptedTarget() entity.Target {
 	ret := _m.ctrl.Call(_m, "AcceptedTarget")
 	ret0, _ := ret[0].(entity.Target)
 	return ret0
 }
 
-func (_mr *_MockPublisherRecorder) AcceptedTarget() *gomock.Call {
+// AcceptedTarget indicates an expected call of AcceptedTarget
+func (_mr *MockPublisherMockRecorder) AcceptedTarget() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "AcceptedTarget")
 }
 
+// AcceptedTypes mocks base method
 func (_m *MockPublisher) AcceptedTypes() []entity.AdType {
 	ret := _m.ctrl.Call(_m, "AcceptedTypes")
 	ret0, _ := ret[0].([]entity.AdType)
 	return ret0
 }
 
-func (_mr *_MockPublisherRecorder) AcceptedTypes() *gomock.Call {
+// AcceptedTypes indicates an expected call of AcceptedTypes
+func (_mr *MockPublisherMockRecorder) AcceptedTypes() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "AcceptedTypes")
 }
 
+// Active mocks base method
 func (_m *MockPublisher) Active() bool {
 	ret := _m.ctrl.Call(_m, "Active")
 	ret0, _ := ret[0].(bool)
 	return ret0
 }
 
-func (_mr *_MockPublisherRecorder) Active() *gomock.Call {
+// Active indicates an expected call of Active
+func (_mr *MockPublisherMockRecorder) Active() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "Active")
 }
 
+// Attributes mocks base method
 func (_m *MockPublisher) Attributes(_param0 entity.PublisherAttributes) interface{} {
 	ret := _m.ctrl.Call(_m, "Attributes", _param0)
 	ret0, _ := ret[0].(interface{})
 	return ret0
 }
 
-func (_mr *_MockPublisherRecorder) Attributes(arg0 interface{}) *gomock.Call {
+// Attributes indicates an expected call of Attributes
+func (_mr *MockPublisherMockRecorder) Attributes(arg0 interface{}) *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "Attributes", arg0)
 }
 
+// BIDType mocks base method
 func (_m *MockPublisher) BIDType() entity.BIDType {
 	ret := _m.ctrl.Call(_m, "BIDType")
 	ret0, _ := ret[0].(entity.BIDType)
 	return ret0
 }
 
-func (_mr *_MockPublisherRecorder) BIDType() *gomock.Call {
+// BIDType indicates an expected call of BIDType
+func (_mr *MockPublisherMockRecorder) BIDType() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "BIDType")
 }
 
+// FloorCPM mocks base method
 func (_m *MockPublisher) FloorCPM() int64 {
 	ret := _m.ctrl.Call(_m, "FloorCPM")
 	ret0, _ := ret[0].(int64)
 	return ret0
 }
 
-func (_mr *_MockPublisherRecorder) FloorCPM() *gomock.Call {
+// FloorCPM indicates an expected call of FloorCPM
+func (_mr *MockPublisherMockRecorder) FloorCPM() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "FloorCPM")
 }
 
+// ID mocks base method
 func (_m *MockPublisher) ID() int64 {
 	ret := _m.ctrl.Call(_m, "ID")
 	ret0, _ := ret[0].(int64)
 	return ret0
 }
 
-func (_mr *_MockPublisherRecorder) ID() *gomock.Call {
+// ID indicates an expected call of ID
+func (_mr *MockPublisherMockRecorder) ID() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "ID")
 }
 
+// MinCPC mocks base method
 func (_m *MockPublisher) MinCPC() int64 {
 	ret := _m.ctrl.Call(_m, "MinCPC")
 	ret0, _ := ret[0].(int64)
 	return ret0
 }
 
-func (_mr *_MockPublisherRecorder) MinCPC() *gomock.Call {
+// MinCPC indicates an expected call of MinCPC
+func (_mr *MockPublisherMockRecorder) MinCPC() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "MinCPC")
 }
 
+// Name mocks base method
 func (_m *MockPublisher) Name() string {
 	ret := _m.ctrl.Call(_m, "Name")
 	ret0, _ := ret[0].(string)
 	return ret0
 }
 
-func (_mr *_MockPublisherRecorder) Name() *gomock.Call {
+// Name indicates an expected call of Name
+func (_mr *MockPublisherMockRecorder) Name() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "Name")
 }
 
+// SoftFloorCPM mocks base method
 func (_m *MockPublisher) SoftFloorCPM() int64 {
 	ret := _m.ctrl.Call(_m, "SoftFloorCPM")
 	ret0, _ := ret[0].(int64)
 	return ret0
 }
 
-func (_mr *_MockPublisherRecorder) SoftFloorCPM() *gomock.Call {
+// SoftFloorCPM indicates an expected call of SoftFloorCPM
+func (_mr *MockPublisherMockRecorder) SoftFloorCPM() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "SoftFloorCPM")
 }
 
+// Supplier mocks base method
 func (_m *MockPublisher) Supplier() entity.Supplier {
 	ret := _m.ctrl.Call(_m, "Supplier")
 	ret0, _ := ret[0].(entity.Supplier)
 	return ret0
 }
 
-func (_mr *_MockPublisherRecorder) Supplier() *gomock.Call {
+// Supplier indicates an expected call of Supplier
+func (_mr *MockPublisherMockRecorder) Supplier() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "Supplier")
 }
 
+// UnderFloor mocks base method
 func (_m *MockPublisher) UnderFloor() bool {
 	ret := _m.ctrl.Call(_m, "UnderFloor")
 	ret0, _ := ret[0].(bool)
 	return ret0
 }
 
-func (_mr *_MockPublisherRecorder) UnderFloor() *gomock.Call {
+// UnderFloor indicates an expected call of UnderFloor
+func (_mr *MockPublisherMockRecorder) UnderFloor() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "UnderFloor")
 }
 
-// Mock of Location interface
+// MockLocation is a mock of Location interface
 type MockLocation struct {
 	ctrl     *gomock.Controller
-	recorder *_MockLocationRecorder
+	recorder *MockLocationMockRecorder
 }
 
-// Recorder for MockLocation (not exported)
-type _MockLocationRecorder struct {
+// MockLocationMockRecorder is the mock recorder for MockLocation
+type MockLocationMockRecorder struct {
 	mock *MockLocation
 }
 
+// NewMockLocation creates a new mock instance
 func NewMockLocation(ctrl *gomock.Controller) *MockLocation {
 	mock := &MockLocation{ctrl: ctrl}
-	mock.recorder = &_MockLocationRecorder{mock}
+	mock.recorder = &MockLocationMockRecorder{mock}
 	return mock
 }
 
-func (_m *MockLocation) EXPECT() *_MockLocationRecorder {
+// EXPECT returns an object that allows the caller to indicate expected use
+func (_m *MockLocation) EXPECT() *MockLocationMockRecorder {
 	return _m.recorder
 }
 
+// Country mocks base method
 func (_m *MockLocation) Country() entity.Country {
 	ret := _m.ctrl.Call(_m, "Country")
 	ret0, _ := ret[0].(entity.Country)
 	return ret0
 }
 
-func (_mr *_MockLocationRecorder) Country() *gomock.Call {
+// Country indicates an expected call of Country
+func (_mr *MockLocationMockRecorder) Country() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "Country")
 }
 
+// LatLon mocks base method
 func (_m *MockLocation) LatLon() entity.LatLon {
 	ret := _m.ctrl.Call(_m, "LatLon")
 	ret0, _ := ret[0].(entity.LatLon)
 	return ret0
 }
 
-func (_mr *_MockLocationRecorder) LatLon() *gomock.Call {
+// LatLon indicates an expected call of LatLon
+func (_mr *MockLocationMockRecorder) LatLon() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "LatLon")
 }
 
+// Province mocks base method
 func (_m *MockLocation) Province() entity.Province {
 	ret := _m.ctrl.Call(_m, "Province")
 	ret0, _ := ret[0].(entity.Province)
 	return ret0
 }
 
-func (_mr *_MockLocationRecorder) Province() *gomock.Call {
+// Province indicates an expected call of Province
+func (_mr *MockLocationMockRecorder) Province() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "Province")
 }
 
-// Mock of Slot interface
+// MockSlot is a mock of Slot interface
 type MockSlot struct {
 	ctrl     *gomock.Controller
-	recorder *_MockSlotRecorder
+	recorder *MockSlotMockRecorder
 }
 
-// Recorder for MockSlot (not exported)
-type _MockSlotRecorder struct {
+// MockSlotMockRecorder is the mock recorder for MockSlot
+type MockSlotMockRecorder struct {
 	mock *MockSlot
 }
 
+// NewMockSlot creates a new mock instance
 func NewMockSlot(ctrl *gomock.Controller) *MockSlot {
 	mock := &MockSlot{ctrl: ctrl}
-	mock.recorder = &_MockSlotRecorder{mock}
+	mock.recorder = &MockSlotMockRecorder{mock}
 	return mock
 }
 
-func (_m *MockSlot) EXPECT() *_MockSlotRecorder {
+// EXPECT returns an object that allows the caller to indicate expected use
+func (_m *MockSlot) EXPECT() *MockSlotMockRecorder {
 	return _m.recorder
 }
 
+// AllowedSize mocks base method
 func (_m *MockSlot) AllowedSize() []int {
 	ret := _m.ctrl.Call(_m, "AllowedSize")
 	ret0, _ := ret[0].([]int)
 	return ret0
 }
 
-func (_mr *_MockSlotRecorder) AllowedSize() *gomock.Call {
+// AllowedSize indicates an expected call of AllowedSize
+func (_mr *MockSlotMockRecorder) AllowedSize() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "AllowedSize")
 }
 
+// ID mocks base method
 func (_m *MockSlot) ID() int64 {
 	ret := _m.ctrl.Call(_m, "ID")
 	ret0, _ := ret[0].(int64)
 	return ret0
 }
 
-func (_mr *_MockSlotRecorder) ID() *gomock.Call {
+// ID indicates an expected call of ID
+func (_mr *MockSlotMockRecorder) ID() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "ID")
 }
 
+// PublicID mocks base method
 func (_m *MockSlot) PublicID() string {
 	ret := _m.ctrl.Call(_m, "PublicID")
 	ret0, _ := ret[0].(string)
 	return ret0
 }
 
-func (_mr *_MockSlotRecorder) PublicID() *gomock.Call {
+// PublicID indicates an expected call of PublicID
+func (_mr *MockSlotMockRecorder) PublicID() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "PublicID")
 }
 
+// SetShowURL mocks base method
 func (_m *MockSlot) SetShowURL(_param0 string) {
 	_m.ctrl.Call(_m, "SetShowURL", _param0)
 }
 
-func (_mr *_MockSlotRecorder) SetShowURL(arg0 interface{}) *gomock.Call {
+// SetShowURL indicates an expected call of SetShowURL
+func (_mr *MockSlotMockRecorder) SetShowURL(arg0 interface{}) *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "SetShowURL", arg0)
 }
 
+// SetWinnerAdvertise mocks base method
 func (_m *MockSlot) SetWinnerAdvertise(_param0 entity.Advertise) {
 	_m.ctrl.Call(_m, "SetWinnerAdvertise", _param0)
 }
 
-func (_mr *_MockSlotRecorder) SetWinnerAdvertise(arg0 interface{}) *gomock.Call {
+// SetWinnerAdvertise indicates an expected call of SetWinnerAdvertise
+func (_mr *MockSlotMockRecorder) SetWinnerAdvertise(arg0 interface{}) *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "SetWinnerAdvertise", arg0)
 }
 
+// ShowURL mocks base method
 func (_m *MockSlot) ShowURL() string {
 	ret := _m.ctrl.Call(_m, "ShowURL")
 	ret0, _ := ret[0].(string)
 	return ret0
 }
 
-func (_mr *_MockSlotRecorder) ShowURL() *gomock.Call {
+// ShowURL indicates an expected call of ShowURL
+func (_mr *MockSlotMockRecorder) ShowURL() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "ShowURL")
 }
 
+// Size mocks base method
 func (_m *MockSlot) Size() int {
 	ret := _m.ctrl.Call(_m, "Size")
 	ret0, _ := ret[0].(int)
 	return ret0
 }
 
-func (_mr *_MockSlotRecorder) Size() *gomock.Call {
+// Size indicates an expected call of Size
+func (_mr *MockSlotMockRecorder) Size() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "Size")
 }
 
+// SlotCTR mocks base method
 func (_m *MockSlot) SlotCTR() float64 {
 	ret := _m.ctrl.Call(_m, "SlotCTR")
 	ret0, _ := ret[0].(float64)
 	return ret0
 }
 
-func (_mr *_MockSlotRecorder) SlotCTR() *gomock.Call {
+// SlotCTR indicates an expected call of SlotCTR
+func (_mr *MockSlotMockRecorder) SlotCTR() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "SlotCTR")
 }
 
+// StateID mocks base method
 func (_m *MockSlot) StateID() string {
 	ret := _m.ctrl.Call(_m, "StateID")
 	ret0, _ := ret[0].(string)
 	return ret0
 }
 
-func (_mr *_MockSlotRecorder) StateID() *gomock.Call {
+// StateID indicates an expected call of StateID
+func (_mr *MockSlotMockRecorder) StateID() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "StateID")
 }
 
+// WinnerAdvertise mocks base method
 func (_m *MockSlot) WinnerAdvertise() entity.Advertise {
 	ret := _m.ctrl.Call(_m, "WinnerAdvertise")
 	ret0, _ := ret[0].(entity.Advertise)
 	return ret0
 }
 
-func (_mr *_MockSlotRecorder) WinnerAdvertise() *gomock.Call {
+// WinnerAdvertise indicates an expected call of WinnerAdvertise
+func (_mr *MockSlotMockRecorder) WinnerAdvertise() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "WinnerAdvertise")
 }
 
-// Mock of Supplier interface
+// MockSupplier is a mock of Supplier interface
 type MockSupplier struct {
 	ctrl     *gomock.Controller
-	recorder *_MockSupplierRecorder
+	recorder *MockSupplierMockRecorder
 }
 
-// Recorder for MockSupplier (not exported)
-type _MockSupplierRecorder struct {
+// MockSupplierMockRecorder is the mock recorder for MockSupplier
+type MockSupplierMockRecorder struct {
 	mock *MockSupplier
 }
 
+// NewMockSupplier creates a new mock instance
 func NewMockSupplier(ctrl *gomock.Controller) *MockSupplier {
 	mock := &MockSupplier{ctrl: ctrl}
-	mock.recorder = &_MockSupplierRecorder{mock}
+	mock.recorder = &MockSupplierMockRecorder{mock}
 	return mock
 }
 
-func (_m *MockSupplier) EXPECT() *_MockSupplierRecorder {
+// EXPECT returns an object that allows the caller to indicate expected use
+func (_m *MockSupplier) EXPECT() *MockSupplierMockRecorder {
 	return _m.recorder
 }
 
+// AcceptedTypes mocks base method
 func (_m *MockSupplier) AcceptedTypes() []entity.AdType {
 	ret := _m.ctrl.Call(_m, "AcceptedTypes")
 	ret0, _ := ret[0].([]entity.AdType)
 	return ret0
 }
 
-func (_mr *_MockSupplierRecorder) AcceptedTypes() *gomock.Call {
+// AcceptedTypes indicates an expected call of AcceptedTypes
+func (_mr *MockSupplierMockRecorder) AcceptedTypes() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "AcceptedTypes")
 }
 
+// CPMFloor mocks base method
 func (_m *MockSupplier) CPMFloor() int64 {
 	ret := _m.ctrl.Call(_m, "CPMFloor")
 	ret0, _ := ret[0].(int64)
 	return ret0
 }
 
-func (_mr *_MockSupplierRecorder) CPMFloor() *gomock.Call {
+// CPMFloor indicates an expected call of CPMFloor
+func (_mr *MockSupplierMockRecorder) CPMFloor() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "CPMFloor")
 }
 
+// CountryWhiteList mocks base method
 func (_m *MockSupplier) CountryWhiteList() []entity.Country {
 	ret := _m.ctrl.Call(_m, "CountryWhiteList")
 	ret0, _ := ret[0].([]entity.Country)
 	return ret0
 }
 
-func (_mr *_MockSupplierRecorder) CountryWhiteList() *gomock.Call {
+// CountryWhiteList indicates an expected call of CountryWhiteList
+func (_mr *MockSupplierMockRecorder) CountryWhiteList() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "CountryWhiteList")
 }
 
+// ExcludedDemands mocks base method
 func (_m *MockSupplier) ExcludedDemands() []string {
 	ret := _m.ctrl.Call(_m, "ExcludedDemands")
 	ret0, _ := ret[0].([]string)
 	return ret0
 }
 
-func (_mr *_MockSupplierRecorder) ExcludedDemands() *gomock.Call {
+// ExcludedDemands indicates an expected call of ExcludedDemands
+func (_mr *MockSupplierMockRecorder) ExcludedDemands() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "ExcludedDemands")
 }
 
+// ID mocks base method
 func (_m *MockSupplier) ID() int64 {
 	ret := _m.ctrl.Call(_m, "ID")
 	ret0, _ := ret[0].(int64)
 	return ret0
 }
 
-func (_mr *_MockSupplierRecorder) ID() *gomock.Call {
+// ID indicates an expected call of ID
+func (_mr *MockSupplierMockRecorder) ID() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "ID")
 }
 
+// Name mocks base method
 func (_m *MockSupplier) Name() string {
 	ret := _m.ctrl.Call(_m, "Name")
 	ret0, _ := ret[0].(string)
 	return ret0
 }
 
-func (_mr *_MockSupplierRecorder) Name() *gomock.Call {
+// Name indicates an expected call of Name
+func (_mr *MockSupplierMockRecorder) Name() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "Name")
 }

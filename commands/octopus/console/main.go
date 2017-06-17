@@ -2,7 +2,7 @@ package main
 
 import (
 	"clickyab.com/exchange/commands"
-	_ "clickyab.com/exchange/octopus/console/internal/routes"
+	_ "clickyab.com/exchange/octopus/console"
 	"github.com/clickyab/services/config"
 
 	"github.com/clickyab/services/initializer"

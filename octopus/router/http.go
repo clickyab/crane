@@ -13,8 +13,8 @@ import (
 	"github.com/clickyab/services/initializer"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/fzerorubigd/xhandler"
-	"github.com/fzerorubigd/xmux"
+	"github.com/rs/xhandler"
+	"github.com/rs/xmux"
 )
 
 var (
@@ -41,13 +41,13 @@ func (i initRouter) Initialize(ctx context.Context) {
 	mux.PUT("/demands/status/:name", wrap(demands.Status))
 	mux.OPTIONS("/demands/status/:name", wrap(demands.Status))
 
-	srv := &http.Server{Addr: *listenAddress, Handler: xhandler.New(ctx, mux)}
+	srv := &http.Server{Addr: listenAddress.String(), Handler: xhandler.New(ctx, mux)}
 	go func() {
 		if err := srv.ListenAndServe(); err != nil {
 			logrus.Debug(err)
 		}
 	}()
-	logrus.Debugf("Server started on %s", *listenAddress)
+	logrus.Debugf("Server started on %s", listenAddress.String())
 	go func() {
 		done := ctx.Done()
 		if done != nil {

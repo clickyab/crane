@@ -16,7 +16,7 @@ func main() {
 	config.Initialize("test", "test", "test")
 	http.HandleFunc("/start", getSupplierDemo)
 	http.HandleFunc("/send", postSupplierDemo)
-	fmt.Println(*port)
-	http.ListenAndServe(*port, nil)
+	fmt.Println(port.String())
+	http.ListenAndServe(port.String(), nil)
 	shell.WaitExitSignal()
 }

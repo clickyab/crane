@@ -68,7 +68,7 @@ func (rf restful) Render(imp exchange.Impression, in map[string]exchange.Adverti
 
 		trackURL := &url.URL{
 			Scheme: imp.Scheme(),
-			Host:   *host,
+			Host:   host.String(),
 			Path:   fmt.Sprintf(rf.pixelPattern, in[slotTrackID].Demand().Name(), in[slotTrackID].TrackID()),
 		}
 
