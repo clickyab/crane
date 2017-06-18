@@ -249,6 +249,15 @@
 			"Rev": "77f18212c9c7edc9bd6a33d383a7b545ce62f064"
 		},
 		{
+			"ImportPath": "github.com/kr/pretty",
+			"Comment": "go.weekly.2011-12-22-36-gcfb55aa",
+			"Rev": "cfb55aafdaf3ec08f0db22699ab822c50091b1c4"
+		},
+		{
+			"ImportPath": "github.com/kr/text",
+			"Rev": "7cafcd837844e784b526369c9bce262804aebc60"
+		},
+		{
 			"ImportPath": "github.com/mssola/user_agent",
 			"Comment": "v0.4.1-20-g07efe2b",
 			"Rev": "07efe2b857fb8c02d2dd85c12d0145f58554ec7c"
