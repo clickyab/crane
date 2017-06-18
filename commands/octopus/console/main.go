@@ -4,6 +4,7 @@ import (
 	"clickyab.com/exchange/commands"
 	_ "clickyab.com/exchange/octopus/console"
 	"github.com/clickyab/services/config"
+	_ "github.com/clickyab/services/framework/router"
 
 	"github.com/clickyab/services/initializer"
 

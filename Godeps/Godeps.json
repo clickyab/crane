@@ -7,6 +7,14 @@
 	],
 	"Deps": [
 		{
+			"ImportPath": "github.com/GeertJohan/go.rice",
+			"Rev": "c02ca9a983da5807ddf7d796784928f5be4afd09"
+		},
+		{
+			"ImportPath": "github.com/GeertJohan/go.rice/embedded",
+			"Rev": "c02ca9a983da5807ddf7d796784928f5be4afd09"
+		},
+		{
 			"ImportPath": "github.com/Sirupsen/logrus",
 			"Comment": "v0.11.5-46-g5e5dc89",
 			"Rev": "5e5dc898656f695e2a086b8e12559febbfc01562"
@@ -112,6 +120,10 @@
 			"Rev": "1c98d15c8683411e5c6bb5c2670d73eb7e50cc41"
 		},
 		{
+			"ImportPath": "github.com/clickyab/services/framework/router",
+			"Rev": "1c98d15c8683411e5c6bb5c2670d73eb7e50cc41"
+		},
+		{
 			"ImportPath": "github.com/clickyab/services/gmaps",
 			"Rev": "1c98d15c8683411e5c6bb5c2670d73eb7e50cc41"
 		},
@@ -190,6 +202,10 @@
 			"Rev": "b097669b1569203c3ce05a6b8717d43140fdb3d5"
 		},
 		{
+			"ImportPath": "github.com/daaku/go.zipexe",
+			"Rev": "a5fe2436ffcb3236e175e5149162b41cd28bd27d"
+		},
+		{
 			"ImportPath": "github.com/fatih/structs",
 			"Comment": "v1.0-2-g74a29b9",
 			"Rev": "74a29b9fac7397d933f47e33eba94d2d83a464a2"
@@ -249,6 +265,10 @@
 			"Rev": "77f18212c9c7edc9bd6a33d383a7b545ce62f064"
 		},
 		{
+			"ImportPath": "github.com/kardianos/osext",
+			"Rev": "ae77be60afb1dcacde03767a8c37337fad28ac14"
+		},
+		{
 			"ImportPath": "github.com/kr/pretty",
 			"Comment": "go.weekly.2011-12-22-36-gcfb55aa",
 			"Rev": "cfb55aafdaf3ec08f0db22699ab822c50091b1c4"
@@ -266,6 +286,11 @@
 			"ImportPath": "github.com/ogier/pflag",
 			"Comment": "v0.0.1-7-g45c278a",
 			"Rev": "45c278ab3607870051a2ea9040bb85fcb8557481"
+		},
+		{
+			"ImportPath": "github.com/rs/cors",
+			"Comment": "v1.0-5-g8dd4211",
+			"Rev": "8dd4211afb5d08dbb39a533b9bb9e4b486351df6"
 		},
 		{
 			"ImportPath": "github.com/rs/xhandler",
