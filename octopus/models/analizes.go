@@ -78,7 +78,6 @@ type ExchangeReport struct {
 type Parts struct {
 	Query  string
 	Params []interface{}
-	Do     bool
 }
 
 // DemandReport demand_report
@@ -123,13 +122,12 @@ func (m *Manager) MultiQuery(parts ...Parts) (err error) {
 		}
 	}()
 
-	for i := range parts {
-		if parts[i].Do {
-			_, err = m.GetProperDBMap().Exec(parts[i].Query, parts[i].Params...)
-			if err != nil {
-				return
-			}
+	for _, q := range parts {
+		_, err = m.GetProperDBMap().Exec(q.Query, q.Params...)
+		if err != nil {
+			return
 		}
 	}
+
 	return nil
 }

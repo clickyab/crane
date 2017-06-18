@@ -76,14 +76,21 @@ ON DUPLICATE KEY UPDATE
 `
 
 func flush(supDemSrc map[string]*datamodels.TableModel, supSrc map[string]*datamodels.TableModel) error {
+
+	if len(supDemSrc) == 0 && len(supSrc) == 0 {
+		return nil
+	}
+
 	var (
 		parts1, parts2 []string
 	)
+
 	for i := range supDemSrc {
 		if has, part := hasDataSupplierDemand(supDemSrc[i]); has {
 			parts1 = append(parts1, part)
 		}
 	}
+
 	q1 := fmt.Sprintf(supDemSrcTable, strings.Join(parts1, ",\n"))
 
 	for i := range supSrc {
@@ -91,18 +98,29 @@ func flush(supDemSrc map[string]*datamodels.TableModel, supSrc map[string]*datam
 			parts2 = append(parts2, part)
 		}
 	}
+
 	q2 := fmt.Sprintf(supSrcTable, strings.Join(parts2, ",\n"))
+
 	if len(parts1)+len(parts2) == 0 {
 		return nil
+	}
+
+	if len(supDemSrc) > 0 && len(supSrc) == 0 {
+		return models.NewManager().MultiQuery(models.Parts{
+			Query: q1,
+		})
+	}
+	if len(supDemSrc) == 0 && len(supSrc) > 0 {
+		return models.NewManager().MultiQuery(models.Parts{
+			Query: q2,
+		})
 	}
 	return models.NewManager().MultiQuery(
 		models.Parts{
 			Query: q1,
-			Do:    len(parts1) > 0,
 		},
 		models.Parts{
 			Query: q2,
-			Do:    len(parts2) > 0,
 		},
 	)
 
