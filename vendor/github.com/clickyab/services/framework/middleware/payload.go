@@ -14,9 +14,11 @@ import (
 	"github.com/clickyab/services/trans"
 )
 
+type contextKey string
+
 const (
 	// ContextBody is the context key for the body unmarshalled object
-	ContextBody string = "_body"
+	ContextBody contextKey = "_body"
 )
 
 type (

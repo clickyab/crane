@@ -7,14 +7,8 @@ import (
 	"gopkg.in/fzerorubigd/onion.v3"
 )
 
-type variable struct {
-	ref, def interface{}
-	key      string
-}
-
 var (
-	allVariables []variable
-	lock         = &sync.Mutex{}
+	lock = &sync.Mutex{}
 )
 
 // RegisterString add an string to config

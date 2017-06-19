@@ -2,15 +2,13 @@ package ip2location
 
 import (
 	"io"
-
-	"path/filepath"
-
 	"io/ioutil"
 	"os"
+	"path/filepath"
 
-	"github.com/fzerorubigd/expand"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/config"
+	"github.com/fzerorubigd/expand"
 	"gopkg.in/fzerorubigd/onion.v3"
 )
 
