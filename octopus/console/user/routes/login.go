@@ -7,7 +7,7 @@ import (
 
 	"fmt"
 
-	"clickyab.com/exchange/octopus/console/internal/aaa"
+	"clickyab.com/exchange/octopus/console/user/aaa"
 	"github.com/clickyab/services/eav"
 	"github.com/clickyab/services/random"
 	"golang.org/x/crypto/bcrypt"

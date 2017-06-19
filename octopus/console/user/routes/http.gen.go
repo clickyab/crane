@@ -38,6 +38,28 @@ func (c *Controller) Routes(r *xmux.Mux, mountPoint string) {
 	group.POST("/login", xhandler.HandlerFuncC(framework.Mix(c.login, m0...)))
 	// End route with key 0
 
+	/* Route {
+		"Route": "/logout",
+		"Method": "GET",
+		"Function": "Controller.logout",
+		"RoutePkg": "routes",
+		"RouteMiddleware": [
+			"Authenticate"
+		],
+		"RouteFuncMiddleware": "",
+		"RecType": "Controller",
+		"RecName": "c",
+		"Payload": "",
+		"Resource": "",
+		"Scope": ""
+	} with key 1 */
+	m1 := append(groupMiddleware, []framework.Middleware{
+		Authenticate,
+	}...)
+
+	group.GET("/logout", xhandler.HandlerFuncC(framework.Mix(c.logout, m1...)))
+	// End route with key 1
+
 	initializer.DoInitialize(c)
 }
 

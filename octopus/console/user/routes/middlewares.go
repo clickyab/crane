@@ -4,7 +4,9 @@ import (
 	"context"
 	"net/http"
 
-	"clickyab.com/exchange/octopus/console/internal/aaa"
+	"github.com/clickyab/services/assert"
+
+	"clickyab.com/exchange/octopus/console/user/aaa"
 	"github.com/clickyab/services/eav"
 	"github.com/clickyab/services/framework"
 	"github.com/clickyab/services/framework/controller"
@@ -40,4 +42,38 @@ func Authenticate(next framework.Handler) framework.Handler {
 		}
 		framework.JSON(w, http.StatusUnauthorized, controller.ErrorResponseSimple{Error: trans.E("Unauthorized")})
 	}
+}
+
+// GetUser is the helper function to extract user data from context
+func GetUser(ctx context.Context) (*aaa.User, bool) {
+	rd, ok := ctx.Value(dataKey).(*data)
+	if !ok {
+		return nil, false
+	}
+
+	return rd.user, true
+}
+
+// MustGetUser try to get user data, or panic if there is no user data
+func MustGetUser(ctx context.Context) *aaa.User {
+	rd, ok := GetUser(ctx)
+	assert.True(ok, "[BUG] no user in context")
+	return rd
+}
+
+// GetToken is the helper function to extract user data from context
+func GetToken(ctx context.Context) (string, bool) {
+	rd, ok := ctx.Value(dataKey).(*data)
+	if !ok {
+		return "", false
+	}
+
+	return rd.token, true
+}
+
+// MustGetToken try to get user data, or panic if there is no user data
+func MustGetToken(ctx context.Context) string {
+	rd, ok := GetToken(ctx)
+	assert.True(ok, "[BUG] no user in context")
+	return rd
 }
