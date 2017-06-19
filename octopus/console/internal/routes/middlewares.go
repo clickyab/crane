@@ -1,4 +1,4 @@
-package user
+package routes
 
 import (
 	"context"
@@ -27,7 +27,7 @@ func Authenticate(next framework.Handler) framework.Handler {
 		if token != "" {
 			val := eav.NewEavStore(token).SubKey("token")
 			if val != "" {
-				usr, err := aaa.NewAaaManager().GetUserByToken(val)
+				usr, err := aaa.NewAaaManager().FindUserByToken(val)
 				if err == nil {
 					ctx = context.WithValue(ctx, dataKey, data{
 						token: token,

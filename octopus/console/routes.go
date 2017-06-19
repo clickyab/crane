@@ -1,6 +1,10 @@
 package console
 
 import (
-	// Make sure the routes is registered
-	_ "clickyab.com/exchange/octopus/console/internal/routes"
+	"clickyab.com/exchange/octopus/console/internal/routes"
+	"github.com/clickyab/services/framework/router"
 )
+
+func init() {
+	router.Register(&routes.Controller{})
+}

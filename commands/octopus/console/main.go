@@ -10,6 +10,8 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	_ "github.com/clickyab/services/eav/redis"
+	_ "github.com/clickyab/services/mysql/connection/mysql"
+	_ "github.com/clickyab/services/random"
 	"github.com/clickyab/services/shell"
 	_ "golang.org/x/crypto/bcrypt"
 )

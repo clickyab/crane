@@ -1,4 +1,4 @@
-package user
+package routes
 
 import "github.com/clickyab/services/framework/controller"
 

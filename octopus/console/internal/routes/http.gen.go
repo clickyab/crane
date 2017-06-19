@@ -1,6 +1,6 @@
 // Code generated build with router DO NOT EDIT.
 
-package user
+package routes
 
 import (
 	"github.com/clickyab/services/framework"
@@ -22,7 +22,7 @@ func (c *Controller) Routes(r *xmux.Mux, mountPoint string) {
 		"Route": "/login",
 		"Method": "POST",
 		"Function": "Controller.login",
-		"RoutePkg": "user",
+		"RoutePkg": "routes",
 		"RouteMiddleware": null,
 		"RouteFuncMiddleware": "",
 		"RecType": "Controller",
@@ -37,28 +37,6 @@ func (c *Controller) Routes(r *xmux.Mux, mountPoint string) {
 	m0 = append(m0, middleware.PayloadUnMarshallerGenerator(loginPayload{}))
 	group.POST("/login", xhandler.HandlerFuncC(framework.Mix(c.login, m0...)))
 	// End route with key 0
-
-	/* Route {
-		"Route": "/logout",
-		"Method": "GET",
-		"Function": "Controller.logout",
-		"RoutePkg": "user",
-		"RouteMiddleware": [
-			"Authenticate"
-		],
-		"RouteFuncMiddleware": "",
-		"RecType": "Controller",
-		"RecName": "c",
-		"Payload": "",
-		"Resource": "",
-		"Scope": ""
-	} with key 1 */
-	m1 := append(groupMiddleware, []framework.Middleware{
-		Authenticate,
-	}...)
-
-	group.GET("/logout", xhandler.HandlerFuncC(framework.Mix(c.logout, m1...)))
-	// End route with key 1
 
 	initializer.DoInitialize(c)
 }
