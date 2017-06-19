@@ -65,6 +65,7 @@ package {{ .GroupPkg }}
 import (
 	"github.com/clickyab/services/framework"
 	"github.com/clickyab/services/framework/middleware"
+	"github.com/clickyab/services/framework/router"
 	"github.com/clickyab/services/initializer"
 	"github.com/rs/xhandler"
 	"github.com/rs/xmux"
@@ -101,6 +102,10 @@ func ({{ .GroupRec }} *{{ .StructName }}) Routes(r *xmux.Mux, mountPoint string)
 	{{ end }}
 	{{ end }}
 	initializer.DoInitialize({{ .GroupRec }})
+}
+
+func init() {
+	router.Register(&{{ .StructName }}{})
 }
 `
 
