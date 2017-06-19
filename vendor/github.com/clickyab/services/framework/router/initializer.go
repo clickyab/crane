@@ -5,6 +5,10 @@ import (
 	"net/http"
 	"time"
 
+	"os"
+
+	"fmt"
+
 	rice "github.com/GeertJohan/go.rice"
 	"github.com/Sirupsen/logrus"
 	"github.com/clickyab/services/assert"
@@ -84,5 +88,15 @@ func Register(c ...Routes) {
 }
 
 func init() {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8090"
+	}
+	listen = config.RegisterString(
+		"services.framework.listen",
+		fmt.Sprintf(":%s", port),
+		"address to listen for framework",
+	)
+
 	initializer.Register(&initer{}, 100)
 }
