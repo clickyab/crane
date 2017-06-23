@@ -15,12 +15,8 @@ import (
 
 type dataType string
 
-type data struct {
-	user  *aaa.User
-	token string
-}
-
 const dataKey dataType = "__user_data__"
+const tokenKey dataType = "__token_data__"
 
 // Authenticate is a middleware used for authorization in exchange console
 func Authenticate(next framework.Handler) framework.Handler {
@@ -31,10 +27,8 @@ func Authenticate(next framework.Handler) framework.Handler {
 			if val != "" {
 				usr, err := aaa.NewAaaManager().FindUserByToken(val)
 				if err == nil {
-					ctx = context.WithValue(ctx, dataKey, data{
-						token: token,
-						user:  usr,
-					})
+					ctx = context.WithValue(ctx, dataKey, usr)
+					ctx = context.WithValue(ctx, tokenKey, token)
 					next(ctx, w, r)
 					return
 				}
@@ -46,12 +40,12 @@ func Authenticate(next framework.Handler) framework.Handler {
 
 // GetUser is the helper function to extract user data from context
 func GetUser(ctx context.Context) (*aaa.User, bool) {
-	rd, ok := ctx.Value(dataKey).(*data)
+	rd, ok := ctx.Value(dataKey).(*aaa.User)
 	if !ok {
 		return nil, false
 	}
 
-	return rd.user, true
+	return rd, true
 }
 
 // MustGetUser try to get user data, or panic if there is no user data
@@ -63,12 +57,12 @@ func MustGetUser(ctx context.Context) *aaa.User {
 
 // GetToken is the helper function to extract user data from context
 func GetToken(ctx context.Context) (string, bool) {
-	rd, ok := ctx.Value(dataKey).(*data)
+	rd, ok := ctx.Value(tokenKey).(string)
 	if !ok {
 		return "", false
 	}
 
-	return rd.token, true
+	return rd, true
 }
 
 // MustGetToken try to get user data, or panic if there is no user data

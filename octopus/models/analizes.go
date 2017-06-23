@@ -10,9 +10,9 @@ const (
 	// ExchangeReportTableName table name exchange
 	ExchangeReportTableName = "exchange_report"
 	// DemandTableName table name demand
-	DemandTableName = "supplier_source_demand"
+	DemandTableName = "sup_dem_src"
 	// SupplierTableName table supplier
-	SupplierTableName = "supplier_source"
+	SupplierTableName = "sup_src"
 	// DemandReportTableName demand report table
 	DemandReportTableName = "demand_report"
 	// SupplierReportTableName table supplier report
@@ -92,6 +92,7 @@ type DemandReport struct {
 	AdOutBid        int64  `json:"ad_out_bid" db:"ad_out_bid"`
 	DeliverCount    int64  `json:"deliver_count" db:"deliver_count"`
 	DeliverBid      int64  `json:"deliver_bid" db:"deliver_bid"`
+	Profit          int64  `json:"profit" db:"profit"`
 	SuccessRate     int64  `json:"success_rate" db:"-"`
 	DeliverRate     int64  `json:"deliver_rate" db:"-"`
 	WinRate         int64  `json:"win_rate" db:"-"`
@@ -102,7 +103,7 @@ type SupplierReporter struct {
 	ID             int64     `json:"id" db:"id"`
 	Supplier       string    `json:"supplier" db:"supplier"`
 	Date           time.Time `json:"target_date" db:"target_date"`
-	ImpressionIn   int64     `json:"impression_in" db:"impression_in"`
+	ImpressionIn   int64     `json:"impression_in_count" db:"impression_in_count"`
 	AdOutCount     int64     `json:"ad_out_count" db:"ad_out_count"`
 	DeliveredCount int64     `json:"delivered_count" db:"delivered_count"`
 	Earn           int64     `json:"earn" db:"earn"`

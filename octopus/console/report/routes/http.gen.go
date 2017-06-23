@@ -3,8 +3,8 @@
 package routes
 
 import (
+	"clickyab.com/exchange/octopus/console/user/routes"
 	"github.com/clickyab/services/framework"
-	"github.com/clickyab/services/framework/middleware"
 	"github.com/clickyab/services/framework/router"
 	"github.com/clickyab/services/initializer"
 	"github.com/rs/xhandler"
@@ -16,35 +16,37 @@ func (c *Controller) Routes(r *xmux.Mux, mountPoint string) {
 
 	groupMiddleware := []framework.Middleware{}
 
-	group := r.NewGroup(mountPoint + "/user")
+	group := r.NewGroup(mountPoint + "/report")
 
 	/* Route {
-		"Route": "/login",
-		"Method": "POST",
-		"Function": "Controller.login",
+		"Route": "/demand/:from/:to",
+		"Method": "GET",
+		"Function": "Controller.demand",
 		"RoutePkg": "routes",
-		"RouteMiddleware": null,
+		"RouteMiddleware": [
+			"routes.Authenticate"
+		],
 		"RouteFuncMiddleware": "",
 		"RecType": "Controller",
 		"RecName": "c",
-		"Payload": "loginPayload",
+		"Payload": "",
 		"Resource": "",
 		"Scope": ""
 	} with key 0 */
-	m0 := append(groupMiddleware, []framework.Middleware{}...)
+	m0 := append(groupMiddleware, []framework.Middleware{
+		routes.Authenticate,
+	}...)
 
-	// Make sure payload is the last middleware
-	m0 = append(m0, middleware.PayloadUnMarshallerGenerator(loginPayload{}))
-	group.POST("/login", xhandler.HandlerFuncC(framework.Mix(c.login, m0...)))
+	group.GET("/demand/:from/:to", xhandler.HandlerFuncC(framework.Mix(c.demand, m0...)))
 	// End route with key 0
 
 	/* Route {
-		"Route": "/logout",
+		"Route": "/exchange/:from/:to",
 		"Method": "GET",
-		"Function": "Controller.logout",
+		"Function": "Controller.exchange",
 		"RoutePkg": "routes",
 		"RouteMiddleware": [
-			"Authenticate"
+			"routes.Authenticate"
 		],
 		"RouteFuncMiddleware": "",
 		"RecType": "Controller",
@@ -54,30 +56,32 @@ func (c *Controller) Routes(r *xmux.Mux, mountPoint string) {
 		"Scope": ""
 	} with key 1 */
 	m1 := append(groupMiddleware, []framework.Middleware{
-		Authenticate,
+		routes.Authenticate,
 	}...)
 
-	group.GET("/logout", xhandler.HandlerFuncC(framework.Mix(c.logout, m1...)))
+	group.GET("/exchange/:from/:to", xhandler.HandlerFuncC(framework.Mix(c.exchange, m1...)))
 	// End route with key 1
 
 	/* Route {
-		"Route": "/register",
-		"Method": "POST",
-		"Function": "Controller.register",
+		"Route": "/supplier/:from/:to",
+		"Method": "GET",
+		"Function": "Controller.supplier",
 		"RoutePkg": "routes",
-		"RouteMiddleware": null,
+		"RouteMiddleware": [
+			"routes.Authenticate"
+		],
 		"RouteFuncMiddleware": "",
 		"RecType": "Controller",
 		"RecName": "c",
-		"Payload": "registrationPayload",
+		"Payload": "",
 		"Resource": "",
 		"Scope": ""
 	} with key 2 */
-	m2 := append(groupMiddleware, []framework.Middleware{}...)
+	m2 := append(groupMiddleware, []framework.Middleware{
+		routes.Authenticate,
+	}...)
 
-	// Make sure payload is the last middleware
-	m2 = append(m2, middleware.PayloadUnMarshallerGenerator(registrationPayload{}))
-	group.POST("/register", xhandler.HandlerFuncC(framework.Mix(c.register, m2...)))
+	group.GET("/supplier/:from/:to", xhandler.HandlerFuncC(framework.Mix(c.supplier, m2...)))
 	// End route with key 2
 
 	initializer.DoInitialize(c)

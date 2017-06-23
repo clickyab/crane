@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"clickyab.com/exchange/octopus/console/user/aaa"
 	"github.com/clickyab/services/assert"
 )
 
@@ -232,4 +233,86 @@ func timePartial(isFirst bool, from time.Time, to time.Time) (res string) {
 		res += fmt.Sprintf(` BETWEEN "%s" AND "%s"`, f, e)
 	}
 	return
+}
+
+// FillDemandReport demand report
+func (m *Manager) FillDemandReport(p, c int, sort, order string, from, to int64, user *aaa.User) ([]DemandReport, int64) {
+	var res []DemandReport
+	var params []interface{}
+	limit := c
+	offset := (p - 1) * c
+	params = append(params, from, to)
+	countQuery := fmt.Sprintf("SELECT COUNT(dr.id) FROM %s AS dr "+
+		"INNER JOIN %s AS d ON d.name=dr.demand WHERE dr.target_date BETWEEN ? AND ? ", DemandReportTableName, "demands")
+	query := fmt.Sprintf("SELECT dr.* FROM %s AS dr "+
+		"INNER JOIN %s AS d ON d.name=dr.demand WHERE dr.target_date BETWEEN ? AND ? ", DemandReportTableName, "demands")
+	//check user perm
+	if user.UserType != aaa.AdminUserType {
+		countQuery += "AND d.user_id = ? "
+		query += "AND d.user_id = ? "
+		params = append(params, user.ID)
+	}
+	if sort != "" {
+		query += fmt.Sprintf("ORDER BY %s %s ", sort, order)
+	}
+	query += fmt.Sprintf("LIMIT %d OFFSET %d ", limit, offset)
+	count, err := m.GetRDbMap().SelectInt(countQuery, params...)
+	assert.Nil(err)
+
+	_, err = m.GetRDbMap().Select(&res, query, params...)
+	assert.Nil(err)
+	return res, count
+}
+
+// FillSupplierReport supplier report
+func (m *Manager) FillSupplierReport(p, c int, sort, order string, from, to int64, user *aaa.User) ([]SupplierReporter, int64) {
+	var res []SupplierReporter
+	var params []interface{}
+	limit := c
+	offset := (p - 1) * c
+	params = append(params, from, to)
+	countQuery := fmt.Sprintf("SELECT COUNT(sr.id) FROM %s AS sr "+
+		"INNER JOIN %s AS s ON s.name=sr.supplier WHERE sr.target_date BETWEEN ? AND ? ", SupplierReportTableName, "suppliers")
+	query := fmt.Sprintf("SELECT sr.* FROM %s AS sr "+
+		"INNER JOIN %s AS s ON s.name=sr.supplier WHERE sr.target_date BETWEEN ? AND ? ", SupplierReportTableName, "suppliers")
+	//check user perm
+	if user.UserType != aaa.AdminUserType {
+		countQuery += "AND s.user_id = ? "
+		query += "AND s.user_id = ? "
+		params = append(params, user.ID)
+	}
+	if sort != "" {
+		query += fmt.Sprintf("ORDER BY %s %s ", sort, order)
+	}
+	query += fmt.Sprintf("LIMIT %d OFFSET %d ", limit, offset)
+	count, err := m.GetRDbMap().SelectInt(countQuery, params...)
+	assert.Nil(err)
+
+	_, err = m.GetRDbMap().Select(&res, query, params...)
+	assert.Nil(err)
+	return res, count
+}
+
+// FillExchangeReport exchange report
+func (m *Manager) FillExchangeReport(p, c int, sort, order string, from, to int64, user *aaa.User) ([]ExchangeReport, int64) {
+	var res []ExchangeReport
+	var params []interface{}
+	limit := c
+	offset := (p - 1) * c
+	params = append(params, from, to)
+	countQuery := fmt.Sprintf("SELECT COUNT(er.id) FROM %s AS er "+
+		"WHERE er.target_date BETWEEN ? AND ? ", ExchangeReportTableName)
+	query := fmt.Sprintf("SELECT er.* FROM %s AS er "+
+		"WHERE er.target_date BETWEEN ? AND ? ", ExchangeReportTableName)
+
+	if sort != "" {
+		query += fmt.Sprintf("ORDER BY %s %s ", sort, order)
+	}
+	query += fmt.Sprintf("LIMIT %d OFFSET %d ", limit, offset)
+	count, err := m.GetRDbMap().SelectInt(countQuery, params...)
+	assert.Nil(err)
+
+	_, err = m.GetRDbMap().Select(&res, query, params...)
+	assert.Nil(err)
+	return res, count
 }
