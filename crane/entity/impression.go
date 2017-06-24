@@ -11,8 +11,8 @@ type ImpressionAttributes string
 // Impression is the single impression object
 type Impression interface {
 	Request() *http.Request
-	// MegaIMP return the random id of this imp object
-	MegaIMP() string
+	// TrackID return the random id of this imp object
+	TrackID() string
 	// ClientID is the key to identify client
 	ClientID() int64
 	// IP return the client ip

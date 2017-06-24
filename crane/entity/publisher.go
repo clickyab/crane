@@ -1,10 +1,5 @@
 package entity
 
-type (
-	// PublisherAttributes is the publisher attributes
-	PublisherAttributes string
-)
-
 const (
 	// PublisherTypeApp is the app
 	PublisherTypeApp = 1
@@ -26,8 +21,6 @@ const (
 
 // Publisher is the publisher interface
 type Publisher interface {
-	// GetID return the publisher id
-	ID() int64
 	// FloorCPM is the floor cpm for publisher
 	FloorCPM() int64
 	// SoftFloorCPM is the soft version of floor cpm. if the publisher ahs it, then the system
@@ -35,20 +28,16 @@ type Publisher interface {
 	SoftFloorCPM() int64
 	// Name of publisher
 	Name() string
-	// Active is the publisher active?
-	Active() bool
 	// Type return the publisher type
 	AcceptedTarget() Target
 	// Attributes is the generic attribute system
-	Attributes(PublisherAttributes) interface{}
+	Attributes() map[string]interface{}
 	// BIDType return this publisher bid type
 	BIDType() BIDType
 	// MinCPC is the minimum CPC requested for this requests
 	MinCPC() int64
 	// AcceptedTypes is the type accepted by this impression
 	AcceptedTypes() []AdType
-	// Is this publisher accept under floor ads or not ?
-	UnderFloor() bool
-	// Supplier return the crane object for this publisher
-	Supplier() Supplier
+	// Supplier return the exchange object for this publisher
+	Supplier() string
 }
