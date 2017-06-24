@@ -45,16 +45,18 @@ var (
 package {{ .PackageName }}
 // AUTO GENERATED CODE. DO NOT EDIT!
 import (
-	"gopkg.in/labstack/echo.v3"
 	"gopkg.in/go-playground/validator.v9"
+	"github.com/clickyab/services/framework/middleware"
+	"context"
+	"net/http"
 )
 	{{ range $m := .Data }}
-	func ({{ $m.Rec }} *{{ $m.Type }}) Validate(ctx echo.Context ) error {
+	func ({{ $m.Rec }} *{{ $m.Type }}) Validate(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 		err := func(in interface{}) error {
 			if v, ok := in.(interface {
-				ValidateExtra(echo.Context) error
+				ValidateExtra(ctx context.Context, w http.ResponseWriter, r *http.Request) error
 			}); ok {
-				return v.ValidateExtra(ctx)
+				return v.ValidateExtra(ctx, w, r)
 			}
 			return nil
 		}({{ $m.Rec }})
@@ -65,7 +67,7 @@ import (
 		if errs == nil {
 			return nil
 		}
-		res := middlewares.GroupError{}
+		res := middleware.GroupError{}
 		for _, i := range errs.(validator.ValidationErrors) {
 			switch i.Field() { {{ range $f := $m.Map }}
 				case "{{ $f.Name }}":
