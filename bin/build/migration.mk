@@ -1,5 +1,5 @@
 tools-migrate: migration
-	$(BUILD) clickyab.com/exchange/commands/migration
+	$(BUILD) clickyab.com/crane/commands/migration
 
 octopus_migup: tools-migrate
 	$(BIN)/migration -action=up -app=octopus

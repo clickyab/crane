@@ -10,7 +10,7 @@ import (
 	"github.com/clickyab/services/initializer"
 	"github.com/clickyab/services/ip2location"
 
-	"clickyab.com/exchange/commands"
+	"clickyab.com/crane/commands"
 	"github.com/Sirupsen/logrus"
 	"github.com/clickyab/services/shell"
 )

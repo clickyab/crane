@@ -1,4 +1,4 @@
-export APPNAME=exchange
+export APPNAME=crane
 export DEFAULT_PASS=bita123
 export GO=$(shell which go)
 export NODE=$(shell which nodejs)

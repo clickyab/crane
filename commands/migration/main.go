@@ -14,7 +14,7 @@ import (
 	"github.com/clickyab/services/mysql"
 	_ "github.com/clickyab/services/mysql/connection/mysql"
 
-	"clickyab.com/exchange/commands"
+	"clickyab.com/crane/commands"
 	"github.com/Sirupsen/logrus"
 	"github.com/rubenv/sql-migrate"
 )
