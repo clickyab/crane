@@ -1,6 +1,6 @@
 package filter
 
-import "clickyab.com/exchange/crane/entity"
+import "clickyab.com/crane/crane/entity"
 
 // PublisherWhiteList check if the publisher is in white list of this or not
 func PublisherWhiteList(impression entity.Impression, ad entity.Advertise) bool {

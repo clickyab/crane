@@ -5,7 +5,7 @@ TARGET=${1:-test}
 
 OLD_ROOT="$(readlink -f $(dirname ${BASH_SOURCE[0]})/../)"
 GOPATH="$(mktemp -d)"
-ROOT="${GOPATH}/src/clickyab.com/exchange"
+ROOT="${GOPATH}/src/clickyab.com/crane"
 mkdir -p ${ROOT}
 
 cp -R ${OLD_ROOT}/* ${ROOT}

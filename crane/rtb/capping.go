@@ -12,7 +12,7 @@ import (
 
 	"github.com/clickyab/services/assert"
 
-	"clickyab.com/exchange/crane/entity"
+	"clickyab.com/crane/crane/entity"
 )
 
 const (

@@ -3,7 +3,7 @@ package rtb
 import (
 	"context"
 
-	"clickyab.com/exchange/crane/entity"
+	"clickyab.com/crane/crane/entity"
 	"github.com/clickyab/services/store"
 )
 

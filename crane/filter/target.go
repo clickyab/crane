@@ -1,6 +1,6 @@
 package filter
 
-import "clickyab.com/exchange/crane/entity"
+import "clickyab.com/crane/crane/entity"
 
 // Target if the campaign target and imp target is ok
 func Target(imp entity.Impression, ad entity.Advertise) bool {

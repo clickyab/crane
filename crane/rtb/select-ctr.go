@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"clickyab.com/exchange/crane/entity"
+	"clickyab.com/crane/crane/entity"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/eav"
 	"github.com/clickyab/services/store"

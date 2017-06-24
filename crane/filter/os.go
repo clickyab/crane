@@ -1,7 +1,7 @@
 package filter
 
 import (
-	"clickyab.com/exchange/crane/entity"
+	"clickyab.com/crane/crane/entity"
 )
 
 // OS check for os matched in filters

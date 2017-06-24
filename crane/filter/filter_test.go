@@ -5,9 +5,9 @@ import (
 	"testing"
 	"time"
 
-	"clickyab.com/exchange/crane/entity"
+	"clickyab.com/crane/crane/entity"
 
-	"clickyab.com/exchange/crane/entity/mock_entity"
+	"clickyab.com/crane/crane/entity/mock_entity"
 
 	"github.com/golang/mock/gomock"
 	. "github.com/smartystreets/goconvey/convey"

@@ -14,3 +14,4 @@ npm-debug.log
 statics/
 contrib/*.BIN
 contrib/*.BIN.md5
+contrib/*.BIN.gz

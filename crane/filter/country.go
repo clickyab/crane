@@ -1,7 +1,7 @@
 package filter
 
 import (
-	"clickyab.com/exchange/crane/entity"
+	"clickyab.com/crane/crane/entity"
 )
 
 // Country check if the ad country is matched or not

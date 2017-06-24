@@ -3,7 +3,7 @@ package reducer
 import (
 	"context"
 
-	"clickyab.com/exchange/crane/entity"
+	"clickyab.com/crane/crane/entity"
 )
 
 var videoSize = []int{3, 4, 9, 16, 14}

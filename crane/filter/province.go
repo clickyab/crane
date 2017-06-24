@@ -1,7 +1,7 @@
 package filter
 
 import (
-	"clickyab.com/exchange/crane/entity"
+	"clickyab.com/crane/crane/entity"
 )
 
 // Province check if the ad accept this province or not

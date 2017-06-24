@@ -1,8 +1,8 @@
 package filter
 
 import (
-	"clickyab.com/exchange/crane/entity"
-	"clickyab.com/exchange/crane/reducer"
+	"clickyab.com/crane/crane/entity"
+	"clickyab.com/crane/crane/reducer"
 )
 
 var (

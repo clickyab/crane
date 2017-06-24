@@ -1,6 +1,6 @@
 package filter
 
-import "clickyab.com/exchange/crane/entity"
+import "clickyab.com/crane/crane/entity"
 
 func hasInt64(slice []int64, elem int64) bool {
 	for i := range slice {

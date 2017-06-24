@@ -49,6 +49,6 @@ type Publisher interface {
 	AcceptedTypes() []AdType
 	// Is this publisher accept under floor ads or not ?
 	UnderFloor() bool
-	// Supplier return the exchange object for this publisher
+	// Supplier return the crane object for this publisher
 	Supplier() Supplier
 }
