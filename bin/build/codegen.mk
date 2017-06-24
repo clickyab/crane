@@ -1,11 +1,4 @@
 tools-codegen:
-	$(BUILD) clickyab.com/exchange/commands/codegen
+	$(BUILD) clickyab.com/crane/commands/codegen
 
-octopus-user: tools-codegen
-	$(BIN)/codegen -p clickyab.com/exchange/octopus/console/user/aaa
-	$(BIN)/codegen -p clickyab.com/exchange/octopus/console/user/routes
-
-octopus-report: tools-codegen
-	$(BIN)/codegen -p clickyab.com/exchange/octopus/console/report/routes
-
-codegen: ip2location migration octopus-user
+codegen: ip2location migration
