@@ -12,6 +12,8 @@ const (
 	AdTypeVideo AdType = "video"
 	// AdTypeHTML is the html ad type
 	AdTypeHTML AdType = "html"
+	// AdTypeNative is the native ad type
+	AdTypeNative AdType = "native"
 )
 
 // Advertise is the single advertise interface
@@ -48,4 +50,8 @@ type Advertise interface {
 	Attributes() map[string]interface{}
 	// Duplicate is a hackish function to handle the duplicate of interface
 	Duplicate() Advertise
+	// Media asd
+	Media() string
+	// TargetURL asd
+	TargetURL() string
 }
