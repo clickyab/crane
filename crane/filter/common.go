@@ -2,19 +2,7 @@ package filter
 
 import "clickyab.com/crane/crane/entity"
 
-func hasInt64(slice []int64, elem int64) bool {
-	for i := range slice {
-		if slice[i] == elem {
-			return true
-		}
-	}
-	return false
-}
-
-func hasInt(slice []int, elem int) bool {
-	if len(slice) == 0 {
-		return false
-	}
+func hasString(slice []string, elem string) bool {
 	for i := range slice {
 		if slice[i] == elem {
 			return true

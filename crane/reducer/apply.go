@@ -2,11 +2,10 @@ package reducer
 
 import (
 	"context"
+	"fmt"
 
 	"clickyab.com/crane/crane/entity"
 )
-
-var videoSize = []int{3, 4, 9, 16, 14}
 
 // FilterFunc is the type use to filter the
 type FilterFunc func(entity.Impression, entity.Advertise) bool
@@ -38,23 +37,19 @@ func checkCtx(d <-chan struct{}) bool {
 
 // Apply get the data and then call filter on each of them concurrently, the
 // result is the accepted items
-func Apply(ctx context.Context, imp entity.Impression, ads []entity.Advertise, ff FilterFunc) map[int][]entity.Advertise {
+func Apply(ctx context.Context, imp entity.Impression, ads []entity.Advertise, ff FilterFunc) map[string][]entity.Advertise {
 	d := ctx.Done()
-	m := make(map[int][]entity.Advertise)
+	m := make(map[string][]entity.Advertise)
 	for i := range ads {
 		if !checkCtx(d) {
 			break
 		}
 		if ff(imp, ads[i]) {
-			n := ads[i].Copy()
+			n := ads[i].Duplicate()
 			n.SetWinnerBID(0)
-			if n.Type() == entity.AdTypeVideo {
-				for _, j := range videoSize {
-					m[j] = append(m[j], n)
-				}
-			} else {
-				m[ads[i].Size()] = append(m[ads[i].Size()], n)
-			}
+			// TODO : There is a problem here. if the size is allowed in more other size then what?
+			key := fmt.Sprintf("%dx%d", ads[i].Width(), ads[i].Height())
+			m[key] = append(m[key], n)
 		}
 	}
 	return m

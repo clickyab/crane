@@ -76,7 +76,7 @@ func getCappingKey(copID int64) string {
 	)
 }
 
-func getCapping(ctx context.Context, clientID int64, ads map[int][]entity.Advertise, slots []entity.Slot) map[int][]entity.Advertise {
+func getCapping(ctx context.Context, clientID int64, ads map[string][]entity.Advertise, slots []entity.Slot) map[string][]entity.Advertise {
 	kiwi := eav.NewEavStore(getCappingKey(clientID))
 	go func() {
 		c := ctx.Done()
@@ -90,7 +90,7 @@ func getCapping(ctx context.Context, clientID int64, ads map[int][]entity.Advert
 	caps := kiwi.AllKeys()
 	capsInt := make(map[string]int64)
 	for s := range slots {
-		size := slots[s].Size()
+		size := fmt.Sprintf("%dx%d", slots[s].Width(), slots[s].Height())
 		// First check for ads one by one
 		for a := range ads[size] {
 			capKey := fmt.Sprintf("%s_%d", adCapKey, ads[size][a].ID())

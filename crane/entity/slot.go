@@ -2,6 +2,7 @@ package entity
 
 // Slot is the slot of the app
 type Slot interface {
+	ID() string
 	// TrackID of slot
 	TrackID() string
 	// Width return the primary size of this slot
@@ -20,4 +21,6 @@ type Slot interface {
 	SetShowURL(string)
 	// ShowURL get the show url usable for async calls
 	ShowURL() string
+	// IsSizeAllowed return true if the size is allowed in this slot
+	IsSizeAllowed(int, int) bool
 }

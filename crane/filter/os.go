@@ -1,18 +1,16 @@
 package filter
 
-import (
-	"clickyab.com/crane/crane/entity"
-)
+import "clickyab.com/crane/crane/entity"
 
 // OS check for os matched in filters
 func OS(impression entity.Impression, advertise entity.Advertise) bool {
-	blacklist := advertise.AllowedOS()
+	blacklist := advertise.Campaign().AllowedOS()
 	if len(blacklist) == 0 {
 		// No os is blacklisted, so pass it
 		return true
 	}
 
-	elem := impression.OS().ID
+	elem := impression.OS().Name
 
-	return hasInt64(blacklist, elem)
+	return hasString(blacklist, elem)
 }
