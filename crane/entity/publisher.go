@@ -26,6 +26,8 @@ type Publisher interface {
 	// SoftFloorCPM is the soft version of floor cpm. if the publisher ahs it, then the system
 	// try to use this as floor, but if this is not available, the FloorCPM is used
 	SoftFloorCPM() int64
+	// UnderFloor return if the publisher allow under floor or not
+	UnderFloor() bool
 	// Name of publisher
 	Name() string
 	// Type return the publisher type
