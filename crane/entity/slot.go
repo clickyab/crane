@@ -23,4 +23,6 @@ type Slot interface {
 	ShowURL() string
 	// IsSizeAllowed return true if the size is allowed in this slot
 	IsSizeAllowed(int, int) bool
+	// Attribute return meta data for slot
+	Attribute() map[string]interface{}
 }
