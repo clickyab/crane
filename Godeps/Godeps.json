@@ -293,6 +293,14 @@
 			"Rev": "8dd4211afb5d08dbb39a533b9bb9e4b486351df6"
 		},
 		{
+			"ImportPath": "github.com/rs/vast",
+			"Rev": "5cacdef9ff8ff27c26430511d05ae8342ae8e6a6"
+		},
+		{
+			"ImportPath": "github.com/rs/vmap",
+			"Rev": "0ea602459e7677460656619507890f48c5abce9c"
+		},
+		{
 			"ImportPath": "github.com/rs/xhandler",
 			"Comment": "v.11-2-gfe78910",
 			"Rev": "fe789104c7f474ee779e6d39c745f15c6a950dc2"
