@@ -13,6 +13,8 @@ func Target(imp entity.Impression, ad entity.Advertise) bool {
 		r = int(entity.TargetVast)
 	case entity.TargetWeb:
 		r = int(entity.TargetWeb)
+	case entity.TargetNative:
+		r = int(entity.TargetNative)
 	}
 
 	for _, i := range ad.Campaign().Target() {

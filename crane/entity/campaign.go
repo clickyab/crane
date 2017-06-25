@@ -10,6 +10,8 @@ const (
 	TargetApp
 	// TargetVast is the vast target
 	TargetVast
+	// TargetNative is the native platform
+	TargetNative
 )
 
 // Campaign is the single campaign in ssytem
@@ -24,4 +26,26 @@ type Campaign interface {
 	Frequency() int
 	// Target return the target of this campaign
 	Target() []Target
+	//BlackListPublisher shows publishers in blacklist
+	BlackListPublisher() []string
+	//BlackListPublisher shows publishers in blacklist
+	WhiteListPublisher() []string
+	//AllowedOS return os blacklist of a campaign
+	AllowedOS() []string
+	//Country return country
+	Country() []string
+	// Province returns province ID
+	Province() []string
+	//LanLon return LanLon and radius to accept ad
+	LanLon() (float64, float64, int)
+	// Category return the category of this campaign
+	Category() []Category
+	// Attributes return the ad specific attributes
+	Attributes() map[string]interface{}
+}
+
+// IsSizeAllowed return if the size is allowed in target type or not
+func (t Target) IsSizeAllowed(w, h int) bool {
+	// TODO : Write the entire body
+	return true
 }

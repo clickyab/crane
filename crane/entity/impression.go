@@ -25,10 +25,10 @@ type Impression interface {
 	Location() Location
 	// OS the os of requester if available
 	OS() OS
-	// Attributes is the generic attribute system
-	Attributes(ImpressionAttributes) interface{}
 	// Slots is the slot for this request
 	Slots() []Slot
 	// Category returns category obviously
 	Category() []Category
+	// Attributes return the impression specific attributes
+	Attributes() map[string]interface{}
 }

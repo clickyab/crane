@@ -58,10 +58,10 @@ func (s resultStore) getData(pub entity.Publisher) (ef entity.SortByCap, floor i
 }
 
 func createMegaStore(imp entity.Impression) eav.Kiwi {
-	kiwi := eav.NewEavStore(Mega + imp.MegaIMP())
+	kiwi := eav.NewEavStore(Mega + imp.TrackID())
 	assert.Nil(kiwi.SetSubKey(MegaIP, imp.IP().String()).
 		SetSubKey(MegaUserAgent, imp.UserAgent()).
-		SetSubKey(MegaPubID, fmt.Sprint(imp.Source().ID())).
+		SetSubKey(MegaPubID, imp.Source().Name()).
 		SetSubKey(MegaTimeUnix, fmt.Sprint(time.Now().Unix())).
 		Save(megaImpressionTTL.Duration()))
 	return kiwi
@@ -72,7 +72,7 @@ func selectCTR(
 	pCtx context.Context,
 	store store.Interface,
 	imp entity.Impression,
-	ads map[int][]entity.Advertise,
+	ads map[string][]entity.Advertise,
 	ch chan map[string]entity.Advertise,
 ) {
 
@@ -90,7 +90,7 @@ func selectCTR(
 	wg := sync.WaitGroup{}
 	for i := range slots {
 		var (
-			size    = slots[i].Size()
+			size    = fmt.Sprintf("%dx%d", slots[i].Width(), slots[i].Height())
 			noVideo bool
 		)
 
@@ -101,7 +101,7 @@ func selectCTR(
 
 		if len(ef) == 0 {
 			// TODO : Warnings
-			store.Push(slots[i].StateID(), "", time.Hour)
+			store.Push(slots[i].TrackID(), "", time.Hour)
 			continue
 		}
 
@@ -128,14 +128,14 @@ func selectCTR(
 		}
 
 		kiwi.SetSubKey(fmt.Sprintf("%s_%d", MegaAdvertise, sorted[0].ID()), fmt.Sprint(sorted[0].WinnerBID()))
-		kiwi.SetSubKey(fmt.Sprintf("%s_%d", MegaSlot, sorted[0].ID()), fmt.Sprint(slots[i].ID()))
+		kiwi.SetSubKey(fmt.Sprintf("%s_%d", MegaSlot, sorted[0].ID()), slots[i].ID())
 		assert.Nil(kiwi.Save(megaImpressionTTL.Duration()))
 
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			ch <- map[string]entity.Advertise{slots[i].StateID(): sorted[0]}
-			store.Push(slots[i].StateID(), fmt.Sprint(sorted[0].ID()), time.Hour)
+			ch <- map[string]entity.Advertise{slots[i].TrackID(): sorted[0]}
+			store.Push(slots[i].TrackID(), fmt.Sprint(sorted[0].ID()), time.Hour)
 		}()
 	}
 
