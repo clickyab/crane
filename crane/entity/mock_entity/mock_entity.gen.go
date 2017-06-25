@@ -296,6 +296,18 @@ func (_mr *MockAdvertiseMockRecorder) ID() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "ID")
 }
 
+// Media mocks base method
+func (_m *MockAdvertise) Media() string {
+	ret := _m.ctrl.Call(_m, "Media")
+	ret0, _ := ret[0].(string)
+	return ret0
+}
+
+// Media indicates an expected call of Media
+func (_mr *MockAdvertiseMockRecorder) Media() *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "Media")
+}
+
 // SetCPM mocks base method
 func (_m *MockAdvertise) SetCPM(_param0 int64) {
 	_m.ctrl.Call(_m, "SetCPM", _param0)
@@ -334,6 +346,18 @@ func (_m *MockAdvertise) SetWinnerBID(_param0 int64) {
 // SetWinnerBID indicates an expected call of SetWinnerBID
 func (_mr *MockAdvertiseMockRecorder) SetWinnerBID(arg0 interface{}) *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "SetWinnerBID", arg0)
+}
+
+// TargetURL mocks base method
+func (_m *MockAdvertise) TargetURL() string {
+	ret := _m.ctrl.Call(_m, "TargetURL")
+	ret0, _ := ret[0].(string)
+	return ret0
+}
+
+// TargetURL indicates an expected call of TargetURL
+func (_mr *MockAdvertiseMockRecorder) TargetURL() *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "TargetURL")
 }
 
 // Type mocks base method
@@ -778,6 +802,30 @@ func (_m *MockSlot) EXPECT() *MockSlotMockRecorder {
 	return _m.recorder
 }
 
+// Advertise mocks base method
+func (_m *MockSlot) Advertise() entity.Advertise {
+	ret := _m.ctrl.Call(_m, "Advertise")
+	ret0, _ := ret[0].(entity.Advertise)
+	return ret0
+}
+
+// Advertise indicates an expected call of Advertise
+func (_mr *MockSlotMockRecorder) Advertise() *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "Advertise")
+}
+
+// Attribute mocks base method
+func (_m *MockSlot) Attribute() map[string]interface{} {
+	ret := _m.ctrl.Call(_m, "Attribute")
+	ret0, _ := ret[0].(map[string]interface{})
+	return ret0
+}
+
+// Attribute indicates an expected call of Attribute
+func (_mr *MockSlotMockRecorder) Attribute() *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "Attribute")
+}
+
 // Height mocks base method
 func (_m *MockSlot) Height() int {
 	ret := _m.ctrl.Call(_m, "Height")
@@ -812,6 +860,16 @@ func (_m *MockSlot) IsSizeAllowed(_param0 int, _param1 int) bool {
 // IsSizeAllowed indicates an expected call of IsSizeAllowed
 func (_mr *MockSlotMockRecorder) IsSizeAllowed(arg0, arg1 interface{}) *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "IsSizeAllowed", arg0, arg1)
+}
+
+// SetAdvertise mocks base method
+func (_m *MockSlot) SetAdvertise(_param0 entity.Advertise) {
+	_m.ctrl.Call(_m, "SetAdvertise", _param0)
+}
+
+// SetAdvertise indicates an expected call of SetAdvertise
+func (_mr *MockSlotMockRecorder) SetAdvertise(arg0 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "SetAdvertise", arg0)
 }
 
 // SetShowURL mocks base method

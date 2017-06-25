@@ -20,8 +20,10 @@ type nativeAd struct {
 	Corners string
 	Image   string
 	Title   string
-	URL     string
-	Site    string
+	// Tracking URL: E.g. native.clickyab.com/?id=3452345
+	URL string
+	// Destination URL: E.g. example.com
+	Site string
 }
 
 func renderNative(imp nativeContainer) string {
