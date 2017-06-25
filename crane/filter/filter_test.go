@@ -9,6 +9,7 @@ import (
 
 	"clickyab.com/crane/crane/entity/mock_entity"
 
+	"github.com/clickyab/services/random"
 	"github.com/golang/mock/gomock"
 	. "github.com/smartystreets/goconvey/convey"
 )
@@ -19,18 +20,24 @@ func TestFilter(t *testing.T) {
 	defer ctrl.Finish()
 
 	Convey("filters test", t, func() {
-
+		clickyabAd := mock_entity.NewMockAdvertise(ctrl)
+		impression := mock_entity.NewMockImpression(ctrl)
+		campaign := mock_entity.NewMockCampaign(ctrl)
+		clickyabAd.EXPECT().Campaign().Return(campaign).AnyTimes()
 		Convey("blacklist filter test", func() {
 			Convey("Publisher blackList filter", func() {
 
 				Convey("if it was in black list", func() {
-					i := rand.Int63()
+					i := <-random.ID
 					mockClickyabAd := mock_entity.NewMockAdvertise(ctrl)
 					mockImpression := mock_entity.NewMockImpression(ctrl)
 					mockPublisher := mock_entity.NewMockPublisher(ctrl)
-					mockPublisher.EXPECT().ID().Return(i)
+					mockCampaign := mock_entity.NewMockCampaign(ctrl)
+					mockCampaign.EXPECT().BlackListPublisher().Return([]string{i, "one", "two"})
+					mockPublisher.EXPECT().Name().Return(i)
 					mockImpression.EXPECT().Source().Return(mockPublisher)
-					mockClickyabAd.EXPECT().BlackListPublisher().Return([]int64{i, 3, 250})
+					mockClickyabAd.EXPECT().Campaign().Return(mockCampaign)
+
 					So(PublisherBlackList(mockImpression, mockClickyabAd), ShouldBeFalse)
 				})
 
@@ -38,15 +45,19 @@ func TestFilter(t *testing.T) {
 					mockClickyabAd := mock_entity.NewMockAdvertise(ctrl)
 					mockImpression := mock_entity.NewMockImpression(ctrl)
 					mockPublisher := mock_entity.NewMockPublisher(ctrl)
-					mockPublisher.EXPECT().ID().Return(int64(10))
+					mockCampaign := mock_entity.NewMockCampaign(ctrl)
+					mockCampaign.EXPECT().BlackListPublisher().Return([]string{"one", "two"})
+					mockClickyabAd.EXPECT().Campaign().Return(mockCampaign)
+					mockPublisher.EXPECT().Name().Return(<-random.ID)
 					mockImpression.EXPECT().Source().Return(mockPublisher)
-					mockClickyabAd.EXPECT().BlackListPublisher().Return([]int64{12, 20})
 					So(PublisherBlackList(mockImpression, mockClickyabAd), ShouldBeTrue)
 				})
 
 				Convey("if ad's blacklist is empty", func() {
 					mockClickyabAd := mock_entity.NewMockAdvertise(ctrl)
-					mockClickyabAd.EXPECT().BlackListPublisher().Return([]int64{})
+					mockCampaign := mock_entity.NewMockCampaign(ctrl)
+					mockCampaign.EXPECT().BlackListPublisher().Return([]string{})
+					mockClickyabAd.EXPECT().Campaign().Return(mockCampaign)
 					So(PublisherBlackList(nil, mockClickyabAd), ShouldBeTrue)
 				})
 
@@ -128,172 +139,109 @@ func TestFilter(t *testing.T) {
 		})
 
 		Convey("whitelist filter test", func() {
-			Convey("Publisher whitelist filter", func() {
-
-				Convey("if it was in white list ", func() {
-					i := rand.Int63()
-					mockClickyabAd := mock_entity.NewMockAdvertise(ctrl)
-					mockImpression := mock_entity.NewMockImpression(ctrl)
-					mockPublisher := mock_entity.NewMockPublisher(ctrl)
-					mockPublisher.EXPECT().ID().Return(i)
-					mockImpression.EXPECT().Source().Return(mockPublisher)
-					mockClickyabAd.EXPECT().WhiteListPublisher().Return([]int64{i, 10, 100})
-					So(PublisherWhiteList(mockImpression, mockClickyabAd), ShouldBeTrue)
-				})
-
-				Convey("if it wasn't in white list ", func() {
-					i := rand.Int63()
-					mockClickyabAd := mock_entity.NewMockAdvertise(ctrl)
-					mockImpression := mock_entity.NewMockImpression(ctrl)
-					mockPublisher := mock_entity.NewMockPublisher(ctrl)
-					mockPublisher.EXPECT().ID().Return(i)
-					mockImpression.EXPECT().Source().Return(mockPublisher)
-					mockClickyabAd.EXPECT().WhiteListPublisher().Return([]int64{i})
-					So(PublisherWhiteList(mockImpression, mockClickyabAd), ShouldBeTrue)
-				})
-
-				Convey("if ad's blacklist is empty", func() {
-					mockClickyabAd := mock_entity.NewMockAdvertise(ctrl)
-					mockClickyabAd.EXPECT().WhiteListPublisher().Return([]int64{})
-					So(PublisherWhiteList(nil, mockClickyabAd), ShouldBeTrue)
-				})
-
-			})
+			//Convey("Publisher whitelist filter", func() {
+			//
+			//	Convey("if it was in white list ", func() {
+			//		id := <-random.ID
+			//		mockClickyabAd := mock_entity.NewMockAdvertise(ctrl)
+			//		mockImpression := mock_entity.NewMockImpression(ctrl)
+			//		mockPublisher := mock_entity.NewMockPublisher(ctrl)
+			//		mockCampaign := mock_entity.NewMockCampaign(ctrl)
+			//		mockCampaign.EXPECT().WhiteListPublisher().Return([]string{id, "one", "two"})
+			//		mockPublisher.EXPECT().Name().Return(id)
+			//		mockImpression.EXPECT().Source().Return(mockPublisher)
+			//		So(PublisherWhiteList(mockImpression, mockClickyabAd), ShouldBeTrue)
+			//	})
+			//
+			//	Convey("if it wasn't in white list ", func() {
+			//		id := <-random.ID
+			//		mockClickyabAd := mock_entity.NewMockAdvertise(ctrl)
+			//		mockImpression := mock_entity.NewMockImpression(ctrl)
+			//		mockPublisher := mock_entity.NewMockPublisher(ctrl)
+			//		mockCampaign := mock_entity.NewMockCampaign(ctrl)
+			//		mockCampaign.EXPECT().WhiteListPublisher().Return([]string{})
+			//		mockClickyabAd.EXPECT().Campaign().Return(mockCampaign)
+			//		mockPublisher.EXPECT().Name().Return(id)
+			//		mockImpression.EXPECT().Source().Return(mockPublisher)
+			//		So(PublisherWhiteList(mockImpression, mockClickyabAd), ShouldBeTrue)
+			//	})
+			//
+			//	Convey("if ad's blacklist is empty", func() {
+			//
+			//		mockClickyabAd := mock_entity.NewMockAdvertise(ctrl)
+			//		mockCampaign := mock_entity.NewMockCampaign(ctrl)
+			//		mockClickyabAd.EXPECT().Campaign().Return(mockCampaign)
+			//		mockCampaign.EXPECT().WhiteListPublisher().Return([]string{})
+			//		So(PublisherWhiteList(nil, mockClickyabAd), ShouldBeTrue)
+			//	})
+			//
+			//})
 
 			Convey("Web Category White List ", func() {
 
 				Convey("if it wasnt web type ", func() {
-					mockClickyabAd := mock_entity.NewMockAdvertise(ctrl)
-					mockImpression := mock_entity.NewMockImpression(ctrl)
-					mockClickyabAd.EXPECT().Category().Return([]entity.Category{"ads"})
-					mockImpression.EXPECT().Category().Return([]entity.Category{"sport", "news"})
-					So(Category(mockImpression, mockClickyabAd), ShouldBeFalse)
+
+					campaign.EXPECT().Category().Return([]entity.Category{"ads"})
+					impression.EXPECT().Category().Return([]entity.Category{"sport", "news"})
+					So(Category(impression, clickyabAd), ShouldBeFalse)
 				})
 
 				Convey("if it was in whitelist", func() {
-					mockClickyabAd := mock_entity.NewMockAdvertise(ctrl)
-					mockImpression := mock_entity.NewMockImpression(ctrl)
-					mockClickyabAd.EXPECT().Category().Return([]entity.Category{"sport"})
-					mockImpression.EXPECT().Category().Return([]entity.Category{"sport", "news"})
-					So(Category(mockImpression, mockClickyabAd), ShouldBeTrue)
+					campaign.EXPECT().Category().Return([]entity.Category{"sport"})
+					impression.EXPECT().Category().Return([]entity.Category{"sport", "news"})
+					So(Category(impression, clickyabAd), ShouldBeTrue)
 				})
 
 				Convey("if it didnt match all whitelist", func() {
-					mockClickyabAd := mock_entity.NewMockAdvertise(ctrl)
-					mockImpression := mock_entity.NewMockImpression(ctrl)
-					mockClickyabAd.EXPECT().Category().Return([]entity.Category{"weather", "news"})
-					mockImpression.EXPECT().Category().Return([]entity.Category{"sport", "news"})
-					So(Category(mockImpression, mockClickyabAd), ShouldBeTrue)
+					campaign.EXPECT().Category().Return([]entity.Category{"weather", "news"})
+					impression.EXPECT().Category().Return([]entity.Category{"sport", "news"})
+					So(Category(impression, clickyabAd), ShouldBeTrue)
 				})
 
 				Convey("if impression cat is empty whitelist", func() {
-					mockClickyabAd := mock_entity.NewMockAdvertise(ctrl)
-					mockImpression := mock_entity.NewMockImpression(ctrl)
-					mockClickyabAd.EXPECT().Category().Return([]entity.Category{"weather", "news"})
-					mockImpression.EXPECT().Category().Return([]entity.Category{})
-					So(Category(mockImpression, mockClickyabAd), ShouldBeFalse)
+					campaign.EXPECT().Category().Return([]entity.Category{"weather", "news"})
+					impression.EXPECT().Category().Return([]entity.Category{})
+					So(Category(impression, clickyabAd), ShouldBeFalse)
 				})
-			})
-
-			Convey("Size white list", func() {
-
-				Convey("if is not in type", func() {
-					mockClickyabAd := mock_entity.NewMockAdvertise(ctrl)
-					mockImpression := mock_entity.NewMockImpression(ctrl)
-					mockPublisher := mock_entity.NewMockPublisher(ctrl)
-					mockPublisher.EXPECT().AcceptedTarget().Return(entity.TargetApp)
-					mockImpression.EXPECT().Source().Return(mockPublisher)
-					So(createSizeFilter(entity.TargetVast)(mockImpression, mockClickyabAd), ShouldBeTrue)
-				})
-
-				Convey("if is type & in size", func() {
-					i := rand.Int()
-					mockClickyabAd := mock_entity.NewMockAdvertise(ctrl)
-					mockImpression := mock_entity.NewMockImpression(ctrl)
-					mockSlot := mock_entity.NewMockSlot(ctrl)
-					mockPublisher := mock_entity.NewMockPublisher(ctrl)
-					mockSlot.EXPECT().AllowedSize().Return([]int{i, i + 1, i + 2})
-					mockClickyabAd.EXPECT().Size().Return(i)
-					mockImpression.EXPECT().Slots().Return([]entity.Slot{mockSlot})
-					mockPublisher.EXPECT().AcceptedTarget().Return(entity.TargetVast)
-					mockImpression.EXPECT().Source().Return(mockPublisher)
-					So(createSizeFilter(entity.TargetVast)(mockImpression, mockClickyabAd), ShouldBeTrue)
-				})
-
-				Convey("if is not in size", func() {
-					i := rand.Int()
-					mockClickyabAd := mock_entity.NewMockAdvertise(ctrl)
-					mockImpression := mock_entity.NewMockImpression(ctrl)
-					mockSlot := mock_entity.NewMockSlot(ctrl)
-					mockPublisher := mock_entity.NewMockPublisher(ctrl)
-					mockSlot.EXPECT().AllowedSize().Return([]int{i, i + 1, i + 2})
-					mockClickyabAd.EXPECT().Size().Return(i + i + 1)
-					mockImpression.EXPECT().Slots().Return([]entity.Slot{mockSlot})
-					mockPublisher.EXPECT().AcceptedTarget().Return(entity.TargetVast)
-					mockImpression.EXPECT().Source().Return(mockPublisher)
-					So(createSizeFilter(entity.TargetVast)(mockImpression, mockClickyabAd), ShouldBeFalse)
-				})
-
-				Convey("if slot allowed size is empty", func() {
-					i := rand.Int()
-					mockClickyabAd := mock_entity.NewMockAdvertise(ctrl)
-					mockImpression := mock_entity.NewMockImpression(ctrl)
-					mockSlot := mock_entity.NewMockSlot(ctrl)
-					mockPublisher := mock_entity.NewMockPublisher(ctrl)
-					mockSlot.EXPECT().AllowedSize().Return([]int{})
-					mockClickyabAd.EXPECT().Size().Return(i + i + 1)
-					mockImpression.EXPECT().Slots().Return([]entity.Slot{mockSlot})
-					mockPublisher.EXPECT().AcceptedTarget().Return(entity.TargetVast)
-					mockImpression.EXPECT().Source().Return(mockPublisher)
-					So(createSizeFilter(entity.TargetVast)(mockImpression, mockClickyabAd), ShouldBeFalse)
-				})
-
 			})
 
 			Convey("Country white list", func() {
-
 				Convey("if country empty", func() {
-					mockClickyabAd := mock_entity.NewMockAdvertise(ctrl)
-					mockImpression := mock_entity.NewMockImpression(ctrl)
-					mockClickyabAd.EXPECT().Country().Return([]int64{})
-					So(Country(mockImpression, mockClickyabAd), ShouldBeTrue)
+					campaign.EXPECT().Country().Return([]string{})
+					So(Country(impression, clickyabAd), ShouldBeTrue)
 				})
 
 				Convey("if country ID matched", func() {
 					sampleCountry := entity.Country{
 						Valid: true,
-						ID:    int64(2),
 						Name:  "ali",
 						ISO:   "iran",
 					}
-					clickadmock := mock_entity.NewMockAdvertise(ctrl)
-					clickadmock.EXPECT().Country().Return([]int64{2})
+					campaign.EXPECT().Country().Return([]string{"ali"})
 
-					locationmock := mock_entity.NewMockLocation(ctrl)
-					locationmock.EXPECT().Country().Return(sampleCountry)
+					location := mock_entity.NewMockLocation(ctrl)
+					location.EXPECT().Country().Return(sampleCountry)
 
 					imprmock := mock_entity.NewMockImpression(ctrl)
-					imprmock.EXPECT().Location().Return(locationmock)
+					imprmock.EXPECT().Location().Return(location)
 
-					So(Country(imprmock, clickadmock), ShouldBeTrue)
+					So(Country(imprmock, clickyabAd), ShouldBeTrue)
 				})
 
 				Convey("if country isn't valid", func() {
 					sampleCountry := entity.Country{
 						Valid: false,
-						ID:    int64(2),
 						Name:  "ali",
 						ISO:   "iran",
 					}
-					clickadmock := mock_entity.NewMockAdvertise(ctrl)
-					clickadmock.EXPECT().Country().Return([]int64{3})
+					campaign.EXPECT().Country().Return([]string{""})
 
 					locationmock := mock_entity.NewMockLocation(ctrl)
 					locationmock.EXPECT().Country().Return(sampleCountry)
 
 					imprmock := mock_entity.NewMockImpression(ctrl)
 					imprmock.EXPECT().Location().Return(locationmock)
-					So(Country(imprmock, clickadmock), ShouldBeFalse)
+					So(Country(imprmock, clickyabAd), ShouldBeFalse)
 				})
 			})
 
@@ -302,93 +250,83 @@ func TestFilter(t *testing.T) {
 				Convey("if Province ID doesn't matched", func() {
 					sampleProvince := entity.Province{
 						Valid: true,
-						ID:    int64(3),
 						Name:  "ali",
 					}
-					clickadmock := mock_entity.NewMockAdvertise(ctrl)
-					clickadmock.EXPECT().Province().Return([]int64{2})
+					campaign.EXPECT().Province().Return([]string{""})
 
 					locationmock := mock_entity.NewMockLocation(ctrl)
 					locationmock.EXPECT().Province().Return(sampleProvince)
 
 					imprmock := mock_entity.NewMockImpression(ctrl)
 					imprmock.EXPECT().Location().Return(locationmock)
-					So(Province(imprmock, clickadmock), ShouldBeFalse)
+					So(Province(imprmock, clickyabAd), ShouldBeFalse)
 				})
 
 				Convey("if Province ID matched", func() {
 					sampleProvince := entity.Province{
 						Valid: true,
-						ID:    int64(2),
 						Name:  "ali",
 					}
-					clickadmock := mock_entity.NewMockAdvertise(ctrl)
-					clickadmock.EXPECT().Province().Return([]int64{2})
+					campaign.EXPECT().Province().Return([]string{"ali"})
 
 					locationmock := mock_entity.NewMockLocation(ctrl)
 					locationmock.EXPECT().Province().Return(sampleProvince)
 
 					imprmock := mock_entity.NewMockImpression(ctrl)
 					imprmock.EXPECT().Location().Return(locationmock)
-					So(Province(imprmock, clickadmock), ShouldBeTrue)
+					So(Province(imprmock, clickyabAd), ShouldBeTrue)
+
 				})
 
 				Convey("if Province isn't valid", func() {
 					sampleProvince := entity.Province{
 						Valid: false,
-						ID:    int64(2),
 						Name:  "ali",
 					}
-					clickadmock := mock_entity.NewMockAdvertise(ctrl)
-					clickadmock.EXPECT().Province().Return([]int64{3})
+					campaign.EXPECT().Province().Return([]string{""})
 
 					locationmock := mock_entity.NewMockLocation(ctrl)
 					locationmock.EXPECT().Province().Return(sampleProvince)
 
 					imprmock := mock_entity.NewMockImpression(ctrl)
 					imprmock.EXPECT().Location().Return(locationmock)
-					So(Province(imprmock, clickadmock), ShouldBeFalse)
+					So(Province(imprmock, clickyabAd), ShouldBeFalse)
 				})
 
 				Convey("if Province is empty", func() {
-					clickadmock := mock_entity.NewMockAdvertise(ctrl)
-					clickadmock.EXPECT().Province().Return([]int64{})
-					So(Province(nil, clickadmock), ShouldBeTrue)
+					campaign.EXPECT().Province().Return([]string{})
+					So(Province(nil, clickyabAd), ShouldBeTrue)
 				})
 			})
 
 			Convey("OS white list", func() {
 				osMock := entity.OS{
-					ID:     1,
 					Mobile: false,
 					Valid:  true,
 					Name:   "android",
 				}
 
 				Convey("if is in white list", func() {
-					click := mock_entity.NewMockAdvertise(ctrl)
-					click.EXPECT().AllowedOS().Return([]int64{1, 2, 3})
+					campaign.EXPECT().AllowedOS().Return([]string{})
 
 					imp := mock_entity.NewMockImpression(ctrl)
-					imp.EXPECT().OS().Return(osMock)
+					imp.EXPECT().OS().Return(osMock).AnyTimes()
 
-					So(OS(imp, click), ShouldBeTrue)
+					So(OS(imp, clickyabAd), ShouldBeTrue)
 
 				})
 				Convey("if is not in white list", func() {
-					click := mock_entity.NewMockAdvertise(ctrl)
-					click.EXPECT().AllowedOS().Return([]int64{2, 3})
+					campaign.EXPECT().AllowedOS().Return([]string{"ios"})
 
 					imp := mock_entity.NewMockImpression(ctrl)
-					imp.EXPECT().OS().Return(osMock)
-					So(OS(imp, click), ShouldBeFalse)
+					imp.EXPECT().OS().Return(osMock).AnyTimes()
+					So(OS(imp, clickyabAd), ShouldBeFalse)
 
 				})
 
 				Convey("if allowed os type is empty", func() {
-					click := mock_entity.NewMockAdvertise(ctrl)
-					click.EXPECT().AllowedOS().Return([]int64{})
-					So(OS(nil, click), ShouldBeTrue)
+					campaign.EXPECT().AllowedOS().Return([]string{}).AnyTimes()
+					So(OS(nil, clickyabAd), ShouldBeTrue)
 
 				})
 			})
