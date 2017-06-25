@@ -3,7 +3,6 @@ package entity
 // Country is the country object
 type Country struct {
 	Valid bool
-	ID    int64
 	Name  string
 	ISO   string
 }
@@ -11,7 +10,6 @@ type Country struct {
 // Province of the request
 type Province struct {
 	Valid bool
-	ID    int64
 	Name  string
 }
 

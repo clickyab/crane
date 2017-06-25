@@ -6,7 +6,7 @@ import (
 
 // Province check if the ad accept this province or not
 func Province(impression entity.Impression, ad entity.Advertise) bool {
-	elem := ad.Province()
+	elem := ad.Campaign().Province()
 	if len(elem) == 0 {
 		// ad has no province attach to it
 		return true
@@ -17,5 +17,5 @@ func Province(impression entity.Impression, ad entity.Advertise) bool {
 		return false
 	}
 
-	return hasInt64(elem, province.ID)
+	return hasString(elem, province.Name)
 }

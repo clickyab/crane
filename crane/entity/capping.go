@@ -26,7 +26,7 @@ func (a SortByCap) Swap(i, j int) {
 
 // Less return if the index i is less then index j?
 func (a SortByCap) Less(i, j int) bool {
-	// This is a multisort function.
+	// This is a multi-sort function.
 	iCP := a[i].Capping().View() / a[i].Capping().Frequency()
 	jCP := a[j].Capping().View() / a[j].Capping().Frequency()
 	if iCP != jCP {

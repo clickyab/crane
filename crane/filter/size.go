@@ -21,7 +21,7 @@ func createSizeFilter(t entity.Target) reducer.FilterFunc {
 			return true
 		}
 		for _, i := range impression.Slots() {
-			if hasInt(i.AllowedSize(), advertise.Size()) {
+			if t.IsSizeAllowed(advertise.Width(), advertise.Height()) && i.IsSizeAllowed(advertise.Width(), advertise.Height()) {
 				return true
 			}
 		}

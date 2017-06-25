@@ -23,6 +23,15 @@ func hasInt(slice []int, elem int) bool {
 	return false
 }
 
+func hasString(slice []string, elem string) bool {
+	for i := range slice {
+		if slice[i] == elem {
+			return true
+		}
+	}
+	return false
+}
+
 // hasCategory check for atleast one category to match. one is ok.
 func hasCategory(impCat []entity.Category, adCat []entity.Category) bool {
 	for _, i := range adCat {
