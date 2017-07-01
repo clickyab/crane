@@ -2,7 +2,6 @@ package entity
 
 // Slot is the slot of the app
 type Slot interface {
-	ID() string
 	// TrackID of slot
 	TrackID() string
 	// Width return the primary size of this slot
@@ -25,8 +24,4 @@ type Slot interface {
 	IsSizeAllowed(int, int) bool
 	// Attribute return meta data for slot
 	Attribute() map[string]interface{}
-	// SetAdvertise will set ad to slot
-	SetAdvertise(a Advertise)
-	// Advertise returns ad
-	Advertise() Advertise
 }

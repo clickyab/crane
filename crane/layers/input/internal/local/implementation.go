@@ -1,138 +1,172 @@
 package local
 
-import "clickyab.com/crane/crane/entity"
+import (
+	"clickyab.com/crane/crane/entity"
+	"github.com/Sirupsen/logrus"
+	"github.com/clickyab/services/assert"
+	"github.com/clickyab/services/config"
+)
 
-// Country Country
-func (*Location) Country() entity.Country {
-	panic("implement me")
+var originalUnderFloor = config.RegisterBoolean("crane.input.rest.under_floor", false, "its used when publisher's underfloor isn't set")
+
+const acceptedTarget string = "accepted_target"
+
+// FloorCPM is publisher's cpm floor
+// @required FFloorCPM
+func (rp *Publisher) FloorCPM() int64 {
+	return rp.FFloorCPM
 }
 
-// Province Province
-func (*Location) Province() entity.Province {
-	panic("implement me")
+// SoftFloorCPM is publisher soft floor cpm
+// @required FSoftFloorCPM
+func (rp *Publisher) SoftFloorCPM() int64 {
+	return rp.FSoftFloorCPM
 }
 
-// LatLon LatLon
-func (*Location) LatLon() entity.LatLon {
-	panic("implement me")
+// UnderFloor is publisher underfloor
+func (rp *Publisher) UnderFloor() bool {
+	if rp.UnderFloor == nil {
+		return originalUnderFloor.Bool()
+	}
+	return *rp.FUnderFloor
 }
 
-// FloorCPM FloorCPM
-func (*Publisher) FloorCPM() int64 {
-	panic("implement me")
+// Name is publisher name
+// @required FName
+func (rp *Publisher) Name() string {
+	return rp.FName
 }
 
-// SoftFloorCPM SoftFloorCPM
-func (*Publisher) SoftFloorCPM() int64 {
-	panic("implement me")
+// AcceptedTarget is publisher's target (web, vast, app, native)
+func (rp *Publisher) AcceptedTarget() entity.Target {
+	t, ok := rp.FAttributes[acceptedTarget].(entity.Target)
+	if !ok {
+		return entity.TargetInvalid
+	}
+
+	return t
 }
 
-// UnderFloor UnderFloor
-func (*Publisher) UnderFloor() bool {
-	panic("implement me")
+// Attributes is publisher's Attributes
+func (rp *Publisher) Attributes() map[string]interface{} {
+	return rp.FAttributes
 }
 
-// Name Name
-func (*Publisher) Name() string {
-	panic("implement me")
+// BIDType is publisher's bid type, rest is cpm
+func (rp *Publisher) BIDType() entity.BIDType {
+	return entity.BIDTypeCPM
 }
 
-// AcceptedTarget AcceptedTarget
-func (*Publisher) AcceptedTarget() entity.Target {
-	panic("implement me")
+// MinCPC is publisher's minimum cpc
+func (rp *Publisher) MinCPC() int64 {
+	logrus.Panic("rest type shouldn't have minCPC")
+	return 0
 }
 
-// Attributes Attributes
-func (*Publisher) Attributes() map[string]interface{} {
-	panic("implement me")
+// AcceptedTypes is publisher's accepted types (dyn, banner, video, html, native)
+func (rp *Publisher) AcceptedTypes() []entity.AdType {
+	at, ok := rp.FAttributes["accepted_types"].([]entity.AdType)
+	if !ok {
+		return nil
+	}
+
+	return at
 }
 
-// BIDType BIDType
-func (*Publisher) BIDType() entity.BIDType {
-	panic("implement me")
+// Supplier is publisher's supplier
+// @required FSupplier
+func (rp *Publisher) Supplier() string {
+	return rp.FSupplier
 }
 
-// MinCPC MinCPC
-func (*Publisher) MinCPC() int64 {
-	panic("implement me")
+// Country is  country
+func (rl *Location) Country() entity.Country {
+	c := rl.FCountry
+	return entity.Country{
+		Valid: c.Valid,
+		Name:  c.Name,
+		ISO:   c.ISO,
+	}
 }
 
-// AcceptedTypes AcceptedTypes
-func (*Publisher) AcceptedTypes() []entity.AdType {
-	panic("implement me")
+// Province is request's Province
+func (rl *Location) Province() entity.Province {
+	p := rl.FProvince
+	return entity.Province{
+		Name:  p.Name,
+		Valid: p.Valid,
+	}
 }
 
-// Supplier Supplier
-func (*Publisher) Supplier() string {
-	panic("implement me")
+// LatLon is request's LatLon
+func (rl *Location) LatLon() entity.LatLon {
+	l := rl.FLatLon
+	return entity.LatLon{
+		Valid: l.Valid,
+		Lon:   l.Lon,
+		Lat:   l.Lat,
+	}
 }
 
-// ID ID
-func (*Slot) ID() string {
-	panic("implement me")
+// TrackID is slot's random trackID
+func (rs *Slot) TrackID() string {
+	return rs.FTrackID
 }
 
-// TrackID TrackID
-func (*Slot) TrackID() string {
-	panic("implement me")
+// Width is slot's width
+// @required slot's Width
+func (rs *Slot) Width() int {
+	return rs.FWidth
 }
 
-// Width Width
-func (*Slot) Width() int {
-	panic("implement me")
+// Height is slot's Height
+// @required FHeight
+func (rs *Slot) Height() int {
+	return rs.FHeight
 }
 
-// Height Height
-func (*Slot) Height() int {
-	panic("implement me")
+// SlotCTR is slot's ctr
+func (rs *Slot) SlotCTR() float64 {
+	return rs.slotCTR
 }
 
-// SetSlotCTR SetSlotCTR
-func (*Slot) SetSlotCTR(float64) {
-	panic("implement me")
+// SetSlotCTR set's slot's ctr
+func (rs *Slot) SetSlotCTR(ctr float64) {
+	rs.slotCTR = ctr
 }
 
-// SlotCTR SlotCTR
-func (*Slot) SlotCTR() float64 {
-	panic("implement me")
+// SetWinnerAdvertise Sets slot's Winner Advertise
+func (rs *Slot) SetWinnerAdvertise(ad entity.Advertise) {
+	rs.winnerAd = ad
 }
 
-// SetWinnerAdvertise SetWinnerAdvertise
-func (*Slot) SetWinnerAdvertise(entity.Advertise) {
-	panic("implement me")
+// WinnerAdvertise gets slot's Winner Advertise
+func (rs *Slot) WinnerAdvertise() entity.Advertise {
+	ad, ok := rs.winnerAd.(entity.Advertise)
+	assert.True(ok)
+	return ad
 }
 
-// WinnerAdvertise WinnerAdvertise
-func (*Slot) WinnerAdvertise() entity.Advertise {
-	panic("implement me")
+// SetShowURL set slot's show url
+func (rs *Slot) SetShowURL(url string) {
+	rs.showURL = url
 }
 
-// SetShowURL SetShowURL
-func (*Slot) SetShowURL(string) {
-	panic("implement me")
+// ShowURL returns showURL, the url' response is and html rendered ad
+func (rs *Slot) ShowURL() string {
+	return rs.showURL
 }
 
-// ShowURL ShowURL
-func (*Slot) ShowURL() string {
-	panic("implement me")
+// IsSizeAllowed says if its allowed by owner size
+func (rs *Slot) IsSizeAllowed(width, height int) bool {
+	w, h := rs.FWidth, rs.FHeight
+	if w == width && h == height {
+		return true
+	}
+	return false
 }
 
-// IsSizeAllowed IsSizeAllowed
-func (*Slot) IsSizeAllowed(int, int) bool {
-	panic("implement me")
-}
-
-// Attribute Attribute
-func (*Slot) Attribute() map[string]interface{} {
-	panic("implement me")
-}
-
-// SetAdvertise SetAdvertise
-func (*Slot) SetAdvertise(a entity.Advertise) {
-	panic("implement me")
-}
-
-// Advertise Advertise
-func (*Slot) Advertise() entity.Advertise {
-	panic("implement me")
+// Attribute slots attribute
+func (rs Slot) Attribute() map[string]interface{} {
+	return rs.attribute
 }

@@ -30,7 +30,7 @@ type Publisher interface {
 	UnderFloor() bool
 	// Name of publisher
 	Name() string
-	// Type return the publisher type
+	// AcceptedTarget return the publisher type
 	AcceptedTarget() Target
 	// Attributes is the generic attribute system
 	Attributes() map[string]interface{}
