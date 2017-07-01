@@ -14,7 +14,7 @@ type Impression interface {
 	// TrackID return the random id of this imp object
 	TrackID() string
 	// ClientID is the key to identify client
-	ClientID() int64
+	ClientID() string
 	// IP return the client ip
 	IP() net.IP
 	// UserAgent return the client user agent
