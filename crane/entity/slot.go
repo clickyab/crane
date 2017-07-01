@@ -21,6 +21,10 @@ type Slot interface {
 	SetShowURL(string)
 	// ShowURL get the show url usable for async calls
 	ShowURL() string
+	// SetClickURL set internal system url for our logic and after redirect to TargetURL Advertise
+	SetClickURL() string
+	// ClickURL is internal system url for our logic and after redirect to TargetURL Advertise
+	ClickURL() string
 	// IsSizeAllowed return true if the size is allowed in this slot
 	IsSizeAllowed(int, int) bool
 	// Attribute return meta data for slot

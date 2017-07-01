@@ -1,5 +1,7 @@
 package entity
 
+import "net/url"
+
 // AdType is the type supported by ads
 type AdType string
 
@@ -44,6 +46,10 @@ type Advertise interface {
 	Capping() Capping
 	// SetCapping set the current capping
 	SetCapping(Capping)
+	// Media advertise such as image,gif,video,...
+	Media() string
+	// TargetURL end of show ad redirect to this URL
+	TargetURL() url.URL
 	// Attributes return the ad specific attributes
 	Attributes() map[string]interface{}
 	// Duplicate is a hackish function to handle the duplicate of interface
