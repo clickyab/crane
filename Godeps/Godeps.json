@@ -352,6 +352,10 @@
 			"Rev": "dfe15e36048539f4cda41f240b27a5ca25b9cd46"
 		},
 		{
+			"ImportPath": "github.com/ua-parser/uap-go/uaparser",
+			"Rev": "e0b1fe757c944e839263af90b3c74b76d816558e"
+		},
+		{
 			"ImportPath": "golang.org/x/crypto/bcrypt",
 			"Rev": "7e9105388ebff089b3f99f0ef676ea55a6da3a7e"
 		},
