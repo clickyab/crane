@@ -62,18 +62,18 @@ func (i *imp) Attributes() map[string]interface{} {
 func (i *imp) extractData() {
 	d := ip2location.IP2Location(i.FIP.String())
 	i.FLocation = &local.Location{
-		TheCountry: entity.Country{
+		FCountry: entity.Country{
 			Name:  d.CountryLong,
 			ISO:   d.CountryShort,
 			Valid: d.CountryLong != "-",
 		},
 
-		TheProvince: entity.Province{
+		FProvince: entity.Province{
 			Valid: d.Region != "-",
 			Name:  d.Region,
 		},
 
-		TheLatLon: i.latlon,
+		FLatLon: i.latlon,
 	}
 
 }

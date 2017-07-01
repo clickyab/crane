@@ -128,7 +128,7 @@ func selectCTR(
 		}
 
 		kiwi.SetSubKey(fmt.Sprintf("%s_%d", MegaAdvertise, sorted[0].ID()), fmt.Sprint(sorted[0].WinnerBID()))
-		kiwi.SetSubKey(fmt.Sprintf("%s_%d", MegaSlot, sorted[0].ID()), slots[i].ID())
+		kiwi.SetSubKey(fmt.Sprintf("%s_%d", MegaSlot, sorted[0].ID()), slots[i].TrackID())
 		assert.Nil(kiwi.Save(megaImpressionTTL.Duration()))
 
 		wg.Add(1)
