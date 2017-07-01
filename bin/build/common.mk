@@ -3,3 +3,6 @@ needroot :
 
 notroot :
 	@[ "$(shell id -u)" != "0" ] || exit 1
+
+rebase:
+	git pull origin master --rebase
