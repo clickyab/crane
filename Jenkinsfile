@@ -1,6 +1,7 @@
 node {
     stage('Prepare') {
         checkout scm
+        sh "make rebase"
         sh "make prepare"
     }
     stage('Build') {
