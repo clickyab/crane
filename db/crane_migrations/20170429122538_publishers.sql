@@ -10,19 +10,14 @@ create table publishers
   soft_floor_cpm int null,
   name varchar(60) not null,
   bid_type tinyint not null,
-  under_floor bit default b'0' null,
-  platform tinyint not null,
-  active bit default b'1' not null,
+  under_floor ENUM('yes', 'no') NOT NULL,
+  platform ENUM('app', 'web', 'vast') NOT NULL,
+  active ENUM('yes', 'no') NOT NULL,
   created_at timestamp default CURRENT_TIMESTAMP not null,
   updated_at timestamp default CURRENT_TIMESTAMP not null,
-  constraint publishers_users_id_fk
-    foreign key (user_id) references users (id)
-)
-;
-
-create index publishers_users_id_fk
-  on publishers (user_id)
-;
+  CONSTRAINT publisher_user_id_fk FOREIGN KEY (user_id) REFERENCES users (id)
+);
+CREATE INDEX publisher_user_uindex ON publishers (user_id);
 
 -- +migrate Down
 -- SQL section 'Down' is executed when this migration is rolled back
