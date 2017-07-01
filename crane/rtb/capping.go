@@ -67,16 +67,16 @@ func (c *capping) Selected() bool {
 	return c.selected
 }
 
-func getCappingKey(copID int64) string {
+func getCappingKey(copID string) string {
 	return fmt.Sprintf(
-		"%s_%d_%s",
+		"%s_%s_%s",
 		userCapKey,
 		copID,
 		time.Now().Format("060102"),
 	)
 }
 
-func getCapping(ctx context.Context, clientID int64, ads map[string][]entity.Advertise, slots []entity.Slot) map[string][]entity.Advertise {
+func getCapping(ctx context.Context, clientID string, ads map[string][]entity.Advertise, slots []entity.Slot) map[string][]entity.Advertise {
 	kiwi := eav.NewEavStore(getCappingKey(clientID))
 	go func() {
 		c := ctx.Done()
