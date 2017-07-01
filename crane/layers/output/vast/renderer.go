@@ -66,6 +66,7 @@ func Renderer(impression entity.Impression, cp entity.ClickProvider) []byte {
 
 		ad := newAd(il)
 		vd := newVastData(*ad)
+
 		a, b := podMultipleAd.Bool(), redirection.Bool()
 		source := newAdSourceWithVastAdData(string(advertise.ID()), vd, &a, &b)
 		adBreak := newAdBreak(attribute.Offset, attribute.Duration, impression.TrackID(), string(attribute.BreakType), source, []vmap.Tracking{})
