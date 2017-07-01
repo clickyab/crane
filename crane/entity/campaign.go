@@ -14,7 +14,7 @@ const (
 	TargetNative
 )
 
-// Campaign is the single campaign in ssytem
+// Campaign is the single campaign in system
 type Campaign interface {
 	// ID return the campaign id
 	ID() int64
