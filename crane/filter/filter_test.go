@@ -35,7 +35,7 @@ func TestFilter(t *testing.T) {
 					mockCampaign := mock_entity.NewMockCampaign(ctrl)
 					mockCampaign.EXPECT().BlackListPublisher().Return([]string{i, "one", "two"})
 					mockPublisher.EXPECT().Name().Return(i)
-					mockImpression.EXPECT().Source().Return(mockPublisher)
+					mockImpression.EXPECT().Publisher().Return(mockPublisher)
 					mockClickyabAd.EXPECT().Campaign().Return(mockCampaign)
 
 					So(PublisherBlackList(mockImpression, mockClickyabAd), ShouldBeFalse)
@@ -49,7 +49,7 @@ func TestFilter(t *testing.T) {
 					mockCampaign.EXPECT().BlackListPublisher().Return([]string{"one", "two"})
 					mockClickyabAd.EXPECT().Campaign().Return(mockCampaign)
 					mockPublisher.EXPECT().Name().Return(<-random.ID)
-					mockImpression.EXPECT().Source().Return(mockPublisher)
+					mockImpression.EXPECT().Publisher().Return(mockPublisher)
 					So(PublisherBlackList(mockImpression, mockClickyabAd), ShouldBeTrue)
 				})
 
@@ -64,7 +64,7 @@ func TestFilter(t *testing.T) {
 			})
 			Convey("Target testing", func() {
 
-				Convey("impressions source type is app and matches ad type", func() {
+				Convey("impressions Publisher type is app and matches ad type", func() {
 					mockClickyabAd := mock_entity.NewMockAdvertise(ctrl)
 					mockImpression := mock_entity.NewMockImpression(ctrl)
 					mockPublisher := mock_entity.NewMockPublisher(ctrl)
@@ -72,11 +72,11 @@ func TestFilter(t *testing.T) {
 					mockCampaign.EXPECT().Target().Return([]entity.Target{entity.TargetApp, entity.TargetVast})
 					mockPublisher.EXPECT().AcceptedTarget().Return(entity.TargetApp)
 					mockClickyabAd.EXPECT().Campaign().Return(mockCampaign)
-					mockImpression.EXPECT().Source().Return(mockPublisher)
+					mockImpression.EXPECT().Publisher().Return(mockPublisher)
 					So(Target(mockImpression, mockClickyabAd), ShouldBeTrue)
 				})
 
-				Convey("impressions source type is web and matches ad type", func() {
+				Convey("impressions Publisher type is web and matches ad type", func() {
 					mockClickyabAd := mock_entity.NewMockAdvertise(ctrl)
 					mockImpression := mock_entity.NewMockImpression(ctrl)
 					mockPublisher := mock_entity.NewMockPublisher(ctrl)
@@ -84,11 +84,11 @@ func TestFilter(t *testing.T) {
 					mockCampaign.EXPECT().Target().Return([]entity.Target{entity.TargetWeb, entity.TargetVast})
 					mockPublisher.EXPECT().AcceptedTarget().Return(entity.TargetWeb)
 					mockClickyabAd.EXPECT().Campaign().Return(mockCampaign)
-					mockImpression.EXPECT().Source().Return(mockPublisher)
+					mockImpression.EXPECT().Publisher().Return(mockPublisher)
 					So(Target(mockImpression, mockClickyabAd), ShouldBeTrue)
 				})
 
-				Convey("impressions source type is vast and matches ad type", func() {
+				Convey("impressions Publisher type is vast and matches ad type", func() {
 					mockClickyabAd := mock_entity.NewMockAdvertise(ctrl)
 					mockImpression := mock_entity.NewMockImpression(ctrl)
 					mockPublisher := mock_entity.NewMockPublisher(ctrl)
@@ -96,11 +96,11 @@ func TestFilter(t *testing.T) {
 					mockCampaign.EXPECT().Target().Return([]entity.Target{entity.TargetVast, entity.TargetApp})
 					mockPublisher.EXPECT().AcceptedTarget().Return(entity.TargetVast)
 					mockClickyabAd.EXPECT().Campaign().Return(mockCampaign)
-					mockImpression.EXPECT().Source().Return(mockPublisher)
+					mockImpression.EXPECT().Publisher().Return(mockPublisher)
 					So(Target(mockImpression, mockClickyabAd), ShouldBeTrue)
 				})
 
-				Convey("impressions source type is app and doesn't match ad type", func() {
+				Convey("impressions Publisher type is app and doesn't match ad type", func() {
 					mockClickyabAd := mock_entity.NewMockAdvertise(ctrl)
 					mockImpression := mock_entity.NewMockImpression(ctrl)
 					mockPublisher := mock_entity.NewMockPublisher(ctrl)
@@ -108,11 +108,11 @@ func TestFilter(t *testing.T) {
 					mockCampaign.EXPECT().Target().Return([]entity.Target{entity.TargetWeb, entity.TargetVast})
 					mockPublisher.EXPECT().AcceptedTarget().Return(entity.TargetApp)
 					mockClickyabAd.EXPECT().Campaign().Return(mockCampaign)
-					mockImpression.EXPECT().Source().Return(mockPublisher)
+					mockImpression.EXPECT().Publisher().Return(mockPublisher)
 					So(Target(mockImpression, mockClickyabAd), ShouldBeFalse)
 				})
 
-				Convey("impressions source type is web and doesn't match ad type", func() {
+				Convey("impressions Publisher type is web and doesn't match ad type", func() {
 					mockClickyabAd := mock_entity.NewMockAdvertise(ctrl)
 					mockImpression := mock_entity.NewMockImpression(ctrl)
 					mockPublisher := mock_entity.NewMockPublisher(ctrl)
@@ -120,11 +120,11 @@ func TestFilter(t *testing.T) {
 					mockCampaign.EXPECT().Target().Return([]entity.Target{entity.TargetVast})
 					mockPublisher.EXPECT().AcceptedTarget().Return(entity.TargetWeb)
 					mockClickyabAd.EXPECT().Campaign().Return(mockCampaign)
-					mockImpression.EXPECT().Source().Return(mockPublisher)
+					mockImpression.EXPECT().Publisher().Return(mockPublisher)
 					So(Target(mockImpression, mockClickyabAd), ShouldBeFalse)
 				})
 
-				Convey("impressions source type is vast and doesn't match ad type", func() {
+				Convey("impressions Publisher type is vast and doesn't match ad type", func() {
 					mockClickyabAd := mock_entity.NewMockAdvertise(ctrl)
 					mockImpression := mock_entity.NewMockImpression(ctrl)
 					mockPublisher := mock_entity.NewMockPublisher(ctrl)
@@ -132,7 +132,7 @@ func TestFilter(t *testing.T) {
 					mockCampaign.EXPECT().Target().Return([]entity.Target{entity.TargetWeb, entity.TargetApp})
 					mockPublisher.EXPECT().AcceptedTarget().Return(entity.TargetVast)
 					mockClickyabAd.EXPECT().Campaign().Return(mockCampaign)
-					mockImpression.EXPECT().Source().Return(mockPublisher)
+					mockImpression.EXPECT().Publisher().Return(mockPublisher)
 					So(Target(mockImpression, mockClickyabAd), ShouldBeFalse)
 				})
 			})
@@ -149,7 +149,7 @@ func TestFilter(t *testing.T) {
 			//		mockCampaign := mock_entity.NewMockCampaign(ctrl)
 			//		mockCampaign.EXPECT().WhiteListPublisher().Return([]string{id, "one", "two"})
 			//		mockPublisher.EXPECT().Name().Return(id)
-			//		mockImpression.EXPECT().Source().Return(mockPublisher)
+			//		mockImpression.EXPECT().Publisher().Return(mockPublisher)
 			//		So(PublisherWhiteList(mockImpression, mockClickyabAd), ShouldBeTrue)
 			//	})
 			//
@@ -162,7 +162,7 @@ func TestFilter(t *testing.T) {
 			//		mockCampaign.EXPECT().WhiteListPublisher().Return([]string{})
 			//		mockClickyabAd.EXPECT().Campaign().Return(mockCampaign)
 			//		mockPublisher.EXPECT().Name().Return(id)
-			//		mockImpression.EXPECT().Source().Return(mockPublisher)
+			//		mockImpression.EXPECT().Publisher().Return(mockPublisher)
 			//		So(PublisherWhiteList(mockImpression, mockClickyabAd), ShouldBeTrue)
 			//	})
 			//

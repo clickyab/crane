@@ -19,8 +19,8 @@ type Impression interface {
 	IP() net.IP
 	// UserAgent return the client user agent
 	UserAgent() string
-	// Source return the publisher that this client is going into system from that
-	Source() Publisher
+	// Publisher return the publisher that this client is going into system from that
+	Publisher() Publisher
 	// Location of the request
 	Location() Location
 	// OS the os of requester if available
