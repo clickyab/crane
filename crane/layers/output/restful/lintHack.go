@@ -4,7 +4,7 @@ import "fmt"
 
 func init() {
 	if false {
-		parser(nil)
+		parse(nil, nil)
 		a := restAd{}
 		fetchLanding("asd")
 		fmt.Println(a)
