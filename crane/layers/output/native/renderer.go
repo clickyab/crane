@@ -8,10 +8,11 @@ import (
 	"clickyab.com/crane/crane/entity"
 )
 
-type Native struct {
+type renderer struct {
 }
 
-func (n *Native) Render(w io.Writer, imp entity.Impression, cl entity.ClickProvider) error {
+// Render write native template to writer
+func (n renderer) Render(w io.Writer, imp entity.Impression, cl entity.ClickProvider) error {
 
 	slots := make([]entity.Slot, 0)
 	for _, s := range imp.Slots() {
@@ -48,4 +49,9 @@ func (n *Native) Render(w io.Writer, imp entity.Impression, cl entity.ClickProvi
 	nc.Ads = nads
 	_, e := w.Write([]byte(renderNative(*nc)))
 	return e
+}
+
+// NewRenderer just fill Renderer interface
+func NewRenderer() entity.Renderer {
+	return renderer{}
 }
