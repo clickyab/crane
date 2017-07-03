@@ -28,6 +28,7 @@ type Location struct {
 
 // Slot Slot
 type Slot struct {
+	FID      string `json:"id"`
 	FWidth   int    `json:"width"`
 	FHeight  int    `json:"height"`
 	FTrackID string `json:"track_id"`

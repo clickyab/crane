@@ -108,6 +108,11 @@ func (rl *Location) LatLon() entity.LatLon {
 	}
 }
 
+// ID is slot's ID
+func (rs *Slot) ID() string {
+	return rs.FID
+}
+
 // TrackID is slot's random trackID
 func (rs *Slot) TrackID() string {
 	return rs.FTrackID
