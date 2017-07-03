@@ -85,9 +85,7 @@ func (v *data) parse(impression entity.Impression, cp entity.ClickProvider) {
 	v.data = b
 }
 
-// TODO: event handler is needed
-// maxbitrate havent implemented
-// one impression cuz no multiple vast ad
+// one impression cuzes no multiple vast ad
 func newInlineLinearAd(showURL, clickURL string, adtype adType, width, height int) *vast.InLine {
 	duration := vast.Duration(skipOffset.Duration())
 	return &vast.InLine{
