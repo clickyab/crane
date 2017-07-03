@@ -1,10 +1,9 @@
 package native
 
 import (
+	"errors"
 	"fmt"
 	"io"
-
-	"errors"
 
 	"clickyab.com/crane/crane/entity"
 )
