@@ -25,8 +25,4 @@ type Slot interface {
 	IsSizeAllowed(int, int) bool
 	// Attribute return meta data for slot
 	Attribute() map[string]interface{}
-	// SetAdvertise will set ad to slot
-	SetAdvertise(a Advertise)
-	// Advertise returns ad
-	Advertise() Advertise
 }

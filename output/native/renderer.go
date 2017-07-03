@@ -1,10 +1,9 @@
 package native
 
 import (
+	"errors"
 	"fmt"
 	"io"
-
-	"errors"
 
 	"clickyab.com/crane/crane/entity"
 )
@@ -16,7 +15,7 @@ func (n *Native) Render(w io.Writer, imp entity.Impression, cl entity.ClickProvi
 
 	slots := make([]entity.Slot, 0)
 	for _, s := range imp.Slots() {
-		if a := s.Advertise(); a != nil && a.Type() == entity.AdTypeNative {
+		if a := s.WinnerAdvertise(); a != nil && a.Type() == entity.AdTypeNative {
 			slots = append(slots, s)
 		}
 	}
@@ -34,15 +33,15 @@ func (n *Native) Render(w io.Writer, imp entity.Impression, cl entity.ClickProvi
 	nads := make([]nativeAd, 0)
 
 	for _, a := range slots {
-		v, ok := a.Advertise().Attributes()["title"].(string)
+		v, ok := a.WinnerAdvertise().Attributes()["title"].(string)
 		if !ok {
-			return fmt.Errorf("ad with ID %s does't have title in attributes", a.Advertise().ID())
+			return fmt.Errorf("ad with ID %s does't have title in attributes", a.WinnerAdvertise().ID())
 		}
 		nads = append(nads, nativeAd{
 			Title: v,
 			URL:   cl.ClickURL(a, imp),
-			Site:  a.Advertise().TargetURL(),
-			Image: a.Advertise().Media(),
+			Site:  a.WinnerAdvertise().TargetURL(),
+			Image: a.WinnerAdvertise().Media(),
 		})
 	}
 
