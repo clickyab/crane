@@ -5,8 +5,19 @@ import (
 
 	"encoding/json"
 
+	"fmt"
+
+	"time"
+
 	"clickyab.com/crane/crane/entity"
+	"github.com/Sirupsen/logrus"
 	"github.com/clickyab/services/assert"
+	"github.com/clickyab/services/eav"
+)
+
+const (
+	restSingleAdEavKey string = `RSA`
+	templateKey               = `template`
 )
 
 type restAd struct {
@@ -19,7 +30,7 @@ type restAd struct {
 	RSlotTrackID string `json:"slot_track_id"`
 }
 
-func parse(r *render, imp entity.Impression) error {
+func parse(r *render, imp entity.Impression, cp entity.ClickProvider) error {
 	slots := imp.Slots()
 	ads := []restAd{}
 
@@ -35,6 +46,15 @@ func parse(r *render, imp entity.Impression) error {
 			RLanding:     fetchLanding(slot.WinnerAdvertise().TargetURL()),
 			RSlotTrackID: slot.TrackID(),
 		}
+		go func() {
+			renderedAd, err := makeSingleAdData(slot.WinnerAdvertise(), imp, slot, cp)
+			if err != nil {
+				logrus.Debug("couldn't render ad")
+				return
+			}
+			key := fmt.Sprintf("%s_%s_%s", restSingleAdEavKey, imp.TrackID(), slot.TrackID())
+			eav.NewEavStore(key).SetSubKey(templateKey, renderedAd).Save(time.Hour * 24)
+		}()
 		ads = append(ads, ad)
 	}
 	coded, err := json.Marshal(ads)

@@ -12,11 +12,10 @@ type render struct {
 
 // need to register render{} somewhere
 func (r *render) Render(w io.Writer, imp entity.Impression, cp entity.ClickProvider) error {
-	err := parse(r, imp)
+	err := parse(r, imp, cp)
 	if err != nil {
 		return err
 	}
 	_, err = w.Write(r.data)
 	return err
-
 }
