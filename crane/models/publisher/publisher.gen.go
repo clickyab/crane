@@ -43,7 +43,7 @@ func (m *Manager) Initialize() {
 		PublisherTableFull,
 	).SetKeys(
 		true,
-		"IDd",
+		"FID",
 	)
 
 }

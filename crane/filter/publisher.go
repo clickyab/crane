@@ -11,7 +11,7 @@ func PublisherWhiteList(impression entity.Impression, ad entity.Advertise) bool 
 		return true
 	}
 
-	elem := impression.Source().Name()
+	elem := impression.Publisher().Name()
 	return hasString(blacklist, elem)
 }
 
@@ -24,6 +24,6 @@ func PublisherBlackList(impression entity.Impression, ad entity.Advertise) bool 
 		return true
 	}
 
-	elem := impression.Source().Name()
+	elem := impression.Publisher().Name()
 	return !hasString(blacklist, elem)
 }

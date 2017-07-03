@@ -58,9 +58,9 @@ func (_mr *MockImpressionMockRecorder) Category() *gomock.Call {
 }
 
 // ClientID mocks base method
-func (_m *MockImpression) ClientID() int64 {
+func (_m *MockImpression) ClientID() string {
 	ret := _m.ctrl.Call(_m, "ClientID")
-	ret0, _ := ret[0].(int64)
+	ret0, _ := ret[0].(string)
 	return ret0
 }
 
@@ -105,6 +105,18 @@ func (_mr *MockImpressionMockRecorder) OS() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "OS")
 }
 
+// Publisher mocks base method
+func (_m *MockImpression) Publisher() entity.Publisher {
+	ret := _m.ctrl.Call(_m, "Publisher")
+	ret0, _ := ret[0].(entity.Publisher)
+	return ret0
+}
+
+// Publisher indicates an expected call of Publisher
+func (_mr *MockImpressionMockRecorder) Publisher() *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "Publisher")
+}
+
 // Request mocks base method
 func (_m *MockImpression) Request() *http.Request {
 	ret := _m.ctrl.Call(_m, "Request")
@@ -127,18 +139,6 @@ func (_m *MockImpression) Slots() []entity.Slot {
 // Slots indicates an expected call of Slots
 func (_mr *MockImpressionMockRecorder) Slots() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "Slots")
-}
-
-// Source mocks base method
-func (_m *MockImpression) Source() entity.Publisher {
-	ret := _m.ctrl.Call(_m, "Source")
-	ret0, _ := ret[0].(entity.Publisher)
-	return ret0
-}
-
-// Source indicates an expected call of Source
-func (_mr *MockImpressionMockRecorder) Source() *gomock.Call {
-	return _mr.mock.ctrl.RecordCall(_mr.mock, "Source")
 }
 
 // TrackID mocks base method

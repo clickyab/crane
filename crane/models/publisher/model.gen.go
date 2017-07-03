@@ -112,8 +112,8 @@ func (m *Manager) ListPublishersWithPagination(offset, perPage int) []Publisher 
 	return m.ListPublishersWithPaginationFilter(offset, perPage, "")
 }
 
-// FindPublisherByIDd return the Publisher base on its id
-func (m *Manager) FindPublisherByIDd(id int64) (*Publisher, error) {
+// FindPublisherByFID return the Publisher base on its id
+func (m *Manager) FindPublisherByFID(id int64) (*Publisher, error) {
 	var res Publisher
 	err := m.GetRDbMap().SelectOne(
 		&res,

@@ -61,7 +61,7 @@ func createMegaStore(imp entity.Impression) eav.Kiwi {
 	kiwi := eav.NewEavStore(Mega + imp.TrackID())
 	assert.Nil(kiwi.SetSubKey(MegaIP, imp.IP().String()).
 		SetSubKey(MegaUserAgent, imp.UserAgent()).
-		SetSubKey(MegaPubID, imp.Source().Name()).
+		SetSubKey(MegaPubID, imp.Publisher().Name()).
 		SetSubKey(MegaTimeUnix, fmt.Sprint(time.Now().Unix())).
 		Save(megaImpressionTTL.Duration()))
 	return kiwi
@@ -80,11 +80,11 @@ func selectCTR(
 	// call cancel on exiting this function so the done channel is fired
 	defer cnl()
 	// TODO : better implementation
-	multiVideo := imp.Source().AcceptedTarget() == entity.TargetVast
+	multiVideo := imp.Publisher().AcceptedTarget() == entity.TargetVast
 
 	// Get the capping
 	slots := imp.Slots()
-	pub := imp.Source()
+	pub := imp.Publisher()
 	ads = getCapping(ctx, imp.ClientID(), ads, slots)
 	kiwi := createMegaStore(imp)
 	wg := sync.WaitGroup{}
@@ -116,8 +116,8 @@ func selectCTR(
 		}
 
 		// Force price on min CPC
-		if sorted[0].WinnerBID() < imp.Source().MinCPC() {
-			sorted[0].SetWinnerBID(imp.Source().MinCPC())
+		if sorted[0].WinnerBID() < imp.Publisher().MinCPC() {
+			sorted[0].SetWinnerBID(imp.Publisher().MinCPC())
 		}
 
 		sorted[0].Capping().IncView(1, true)
