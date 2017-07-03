@@ -3,6 +3,8 @@ package publisher
 import (
 	"time"
 
+	"fmt"
+
 	"clickyab.com/crane/crane/entity"
 )
 
@@ -25,6 +27,9 @@ const (
 	VastPlatform Platforms = "vast"
 	// WebPlatform WebPlatform
 	WebPlatform Platforms = "web"
+
+	// NativePlatform NativePlatform
+	NativePlatform Platforms = "native"
 )
 
 // Publisher user model in database
@@ -41,12 +46,24 @@ type Publisher struct {
 	FFloorCPM     int64        `json:"floor_cpm" db:"floor_cpm"`
 	FSoftFloorCPM int64        `json:"soft_floor_cpm" db:"soft_floor_cpm"`
 	FName         string       `json:"name" db:"name"`
+	FSupplier     string       `json:"supplier" db:"supplier"`
 	BidType       int64        `json:"bid_type" db:"bid_type"`
-	FUnderFloor   int64        `json:"under_floor" db:"under_floor"`
+	FUnderFloor   ActiveStatus `json:"under_floor" db:"under_floor"`
 	Platform      Platforms    `json:"platform" db:"platform"`
 	FActive       ActiveStatus `json:"active" db:"active"`
 	CreatedAt     *time.Time   `json:"created_at"  db:"created_at"`
 	UpdatedAt     *time.Time   `json:"updated_at" db:"updated_at"`
+}
+
+// FindPublisherByPlatformName ry to  fetch publisher
+func (m *Manager) FindPublisherByPlatformNameSup(name string, platform Platforms, sup string) (*Publisher, error) {
+	res := Publisher{}
+	q := fmt.Sprintf("SELECT * FROM %s WHERE name=? AND platform=? AND sup=? AND active='yes' LIMIT 1", PublisherTableFull)
+	err := m.GetRDbMap().SelectOne(&res, q, name, platform, sup)
+	if err != nil {
+		return nil, err
+	}
+	return &res, nil
 }
 
 // ID returns ID
