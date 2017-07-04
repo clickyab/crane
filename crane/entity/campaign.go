@@ -5,7 +5,7 @@ type Target int
 
 const (
 
-	// TargetWeb is the normal banner in system
+	// TargetInvalid is the invalid banner in system
 	TargetInvalid Target = iota
 	// TargetWeb TargetWeb
 	TargetWeb

@@ -26,6 +26,7 @@ type User struct {
 	UpdatedAt *time.Time             `json:"updated_at" db:"updated_at"`
 }
 
+// IsUserActive IsUserActive
 func (m *Manager) IsUserActive(ID int64) bool {
 	res := User{}
 	q := fmt.Sprintf("SELECT * FROM %s WHERE active=?", UserTableFull)

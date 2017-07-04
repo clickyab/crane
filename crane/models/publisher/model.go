@@ -55,7 +55,7 @@ type Publisher struct {
 	UpdatedAt     *time.Time   `json:"updated_at" db:"updated_at"`
 }
 
-// FindPublisherByPlatformName ry to  fetch publisher
+// FindPublisherByPlatformNameSup try to  fetch publisher
 func (m *Manager) FindPublisherByPlatformNameSup(name string, platform Platforms, sup string) (*Publisher, error) {
 	res := Publisher{}
 	q := fmt.Sprintf("SELECT * FROM %s WHERE name=? AND platform=? AND sup=? AND active='yes' LIMIT 1", PublisherTableFull)

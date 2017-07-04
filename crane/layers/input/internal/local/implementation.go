@@ -1,6 +1,8 @@
 package local
 
 import (
+	"net"
+
 	"clickyab.com/crane/crane/entity"
 	"github.com/Sirupsen/logrus"
 	"github.com/clickyab/services/assert"
@@ -80,32 +82,18 @@ func (rp *Publisher) Supplier() string {
 }
 
 // Country is  country
-func (rl *Location) Country() entity.Country {
-	c := rl.FCountry
-	return entity.Country{
-		Valid: c.Valid,
-		Name:  c.Name,
-		ISO:   c.ISO,
-	}
+func (rl Location) Country() entity.Country {
+	return rl.FCountry
 }
 
 // Province is request's Province
-func (rl *Location) Province() entity.Province {
-	p := rl.FProvince
-	return entity.Province{
-		Name:  p.Name,
-		Valid: p.Valid,
-	}
+func (rl Location) Province() entity.Province {
+	return rl.FProvince
 }
 
 // LatLon is request's LatLon
-func (rl *Location) LatLon() entity.LatLon {
-	l := rl.FLatLon
-	return entity.LatLon{
-		Valid: l.Valid,
-		Lon:   l.Lon,
-		Lat:   l.Lat,
-	}
+func (rl Location) LatLon() entity.LatLon {
+	return rl.FLatLon
 }
 
 // ID is slot's ID
@@ -172,6 +160,34 @@ func (rs *Slot) IsSizeAllowed(width, height int) bool {
 }
 
 // Attribute slots attribute
-func (rs Slot) Attribute() map[string]interface{} {
+func (rs *Slot) Attribute() map[string]interface{} {
 	return rs.attribute
+}
+
+func (r *request) IP() net.IP {
+	return r.ip
+}
+
+func (r *request) OS() entity.OS {
+	return r.os
+}
+
+func (r *request) ClientID() string {
+	return r.client
+}
+
+func (r *request) Protocol() string {
+	return r.protocol
+}
+
+func (r *request) UserAgent() string {
+	return r.userAgent
+}
+
+func (r *request) Location() entity.Location {
+	return r.location
+}
+
+func (r *request) Attributes() map[string]string {
+	return r.attr
 }

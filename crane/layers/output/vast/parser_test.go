@@ -24,14 +24,20 @@ func (c *clickProvider) ClickURL(entity.Slot, entity.Impression) string {
 }
 
 type imp struct {
-	slots   []entity.Slot
-	trackID string
+	slots    []entity.Slot
+	trackID  string
+	protocol string
 }
 
 type slot struct {
 	attr    map[string]interface{}
 	winner  entity.Advertise
 	showUrl string
+	id      string
+}
+
+func (s *slot) ID() string {
+	return s.id
 }
 
 type ad struct {
@@ -196,8 +202,12 @@ func (*imp) Category() []entity.Category {
 	panic("implement me")
 }
 
-func (*imp) Attributes() map[string]interface{} {
+func (*imp) Attributes() map[string]string {
 	panic("implement me")
+}
+
+func (i *imp) Protocol() string {
+	return i.protocol
 }
 
 func newImpression(iTrackID string, adID string, attr map[string]interface{}, width, height int) entity.Impression {
