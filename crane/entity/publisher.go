@@ -30,8 +30,8 @@ type Publisher interface {
 	UnderFloor() bool
 	// Name of publisher
 	Name() string
-	// AcceptedTarget return the publisher type
-	AcceptedTarget() Target
+	// AcceptedTargets return the publisher types
+	AcceptedTargets() []Target
 	// Attributes is the generic attribute system
 	Attributes() map[string]interface{}
 	// BIDType return this publisher bid type

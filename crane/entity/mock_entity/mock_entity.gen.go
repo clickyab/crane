@@ -7,7 +7,6 @@ import (
 	entity "clickyab.com/crane/crane/entity"
 	gomock "github.com/golang/mock/gomock"
 	net "net"
-	http "net/http"
 )
 
 // MockImpression is a mock of Impression interface
@@ -34,9 +33,9 @@ func (_m *MockImpression) EXPECT() *MockImpressionMockRecorder {
 }
 
 // Attributes mocks base method
-func (_m *MockImpression) Attributes() map[string]interface{} {
+func (_m *MockImpression) Attributes() map[string]string {
 	ret := _m.ctrl.Call(_m, "Attributes")
-	ret0, _ := ret[0].(map[string]interface{})
+	ret0, _ := ret[0].(map[string]string)
 	return ret0
 }
 
@@ -105,6 +104,18 @@ func (_mr *MockImpressionMockRecorder) OS() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "OS")
 }
 
+// Protocol mocks base method
+func (_m *MockImpression) Protocol() string {
+	ret := _m.ctrl.Call(_m, "Protocol")
+	ret0, _ := ret[0].(string)
+	return ret0
+}
+
+// Protocol indicates an expected call of Protocol
+func (_mr *MockImpressionMockRecorder) Protocol() *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "Protocol")
+}
+
 // Publisher mocks base method
 func (_m *MockImpression) Publisher() entity.Publisher {
 	ret := _m.ctrl.Call(_m, "Publisher")
@@ -115,18 +126,6 @@ func (_m *MockImpression) Publisher() entity.Publisher {
 // Publisher indicates an expected call of Publisher
 func (_mr *MockImpressionMockRecorder) Publisher() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "Publisher")
-}
-
-// Request mocks base method
-func (_m *MockImpression) Request() *http.Request {
-	ret := _m.ctrl.Call(_m, "Request")
-	ret0, _ := ret[0].(*http.Request)
-	return ret0
-}
-
-// Request indicates an expected call of Request
-func (_mr *MockImpressionMockRecorder) Request() *gomock.Call {
-	return _mr.mock.ctrl.RecordCall(_mr.mock, "Request")
 }
 
 // Slots mocks base method
@@ -600,16 +599,16 @@ func (_m *MockPublisher) EXPECT() *MockPublisherMockRecorder {
 	return _m.recorder
 }
 
-// AcceptedTarget mocks base method
-func (_m *MockPublisher) AcceptedTarget() entity.Target {
-	ret := _m.ctrl.Call(_m, "AcceptedTarget")
-	ret0, _ := ret[0].(entity.Target)
+// AcceptedTargets mocks base method
+func (_m *MockPublisher) AcceptedTargets() []entity.Target {
+	ret := _m.ctrl.Call(_m, "AcceptedTargets")
+	ret0, _ := ret[0].([]entity.Target)
 	return ret0
 }
 
-// AcceptedTarget indicates an expected call of AcceptedTarget
-func (_mr *MockPublisherMockRecorder) AcceptedTarget() *gomock.Call {
-	return _mr.mock.ctrl.RecordCall(_mr.mock, "AcceptedTarget")
+// AcceptedTargets indicates an expected call of AcceptedTargets
+func (_mr *MockPublisherMockRecorder) AcceptedTargets() *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "AcceptedTargets")
 }
 
 // AcceptedTypes mocks base method
@@ -824,6 +823,18 @@ func (_m *MockSlot) Height() int {
 // Height indicates an expected call of Height
 func (_mr *MockSlotMockRecorder) Height() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "Height")
+}
+
+// ID mocks base method
+func (_m *MockSlot) ID() string {
+	ret := _m.ctrl.Call(_m, "ID")
+	ret0, _ := ret[0].(string)
+	return ret0
+}
+
+// ID indicates an expected call of ID
+func (_mr *MockSlotMockRecorder) ID() *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "ID")
 }
 
 // IsSizeAllowed mocks base method

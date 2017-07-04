@@ -2,78 +2,59 @@ package native
 
 import (
 	"net"
-	"net/http"
 
 	"clickyab.com/crane/crane/entity"
-	"clickyab.com/crane/crane/layers/input/internal/local"
-	"github.com/clickyab/services/ip2location"
 )
 
-func (i *imp) Request() *http.Request {
-	return i.FRequest
+type impression struct {
+	attr       map[string]string
+	trackID    string
+	clientID   string
+	ip         net.IP
+	ua         string
+	pub        entity.Publisher
+	location   entity.Location
+	os         entity.OS
+	slots      []entity.Slot
+	categories []entity.Category
+	protocol   string
 }
 
-func (i *imp) TrackID() string {
-	return i.FTrackID
+func (i *impression) TrackID() string {
+	return i.trackID
 }
 
-func (i *imp) ClientID() string {
-	return i.FClientID
+func (i *impression) ClientID() string {
+	return i.clientID
 }
 
-func (i *imp) IP() net.IP {
-	return i.FIP
+func (i *impression) IP() net.IP {
+	return i.ip
 }
 
-func (i *imp) UserAgent() string {
-	return i.FUA
+func (i *impression) UserAgent() string {
+	return i.ua
+}
+func (i *impression) Location() entity.Location {
+	return i.location
 }
 
-func (i *imp) Source() entity.Publisher {
-	return i.FPub
+func (i *impression) OS() entity.OS {
+	return i.os
 }
 
-func (i *imp) Location() entity.Location {
-	return i.FLocation
+func (i *impression) Slots() []entity.Slot {
+	return i.slots
 }
 
-func (i *imp) OS() entity.OS {
-	return i.FOS
+func (i *impression) Category() []entity.Category {
+	return i.categories
 }
 
-func (i *imp) Slots() []entity.Slot {
-	if i.nDum == nil {
-		i.nDum = make([]entity.Slot, len(i.FSlots))
-		for j := range i.FSlots {
-			i.nDum[j] = i.FSlots[j]
-		}
-	}
-	return i.nDum
+func (i *impression) Publisher() entity.Publisher {
+	return i.pub
 }
 
-func (i *imp) Category() []entity.Category {
-	return i.FCategories
-}
-
-func (i *imp) Attributes() map[string]interface{} {
-	return i.FAttr
-}
-
-func (i *imp) extractData() {
-	d := ip2location.IP2Location(i.FIP.String())
-	i.FLocation = &local.Location{
-		FCountry: entity.Country{
-			Name:  d.CountryLong,
-			ISO:   d.CountryShort,
-			Valid: d.CountryLong != "-",
-		},
-
-		FProvince: entity.Province{
-			Valid: d.Region != "-",
-			Name:  d.Region,
-		},
-
-		FLatLon: i.latlon,
-	}
-
+func (i *impression) Protocol() string {
+	return i.protocol
 }
