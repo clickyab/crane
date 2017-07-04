@@ -2,6 +2,8 @@ package entity
 
 // Slot is the slot of the app
 type Slot interface {
+	// ID of the slot not changed (permanent)
+	ID() string
 	// TrackID of slot
 	TrackID() string
 	// Width return the primary size of this slot

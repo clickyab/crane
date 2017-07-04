@@ -26,10 +26,10 @@ func (n renderer) Render(w io.Writer, imp entity.Impression, cl entity.ClickProv
 	}
 
 	nc := &nativeContainer{}
-	nc.Title = imp.Attributes()["title"].(string)
-	nc.Style = imp.Attributes()["style"].(string)
-	nc.FontSize = imp.Attributes()["font_size"].(string)
-	nc.Position = imp.Attributes()["position"].(string)
+	nc.Title = imp.Attributes()["title"]
+	nc.Style = imp.Attributes()["style"]
+	nc.FontSize = imp.Attributes()["fontSize"]
+	nc.Position = imp.Attributes()["position"]
 
 	nads := make([]nativeAd, 0)
 

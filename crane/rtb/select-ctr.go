@@ -80,7 +80,13 @@ func selectCTR(
 	// call cancel on exiting this function so the done channel is fired
 	defer cnl()
 	// TODO : better implementation
-	multiVideo := imp.Publisher().AcceptedTarget() == entity.TargetVast
+	multiVideo := false
+	for _, v := range imp.Publisher().AcceptedTargets() {
+		if v == entity.TargetVast {
+			multiVideo = true
+			break
+		}
+	}
 
 	// Get the capping
 	slots := imp.Slots()
