@@ -285,9 +285,9 @@ func (_mr *MockAdvertiseMockRecorder) Height() *gomock.Call {
 }
 
 // ID mocks base method
-func (_m *MockAdvertise) ID() int64 {
+func (_m *MockAdvertise) ID() string {
 	ret := _m.ctrl.Call(_m, "ID")
-	ret0, _ := ret[0].(int64)
+	ret0, _ := ret[0].(string)
 	return ret0
 }
 
@@ -802,18 +802,6 @@ func (_m *MockSlot) EXPECT() *MockSlotMockRecorder {
 	return _m.recorder
 }
 
-// Advertise mocks base method
-func (_m *MockSlot) Advertise() entity.Advertise {
-	ret := _m.ctrl.Call(_m, "Advertise")
-	ret0, _ := ret[0].(entity.Advertise)
-	return ret0
-}
-
-// Advertise indicates an expected call of Advertise
-func (_mr *MockSlotMockRecorder) Advertise() *gomock.Call {
-	return _mr.mock.ctrl.RecordCall(_mr.mock, "Advertise")
-}
-
 // Attribute mocks base method
 func (_m *MockSlot) Attribute() map[string]interface{} {
 	ret := _m.ctrl.Call(_m, "Attribute")
@@ -838,18 +826,6 @@ func (_mr *MockSlotMockRecorder) Height() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "Height")
 }
 
-// ID mocks base method
-func (_m *MockSlot) ID() string {
-	ret := _m.ctrl.Call(_m, "ID")
-	ret0, _ := ret[0].(string)
-	return ret0
-}
-
-// ID indicates an expected call of ID
-func (_mr *MockSlotMockRecorder) ID() *gomock.Call {
-	return _mr.mock.ctrl.RecordCall(_mr.mock, "ID")
-}
-
 // IsSizeAllowed mocks base method
 func (_m *MockSlot) IsSizeAllowed(_param0 int, _param1 int) bool {
 	ret := _m.ctrl.Call(_m, "IsSizeAllowed", _param0, _param1)
@@ -860,16 +836,6 @@ func (_m *MockSlot) IsSizeAllowed(_param0 int, _param1 int) bool {
 // IsSizeAllowed indicates an expected call of IsSizeAllowed
 func (_mr *MockSlotMockRecorder) IsSizeAllowed(arg0, arg1 interface{}) *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "IsSizeAllowed", arg0, arg1)
-}
-
-// SetAdvertise mocks base method
-func (_m *MockSlot) SetAdvertise(_param0 entity.Advertise) {
-	_m.ctrl.Call(_m, "SetAdvertise", _param0)
-}
-
-// SetAdvertise indicates an expected call of SetAdvertise
-func (_mr *MockSlotMockRecorder) SetAdvertise(arg0 interface{}) *gomock.Call {
-	return _mr.mock.ctrl.RecordCall(_mr.mock, "SetAdvertise", arg0)
 }
 
 // SetShowURL mocks base method
