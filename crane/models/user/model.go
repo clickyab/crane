@@ -3,6 +3,8 @@ package user
 import (
 	"time"
 
+	"fmt"
+
 	"clickyab.com/crane/crane/models/publisher"
 )
 
@@ -22,4 +24,15 @@ type User struct {
 	Active    publisher.ActiveStatus `json:"active" db:"active"`
 	CreatedAt *time.Time             `json:"created_at"  db:"created_at"`
 	UpdatedAt *time.Time             `json:"updated_at" db:"updated_at"`
+}
+
+// IsUserActive IsUserActive
+func (m *Manager) IsUserActive(ID int64) bool {
+	res := User{}
+	q := fmt.Sprintf("SELECT * FROM %s WHERE active=?", UserTableFull)
+	err := m.GetRDbMap().SelectOne(&res, q)
+	if err != nil {
+		return false
+	}
+	return true
 }

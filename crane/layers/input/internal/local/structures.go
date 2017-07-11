@@ -1,14 +1,18 @@
 package local
 
-import "clickyab.com/crane/crane/entity"
+import (
+	"net"
+
+	"clickyab.com/crane/crane/entity"
+)
 
 // Publisher Publisher
 type Publisher struct {
 	// Name of publisher
 	FName string `json:"name"`
+	// SoftFloorCPM is the soft version of floor cpm. if the publisher ahs it, then the system
 	// FloorCPM is the floor cpm for publisher
 	FFloorCPM int64 `json:"floor_cpm"`
-	// SoftFloorCPM is the soft version of floor cpm. if the publisher ahs it, then the system
 	// try to use this as floor, but if this is not available, the FloorCPM is used
 	FSoftFloorCPM int64 `json:"soft_floor_cpm"`
 	// Attributes is the generic attribute system
@@ -28,6 +32,7 @@ type Location struct {
 
 // Slot Slot
 type Slot struct {
+	FID      string `json:"id"`
 	FWidth   int    `json:"width"`
 	FHeight  int    `json:"height"`
 	FTrackID string `json:"track_id"`
@@ -36,4 +41,14 @@ type Slot struct {
 	attribute map[string]interface{}
 	winnerAd  interface{}
 	showURL   string
+}
+
+type request struct {
+	attr      map[string]string
+	ip        net.IP
+	os        entity.OS
+	client    string
+	protocol  string
+	userAgent string
+	location  entity.Location
 }

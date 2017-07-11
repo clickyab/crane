@@ -12,6 +12,7 @@ create table publishers
   bid_type tinyint not null,
   under_floor ENUM('yes', 'no') NOT NULL,
   platform ENUM('app', 'web', 'vast') NOT NULL,
+  supplier varchar(60) not null DEFAULT "clickyab",
   active ENUM('yes', 'no') NOT NULL,
   created_at timestamp default CURRENT_TIMESTAMP not null,
   updated_at timestamp default CURRENT_TIMESTAMP not null,

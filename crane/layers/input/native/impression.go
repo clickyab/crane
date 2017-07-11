@@ -2,66 +2,65 @@ package native
 
 import (
 	"net"
-	"net/http"
 
 	"clickyab.com/crane/crane/entity"
 	"clickyab.com/crane/crane/layers/input/internal/local"
 	"github.com/clickyab/services/ip2location"
 )
 
-func (i *imp) Request() *http.Request {
-	return i.FRequest
-}
-
 func (i *imp) TrackID() string {
-	return i.FTrackID
+	return i.fTrackID
 }
 
 func (i *imp) ClientID() string {
-	return i.FClientID
+	return i.fClientID
 }
 
 func (i *imp) IP() net.IP {
-	return i.FIP
+	return i.fIP
 }
 
 func (i *imp) UserAgent() string {
-	return i.FUA
+	return i.fUA
 }
 
 func (i *imp) Source() entity.Publisher {
-	return i.FPub
+	return i.fPub
 }
 
 func (i *imp) Location() entity.Location {
-	return i.FLocation
+	return i.fLocation
 }
 
 func (i *imp) OS() entity.OS {
-	return i.FOS
+	return i.fOS
 }
 
 func (i *imp) Slots() []entity.Slot {
 	if i.nDum == nil {
-		i.nDum = make([]entity.Slot, len(i.FSlots))
-		for j := range i.FSlots {
-			i.nDum[j] = i.FSlots[j]
+		i.nDum = make([]entity.Slot, len(i.fSlots))
+		for j := range i.fSlots {
+			i.nDum[j] = i.fSlots[j]
 		}
 	}
 	return i.nDum
 }
 
 func (i *imp) Category() []entity.Category {
-	return i.FCategories
+	return i.fCategories
 }
 
-func (i *imp) Attributes() map[string]interface{} {
-	return i.FAttr
+func (i *imp) Publisher() entity.Publisher {
+	return i.fPub
+}
+
+func (i *imp) Protocol() string {
+	return i.fprotocol
 }
 
 func (i *imp) extractData() {
-	d := ip2location.IP2Location(i.FIP.String())
-	i.FLocation = &local.Location{
+	d := ip2location.IP2Location(i.fIP.String())
+	i.fLocation = &local.Location{
 		FCountry: entity.Country{
 			Name:  d.CountryLong,
 			ISO:   d.CountryShort,
