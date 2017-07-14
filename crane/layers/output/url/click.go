@@ -73,8 +73,13 @@ func ClickHandler(c Data, w http.ResponseWriter) {
 		w.Write([]byte(backTemplate))
 		w.WriteHeader(http.StatusNotFound)
 	} else {
-
-		w.Header().Set("location", string(u))
+		// add referral metadata to this map
+		m := map[string]interface{}{
+			"publisher":  c.Publisher,
+			"impression": c.ImpressionTrackID,
+			"cid":        c.ClientID,
+		}
+		w.Header().Set("location", addMeta(string(u), m))
 		w.WriteHeader(http.StatusPermanentRedirect)
 	}
 
