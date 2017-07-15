@@ -11,18 +11,36 @@ import (
 	"github.com/clickyab/services/random"
 )
 
+var (
+	ErrorPublisherNotFound = errors.New("publisher with the specified domain not found")
+	ErrorDomainIsEmplty    = errors.New("domain or supplier empty")
+	ErrorCountNotValid     = errors.New("count not valid")
+)
+
+const (
+	domain   = "d"
+	supplier = "supplier"
+)
+
 // New validate request and return a native impression
 func New(r entity.Request) (entity.Impression, error) {
 	//fetch website by domain and (clickyab) supplier
+
 	q := query.Publisher()
-	if r.Attributes()["d"] == "" || r.Attributes()["supplier"] == "" {
-		return nil, errors.New("domain or supplier empty")
-	}
-	pub, err := q.ByPlatform(r.Attributes()["d"], entity.WebPlatform, r.Attributes()["supplier"])
-	if err != nil {
-		return nil, errors.New("publisher with the specified domain not found")
+	if r.Attributes()[domain] == "" || r.Attributes()[supplier] == "" {
+		return nil, ErrorDomainIsEmplty
 	}
 
+	pub, err := q.ByPlatform(r.Attributes()[domain], entity.WebPlatform, r.Attributes()[supplier])
+	fmt.Println(pub, err)
+
+	if err != nil {
+
+		fmt.Println(pub, err)
+
+		return nil, ErrorPublisherNotFound
+	}
+	fmt.Println("sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss")
 	res := &impression{}
 	under := pub.UnderFloor()
 
@@ -38,7 +56,7 @@ func New(r entity.Request) (entity.Impression, error) {
 
 	intCount, err := strconv.Atoi(r.Attributes()["count"])
 	if err != nil {
-		return nil, errors.New("count not valid")
+		return nil, ErrorCountNotValid
 	}
 	sResult := make([]entity.Slot, intCount)
 	attr := make(map[string]interface{})
@@ -47,6 +65,7 @@ func New(r entity.Request) (entity.Impression, error) {
 		sResult = append(sResult, local.ExtractSlot(pub.Supplier(), pub.Name(), entity.NativePlatform, 0, 0, fmt.Sprintf("%d", i), attr))
 	}
 	res.slots = sResult
+
 	// TODO implement later
 	res.categories = make([]entity.Category, 0)
 	return res, nil
