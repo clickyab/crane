@@ -9,7 +9,7 @@ var qp entity.QPublisher
 
 // Publisher return queryable object
 func Publisher() entity.QPublisher {
-	assert.Nil(qp)
+	assert.NotNil(qp)
 	return qp
 }
 

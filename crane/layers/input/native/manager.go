@@ -11,16 +11,41 @@ import (
 	"github.com/clickyab/services/random"
 )
 
+var (
+	// ErrorPublisherNotFound error when query can't find publisher
+	ErrorPublisherNotFound = errors.New("publisher with the specified domain not found")
+	// ErrorDomainIsEmpty when attributes doesn't have domain or supplier
+	ErrorDomainIsEmpty = errors.New("domain or supplier empty")
+	// ErrorCountNotValid when attributes doesn't have count key
+	ErrorCountNotValid = errors.New("count not valid")
+)
+
+const (
+	domain   = "d"
+	supplier = "supplier"
+	count    = "count"
+)
+
 // New validate request and return a native impression
 func New(r entity.Request) (entity.Impression, error) {
 	//fetch website by domain and (clickyab) supplier
-	q := query.Publisher()
-	if r.Attributes()["d"] == "" || r.Attributes()["supplier"] == "" {
-		return nil, errors.New("domain or supplier empty")
+
+	if r.Attributes()[domain] == "" || r.Attributes()[supplier] == "" {
+		return nil, ErrorDomainIsEmpty
 	}
-	pub, err := q.ByPlatform(r.Attributes()["d"], entity.WebPlatform, r.Attributes()["supplier"])
+
+	intCount, err := strconv.Atoi(r.Attributes()[count])
 	if err != nil {
-		return nil, errors.New("publisher with the specified domain not found")
+		return nil, ErrorCountNotValid
+	}
+
+	q := query.Publisher()
+
+	pub, err := q.ByPlatform(r.Attributes()[domain],
+		entity.WebPlatform, r.Attributes()[supplier])
+
+	if err != nil {
+		return nil, ErrorPublisherNotFound
 	}
 
 	res := &impression{}
@@ -36,17 +61,15 @@ func New(r entity.Request) (entity.Impression, error) {
 
 	res.trackID = <-random.ID
 
-	intCount, err := strconv.Atoi(r.Attributes()["count"])
-	if err != nil {
-		return nil, errors.New("count not valid")
-	}
-	sResult := make([]entity.Slot, intCount)
+	sResult := make([]entity.Slot, 0)
 	attr := make(map[string]interface{})
 	for i := 1; i <= intCount; i++ {
 		//fill slot
-		sResult = append(sResult, local.ExtractSlot(pub.Supplier(), pub.Name(), entity.NativePlatform, 0, 0, fmt.Sprintf("%d", i), attr))
+		sResult = append(sResult, local.ExtractSlot(pub.Supplier(), pub.Name(),
+			entity.NativePlatform, 0, 0, fmt.Sprintf("%d", i), attr))
 	}
 	res.slots = sResult
+
 	// TODO implement later
 	res.categories = make([]entity.Category, 0)
 	return res, nil
