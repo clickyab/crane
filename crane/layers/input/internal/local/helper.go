@@ -65,7 +65,8 @@ func Request(ctx context.Context, r *http.Request, extra map[string]string) enti
 }
 
 // ExtractSlot ExtractSlot
-func ExtractSlot(supplier, publisher string, typ entity.Platforms, width, height int, uniqueID string, attributes map[string]interface{}) entity.Slot {
+func ExtractSlot(supplier, publisher string, typ entity.Platforms,
+	width, height int, uniqueID string, attributes map[string]interface{}) entity.Slot {
 	return &Slot{
 		FID:       fmt.Sprintf("%s/%s/%s/%dx%d/%s", supplier, publisher, typ, width, height, uniqueID),
 		attribute: attributes,
