@@ -1,20 +1,20 @@
 tools-migrate: migration
 	$(BUILD) clickyab.com/crane/commands/migration
 
-octopus_migup: tools-migrate
-	$(BIN)/migration -action=up -app=octopus
+migup: tools-migrate
+	$(BIN)/migration -action=up -app=crane
 
-octopus_migdown: tools-migrate
-	$(BIN)/migration -action=down -app=octopus
+migdown: tools-migrate
+	$(BIN)/migration -action=down -app=crane
 
-octopus_migdown-all: tools-migrate
-	$(BIN)/migration -action=down-all -app=octopus
+migdown-all: tools-migrate
+	$(BIN)/migration -action=down-all -app=crane
 
-octopus_migredo: tools-migrate
-	$(BIN)/migration -action=redo -app=octopus
+migredo: tools-migrate
+	$(BIN)/migration -action=redo -app=crane
 
-octopus_miglist: tools-migrate
-	$(BIN)/migration -action=list -app=octopus
+miglist: tools-migrate
+	$(BIN)/migration -action=list -app=crane
 
 migcreate:
 	@/bin/bash $(BIN)/create_migration.sh
