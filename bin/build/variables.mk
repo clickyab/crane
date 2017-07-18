@@ -25,3 +25,4 @@ export RUSER?=$(APPNAME)
 export RPASS?=$(DEFAULT_PASS)
 export WORK_DIR=$(ROOT)/tmp
 export UGLIFYJS=$(ROOT)/node_modules/.bin/uglifyjs
+export CRN_SERVICES_MYSQL_WDSN=root:bita123@tcp(127.0.0.1:3306)/crane?charset=utf8&parseTime=true
