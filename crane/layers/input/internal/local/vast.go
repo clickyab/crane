@@ -1,5 +1,7 @@
 package local
 
+import "github.com/clickyab/services/array"
+
 const (
 	linearWidth     int = 800
 	linearHeight    int = 440
@@ -23,9 +25,9 @@ type LenVast string
 //TypeVast type Vast
 type TypeVast string
 
-//IsValid check valid LenVast
-func (l LenVast) IsValid(string string) bool {
-	return l == LenTypeLong || l == LenTypeDef || l == LenTypeShort
+//IsValidVastLen check valid LenVast
+func IsValidVastLen(a string) bool {
+	return array.StringInArray(a, string(LenTypeLong), string(LenTypeDef), string(LenTypeShort))
 }
 
 // VastSize return size vast

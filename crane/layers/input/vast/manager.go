@@ -23,7 +23,7 @@ var (
 func New(r entity.Request) (entity.Impression, error) {
 	//fetch website by domain and (clickyab) supplier
 	lenVast := r.Attributes()["l"]
-	if lenVast == "" || !local.LenTypeLong.IsValid(lenVast) {
+	if lenVast == "" || !local.IsValidVastLen(lenVast) {
 		return nil, ErrorLenVast
 	}
 	if r.Attributes()["d"] == "" || r.Attributes()["supplier"] == "" {
@@ -55,10 +55,12 @@ func New(r entity.Request) (entity.Impression, error) {
 		attr["offset"] = i
 		attr["breakType"] = vastConf[i][0]
 		attr["duration"] = vastConf[i][2]
-		attr["repeat"] = vastConf[i][3]
+		if vastConf[i][0] == string(local.TypeVastLinear) {
+			attr["repeat"] = vastConf[i][3]
+		}
 		attr["mod"] = mod
 		attr["len"] = lenVast
-		tVast, ok := attr["breakeType"].(local.TypeVast)
+		tVast, ok := attr["breakType"].(local.TypeVast)
 		if !ok {
 			continue
 		}
