@@ -31,8 +31,8 @@ var (
 	factory StoreFactory
 )
 
-// Register is a function to register store factory
-func Register(s StoreFactory) {
+// RegisterEav is a function to register store factory
+func RegisterEav(s StoreFactory) {
 	factory = s
 }
 

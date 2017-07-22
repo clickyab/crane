@@ -27,8 +27,8 @@ var (
 	all    []Routes
 
 	// this is development mode
-	devel      = config.RegisterBoolean("core.devel_mode", true, "core developer mode")
 	mountPoint = config.RegisterString("services.framework.controller.mount_point", "/api", "http controller mount point")
+	swagger    = config.RegisterBoolean("services.framework.swagger", false, "is any swagger code available?")
 	listen     onion.String
 )
 
@@ -49,7 +49,7 @@ func (i *initer) Initialize(ctx context.Context) {
 		},
 	})
 	//engine.SetLogLevel(log.DEBUG)
-	if devel.Bool() {
+	if swagger.Bool() {
 		assetHandler := http.FileServer(rice.MustFindBox("../statics/swagger/").HTTPBox())
 		framework.Any(engine, "/swagger/*", func(_ context.Context, w http.ResponseWriter, r *http.Request) {
 			http.StripPrefix("/swagger/", assetHandler).ServeHTTP(w, r)

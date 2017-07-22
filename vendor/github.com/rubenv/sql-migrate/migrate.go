@@ -191,12 +191,12 @@ func findMigrations(dir http.FileSystem) ([]*Migration, error) {
 		if strings.HasSuffix(info.Name(), ".sql") {
 			file, err := dir.Open(info.Name())
 			if err != nil {
-				return nil, err
+				return nil, fmt.Errorf("Error while opening %s: %s", info.Name(), err)
 			}
 
 			migration, err := ParseMigration(info.Name(), file)
 			if err != nil {
-				return nil, err
+				return nil, fmt.Errorf("Error while parsing %s: %s", info.Name(), err)
 			}
 
 			migrations = append(migrations, migration)
@@ -261,7 +261,7 @@ func ParseMigration(id string, r io.ReadSeeker) (*Migration, error) {
 
 	parsed, err := sqlparse.ParseMigration(r)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Error parsing migration (%s): %s", id, err)
 	}
 
 	m.Up = parsed.UpStatements
@@ -327,6 +327,10 @@ func ExecMax(db *sql.DB, dialect string, m MigrationSource, dir MigrationDirecti
 				AppliedAt: time.Now(),
 			})
 			if err != nil {
+				if trans, ok := executor.(*gorp.Transaction); ok {
+					trans.Rollback()
+				}
+
 				return applied, newTxError(migration, err)
 			}
 		} else if dir == Down {
@@ -334,6 +338,10 @@ func ExecMax(db *sql.DB, dialect string, m MigrationSource, dir MigrationDirecti
 				Id: migration.Id,
 			})
 			if err != nil {
+				if trans, ok := executor.(*gorp.Transaction); ok {
+					trans.Rollback()
+				}
+
 				return applied, newTxError(migration, err)
 			}
 		} else {

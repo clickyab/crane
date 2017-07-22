@@ -78,3 +78,36 @@ func Routine(f func(), extra ...interface{}) {
 
 	f()
 }
+
+func actual(a func() error, extra ...interface{}) (res error) {
+	defer func() {
+		if e := recover(); e != nil {
+			v := version.GetVersion()
+			title := fmt.Errorf("[%s, %d] cannot extract title, the type is %T, value is %v", v.Short, v.Count, e, e)
+			err := mkTitle(e, title, v.Count, v.Short)
+			stack := debug.Stack()
+			call(err, stack, extra...)
+			res = err
+		}
+	}()
+	res = a()
+	return
+}
+
+// Try retry by fibonacci way the given function
+func Try(a func() error, max time.Duration, extra ...interface{}) {
+	x, y := 0, 1
+	for {
+		err := actual(a, extra...)
+		if err == nil {
+			return
+		}
+		logrus.Error(err)
+		t := time.Duration(x) * time.Second
+		if t < max {
+			x, y = y, x+y
+		}
+		time.Sleep(t)
+	}
+
+}
