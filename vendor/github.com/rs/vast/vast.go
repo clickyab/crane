@@ -121,6 +121,10 @@ type Wrapper struct {
 	// XML elements from VAST elements. The following example includes a custom
 	// xml element within the Extensions element.
 	Extensions []Extension `xml:"Extensions>Extension,omitempty"`
+
+	FallbackOnNoAd           bool `xml:"fallbackOnNoAd,attr,omitempty"`
+	AllowMultipleAds         bool `xml:"allowMultipleAds,attr,omitempty"`
+	FollowAdditionalWrappers bool `xml:"followAdditionalWrappers,attr,omitempty"`
 }
 
 // AdSystem contains information about the system that returned the ad
@@ -261,6 +265,8 @@ type Companion struct {
 	AdSlotID string `xml:"adSlotId,attr,omitempty"`
 	// URL to open as destination page when user clicks on the the companion banner ad.
 	CompanionClickThrough string `xml:",omitempty"`
+	// URLs to ping when user clicks on the the companion banner ad.
+	CompanionClickTracking []string `xml:",omitempty"`
 	// Alt text to be displayed when companion is rendered in HTML environment.
 	AltText string `xml:",omitempty"`
 	// The creativeView should always be requested when present. For Companions
