@@ -1,13 +1,11 @@
 package local
 
 import (
-	"fmt"
-	"net"
-
 	"context"
 	"crypto/sha1"
+	"fmt"
+	"net"
 	"net/http"
-
 	"strings"
 
 	"clickyab.com/crane/crane/entity"
