@@ -30,7 +30,7 @@ func main() {
 		assert.Nil(dec.Encode(tmp))
 	})
 	go func() {
-		http.ListenAndServe(listenAddress.String(), nil)
+		logrus.Fatal(http.ListenAndServe(listenAddress.String(), nil))
 	}()
 
 	sig := shell.WaitExitSignal()

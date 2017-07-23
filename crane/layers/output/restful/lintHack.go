@@ -1,10 +1,16 @@
 package restful
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/clickyab/services/assert"
+)
 
 func init() {
 	if false {
-		parse(&render{}, nil, nil)
+
+		assert.Nil(parse(&render{}, nil, nil))
+
 		a := restAd{}
 		fetchLanding("asd")
 		fmt.Println(a)

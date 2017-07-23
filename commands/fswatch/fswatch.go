@@ -15,6 +15,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/clickyab/services/assert"
 	log "github.com/gobuild/log"
 	"github.com/howeyc/fsnotify"
 )
@@ -269,7 +270,7 @@ func flagParse() {
 			log.Fatalf("json decode error: %v", er)
 		}
 		for key, val := range gw.Env {
-			os.Setenv(key, val)
+			assert.Nil(os.Setenv(key, val))
 		}
 		confExists = true
 	}
@@ -291,7 +292,7 @@ func main() {
 		gw.Command = "echo helloworld"
 		if strings.ToUpper(strings.TrimSpace(yn)) == "Y" {
 			data, _ := json.MarshalIndent(gw, "", "    ")
-			ioutil.WriteFile(jsonconf, data, 0644)
+			assert.Nil(ioutil.WriteFile(jsonconf, data, 0644))
 			fmt.Printf("use notepad++ or vim to edit %s\n", strconv.Quote(jsonconf))
 		}
 		return

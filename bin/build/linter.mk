@@ -1,6 +1,6 @@
-export LINTER=$(BIN)/gometalinter.v1
+export LINTER=$(BIN)/gometalinter
 # TODO : Ignoring services/codegen is a bad thing. try to get it back to lint
-export LINTERCMD=$(LINTER) -e ".*.gen.go" -e ".*_test.go" -e "clickyab.com/crane/vendor/.*" --cyclo-over=19 --line-length=120 --deadline=100s --disable-all --enable=structcheck --enable=deadcode --enable=gocyclo --enable=ineffassign --enable=golint --enable=goimports --enable=errcheck --enable=varcheck --enable=goconst --enable=gosimple --enable=staticcheck --enable=unused --enable=misspell
+export LINTERCMD=$(LINTER) -e ".*.gen.go" -e ".*_test.go" -e "clickyab.com/crane/vendor/.*" --cyclo-over=19  --sort=path --disable-all --line-length=120 --deadline=100s --enable=structcheck --enable=deadcode --enable=gocyclo --enable=ineffassign --enable=golint --enable=goimports --enable=errcheck --enable=varcheck --enable=goconst --enable=megacheck --enable=misspell
 
 lint: codegen $(LINTER)
 	$(LINTERCMD) $(ROOT)/commands/...
@@ -8,8 +8,8 @@ lint: codegen $(LINTER)
 	$(LINTERCMD) $(ROOT)/crane/...
 
 metalinter:
-	$(GO) get -v gopkg.in/alecthomas/gometalinter.v1
-	$(GO) install -v gopkg.in/alecthomas/gometalinter.v1
+	$(GO) get -v github.com/alecthomas/gometalinter
+	$(GO) install -v github.com/alecthomas/gometalinter
 	$(LINTER) --install
 
 $(LINTER):
