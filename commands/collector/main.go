@@ -18,6 +18,7 @@ import (
 	"io/ioutil"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/clickyab/services/assert"
 	"github.com/mssola/user_agent"
 	"github.com/rs/xhandler"
 	"github.com/rs/xmux"
@@ -54,14 +55,15 @@ func main() {
 
 	shell.WaitExitSignal()
 	s, _ := context.WithTimeout(context.Background(), 100*time.Millisecond)
-	srv.Shutdown(s)
+	e := srv.Shutdown(s)
+	assert.Nil(e)
 
 }
 
 func collect(_ context.Context, w http.ResponseWriter, r *http.Request) {
 	safe.GoRoutine(func() {
 		data, _ := ioutil.ReadAll(r.Body)
-		r.Body.Close()
+		assert.Nil(r.Body.Close())
 
 		p := Point{}
 		fmt.Println(string(data))
@@ -73,24 +75,24 @@ func collect(_ context.Context, w http.ResponseWriter, r *http.Request) {
 
 		rec := ip2location.GetAll(p.IP)
 		ua := user_agent.New(p.UserAgent)
-		influx.AddPoint(
+		assert.Nil(influx.AddPoint(
 			"impression",
 			map[string]string{
-				"campaign":       fmt.Sprint(p.CampaignID),
+				"campaign":       p.CampaignID,
 				"publisher":      p.PublisherID,
 				"publisher_type": p.PublisherType,
 				"country":        rec.CountryLong,
 				"province":       rec.Region,
 				"city":           rec.City,
 				"mobile":         fmt.Sprint(ua.Mobile()),
-				"platform":       fmt.Sprint(ua.Platform()),
+				"platform":       ua.Platform(),
 			},
 			map[string]interface{}{
 				"count":      1,
 				"winner_bid": p.WinnerBID,
 			},
 			time.Now(),
-		)
+		))
 	})
 	w.WriteHeader(204)
 }

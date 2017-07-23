@@ -84,7 +84,7 @@ func getCapping(ctx context.Context, clientID string, ads map[string][]entity.Ad
 		// the channel is going to close anyway
 		<-c
 		// The key is hardcoded with the today (as in YYYYMMDD), so no need to config this
-		kiwi.Save(24 * time.Hour)
+		assert.Nil(kiwi.Save(24 * time.Hour))
 	}()
 	c := make(cappingContext)
 	caps := kiwi.AllKeys()

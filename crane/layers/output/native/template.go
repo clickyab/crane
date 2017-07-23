@@ -73,8 +73,10 @@ var addRenderer = func(ads []nativeAd) string {
 var native = template.New("native").Funcs(template.FuncMap{"renderAds": addRenderer})
 
 func init() {
-	native.Parse(nativeTmpl)
-	native.Parse(adTmpl)
+	_, e := native.Parse(nativeTmpl)
+	assert.Nil(e)
+	_, e = native.Parse(adTmpl)
+	assert.Nil(e)
 }
 
 const nativeTmpl = `{{define "ads"}}
