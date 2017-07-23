@@ -1,7 +1,9 @@
 package entity
 
-// AdType is the type supported by ads
-type AdType string
+type (
+	// AdType is the type supported by ads
+	AdType string
+)
 
 const (
 	// AdTypeBanner is the banner type

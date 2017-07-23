@@ -26,10 +26,10 @@ type Capping interface {
 	IncView(advertise entity.Advertise)
 }
 
-// getCapping return new cap, "s" is the client id.
-func getCapping(s string, ads []entity.Advertise) Capping {
-	kh := eav.NewAEAVStore(fmt.Sprintf("%s_%s_%s", prefix, s, time.Now().Format("15")))
-	kt := eav.NewAEAVStore(fmt.Sprintf("%s_%s_%s", prefix, s, time.Now().Format("0102")))
+// GetCapping return new cap
+func GetCapping(clientID string, ads []entity.Advertise) Capping {
+	kh := eav.NewAEAVStore(fmt.Sprintf("%s_%s_%s", prefix, clientID, time.Now().Format("15")))
+	kt := eav.NewAEAVStore(fmt.Sprintf("%s_%s_%s", prefix, clientID, time.Now().Format("0102")))
 	// to cache all sub keys
 
 	return &cap{
@@ -61,17 +61,17 @@ func (d *cap) IncView(a entity.Advertise) {
 }
 
 // Len for sorting
-func (d cap) Len() int {
+func (d *cap) Len() int {
 	return len(d.ads)
 }
 
 // Swap for sorting
-func (d cap) Swap(i, j int) {
+func (d *cap) Swap(i, j int) {
 	d.ads[i], d.ads[j] = d.ads[j], d.ads[i]
 }
 
 // Less for sorting
-func (d cap) Less(i, j int) bool {
+func (d *cap) Less(i, j int) bool {
 
 	ka := strconv.FormatInt(d.ads[i].Campaign().ID(), 64)
 	kb := strconv.FormatInt(d.ads[j].Campaign().ID(), 64)
@@ -83,9 +83,19 @@ func (d cap) Less(i, j int) bool {
 
 	fa := isFull(d.ads[i].Campaign().Frequency() <= int(ta))
 	fb := isFull(d.ads[j].Campaign().Frequency() <= int(tb))
+	ca, cb := checkCpm(d.ads[i].CPM(), d.ads[i].CPM())
 
-	return fmt.Sprintf("%s%03x%03x", fa, ha, ta) < fmt.Sprintf("%s%03x%03x", fb, hb, tb)
+	return fmt.Sprintf("%s%03x%03x%d", fa, ha, ta, ca) < fmt.Sprintf("%s%03x%03x%d", fb, hb, tb, cb)
 
+}
+func checkCpm(a, b int64) (ra, rb int) {
+	if a == b {
+		return 0, 0
+	}
+	if a < b {
+		return 1, 0
+	}
+	return 0, 1
 }
 
 type isFull bool
