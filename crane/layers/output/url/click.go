@@ -43,7 +43,7 @@ type click struct {
 // ClickURL generate url for click event
 func (click) ClickURL(s entity.Slot, m entity.Impression) string {
 	// pattern= http://server.com/publisher/slotTrackID/impTrackID/adID/adType/?t=target(base64)
-	targetURL := base64.StdEncoding.EncodeToString([]byte(s.WinnerAdvertise().TargetURL()))
+	targetURL := base64.URLEncoding.WithPadding(base64.NoPadding).EncodeToString([]byte(s.WinnerAdvertise().TargetURL()))
 	url := fmt.Sprintf("http://%s/%s/%s/%s/%s/%s?t=%s", host, m.Publisher().Name(), s.TrackID(), m.TrackID(), s.WinnerAdvertise().ID(), s.WinnerAdvertise().Type(), targetURL)
 	safe.GoRoutine(func() {
 		eav.NewEavStore(keyGen(m.TrackID(), s.TrackID())).
