@@ -29,9 +29,9 @@ const (
 // the flow is something like: route -> Request -> Target (Vast, Native, etc) -> ...
 func Request(ctx context.Context, r *http.Request, extra map[string]string) entity.Request {
 	ip := net.ParseIP(framework.RealIP(r))
-	clientUserLocation := location(ip)
+	clientUserLocation := LocationFromIP(ip)
 
-	os := os(r.UserAgent())
+	os := OSFromAgent(r.UserAgent())
 	protocol := httpScheme
 	if r.TLS != nil {
 		protocol = httpsScheme
@@ -78,7 +78,8 @@ func ExtractSlot(supplier, publisher string, typ entity.Platforms,
 	}
 }
 
-func os(ua string) entity.OS {
+// OSFromAgent get os from agent
+func OSFromAgent(ua string) entity.OS {
 	userAgent := user_agent.New(ua)
 	return entity.OS{
 		Valid:  userAgent.OS() != "",
@@ -88,7 +89,8 @@ func os(ua string) entity.OS {
 
 }
 
-func location(ip net.IP) Location {
+// LocationFromIP get location from ip
+func LocationFromIP(ip net.IP) Location {
 	l := Location{}
 	if ip.String() == "" {
 		return l

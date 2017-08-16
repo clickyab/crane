@@ -12,6 +12,9 @@ const (
 	// WebPlatform WebPlatform
 	WebPlatform Platforms = "web"
 
+	// RestPlatform rest platform
+	RestPlatform Platforms = "rest"
+
 	// NativePlatform NativePlatform
 	NativePlatform Platforms = "native"
 )
