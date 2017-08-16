@@ -64,16 +64,17 @@ package {{ .GroupPkg }}
 
 import (
 	"github.com/clickyab/services/framework"
-	"github.com/clickyab/services/framework/middleware"
 	"github.com/clickyab/services/framework/router"
 	"github.com/clickyab/services/initializer"
 	"github.com/rs/xhandler"
 	"github.com/rs/xmux"
 )
 
+var once = sync.Once{}
 
 // Routes return the route registered with this
 func ({{ .GroupRec }} *{{ .StructName }}) Routes(r *xmux.Mux, mountPoint string) {
+	once.Do(func() {
 	{{ if .Full }}
 	groupMiddleware := []framework.Middleware{
 		{{ range $gm := .GroupMiddleware }}{{ $gm }},
@@ -91,8 +92,8 @@ func ({{ .GroupRec }} *{{ .StructName }}) Routes(r *xmux.Mux, mountPoint string)
 		{{end}}
 	}...)
 	{{ if $route.Resource }}
-	base.RegisterPermission("{{$route.Resource}}", "{{$route.Resource}}")
-	m{{ $key }} = append(m{{ $key }}, authz.AuthorizeGenerator("{{$route.Resource}}",base.UserScope("{{$route.Scope}}"))){{ end }}
+	permission.Register("{{$route.Resource}}", "{{$route.Resource}}")
+	m{{ $key }} = append(m{{ $key }}, authz.AuthorizeGenerator("{{$route.Resource}}","{{$route.Scope}}")){{ end }}
 	{{ if $route.RouteFuncMiddleware }}
 	m{{ $key }} = append(m{{ $key }}, {{ $.GroupRec }}.{{ $route.RouteFuncMiddleware|strip_type }}()...){{ end }}
 	{{ if $route.Payload }} // Make sure payload is the last middleware
@@ -102,6 +103,7 @@ func ({{ .GroupRec }} *{{ .StructName }}) Routes(r *xmux.Mux, mountPoint string)
 	{{ end }}
 	{{ end }}
 	initializer.DoInitialize({{ .GroupRec }})
+	})
 }
 
 func init() {

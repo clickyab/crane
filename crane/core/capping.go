@@ -7,7 +7,8 @@ import (
 	"time"
 
 	"clickyab.com/crane/crane/entity"
-	"github.com/clickyab/services/eav"
+	"github.com/clickyab/services/assert"
+	"github.com/clickyab/services/kv"
 )
 
 const (
@@ -16,8 +17,8 @@ const (
 
 type cap struct {
 	ads []entity.Advertise
-	kh  eav.AKiwi
-	kt  eav.AKiwi
+	kh  kv.AKiwi
+	kt  kv.AKiwi
 }
 
 // Capping interface capping object for all the campaign ads
@@ -28,8 +29,8 @@ type Capping interface {
 
 // GetCapping return new cap
 func GetCapping(clientID string, ads []entity.Advertise) Capping {
-	kh := eav.NewAEAVStore(fmt.Sprintf("%s_%s_%s", prefix, clientID, time.Now().Format("15")))
-	kt := eav.NewAEAVStore(fmt.Sprintf("%s_%s_%s", prefix, clientID, time.Now().Format("0102")))
+	kh := kv.NewAEAVStore(fmt.Sprintf("%s_%s_%s", prefix, clientID, time.Now().Format("15")))
+	kt := kv.NewAEAVStore(fmt.Sprintf("%s_%s_%s", prefix, clientID, time.Now().Format("0102")))
 	// to cache all sub keys
 
 	return &cap{
@@ -51,12 +52,15 @@ func (d *cap) IncView(a entity.Advertise) {
 	k := strconv.FormatInt(a.Campaign().ID(), 64)
 
 	d.kh.IncSubKey(k, 1)
-	hx, _ := time.Parse("06010215", n.Format("06010215"))
-	d.kh.Save(hx.Add(time.Hour).Sub(n))
-
-	tx, _ := time.Parse("060102", n.Format("060102"))
+	hx, err := time.Parse("06010215", n.Format("06010215"))
+	assert.Nil(err)
+	err = d.kh.Save(hx.Add(time.Hour).Sub(n))
+	assert.Nil(err)
+	tx, err := time.Parse("060102", n.Format("060102"))
+	assert.Nil(err)
 	d.kt.IncSubKey(k, 1)
-	d.kt.Save(tx.AddDate(0, 0, 1).Sub(n))
+	err = d.kt.Save(tx.AddDate(0, 0, 1).Sub(n))
+	assert.Nil(err)
 
 }
 
@@ -102,7 +106,7 @@ type isFull bool
 
 // String for stringer
 func (f isFull) String() string {
-	if f == true {
+	if f {
 		return "1"
 	}
 	return "0"

@@ -2,18 +2,14 @@ package router
 
 import (
 	"context"
+	"fmt"
 	"net/http"
+	"os"
 	"time"
 
-	"os"
-
-	"fmt"
-
-	rice "github.com/GeertJohan/go.rice"
 	"github.com/Sirupsen/logrus"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/config"
-	"github.com/clickyab/services/framework"
 	"github.com/clickyab/services/framework/middleware"
 	"github.com/clickyab/services/initializer"
 	"github.com/rs/cors"
@@ -28,7 +24,6 @@ var (
 
 	// this is development mode
 	mountPoint = config.RegisterString("services.framework.controller.mount_point", "/api", "http controller mount point")
-	swagger    = config.RegisterBoolean("services.framework.swagger", false, "is any swagger code available?")
 	listen     onion.String
 )
 
@@ -48,13 +43,6 @@ func (i *initer) Initialize(ctx context.Context) {
 			return true // TODO : write the real code here
 		},
 	})
-	//engine.SetLogLevel(log.DEBUG)
-	if swagger.Bool() {
-		assetHandler := http.FileServer(rice.MustFindBox("../statics/swagger/").HTTPBox())
-		framework.Any(engine, "/swagger/*", func(_ context.Context, w http.ResponseWriter, r *http.Request) {
-			http.StripPrefix("/swagger/", assetHandler).ServeHTTP(w, r)
-		})
-	}
 
 	for i := range all {
 		all[i].Routes(engine, mountPoint.String())

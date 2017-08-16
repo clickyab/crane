@@ -73,6 +73,10 @@ var addRenderer = func(ads []nativeAd) string {
 var native = template.New("native").Funcs(template.FuncMap{"renderAds": addRenderer})
 
 func init() {
+	_, err := native.Funcs(template.FuncMap{"isRound": func(s string) string {
+		return "cyb-" + s
+	}}).Parse(adTmpl)
+	assert.Nil(err)
 	_, e := native.Parse(nativeTmpl)
 	assert.Nil(e)
 	_, e = native.Parse(adTmpl)

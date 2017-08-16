@@ -21,7 +21,7 @@ type singleAd struct {
 func makeSingleAdData(advertise entity.Advertise, impression entity.Impression, slot entity.Slot, cp entity.ClickProvider) (string, error) {
 	scheme := impression.Protocol()
 
-	var src string = advertise.Media()
+	src := advertise.Media()
 	if scheme == "https" {
 		src = strings.Replace(src, "http://", "https://", -1)
 	}

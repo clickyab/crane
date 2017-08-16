@@ -13,12 +13,6 @@ import (
 
 const nullString = "null"
 
-// Initializer is for model when the have need extra initialize on save/update
-type Initializer interface {
-	// Initialize is the method to call att save/update
-	Initialize()
-}
-
 // Int64Slice is simple slice to handle it for json field
 type Int64Slice []int64
 
@@ -41,6 +35,53 @@ type NullInt64 struct {
 type NullString struct {
 	Valid  bool
 	String string
+}
+
+type slaveStatus struct {
+	SlaveIOState              sql.NullString `db:"slave_io_state"`
+	MasterHost                sql.NullString `db:"master_host"`
+	MasterUser                sql.NullString `db:"Master_User"`
+	MasterPort                sql.NullString `db:"master_port"`
+	ConnectRetry              sql.NullString `db:"Connect_Retry"`
+	MasterLogFile             sql.NullString `db:"Master_Log_File"`
+	ReadMasterLogPos          sql.NullString `db:"Read_Master_Log_Pos"`
+	RelayLogFile              sql.NullString `db:"Relay_Log_File"`
+	RelayLogPos               sql.NullString `db:"Relay_Log_Pos"`
+	RelayMasterLogFile        sql.NullString `db:"Relay_Master_Log_File"`
+	SlaveIORunning            string         `db:"Slave_IO_Running"`
+	SlaveSQLRunning           string         `db:"Slave_SQL_Running"`
+	ReplicateDoDB             sql.NullString `db:"Replicate_Do_DB"`
+	ReplicateIgnoreDB         sql.NullString `db:"Replicate_Ignore_DB"`
+	ReplicateDoTable          sql.NullString `db:"Replicate_Do_Table"`
+	ReplicateIgnoreTable      sql.NullString `db:"Replicate_Ignore_Table"`
+	ReplicateWildDoTable      sql.NullString `db:"Replicate_Wild_Do_Table"`
+	ReplicateWildIgnoreTable  sql.NullString `db:"Replicate_Wild_Ignore_Table"`
+	LastErrno                 int            `db:"Last_Errno"`
+	LastError                 sql.NullString `db:"Last_Error"`
+	SkipCounter               sql.NullString `db:"Skip_Counter"`
+	ExecMasterLogPos          sql.NullString `db:"Exec_Master_Log_Pos"`
+	RelayLogSpace             sql.NullString `db:"Relay_Log_Space"`
+	UntilCondition            sql.NullString `db:"Until_Condition"`
+	UntilLogFile              sql.NullString `db:"Until_Log_File"`
+	UntilLogPos               sql.NullString `db:"Until_Log_Pos"`
+	MasterSSLAllowed          sql.NullString `db:"Master_SSL_Allowed"`
+	MasterSSLCAFile           sql.NullString `db:"Master_SSL_CA_File"`
+	MasterSSLCAPath           sql.NullString `db:"Master_SSL_CA_Path"`
+	MasterSSLCert             sql.NullString `db:"Master_SSL_Cert"`
+	MasterSSLCipher           sql.NullString `db:"Master_SSL_Cipher"`
+	MasterSSLKey              sql.NullString `db:"Master_SSL_Key"`
+	SecondsBehindMaster       sql.NullInt64  `db:"Seconds_Behind_Master"`
+	MasterSSLVerifyServerCert sql.NullString `db:"Master_SSL_Verify_Server_Cert"`
+	LastIOErrno               sql.NullString `db:"Last_IO_Errno"`
+	LastIOError               sql.NullString `db:"Last_IO_Error"`
+	LastSQLErrno              sql.NullString `db:"Last_SQL_Errno"`
+	LastSQLError              sql.NullString `db:"Last_SQL_Error"`
+	ReplicateIgnoreServerIDs  sql.NullString `db:"Replicate_Ignore_Server_Ids"`
+	MasterServerID            sql.NullString `db:"Master_Server_Id"`
+	MasterSSLCrl              sql.NullString `db:"Master_SSL_Crl"`
+	MasterSSLCrlpath          sql.NullString `db:"Master_SSL_Crlpath"`
+	UsingGtid                 sql.NullString `db:"Using_Gtid"`
+	GtidIOPos                 sql.NullString `db:"Gtid_IO_Pos"`
 }
 
 // GenericJSONField is used to handle generic json data in postgres

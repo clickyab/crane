@@ -2,21 +2,15 @@ package influx
 
 import (
 	"context"
-
-	"github.com/clickyab/services/assert"
-
+	"errors"
 	"fmt"
-
+	"sync"
 	"time"
 
-	"sync"
-
-	"errors"
-
-	"github.com/clickyab/services/initializer"
-
 	"github.com/Sirupsen/logrus"
-	client "github.com/influxdata/influxdb/client/v2"
+	"github.com/clickyab/services/assert"
+	"github.com/clickyab/services/initializer"
+	"github.com/influxdata/influxdb/client/v2"
 )
 
 type initInflux struct {
@@ -34,7 +28,7 @@ var (
 )
 
 func (inf *initInflux) createClient() (client.Client, error) {
-	switch proto.String() {
+	switch protocol.String() {
 	case "http":
 		return client.NewHTTPClient(
 			client.HTTPConfig{
@@ -53,7 +47,7 @@ func (inf *initInflux) createClient() (client.Client, error) {
 			},
 		)
 	default:
-		return nil, fmt.Errorf("invalid client proto in config : %s", proto.String())
+		return nil, fmt.Errorf("invalid client protocol in config : %s", protocol.String())
 	}
 }
 

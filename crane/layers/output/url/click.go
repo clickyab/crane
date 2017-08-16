@@ -13,7 +13,7 @@ import (
 
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/config"
-	"github.com/clickyab/services/eav"
+	"github.com/clickyab/services/kv"
 	"github.com/clickyab/services/safe"
 )
 
@@ -46,7 +46,7 @@ func (click) ClickURL(s entity.Slot, m entity.Impression) string {
 	targetURL := base64.URLEncoding.WithPadding(base64.NoPadding).EncodeToString([]byte(s.WinnerAdvertise().TargetURL()))
 	url := fmt.Sprintf("http://%s/%s/%s/%s/%s/%s?t=%s", host, m.Publisher().Name(), s.TrackID(), m.TrackID(), s.WinnerAdvertise().ID(), s.WinnerAdvertise().Type(), targetURL)
 	safe.GoRoutine(func() {
-		eav.NewEavStore(keyGen(m.TrackID(), s.TrackID())).
+		err := kv.NewEavStore(keyGen(m.TrackID(), s.TrackID())).
 			SetSubKey(impressionTrackID, m.TrackID()).
 			SetSubKey(publisher, m.Publisher().Name()).
 			SetSubKey(clientID, m.ClientID()).
@@ -58,6 +58,7 @@ func (click) ClickURL(s entity.Slot, m entity.Impression) string {
 			SetSubKey(advertiseID, s.WinnerAdvertise().ID()).
 			SetSubKey(genTime, strconv.FormatInt(time.Now().Unix(), 36)).
 			Save(expire)
+		assert.Nil(err)
 	})
 	return url
 
@@ -70,7 +71,8 @@ func ClickHandler(c Data, w http.ResponseWriter) {
 
 	u, e := base64.StdEncoding.DecodeString(c.Target)
 	if e != nil {
-		w.Write([]byte(backTemplate))
+		_, err := w.Write([]byte(backTemplate))
+		assert.Nil(err)
 		w.WriteHeader(http.StatusNotFound)
 	} else {
 		// add referral metadata to this map
@@ -87,7 +89,7 @@ func ClickHandler(c Data, w http.ResponseWriter) {
 
 	safe.GoRoutine(func() {
 
-		ki := eav.NewEavStore(keyGen(c.ImpressionTrackID, c.SlotTrackID))
+		ki := kv.NewEavStore(keyGen(c.ImpressionTrackID, c.SlotTrackID))
 		v := ki.AllKeys()
 
 		if len(v) == 0 {
