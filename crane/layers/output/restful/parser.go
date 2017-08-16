@@ -12,7 +12,7 @@ import (
 	"clickyab.com/crane/crane/entity"
 	"github.com/Sirupsen/logrus"
 	"github.com/clickyab/services/assert"
-	"github.com/clickyab/services/eav"
+	"github.com/clickyab/services/kv"
 )
 
 const (
@@ -53,7 +53,8 @@ func parse(r *render, imp entity.Impression, cp entity.ClickProvider) error {
 				return
 			}
 			key := fmt.Sprintf("%s_%s_%s", restSingleAdEavKey, imp.TrackID(), slot.TrackID())
-			eav.NewEavStore(key).SetSubKey(templateKey, renderedAd).Save(time.Hour * 24)
+			err = kv.NewEavStore(key).SetSubKey(templateKey, renderedAd).Save(time.Hour * 24)
+			assert.Nil(err)
 		}()
 		ads = append(ads, ad)
 	}

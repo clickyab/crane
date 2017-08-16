@@ -40,8 +40,8 @@ var (
 		"sql.NullTime": {"type": "string", "format": "dateTime"},
 		"github.com/clickyab/services/postgres/models/common.NullTime":   {"type": "string", "format": "dateTime"},
 		"github.com/clickyab/services/postgres/models/common.NullString": {"type": "string"},
-		"modules/balance/acc.Money":                                         {"type": "integer"},
-		"modules/user/aaa.UserStatus":                                       {"type": "string"},
+		"modules/balance/acc.Money":                                      {"type": "integer"},
+		"modules/user/aaa.UserStatus":                                    {"type": "string"},
 	}
 )
 
@@ -78,8 +78,11 @@ type apiGroup struct {
 type context map[string]apiGroup
 
 type swaggerGenerator struct {
-	workDir string
-	domain  string
+	workDir     string
+	domain      string
+	version     string
+	description string
+	title       string
 }
 
 var (
@@ -258,9 +261,9 @@ func (rg *swaggerGenerator) mix() error {
 			Title       string
 			Description string
 		}{
-			Version:     "1.0.0",
-			Title:       "The Malooch API",
-			Description: "Auto genertaed Malooch API",
+			Version:     rg.version,
+			Title:       rg.title,
+			Description: rg.description,
 		},
 		Host:        rg.domain,
 		BasePath:    "/api",
@@ -974,5 +977,23 @@ func init() {
 	}
 	workDir := filepath.Join(wd, "swagger")
 	assert.Nil(os.MkdirAll(workDir, 0744))
-	plugins.Register(&swaggerGenerator{workDir: workDir, domain: domain})
+	title := os.Getenv("SWAGGER_TITLE")
+	if title == "" {
+		title = "Swagger API"
+	}
+	description := os.Getenv("SWAGGER_DESCRIPTION")
+	if description == "" {
+		description = "Auto generated swagger api"
+	}
+	version := os.Getenv("SWAGGER_VERSION")
+	if version == "" {
+		version = "1.0.0"
+	}
+	plugins.Register(&swaggerGenerator{
+		workDir:     workDir,
+		domain:      domain,
+		version:     version,
+		description: description,
+		title:       title,
+	})
 }

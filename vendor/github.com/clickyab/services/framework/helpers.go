@@ -21,7 +21,7 @@ const (
 // Mix try to mix all middleware with the calling route
 func Mix(final Handler, all ...Middleware) Handler {
 	res := final
-	for i := range all {
+	for i := len(all) - 1; i >= 0; i-- {
 		res = all[i](res)
 	}
 

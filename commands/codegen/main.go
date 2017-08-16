@@ -7,10 +7,10 @@ import (
 	"strings"
 
 	"github.com/clickyab/services/assert"
-	_ "github.com/clickyab/services/codegen/datatable" // Datatable
-	_ "github.com/clickyab/services/codegen/enums"     // Enums plugin
-	_ "github.com/clickyab/services/codegen/gin"       // Gin plugin
-	_ "github.com/clickyab/services/codegen/models"    // Models plugin
+	_ "github.com/clickyab/services/codegen/datatable"    // Datatable
+	_ "github.com/clickyab/services/codegen/enums"        // Enums plugin
+	_ "github.com/clickyab/services/codegen/gin"          // Gin plugin
+	_ "github.com/clickyab/services/codegen/models_mysql" // Models plugin
 	"github.com/clickyab/services/codegen/plugins"
 	_ "github.com/clickyab/services/codegen/swagger"  // Raml plugin
 	_ "github.com/clickyab/services/codegen/validate" // Validateor

@@ -136,7 +136,7 @@ func newInlineNonLinearAd(showURL, clickURL string, adtype adType, width, height
 			NonLinearAds: &vast.NonLinearAds{NonLinears: []vast.NonLinear{{
 				Width:                 width,
 				Height:                height,
-				NonLinearClickThrough: clickURL,
+				NonLinearClickThrough: vast.CDATAString{CDATA: clickURL},
 			}}},
 			Sequence: sequence,
 		}},

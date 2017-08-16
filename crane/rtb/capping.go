@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/clickyab/services/eav"
+	"github.com/clickyab/services/kv"
 
 	"context"
 
@@ -30,11 +30,11 @@ type capping struct {
 	frequency int
 	selected  bool
 
-	kiwi eav.Kiwi
+	kiwi kv.Kiwi
 }
 
 // NewCapping create new capping
-func (caps cappingContext) NewCapping(adID int64, freq int, kiwi eav.Kiwi) entity.Capping {
+func (caps cappingContext) NewCapping(adID int64, freq int, kiwi kv.Kiwi) entity.Capping {
 	if _, ok := caps[adID]; !ok {
 		caps[adID] = &capping{
 			adID:      adID,
@@ -77,7 +77,7 @@ func getCappingKey(copID string) string {
 }
 
 func getCapping(ctx context.Context, clientID string, ads map[string][]entity.Advertise, slots []entity.Slot) map[string][]entity.Advertise {
-	kiwi := eav.NewEavStore(getCappingKey(clientID))
+	kiwi := kv.NewEavStore(getCappingKey(clientID))
 	go func() {
 		c := ctx.Done()
 		assert.NotNil(c)

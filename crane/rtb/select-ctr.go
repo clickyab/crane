@@ -9,8 +9,7 @@ import (
 
 	"clickyab.com/crane/crane/entity"
 	"github.com/clickyab/services/assert"
-	"github.com/clickyab/services/eav"
-	"github.com/clickyab/services/store"
+	"github.com/clickyab/services/kv"
 )
 
 const (
@@ -57,8 +56,8 @@ func (s resultStore) getData(pub entity.Publisher) (ef entity.SortByCap, floor i
 	return
 }
 
-func createMegaStore(imp entity.Impression) eav.Kiwi {
-	kiwi := eav.NewEavStore(Mega + imp.TrackID())
+func createMegaStore(imp entity.Impression) kv.Kiwi {
+	kiwi := kv.NewEavStore(Mega + imp.TrackID())
 	assert.Nil(kiwi.SetSubKey(MegaIP, imp.IP().String()).
 		SetSubKey(MegaUserAgent, imp.UserAgent()).
 		SetSubKey(MegaPubID, imp.Publisher().Name()).
@@ -70,7 +69,7 @@ func createMegaStore(imp entity.Impression) eav.Kiwi {
 // selectCTR is the key function to select an ad for an imp base on real time biding
 func selectCTR(
 	pCtx context.Context,
-	store store.Interface,
+	store kv.Store,
 	imp entity.Impression,
 	ads map[string][]entity.Advertise,
 	ch chan map[string]entity.Advertise,
@@ -94,10 +93,10 @@ func selectCTR(
 	ads = getCapping(ctx, imp.ClientID(), ads, slots)
 	kiwi := createMegaStore(imp)
 	wg := sync.WaitGroup{}
+	var noVideo bool
 	for i := range slots {
 		var (
-			size    = fmt.Sprintf("%dx%d", slots[i].Width(), slots[i].Height())
-			noVideo bool
+			size = fmt.Sprintf("%dx%d", slots[i].Width(), slots[i].Height())
 		)
 
 		s := adLoop(ads[size], pub, slots[i], noVideo)
@@ -141,7 +140,7 @@ func selectCTR(
 		go func() {
 			defer wg.Done()
 			ch <- map[string]entity.Advertise{slots[i].TrackID(): sorted[0]}
-			store.Push(slots[i].TrackID(), fmt.Sprint(sorted[0].ID()), time.Hour)
+			store.Push(slots[i].TrackID(), sorted[0].ID(), time.Hour)
 		}()
 	}
 

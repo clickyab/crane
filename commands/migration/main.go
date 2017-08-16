@@ -16,7 +16,7 @@ import (
 
 	"clickyab.com/crane/commands"
 	"github.com/Sirupsen/logrus"
-	"github.com/rubenv/sql-migrate"
+	"github.com/fzerorubigd/sql-migrate"
 )
 
 var (

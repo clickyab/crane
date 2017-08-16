@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
+	"os"
 	"sync"
 	"time"
 
@@ -15,6 +16,7 @@ import (
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/healthz"
 	"github.com/clickyab/services/initializer"
+	"github.com/clickyab/services/migration"
 	"github.com/clickyab/services/safe"
 	gorp "gopkg.in/gorp.v2"
 )
@@ -26,7 +28,7 @@ var (
 	wdbmap   *gorp.DbMap
 
 	once    = sync.Once{}
-	all     []Initializer
+	all     []initializer.Simple
 	factory func(string) (*sql.DB, error)
 )
 
@@ -34,6 +36,17 @@ type initMysql struct {
 }
 
 type gorpLogger struct {
+}
+
+type migrationManager struct {
+}
+
+func (migrationManager) GetSQLDB() *sql.DB {
+	return wdbmap.Db
+}
+
+func (migrationManager) GetDialect() string {
+	return "mysql"
 }
 
 func (g gorpLogger) Printf(format string, v ...interface{}) {
@@ -58,16 +71,43 @@ func createDBMap(dsn, mark string) *gorp.DbMap {
 	return dbmap
 }
 
-func ping(db ...*gorp.DbMap) error {
+func ping(replication bool, db ...*gorp.DbMap) error {
+	if !replication {
+		for i := range db {
+			err := db[i].Db.Ping()
+			if err != nil {
+				logrus.Error(err)
+				continue
+			}
+			return nil // just one active connection is fine
+		}
+		return fmt.Errorf("all %d ping(s) failed", len(db))
+	}
 	for i := range db {
-		err := db[i].Db.Ping()
+		f := slaveStatus{}
+		err := db[i].SelectOne(&f, `SHOW SLAVE STATUS`)
 		if err != nil {
-			logrus.Error(err)
 			continue
 		}
-		return nil // just one active connection is fine
+
+		if f.LastErrno != 0 || f.SlaveIORunning == "No" || f.SlaveSQLRunning == "No" {
+			continue
+		} else if f.SecondsBehindMaster.Valid {
+			if f.SecondsBehindMaster.Int64 > validSecondsSlaveBehind.Int64() {
+				continue
+			}
+		}
+		return nil
 	}
-	return fmt.Errorf("all %d ping(s) failed", len(db))
+	return fmt.Errorf("all %d slave(s) failed", len(db))
+}
+
+// PingDB pings a specific db
+func PingDB(dbIndex int) error {
+	if dbIndex > len(rdbmap)-1 {
+		return errors.New("index out of db bound")
+	}
+	return ping(dbReplicated.Bool(), rdbmap[dbIndex])
 }
 
 // Initialize the modules, its safe to call this as many time as you want.
@@ -76,7 +116,7 @@ func (in *initMysql) Initialize(ctx context.Context) {
 		assert.NotNil(factory)
 
 		wdbmap = createDBMap(wdsn.String(), "[wdb]")
-		safe.Try(func() error { return ping(wdbmap) }, retryMax.Duration())
+		safe.Try(func() error { return ping(false, wdbmap) }, retryMax.Duration())
 
 		rdsns := strings.Split(rdsnSlice.String(), ",")
 		if len(rdsns) == 0 {
@@ -88,11 +128,12 @@ func (in *initMysql) Initialize(ctx context.Context) {
 			tmpDBMap := createDBMap(rdsns[i], fmt.Sprintf("[rdb%d]", i+1))
 			rdbmap = append(rdbmap, tmpDBMap)
 		}
-		safe.Try(func() error { return ping(rdbmap...) }, retryMax.Duration())
+		safe.Try(func() error { return ping(dbReplicated.Bool(), rdbmap...) }, retryMax.Duration())
 
 		fillSafeArray()
 		safe.GoRoutine(func() { updateRdbMap(ctx) })
 
+		doMigration()
 		// Now that all initialization are done, lets initialize our modules
 		for i := range all {
 			all[i].Initialize()
@@ -127,7 +168,7 @@ func updateRdbMap(ctx context.Context) {
 func fillSafeArray() {
 	tmp := []*gorp.DbMap{}
 	for i := range rdbmap {
-		if err := ping(rdbmap[i]); err == nil {
+		if err := ping(dbReplicated.Bool(), rdbmap[i]); err == nil {
 			tmp = append(tmp, rdbmap[i])
 		}
 	}
@@ -146,10 +187,26 @@ func fillSafeArray() {
 	safeRead = tmp
 }
 
+func doMigration() {
+	//if startupMigration.Bool() {
+	//	// its time for migration
+	//	n, err := migration.Do(migrationManager{}, migration.Up, 0)
+	//	if err != nil {
+	//		logrus.Errorf("Migration failed! the error was: %s", err)
+	//		logrus.Error("This continue to run, but someone must check this!")
+	//	} else {
+	//		logrus.Info("%d migration applied", n)
+	//	}
+	//}
+	if develMode.Bool() {
+		migration.List(migrationManager{}, os.Stdout)
+	}
+}
+
 // Healthy return true if the databases are ok and ready for ping
 func (in *initMysql) Healthy(context.Context) error {
-	rErr := ping(rdbmap...)
-	wErr := ping(wdbmap)
+	rErr := ping(dbReplicated.Bool(), rdbmap...)
+	wErr := ping(false, wdbmap)
 
 	if rErr != nil || wErr != nil {
 		return fmt.Errorf("mysql PING failed, read error was %s and write error was %s", rErr, wErr)
@@ -300,7 +357,7 @@ func (m *Manager) TruncateTables(tbl string) error {
 }
 
 // Register a new initMysql module
-func Register(m ...Initializer) {
+func Register(m ...initializer.Simple) {
 	all = append(all, m...)
 }
 
