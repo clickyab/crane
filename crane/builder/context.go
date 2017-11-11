@@ -28,8 +28,6 @@ type Context struct {
 	user      entity.User
 	currency  string
 
-	minbidPercentage int
-
 	eventPage string
 	alexa     bool
 	NoTiny    bool
@@ -38,28 +36,54 @@ type Context struct {
 	referrer string
 	parent   string
 
-	currencyRate float64
-	noCap        bool
-	noTiny       bool
-	multiVideo   bool
-	floorDiv     int64
+	noCap            bool
+	noTiny           bool
+	multiVideo       bool
+	floorPercentage  int64
+	floorCPM         int64
+	softFloorCPM     int64
+	bidType          entity.BIDType
+	minBidPercentage int64
 
 	noShowT bool // Default is showT frame. but for exchange may be we don't want that
 
 	suspicious int
-	rate       int
+	rate       float64
+}
+
+// Rate return the rate of this request
+func (c *Context) Rate() float64 {
+	return c.rate
+}
+
+// FloorCPM is the minimum CPM for this request, default is MinBid * DefaultCTR
+// Currency is always Rial
+func (c *Context) FloorCPM() int64 {
+	return int64(float64(c.floorCPM)/100) * c.FloorPercentage()
+}
+
+// SoftFloorCPM is the minimum CPM for this request, default is FloorCPM
+// Currency is always Rial
+func (c *Context) SoftFloorCPM() int64 {
+	return int64(float64(c.softFloorCPM)/100) * c.FloorPercentage()
+}
+
+// BIDType is the Bid Type for this request, no matter what, the system use
+// cpc , but this is helpful for better data in logs/impression/click
+func (c *Context) BIDType() entity.BIDType {
+	return c.bidType
 }
 
 // MinBIDPercentage return the percentage for min bid
-func (c *Context) MinBIDPercentage() int {
-	if c.minbidPercentage <= 0 {
-		c.minbidPercentage = 100
+func (c *Context) MinBIDPercentage() int64 {
+	if c.minBidPercentage <= 0 {
+		c.minBidPercentage = 100
 	}
-	if c.minbidPercentage > 200 {
-		c.minbidPercentage = 200
+	if c.minBidPercentage > 200 {
+		c.minBidPercentage = 200
 	}
 
-	return c.minbidPercentage
+	return c.minBidPercentage
 }
 
 // Suspicious return zero on ok status and a number on invalid value
@@ -107,15 +131,18 @@ func (c *Context) IsMobile() bool {
 	return c.os.Mobile
 }
 
-// ISP return the isp of this request
-func (c *Context) ISP() string {
-	return c.location.ISP().Name
-}
-
-// FloorDiv return the floor div for this request
+// FloorPercentage return the floor percentage for this request
 // TODO : multiple floor in database
-func (c *Context) FloorDiv() int64 {
-	return c.floorDiv
+func (c *Context) FloorPercentage() int64 {
+	if c.floorPercentage <= 0 {
+		c.floorPercentage = 100
+	}
+
+	if c.floorPercentage > 200 {
+		c.floorPercentage = 200
+	}
+
+	return c.floorPercentage
 }
 
 // Tiny means we need to show the tiny mark in ad

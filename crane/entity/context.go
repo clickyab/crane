@@ -38,11 +38,20 @@ type Context interface {
 	// MultiVideo determine this request can have multiple video
 	MultiVideo() bool
 	// FloorDiv is floor-cpm divider
-	FloorDiv() int64
+	FloorPercentage() int64
 	// Capping is required otr not
 	Capping() bool
 	// MinBIDPercentage is a hack to handle min bid on multiple types.
 	// for example for native its 50%, in new design make sure every
 	// type has its own minbid and drop this hack
-	MinBIDPercentage() int
+	MinBIDPercentage() int64
+	// FloorCPM is the floor cpm for publisher
+	FloorCPM() int64
+	// SoftFloorCPM is the soft version of floor cpm. if the publisher ahs it, then the system
+	// try to use this as floor, but if this is not available, the FloorCPM is used
+	SoftFloorCPM() int64
+	// BIDType return this publisher bid type
+	BIDType() BIDType
+	// Rate return ratio currency conversion to IRR
+	Rate() float64
 }

@@ -35,6 +35,10 @@ func SetFullSeats(pubID string, size int, hash string, ad entity.Advertise, bid 
 			reserveHash: hash,
 			susp:        o.suspicious,
 			showT:       showT,
+			// No need to following data
+			minBidPercentage: o.MinBIDPercentage(),
+			minBid:           bid,
+			rate:             1,
 		})
 		return o, nil
 	}

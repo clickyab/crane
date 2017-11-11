@@ -17,14 +17,10 @@ func getSecondCPM(floorCPM int64, exceedFloor []adAndBid) float64 {
 	return secondCPM
 }
 
-func doBid(adData entity.Advertise, website entity.Publisher, slot entity.Seat, floorDiv int64) (float64, int64, bool) {
+func doBid(adData entity.Advertise, website entity.Publisher, slot entity.Seat, floorCPM int64) (float64, int64, bool) {
 	ctr := (adData.AdCTR()*float64(adCTREffect.Int()) + slot.CTR()*float64(slotCTREffect.Int())) / float64(100)
 	cpm := int64(float64(adData.Campaign().MaxBID()) * ctr * 10.0)
-	//exceed cpm floor
-	if floorDiv < 1 {
-		floorDiv = 1
-	}
-	return ctr, cpm, cpm >= website.FloorCPM()/floorDiv
+	return ctr, cpm, cpm >= floorCPM
 }
 
 // winnerBid calculate winner bid
@@ -46,20 +42,24 @@ func internalSelect(
 	var noVideo bool                 // once set, never unset it again
 	selected := make(map[int64]bool) // all ad selected in this session, to make sure they are not repeated
 
-	for _, slot := range ctx.Seats() {
+	for _, seat := range ctx.Seats() {
 		var (
 			exceedFloor []adAndBid
 			underFloor  []adAndBid
 		)
 
-		for _, adData := range ads[slot.Size()] {
+		for _, adData := range ads[seat.Size()] {
 			if adData.Type() == entity.AdTypeVideo && noVideo {
 				continue
 			}
 			if selected[adData.ID()] {
 				continue
 			}
-			if ctr, cpm, ok := doBid(adData, ctx.Publisher(), slot, ctx.FloorDiv()); ok {
+			// Drop if the min bid is lesser than requested min bid
+			if adData.Campaign().MaxBID() < seat.MinBid() {
+				continue
+			}
+			if ctr, cpm, ok := doBid(adData, ctx.Publisher(), seat, ctx.FloorCPM()); ok {
 				exceedFloor = append(exceedFloor, adAndBid{Advertise: adData, ctr: ctr, cpm: cpm})
 			} else {
 				underFloor = append(underFloor, adAndBid{Advertise: adData, ctr: ctr, cpm: cpm})
@@ -96,7 +96,7 @@ func internalSelect(
 		// Do not do second biding pricing on this ads, they can not pass CPMFloor
 		targetCPM := float64(theAd.Campaign().MaxBID())
 		if secBid {
-			targetCPM = getSecondCPM(ctx.Publisher().FloorCPM(), sorted)
+			targetCPM = getSecondCPM(ctx.FloorCPM(), sorted)
 		}
 		bid := winnerBid(targetCPM, theAd.ctr)
 		if bid > float64(theAd.Campaign().MaxBID()) {
@@ -105,12 +105,12 @@ func internalSelect(
 			bid = float64(theAd.Campaign().MaxBID())
 		}
 
-		if bid < float64(ctx.Publisher().MinBid()) {
+		if bid < float64(seat.MinBid()) {
 			// since we change the winner bid, do not inc the cap
-			bid = float64(ctx.Publisher().MinBid())
+			bid = float64(seat.MinBid())
 		}
 		selected[theAd.ID()] = true
-		slot.SetWinnerAdvertise(theAd.Advertise, bid)
+		seat.SetWinnerAdvertise(theAd.Advertise, bid)
 
 		if !ctx.MultiVideo() {
 			noVideo = noVideo || theAd.Type() == entity.AdTypeVideo

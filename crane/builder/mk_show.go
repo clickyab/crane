@@ -22,7 +22,7 @@ import (
 )
 
 // SetRate set the timestamp. must be first!
-func SetRate(r int) ShowOptionSetter {
+func SetRate(r float64) ShowOptionSetter {
 	return func(options *Context) (*Context, error) {
 		options.rate = r
 		return options, nil
@@ -183,21 +183,46 @@ func SetParent(page, ref string) ShowOptionSetter {
 	}
 }
 
-// SetCurrencyRate set currency convert rate to rial
-func SetCurrencyRate(a float64) ShowOptionSetter {
+// SetFloorPercentage try to set floor div (the real floor is the floor/this value)
+func SetFloorPercentage(i int64) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
-		o.currencyRate = a
+		if i <= 0 {
+			return nil, fmt.Errorf("invalid floor value")
+		}
+		o.floorPercentage = i
 		return o, nil
 	}
 }
 
-// SetFloorDiv try to set floor div (the real floor is the floor/this value)
-func SetFloorDiv(i int64) ShowOptionSetter {
+// SetFloorCPM try to set hard floor on this request (Rial only!)
+func SetFloorCPM(i int64) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
-		if i == 0 {
-			i = 1
+		if i <= 0 {
+			return nil, fmt.Errorf("invalid floor value")
 		}
-		o.floorDiv = i
+		o.floorCPM = i
+		return o, nil
+	}
+}
+
+// SetMinBidPercentage set the minimum bid percentage
+func SetMinBidPercentage(i int64) ShowOptionSetter {
+	return func(o *Context) (*Context, error) {
+		if i <= 0 {
+			return nil, fmt.Errorf("invalid floor value")
+		}
+		o.minBidPercentage = i
+		return o, nil
+	}
+}
+
+// SetSoftFloorCPM try to set soft floor on this request
+func SetSoftFloorCPM(i int64) ShowOptionSetter {
+	return func(o *Context) (*Context, error) {
+		if i <= 0 {
+			return nil, fmt.Errorf("invalid floor value")
+		}
+		o.softFloorCPM = i
 		return o, nil
 	}
 }
