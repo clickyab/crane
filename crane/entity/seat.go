@@ -28,6 +28,6 @@ type Seat interface {
 	Type() string
 	// ShowT the fucking iframe injection
 	ShowT() bool
-	// Rate return ratio currency conversion to IRR
-	Rate() int
+	// MinBid is the minimum CPC requested for this requests
+	MinBid() int64
 }

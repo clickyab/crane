@@ -27,7 +27,6 @@ var (
 		&filter.WebNetwork{},
 		&filter.WebMobile{},
 		&filter.Desktop{},
-		&filter.MinBID{},
 		&filter.OS{},
 		&filter.WhiteList{},
 		&filter.BlackList{},
@@ -104,14 +103,19 @@ func openrtbInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetProtocol(proto),
 		builder.SetTID(us, ip, ua),
 		builder.SetNoTiny(sup.TinyMark()),
-		builder.SetRate(sup.Rate()),
+		// Website of demand has no floor cpm and soft floor cpm associated with them
+		builder.SetFloorCPM(sup.DefaultFloorCPM()),
+		builder.SetSoftFloorCPM(sup.DefaultSoftFloorCPM()),
+		builder.SetRate(float64(sup.Rate())),
 	}
+	// TODO : if we need to implement native/app/vast then the next line must be activated and customized
+	//b = append(b, builder.SetFloorPercentage(100), builder.SetMinBidPercentage(100))
 
 	if payload.Site != nil {
 		b = append(b, builder.SetParent(payload.Site.Page, payload.Site.Ref))
 	}
 
-	b = append(b, builder.SetDemandSeats(seatDetail(payload)))
+	b = append(b, builder.SetDemandSeats(seatDetail(payload)...))
 
 	c, err := rtb.Select(ctx, ortbSelector, b...)
 	if err != nil {
@@ -123,10 +127,10 @@ func openrtbInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	assert.Nil(demand.Render(ctx, w, c))
 }
 
-func seatDetail(req openrtb.BidRequest) map[string]string {
+func seatDetail(req openrtb.BidRequest) []builder.DemandSeatData {
 	var (
 		imp   = req.Imp
-		seats = make(map[string]string)
+		seats = make([]builder.DemandSeatData, 0)
 		w, h  int
 	)
 
@@ -134,8 +138,11 @@ func seatDetail(req openrtb.BidRequest) map[string]string {
 		if imp[i].Banner != nil {
 			w, h = imp[i].Banner.W, imp[i].Banner.H
 		}
-
-		seats[imp[i].ID] = fmt.Sprintf("%dx%d", w, h)
+		seats = append(seats, builder.DemandSeatData{
+			MinBid: imp[i].BidFloor,
+			PubID:  imp[i].ID,
+			Size:   fmt.Sprintf("%dx%d", w, h),
+		})
 	}
 	return seats
 }

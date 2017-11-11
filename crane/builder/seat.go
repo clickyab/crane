@@ -3,6 +3,7 @@ package builder
 import (
 	"crypto/md5"
 	"fmt"
+	"math"
 	"math/rand"
 	"net/url"
 	"time"
@@ -63,17 +64,21 @@ type seat struct {
 	// Host return the target host which is different form request.Host and will be used for routing in click, show, etc
 	// for example if current request.Host is a.clickyab.com and we want to click url hit b.clickyab.com then Host
 	// return b.clickyab.com
-	host string
+	host             string
+	minBidPercentage int64
+	rate             float64
 
 	publisher entity.Publisher
 	ctr       float64
 
-	showT int
-	rate  int
+	showT  int
+	minBid float64
 }
 
-func (s *seat) Rate() int {
-	return s.rate
+// MinBid return the current minimum bid, apply the min bid percentage and
+// rate.
+func (s *seat) MinBid() int64 {
+	return int64(math.Ceil(s.minBid*s.rate)/100) * s.minBidPercentage
 }
 
 func (s *seat) ShowT() bool {
