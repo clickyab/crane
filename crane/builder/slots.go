@@ -88,7 +88,7 @@ func (s *Slot) Click() string {
 func AddWebSlot(pubID string, size int) ShowOptionSetter {
 	//validate slot size
 	assert.False(utils.InWebSize(size))
-	return func(o *context) (*context, error) {
+	return func(o *Context) (*Context, error) {
 		if o.data.Website == nil {
 			return nil, errors.New("website not filled")
 		}
@@ -109,7 +109,7 @@ func AddWebSlot(pubID string, size int) ShowOptionSetter {
 
 // AddNativeSlot try to add native slot to list
 func AddNativeSlot(count int, pubIDBase string) ShowOptionSetter {
-	return func(o *context) (*context, error) {
+	return func(o *Context) (*Context, error) {
 		if o.data.Website == nil {
 			return nil, errors.New("website not filled")
 		}
@@ -136,7 +136,7 @@ func AddNativeSlot(count int, pubIDBase string) ShowOptionSetter {
 
 // AddVastSlot try to add a new vast slot
 func AddVastSlot(basePubID string, l string, first, mid, last bool) ShowOptionSetter {
-	return func(o *context) (*context, error) {
+	return func(o *Context) (*Context, error) {
 		var pubIdSize = make(map[string]int)
 		_, length := cyvast.MakeVastLen(l, first, mid, last)
 		var i int
@@ -184,7 +184,7 @@ func AddVastSlot(basePubID string, l string, first, mid, last bool) ShowOptionSe
 
 // AddAppSlot try to add a slot for application
 func AddAppSlot(adsMedia string) ShowOptionSetter {
-	return func(o *context) (*context, error) {
+	return func(o *Context) (*Context, error) {
 		if o.data.App == nil {
 			return nil, fmt.Errorf("no publisher is set")
 		}

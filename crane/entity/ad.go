@@ -31,7 +31,8 @@ type Advertise interface {
 	// CPM return the current cpm
 	CPM() int64
 	// SetWinnerBID set the winner bid for this ad if the add is the winner
-	SetWinnerBID(int64)
+	// the bool parameter means that the capping must increase
+	SetWinnerBID(int64, bool)
 	// WinnerBID return the winner bid
 	WinnerBID() int64
 	// AdCTR the ad ctr from database (its not calculated from )
@@ -56,4 +57,8 @@ type Advertise interface {
 	Media() string
 	// TargetURL asd
 	TargetURL() string
+
+	SetSlot(Slot)
+
+	Slot() Slot
 }

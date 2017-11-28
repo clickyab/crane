@@ -4,13 +4,12 @@ import (
 	"math/rand"
 	"net"
 
-	"clickyab.com/gad/models"
 	"clickyab.com/crane/crane/entity"
+	"clickyab.com/gad/models"
 )
 
 // ShowOptionSetter is the function to handle setting
-type ShowOptionSetter func(*context) (*context, error)
-
+type ShowOptionSetter func(*Context) (*Context, error)
 
 // common is the common type data
 type common struct {
@@ -61,7 +60,7 @@ type RTB struct {
 	Async            bool // Default is sync, each request must return the data
 	NoCap            bool // Do not use capping system. default is false
 
-	Slots []*Slot
+	Slots []entity.Slot
 }
 
 // Data is calculated or fetched data
@@ -72,8 +71,8 @@ type Data struct {
 	CellLocation *models.CellLocation
 }
 
-// context is the app context
-type context struct {
+// Context is the app Context
+type Context struct {
 	common common
 	app    App
 	rtb    RTB
@@ -82,47 +81,47 @@ type context struct {
 	showT int
 }
 
-func (c *context) IP() net.IP {
+func (c *Context) IP() net.IP {
 	return c.common.IP
 }
 
-func (c *context) OS() entity.OS {
+func (c *Context) OS() entity.OS {
 	return c.common.OS
 }
 
-func (c *context) ClientID() string {
+func (c *Context) ClientID() string {
 	panic("implement me")
 }
 
-func (c *context) Protocol() string {
+func (c *Context) Protocol() string {
 	panic("implement me")
 }
 
-func (c *context) UserAgent() string {
+func (c *Context) UserAgent() string {
 	panic("implement me")
 }
 
-func (c *context) Location() entity.Location {
+func (c *Context) Location() entity.Location {
 	panic("implement me")
 }
 
-func (c *context) Attributes() map[string]string {
+func (c *Context) Attributes() map[string]string {
 	panic("implement me")
 }
 
-func (c *context) TrackID() string {
+func (c *Context) TrackID() string {
 	panic("implement me")
 }
 
-func (c *context) Publisher() entity.Publisher {
+func (c *Context) Publisher() entity.Publisher {
 	panic("implement me")
 }
 
-func (c *context) Slots() []entity.Slot {
+func (c *Context) Slots() []entity.Slot {
 	panic("implement me")
 }
 
-func (c *context) Category() []entity.Category {
+func (c *Context) Category() []entity.Category {
 	panic("implement me")
 }
 
@@ -150,27 +149,27 @@ func (invalidPub) GetType() string {
 }
 
 // GetCommon return th common part of data
-func (c *context) GetCommon() *common {
+func (c *Context) GetCommon() *common {
 	return &c.common
 }
 
 // GetCommon return th app part of data
-func (c *context) GetApp() *App {
+func (c *Context) GetApp() *App {
 	return &c.app
 }
 
 // GetCommon return th rtb part of data
-func (c *context) GetRTB() *RTB {
+func (c *Context) GetRTB() *RTB {
 	return &c.rtb
 }
 
 // GetCommon return th data part of data
-func (c *context) GetData() *Data {
+func (c *Context) GetData() *Data {
 	return &c.data
 }
 
 // ShowT is a hack to handle a simple redirection (for Clickyab owners need)
-func (c *context) ShowT() bool {
+func (c *Context) ShowT() bool {
 	if c.showT == 0 {
 		c.showT = 2
 		if c.common.Mobile && c.common.ProvinceID > 0 && c.common.Alexa && rand.Intn(chanceShowT.Int()) == 1 {
@@ -182,7 +181,7 @@ func (c *context) ShowT() bool {
 }
 
 // GetPublisher return the current publisher object
-func (c *context) GetPublisher() entity.Publisher {
+func (c *Context) GetPublisher() entity.Publisher {
 	if c.data.App == nil && c.data.Website == nil {
 		return invalidPub{}
 	}
@@ -193,9 +192,9 @@ func (c *context) GetPublisher() entity.Publisher {
 	return c.data.App
 }
 
-// NewContext return a context based on its setters
-func NewContext(opt ...ShowOptionSetter) (*context, error) {
-	res := &context{}
+// NewContext return a Context based on its setters
+func NewContext(opt ...ShowOptionSetter) (*Context, error) {
+	res := &Context{}
 	var err error
 	for i := range opt {
 		if res, err = opt[i](res); err != nil {

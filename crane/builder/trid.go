@@ -11,7 +11,7 @@ var copLen = config.RegisterInt("clickyab.cop_len", 10, "cop key len")
 
 // SetWebTID try to create unique user tid, must set it at the end!
 func SetWebTID(tid string) ShowOptionSetter {
-	return func(o *context) (*context, error) {
+	return func(o *Context) (*Context, error) {
 		if o.common.UserAgent == "" || o.common.IP == nil {
 			return nil, fmt.Errorf("call this at the end after setting ip and ua")
 		}

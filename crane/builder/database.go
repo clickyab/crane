@@ -17,7 +17,7 @@ var (
 
 // SetMobileRelatedParam try to set Mobile related parameters
 func SetMobileRelatedParam(u *url.URL) ShowOptionSetter {
-	return func(o *context) (*context, error) {
+	return func(o *Context) (*Context, error) {
 		brand := u.Query().Get("brand")
 		network := u.Query().Get("network")
 

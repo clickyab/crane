@@ -18,7 +18,7 @@ import (
 
 // SetType is the type setter for context
 func SetType(typ string) ShowOptionSetter {
-	return func(options *context) (*context, error) {
+	return func(options *Context) (*Context, error) {
 		if typ != "vast" && typ != "App" && typ != "web" && typ != "native" {
 			return nil, fmt.Errorf("type is not supported %s", typ)
 		}
@@ -29,7 +29,7 @@ func SetType(typ string) ShowOptionSetter {
 
 // SetIP is the IP setter for context, also it extract the IP information
 func SetIP(ip string) ShowOptionSetter {
-	return func(o *context) (*context, error) {
+	return func(o *Context) (*Context, error) {
 		ipv4 := net.ParseIP(ip)
 		if ipv4 == nil {
 			return nil, fmt.Errorf("invalid IP %s", ip)
@@ -46,7 +46,7 @@ func SetIP(ip string) ShowOptionSetter {
 
 // SetUserAgent try to set user agent and all related things
 func SetUserAgent(ua string) ShowOptionSetter {
-	return func(o *context) (*context, error) {
+	return func(o *Context) (*Context, error) {
 		uaO := user_agent.New(ua)
 		o.common.UserAgent = ua
 		o.common.Browser, o.common.BrowserVersion = uaO.Browser()
@@ -68,7 +68,7 @@ func SetUserAgent(ua string) ShowOptionSetter {
 
 // SetAlexa try to set Alexa flag if available
 func SetAlexa(ua string, headers http.Header) ShowOptionSetter {
-	return func(o *context) (*context, error) {
+	return func(o *Context) (*Context, error) {
 		// In go headers are not case sensitive and ok with _ and -
 		if strings.Contains(ua, "Alexa") || headers.Get("ALEXATOOLBAR-ALX_NS_PH") != "" {
 			o.common.Alexa = true
@@ -80,7 +80,7 @@ func SetAlexa(ua string, headers http.Header) ShowOptionSetter {
 
 // SetRequest try to set request in context, also all query params needed by the process
 func SetRequest(host, method string) ShowOptionSetter {
-	return func(o *context) (*context, error) {
+	return func(o *Context) (*Context, error) {
 		o.common.Host = host
 		o.common.Method = method
 		o.common.MegaImp = <-random.ID
@@ -90,7 +90,7 @@ func SetRequest(host, method string) ShowOptionSetter {
 
 // SetSchema try to find schema of the request based on the request headers
 func SetSchema(r *http.Request) ShowOptionSetter {
-	return func(o *context) (*context, error) {
+	return func(o *Context) (*Context, error) {
 		o.common.Scheme = "http"
 		if r.TLS != nil {
 			o.common.Scheme = "https"
@@ -106,7 +106,7 @@ func SetSchema(r *http.Request) ShowOptionSetter {
 // SetQueryParameters try to get query parameters from the request and set the
 // proper field
 func SetQueryParameters(u *url.URL, ref string) ShowOptionSetter {
-	return func(o *context) (*context, error) {
+	return func(o *Context) (*Context, error) {
 		o.common.Parent = u.Query().Get("loc")
 		o.common.Referrer = u.Query().Get("ref")
 
@@ -119,7 +119,7 @@ func SetQueryParameters(u *url.URL, ref string) ShowOptionSetter {
 
 // SetMinCPC try to set minimum cpc for this request
 func SetMinCPC(i int64) ShowOptionSetter {
-	return func(o *context) (*context, error) {
+	return func(o *Context) (*Context, error) {
 		o.rtb.MinCPC = i
 		return o, nil
 	}
@@ -127,7 +127,7 @@ func SetMinCPC(i int64) ShowOptionSetter {
 
 // SetMinBidPercentage try to set minimum bid for this request (normally from Website/App data)
 func SetMinBidPercentage(i float64) ShowOptionSetter {
-	return func(o *context) (*context, error) {
+	return func(o *Context) (*Context, error) {
 		o.rtb.MinBidPercentage = i
 		return o, nil
 	}
@@ -135,7 +135,7 @@ func SetMinBidPercentage(i float64) ShowOptionSetter {
 
 // SetFloorDiv try to set floor div (the real floor is the floor/this value)
 func SetFloorDiv(i int64) ShowOptionSetter {
-	return func(o *context) (*context, error) {
+	return func(o *Context) (*Context, error) {
 		if i == 0 {
 			i = 1
 		}
@@ -146,7 +146,7 @@ func SetFloorDiv(i int64) ShowOptionSetter {
 
 // SetAllowUnderFloor try to set floor div (the real floor is the floor/this value)
 func SetAllowUnderFloor(u bool) ShowOptionSetter {
-	return func(o *context) (*context, error) {
+	return func(o *Context) (*Context, error) {
 		o.rtb.UnderFloor = u
 		return o, nil
 	}
@@ -154,7 +154,7 @@ func SetAllowUnderFloor(u bool) ShowOptionSetter {
 
 // SetApp set application publisher
 func SetApp(app *models.App) ShowOptionSetter {
-	return func(o *context) (*context, error) {
+	return func(o *Context) (*Context, error) {
 		if o.data.Website != nil || o.data.App != nil {
 			return nil, fmt.Errorf("Website/App is already set")
 		}
@@ -165,7 +165,7 @@ func SetApp(app *models.App) ShowOptionSetter {
 
 // SetWebsite is the webiste publisher
 func SetWebsite(web *models.Website) ShowOptionSetter {
-	return func(o *context) (*context, error) {
+	return func(o *Context) (*Context, error) {
 		if o.data.Website != nil || o.data.App != nil {
 			return nil, fmt.Errorf("Website/App is already set")
 		}
@@ -176,7 +176,7 @@ func SetWebsite(web *models.Website) ShowOptionSetter {
 
 // SetEventPage in request that need it
 func SetEventPage(ep string) ShowOptionSetter {
-	return func(o *context) (*context, error) {
+	return func(o *Context) (*Context, error) {
 		o.rtb.EventPage = ep
 		return o, nil
 	}
@@ -184,7 +184,7 @@ func SetEventPage(ep string) ShowOptionSetter {
 
 // SetAsync make this request an async request (vast mainly) default is sync
 func SetAsync() ShowOptionSetter {
-	return func(o *context) (*context, error) {
+	return func(o *Context) (*Context, error) {
 		o.rtb.Async = true
 		return o, nil
 	}
@@ -192,7 +192,7 @@ func SetAsync() ShowOptionSetter {
 
 // SetNoCap make this request to not use capping system
 func SetNoCap() ShowOptionSetter {
-	return func(o *context) (*context, error) {
+	return func(o *Context) (*Context, error) {
 		o.rtb.NoCap = true
 		return o, nil
 	}
@@ -200,7 +200,7 @@ func SetNoCap() ShowOptionSetter {
 
 // SetNoTiny is the option to remove the tiny clickyab marker
 func SetNoTiny() ShowOptionSetter {
-	return func(o *context) (*context, error) {
+	return func(o *Context) (*Context, error) {
 		o.common.NoTiny = true
 		return o, nil
 	}

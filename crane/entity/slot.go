@@ -4,8 +4,10 @@ package entity
 type Slot interface {
 	// ID of the slot not changed (permanent)
 	ID() string
+
+	PublicID() string
 	// TrackID of slot
-	TrackID() string
+	ReservedHash() string
 	// Width return the primary size of this slot
 	Width() int
 	// Height return the primary size of this slot
@@ -26,6 +28,6 @@ type Slot interface {
 	ShowURL() string
 	// IsSizeAllowed return true if the size is allowed in this slot
 	IsSizeAllowed(int, int) bool
-	// Attribute return meta data for slot
-	Attribute() map[string]interface{}
+
+	ExtraParams() map[string]string
 }

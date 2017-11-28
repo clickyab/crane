@@ -21,6 +21,7 @@ const (
 
 // Publisher is the publisher interface
 type Publisher interface {
+	ID() int64
 	// FloorCPM is the floor cpm for publisher
 	FloorCPM() int64
 	// SoftFloorCPM is the soft version of floor cpm. if the publisher ahs it, then the system
