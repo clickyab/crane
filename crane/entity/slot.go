@@ -10,6 +10,8 @@ type Slot interface {
 	Width() int
 	// Height return the primary size of this slot
 	Height() int
+	// Size return the clickyab size
+	Size() int
 	// SetSlotCTR the ctr from database
 	SetSlotCTR(float64)
 	// SlotCTR the ctr from database

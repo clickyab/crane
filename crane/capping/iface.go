@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"clickyab.com/crane/crane/entity"
-	"clickyab.com/gad/builder"
 	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/kv"
 	"github.com/sirupsen/logrus"
@@ -54,7 +53,7 @@ func EmptyCapping(ads map[int][]entity.Advertise) map[int][]entity.Advertise {
 }
 
 // GetCapping try to get capping for current ad
-func GetCapping(copID string, ads map[int][]entity.Advertise, ep string, slots ...*builder.Slot) map[int][]entity.Advertise {
+func GetCapping(copID string, ads map[int][]entity.Advertise, ep string, slots ...entity.Slot) map[int][]entity.Advertise {
 	var selected = make(map[int64]bool)
 	if ep != "" {
 		s := kv.NewDistributedSet(ep)
@@ -70,7 +69,7 @@ func GetCapping(copID string, ads map[int][]entity.Advertise, ep string, slots .
 	results := ck.AllKeys()
 	doneSized := make(map[int]bool)
 	for i := range slots {
-		size := slots[i].Size
+		size := slots[i].Size()
 		if doneSized[size] {
 			continue
 		}

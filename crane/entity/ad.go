@@ -21,7 +21,7 @@ const (
 // Advertise is the single advertise interface
 type Advertise interface {
 	// GetID return the id of advertise
-	ID() string
+	ID() int64
 	// Type return the type of ad
 	Type() AdType
 	// Campaign return the ad campaign
