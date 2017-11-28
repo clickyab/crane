@@ -9,11 +9,11 @@ type ImpressionAttributes string
 
 // ImpressionLayer interface to handle the input layer
 type ImpressionLayer interface {
-	New(context.Context, Request) (Impression, error)
+	New(context.Context, Request) (Context, error)
 }
 
-// Impression is the single impression object
-type Impression interface {
+// Context is the single impression object
+type Context interface {
 	// Request data comes from request for every user
 	// like ip,user agent,client id,...
 	Request

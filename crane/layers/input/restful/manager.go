@@ -10,7 +10,7 @@ import (
 )
 
 // New validate request and return new vast impression
-func New(r entity.Request) (entity.Impression, error) {
+func New(r entity.Request) (entity.Context, error) {
 	m := &impression{}
 
 	v, ok := r.Attributes()["body"]

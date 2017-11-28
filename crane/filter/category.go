@@ -5,9 +5,9 @@ import (
 )
 
 // Category check for category match
-func Category(impression entity.Impression, advertise entity.Advertise) bool {
+func Category(context entity.Context, advertise entity.Advertise) bool {
 	whitelist := advertise.Campaign().Category()
-	elems := impression.Category()
+	elems := context.Category()
 
 	return hasCategory(elems, whitelist)
 }

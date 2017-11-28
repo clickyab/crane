@@ -8,7 +8,7 @@ import (
 )
 
 // AsyncCTR is the selection of ads in async mode
-func AsyncCTR(ctx context.Context, imp entity.Impression, ads map[string][]entity.Advertise, ch chan map[string]entity.Advertise) {
+func AsyncCTR(ctx context.Context, imp entity.Context, ads map[string][]entity.Advertise, ch chan map[string]entity.Advertise) {
 	s := store.GetSyncStore()
 	go selectCTR(ctx, s, imp, ads, ch)
 }

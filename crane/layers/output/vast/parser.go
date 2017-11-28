@@ -46,7 +46,7 @@ type slotVastAttribute struct {
 // Renderer is a function that gets impression and returns marshaled xml vmap
 // adBreakID is impressions.TrackID()
 // each adID is ad.ID()
-func (v *data) parse(impression entity.Impression, cp entity.ClickProvider) {
+func (v *data) parse(impression entity.Context, cp entity.ClickProvider) {
 	var adBreaks []vmap.AdBreak
 
 	for i := range impression.Slots() {

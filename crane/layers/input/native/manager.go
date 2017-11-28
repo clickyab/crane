@@ -27,7 +27,7 @@ const (
 )
 
 // New validate request and return a native impression
-func New(r entity.Request) (entity.Impression, error) {
+func New(r entity.Request) (entity.Context, error) {
 	//fetch website by domain and (clickyab) supplier
 
 	if r.Attributes()[domain] == "" || r.Attributes()[supplier] == "" {

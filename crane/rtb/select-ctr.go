@@ -57,7 +57,7 @@ func (s resultStore) getData(pub entity.Publisher) (ef entity.SortByCap, floor i
 	return
 }
 
-func createMegaStore(imp entity.Impression) eav.Kiwi {
+func createMegaStore(imp entity.Context) eav.Kiwi {
 	kiwi := eav.NewEavStore(Mega + imp.TrackID())
 	assert.Nil(kiwi.SetSubKey(MegaIP, imp.IP().String()).
 		SetSubKey(MegaUserAgent, imp.UserAgent()).
@@ -71,7 +71,7 @@ func createMegaStore(imp entity.Impression) eav.Kiwi {
 func selectCTR(
 	pCtx context.Context,
 	store store.Interface,
-	imp entity.Impression,
+	imp entity.Context,
 	ads map[string][]entity.Advertise,
 	ch chan map[string]entity.Advertise,
 ) {

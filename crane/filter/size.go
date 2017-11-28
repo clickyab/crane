@@ -15,7 +15,7 @@ var (
 )
 
 func createSizeFilter(t entity.Target) reducer.FilterFunc {
-	return func(impression entity.Impression, advertise entity.Advertise) bool {
+	return func(impression entity.Context, advertise entity.Advertise) bool {
 		for _, v := range impression.Publisher().AcceptedTargets() {
 			if v != t {
 				// if the impression is not this type, then pass it by

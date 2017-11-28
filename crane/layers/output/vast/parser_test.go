@@ -19,7 +19,7 @@ type clickProvider struct {
 	url string
 }
 
-func (c *clickProvider) ClickURL(entity.Slot, entity.Impression) string {
+func (c *clickProvider) ClickURL(entity.Slot, entity.Context) string {
 	return c.url
 }
 
@@ -210,7 +210,7 @@ func (i *imp) Protocol() string {
 	return i.protocol
 }
 
-func newImpression(iTrackID string, adID string, attr map[string]interface{}, width, height int) entity.Impression {
+func newImpression(iTrackID string, adID string, attr map[string]interface{}, width, height int) entity.Context {
 	s := make([]entity.Slot, 0)
 
 	s = append(s, &slot{

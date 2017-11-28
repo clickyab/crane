@@ -5,7 +5,7 @@ import (
 )
 
 // Country check if the ad country is matched or not
-func Country(impression entity.Impression, ad entity.Advertise) bool {
+func Country(impression entity.Context, ad entity.Advertise) bool {
 	adCountry := ad.Campaign().Country()
 	if len(adCountry) == 0 {
 		// the ad has no country attached. so pass it

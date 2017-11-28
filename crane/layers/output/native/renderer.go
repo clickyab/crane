@@ -12,7 +12,7 @@ type renderer struct {
 }
 
 // Render write native template to writer
-func (n renderer) Render(w io.Writer, imp entity.Impression, cl entity.ClickProvider) error {
+func (n renderer) Render(w io.Writer, imp entity.Context, cl entity.ClickProvider) error {
 
 	slots := make([]entity.Slot, 0)
 	for _, s := range imp.Slots() {

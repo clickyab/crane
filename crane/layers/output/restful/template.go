@@ -18,7 +18,7 @@ type singleAd struct {
 }
 
 // makeSingleAdData returns web template single ad data
-func makeSingleAdData(advertise entity.Advertise, impression entity.Impression, slot entity.Slot, cp entity.ClickProvider) (string, error) {
+func makeSingleAdData(advertise entity.Advertise, impression entity.Context, slot entity.Slot, cp entity.ClickProvider) (string, error) {
 	scheme := impression.Protocol()
 
 	var src string = advertise.Media()

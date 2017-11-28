@@ -5,7 +5,7 @@ import (
 )
 
 // Province check if the ad accept this province or not
-func Province(impression entity.Impression, ad entity.Advertise) bool {
+func Province(impression entity.Context, ad entity.Advertise) bool {
 	elem := ad.Campaign().Province()
 	if len(elem) == 0 {
 		// ad has no province attach to it

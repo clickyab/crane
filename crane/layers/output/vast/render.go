@@ -11,7 +11,7 @@ type data struct {
 }
 
 // Render implementation
-func (v *data) Render(writer io.Writer, imp entity.Impression, cp entity.ClickProvider) error {
+func (v *data) Render(writer io.Writer, imp entity.Context, cp entity.ClickProvider) error {
 	v.parse(imp, cp)
 	_, err := writer.Write(v.data)
 	return err

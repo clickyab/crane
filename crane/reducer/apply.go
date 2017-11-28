@@ -8,12 +8,12 @@ import (
 )
 
 // FilterFunc is the type use to filter the
-type FilterFunc func(entity.Impression, entity.Advertise) bool
+type FilterFunc func(entity.Context, entity.Advertise) bool
 
 // Mix try to mix multiple filter to single function so there is no need to
 // call Apply more than once
 func Mix(f ...FilterFunc) FilterFunc {
-	return func(e entity.Impression, a entity.Advertise) bool {
+	return func(e entity.Context, a entity.Advertise) bool {
 		for i := range f {
 			if !f[i](e, a) {
 				return false
@@ -37,7 +37,7 @@ func checkCtx(d <-chan struct{}) bool {
 
 // Apply get the data and then call filter on each of them concurrently, the
 // result is the accepted items
-func Apply(ctx context.Context, imp entity.Impression, ads []entity.Advertise, ff FilterFunc) map[string][]entity.Advertise {
+func Apply(ctx context.Context, imp entity.Context, ads []entity.Advertise, ff FilterFunc) map[string][]entity.Advertise {
 	d := ctx.Done()
 	m := make(map[string][]entity.Advertise)
 	for i := range ads {

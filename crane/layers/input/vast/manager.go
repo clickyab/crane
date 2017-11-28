@@ -7,7 +7,7 @@ import (
 )
 
 // New validate request and return new vast impression
-func New(r entity.Request) (entity.Impression, error) {
+func New(r entity.Request) (entity.Context, error) {
 	return nil, errors.New("Implement me")
 
 }

@@ -55,7 +55,7 @@ func (m *m) Write(p []byte) (n int, err error) {
 
 type clickProvider struct{}
 
-func (clickProvider) ClickURL(s entity.Slot, i entity.Impression) string {
+func (clickProvider) ClickURL(s entity.Slot, i entity.Context) string {
 	return ""
 }
 

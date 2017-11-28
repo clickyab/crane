@@ -30,7 +30,7 @@ type restAd struct {
 	RSlotTrackID string `json:"slot_track_id"`
 }
 
-func parse(r *render, imp entity.Impression, cp entity.ClickProvider) error {
+func parse(r *render, imp entity.Context, cp entity.ClickProvider) error {
 	slots := imp.Slots()
 	ads := []restAd{}
 
