@@ -28,7 +28,7 @@ type Campaign interface {
 	// Make sure the result is >= 1
 	Frequency() int
 	// Target return the target of this campaign
-	Target() []Target
+	Target() Target
 	//BlackListPublisher shows publishers in blacklist
 	BlackListPublisher() []string
 	//BlackListPublisher shows publishers in blacklist
@@ -39,8 +39,8 @@ type Campaign interface {
 	Country() []string
 	// Province returns province ID
 	Province() []string
-	//LanLon return LanLon and radius to accept ad
-	LanLon() (float64, float64, int)
+	//LatLon return LatLon and radius to accept ad
+	LatLon() (float64, float64, float64)
 	// Category return the category of this campaign
 	Category() []Category
 	// Attributes return the ad specific attributes

@@ -2,20 +2,20 @@ package entity
 
 type (
 	// AdType is the type supported by ads
-	AdType string
+	AdType int
 )
 
 const (
 	// AdTypeBanner is the banner type
-	AdTypeBanner AdType = "banner"
+	AdTypeBanner AdType = 1
 	// AdTypeDynamic is the dynamic type. the code is html
-	AdTypeDynamic AdType = "dyn"
+	AdTypeDynamic AdType = 2
 	// AdTypeVideo is the video type
-	AdTypeVideo AdType = "video"
+	AdTypeVideo AdType = 3
 	// AdTypeHTML is the html ad type
-	AdTypeHTML AdType = "html"
+	AdTypeHTML AdType = 5
 	// AdTypeNative is the native ad type
-	AdTypeNative AdType = "native"
+	AdTypeNative AdType = 4
 )
 
 // Advertise is the single advertise interface
@@ -53,7 +53,7 @@ type Advertise interface {
 	Attributes() map[string]interface{}
 	// Duplicate is a hackish function to handle the duplicate of interface
 	Duplicate() Advertise
-	// Media asd
+	// Media return image of ad
 	Media() string
 	// TargetURL asd
 	TargetURL() string
