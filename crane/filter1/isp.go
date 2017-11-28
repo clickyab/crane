@@ -1,15 +1,13 @@
 package filter
 
 import (
-	"clickyab.com/crane/crane/builder"
-	"clickyab.com/gad/models"
+	"clickyab.com/crane/crane/entity"
 )
 
 //CheckISP find isp
-func CheckISP(c *builder.context, in models.AdData) bool {
-	if c.GetCommon().ISPID == 0 {
-		return len(in.CampaignISP) == 0
+func CheckISP(c entity.Context, in entity.Advertise) bool {
+	if c.Common().Isp == "" || c.Common().ISPID == 0 {
+		return len(in.Campaign().Isp()) == 0
 	}
-	// The 1 means iran. watch for it please!
-	return in.CampaignISP.Has(true, c.GetCommon().ISPID)
+	return hasString(in.Campaign().Isp(), c.Common().Isp)
 }

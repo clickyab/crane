@@ -2,6 +2,8 @@ package entity
 
 import (
 	"context"
+
+	"clickyab.com/crane/crane/builder"
 )
 
 // ImpressionAttributes is the imp attr key
@@ -25,4 +27,12 @@ type Context interface {
 	Slots() []Slot
 	// Category returns category obviously
 	Category() []Category
+	// Common get common data from context\
+	Common() *builder.Common
+	// App return th app part of data
+	App() *builder.App
+	// Data return data of the context
+	Data() *builder.Data
+	// Data return data of the context
+	RTB() *builder.RTB
 }

@@ -5,14 +5,14 @@ import (
 	"net"
 
 	"clickyab.com/crane/crane/entity"
-	"clickyab.com/gad/models"
+	"clickyab.com/crane/crane/models"
 )
 
 // ShowOptionSetter is the function to handle setting
 type ShowOptionSetter func(*Context) (*Context, error)
 
-// common is the common type data
-type common struct {
+// Common is the Common type data
+type Common struct {
 	Type           string
 	IP             net.IP
 	ISPID          int64
@@ -40,7 +40,7 @@ type common struct {
 	NoTiny         bool
 }
 
-// App is the common application data
+// App is the Common application data
 type App struct {
 	//other App stuff
 	GoogleID      string
@@ -73,7 +73,7 @@ type Data struct {
 
 // Context is the app Context
 type Context struct {
-	common common
+	common Common
 	app    App
 	rtb    RTB
 	data   Data
@@ -148,13 +148,13 @@ func (invalidPub) GetType() string {
 	return ""
 }
 
-// GetCommon return th common part of data
-func (c *Context) GetCommon() *common {
+// Common return th Common part of data
+func (c *Context) Common() *Common {
 	return &c.common
 }
 
-// GetCommon return th app part of data
-func (c *Context) GetApp() *App {
+// App return th app part of data
+func (c *Context) App() *App {
 	return &c.app
 }
 

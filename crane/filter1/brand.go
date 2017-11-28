@@ -1,11 +1,13 @@
 package filter
 
 import (
-	"clickyab.com/crane/crane/builder"
-	"clickyab.com/gad/models"
+	"clickyab.com/crane/crane/entity"
 )
 
 // CheckAppBrand return boolean
-func CheckAppBrand(c *builder.context, in models.AdData) bool {
-	return in.Campaign.CampaignAppBrand.Has(true, c.GetData().PhoneData.BrandID)
+func CheckAppBrand(c entity.Context, in entity.Advertise) bool {
+	if len(in.Campaign().AppBrands()) == 0 {
+		return true
+	}
+	return hasInt64(in.Campaign().AppBrands(), c.Data().PhoneData.BrandID)
 }

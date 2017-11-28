@@ -1,19 +1,18 @@
 package filter
 
 import (
-	"clickyab.com/crane/crane/builder"
-	"clickyab.com/gad/models"
+	"clickyab.com/crane/crane/entity"
 )
 
 // CheckDesktopNetwork filter network for desktop
-func CheckDesktopNetwork(c *builder.context, in models.AdData) bool {
-	if in.CampaignWeb == 1 {
-		if in.CampaignWebMobile == 0 {
-			return !c.GetCommon().Mobile
+func CheckDesktopNetwork(c entity.Context, in entity.Advertise) bool {
+	if in.Campaign().Web() {
+		if !in.Campaign().WebMobile() {
+			return !c.Common().Mobile
 		}
-	} else if in.CampaignWeb == 0 {
-		if in.CampaignWebMobile == 1 {
-			return c.GetCommon().Mobile
+	} else {
+		if in.Campaign().WebMobile() {
+			return c.Common().Mobile
 		}
 	}
 	return true

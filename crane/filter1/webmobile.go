@@ -1,22 +1,21 @@
 package filter
 
 import (
-	"clickyab.com/crane/crane/builder"
-	"clickyab.com/gad/models"
+	"clickyab.com/crane/crane/entity"
 )
 
 // IsNotWebMobile filter for webmobile
-func IsNotWebMobile(c *builder.context, in models.AdData) bool {
-	if c.GetCommon().Mobile {
+func IsNotWebMobile(c entity.Context, in entity.Advertise) bool {
+	if c.Common().Mobile {
 		return true
 	}
-	return in.CampaignWebMobile == 0
+	return !in.Campaign().WebMobile()
 }
 
 // IsWebMobile return if the campaign is ok for web mobile
-func IsWebMobile(c *builder.context, in models.AdData) bool {
-	if c.GetCommon().Mobile {
-		return in.CampaignWebMobile == 1
+func IsWebMobile(c entity.Context, in entity.Advertise) bool {
+	if c.Common().Mobile {
+		return in.Campaign().WebMobile()
 	}
 
 	return true

@@ -1,15 +1,14 @@
 package filter
 
 import (
-	"clickyab.com/crane/crane/builder"
-	"clickyab.com/gad/models"
+	"clickyab.com/crane/crane/entity"
 )
 
 //CheckProvince find province client in campaign
-func CheckProvince(c *builder.context, in models.AdData) bool {
-	if c.GetCommon().ProvinceID == 0 {
-		return len(in.CampaignGeos) == 0
+func CheckProvince(c entity.Context, in entity.Advertise) bool {
+	if c.Common().Province == "" {
+		return len(in.Campaign().Province()) == 0
 	}
 	// The 1 means iran. watch for it please!
-	return in.CampaignGeos.Has(true, c.GetCommon().ProvinceID, 1)
+	return hasString(in.Campaign().Province(), c.Common().Province)
 }

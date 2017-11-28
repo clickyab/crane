@@ -1,24 +1,23 @@
 package filter
 
 import (
-	"clickyab.com/crane/crane/builder"
-	"clickyab.com/gad/models"
+	"clickyab.com/crane/crane/entity"
 )
 
 // IsWebNetwork filter network for campaigns
-func IsWebNetwork(c *builder.context, in models.AdData) bool {
-	if in.CampaignNetwork == 0 {
-		return in.CampaignWeb == 1 || in.CampaignWebMobile == 1
+func IsWebNetwork(c entity.Context, in entity.Advertise) bool {
+	if in.Campaign().Target() == entity.TargetWeb {
+		return in.Campaign().Web() || in.Campaign().WebMobile()
 	}
-	return in.CampaignNetwork == 0 || in.CampaignNetwork == 2
+	return in.Campaign().Target() == entity.TargetWeb || in.Campaign().Target() == entity.TargetVast
 }
 
 // IsAppNetwork filter network for campaigns
-func IsAppNetwork(c *builder.context, in models.AdData) bool {
-	return in.CampaignNetwork == 1
+func IsAppNetwork(c entity.Context, in entity.Advertise) bool {
+	return in.Campaign().Target() == entity.TargetApp
 }
 
 // IsNativeNetwork filter network for native
-func IsNativeNetwork(c *builder.context, in models.AdData) bool {
-	return in.CampaignNetwork == 3
+func IsNativeNetwork(c entity.Context, in entity.Advertise) bool {
+	return in.Campaign().Target() == entity.TargetNative
 }

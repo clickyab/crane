@@ -3,19 +3,18 @@ package filter
 import (
 	"math"
 
-	"clickyab.com/crane/crane/builder"
-	"clickyab.com/gad/models"
+	"clickyab.com/crane/crane/entity"
 )
 
-//CheckMinBid find isp
-func CheckMinBid(c *builder.context, in models.AdData) bool {
-	if c.GetData().Website == nil {
+//CheckMinBid check bid
+func CheckMinBid(c entity.Context, in entity.Advertise) bool {
+	if c.Data().Website == nil {
 		return true
 	}
-	t := c.GetData().Website.WMinBid
-	if c.GetRTB().MinBidPercentage > 0 {
-		t = int64(math.Ceil(c.GetRTB().MinBidPercentage * float64(t)))
+	t := c.Data().Website.WMinBid
+	if c.RTB().MinBidPercentage > 0 {
+		t = int64(math.Ceil(c.RTB().MinBidPercentage * float64(t)))
 	}
 
-	return in.CampaignMaxBid >= t
+	return in.Campaign().MaxBID() >= t
 }

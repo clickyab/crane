@@ -1,16 +1,13 @@
 package filter
 
 import (
-	"clickyab.com/crane/crane/builder"
-	"clickyab.com/gad/models"
+	"clickyab.com/crane/crane/entity"
 )
 
-// CheckWebCategory is the filter for category
-func CheckWebCategory(c *builder.context, in models.AdData) bool {
-	return in.CampaignCat.Match(true, c.GetData().Website.WCategories)
-}
+// Category check for category match
+func Category(context entity.Context, advertise entity.Advertise) bool {
+	whitelist := advertise.Campaign().Category()
+	elems := context.Category()
 
-// CheckAppCategory is the filter for category
-func CheckAppCategory(c *builder.context, in models.AdData) bool {
-	return in.CampaignCat.Match(true, c.GetData().App.Appcat)
+	return hasCategory(elems, whitelist)
 }

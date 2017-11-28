@@ -33,18 +33,31 @@ type Campaign interface {
 	BlackListPublisher() []string
 	//BlackListPublisher shows publishers in blacklist
 	WhiteListPublisher() []string
+	// AppBrands return campaign app brands
+	AppBrands() []string
+	// AppCarriers return campaign app carriers
+	AppCarriers() []string
 	//AllowedOS return os blacklist of a campaign
 	AllowedOS() []string
 	//Country return country
 	Country() []string
 	// Province returns province ID
 	Province() []string
-	//LatLon return LatLon and radius to accept ad
-	LatLon() (float64, float64, float64)
+	//LanLon return LanLon and radius to accept ad
+	LanLon() (float64, float64, float64)
 	// Category return the category of this campaign
 	Category() []Category
 	// Attributes return the ad specific attributes
 	Attributes() map[string]interface{}
+	// WebMobile campaign web mobile on or off
+	WebMobile() bool
+	// Web campaign web on or off
+	Web() bool
+	Hoods() []string
+	// Isp list of campaign isp(s)
+	Isp() []string
+	// NetProvider net providers for certain campaign
+	NetProvider() []string
 }
 
 // IsSizeAllowed return if the size is allowed in target type or not
