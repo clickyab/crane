@@ -3,10 +3,8 @@ package entity
 // Slot is the slot of the app
 type Slot interface {
 	// ID of the slot not changed (permanent)
-	ID() string
-
-	PublicID() string
-	// TrackID of slot
+	ID() int64
+	// ReservedHash of slot
 	ReservedHash() string
 	// Width return the primary size of this slot
 	Width() int

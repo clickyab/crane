@@ -6,8 +6,12 @@ import (
 
 	"errors"
 
-	"clickyab.com/gad/builder/cyslot"
-	"clickyab.com/gad/builder/cyvast"
+	"strconv"
+
+	"clickyab.com/crane/crane/builder/cynative"
+	"clickyab.com/crane/crane/builder/cyslot"
+	"clickyab.com/crane/crane/builder/cyvast"
+	"clickyab.com/crane/crane/entity"
 	"clickyab.com/gad/utils"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/random"
@@ -31,9 +35,9 @@ const (
 
 // Slot is the slot ID
 type Slot struct {
-	ID       int64
+	FID      int64
 	PublicID string
-	Size     int
+	FSize    int
 	Type     SlotType
 
 	// App related
@@ -45,15 +49,18 @@ type Slot struct {
 
 	ExtraParam map[string]string
 
-	CTR float64
-
+	ctr         float64
+	winnerAd    entity.Advertise
 	reserveHash string
-	url         string
+	showURL     string
 	click       string
 }
 
-// ReserveHash is a simple hash for generating link and waiting to show
-func (s *Slot) ReserveHash() string {
+func (s *Slot) ID() int64 {
+	return s.FID
+}
+
+func (s *Slot) ReservedHash() string {
 	if s.reserveHash == "" {
 		s.reserveHash = <-random.ID
 	}
@@ -61,47 +68,90 @@ func (s *Slot) ReserveHash() string {
 	return s.reserveHash
 }
 
-// SetURL is the simple url setter for this slot on reserve
-func (s *Slot) SetURL(u string) {
-	s.url = u
+func (s *Slot) Width() int {
+	w, _ := cyslot.GetSizeByNum(s.FSize)
+	width, err := strconv.ParseInt(w, 10, 0)
+	assert.Nil(err)
+	return int(width)
 }
 
-// URL is the url getter
-func (s *Slot) URL() string {
-	return s.url
+func (s *Slot) Height() int {
+	h, _ := cyslot.GetSizeByNum(s.FSize)
+	height, err := strconv.ParseInt(h, 10, 0)
+	assert.Nil(err)
+	return int(height)
 }
 
-// SizeString return the width and height in string
-func (s *Slot) SizeString() (string, string) {
-	return utils.GetSizeByNum(s.Size)
+func (s *Slot) Size() int {
+	return s.FSize
 }
 
-func (s *Slot) SetClick(u string) {
-	s.click = u
+func (s *Slot) SetSlotCTR(ctr float64) {
+	s.ctr = ctr
 }
 
-func (s *Slot) Click() string {
+func (s *Slot) SlotCTR() float64 {
+	return s.ctr
+}
+
+func (s *Slot) SetWinnerAdvertise(wa entity.Advertise) {
+	s.winnerAd = wa
+}
+
+func (s *Slot) WinnerAdvertise() entity.Advertise {
+	return s.winnerAd
+}
+
+func (s *Slot) SetShowURL(su string) {
+	s.showURL = su
+}
+
+func (s *Slot) ShowURL() string {
+	return s.showURL
+}
+
+func (s *Slot) SetClickURL(c string) {
+	s.click = c
+}
+
+func (s *Slot) ClickURL() string {
 	return s.click
+}
+
+func (s *Slot) IsSizeAllowed(w, h int) bool {
+	if s.Type == SlotTypeNative {
+		return true
+	}
+
+	adSize, err := cyslot.GetSize(fmt.Sprintf("%dx%d", w, h))
+	if err != nil {
+		return false
+	}
+	return adSize == s.Size()
+}
+
+func (s *Slot) ExtraParams() map[string]string {
+	return s.ExtraParam
 }
 
 // AddWebSlot try to add a web slot to list
 func AddWebSlot(pubID string, size int) ShowOptionSetter {
 	//validate slot size
-	assert.False(utils.InWebSize(size))
+	assert.True(cyslot.ValidWebSlotSize(size))
 	return func(o *Context) (*Context, error) {
 		if o.data.Website == nil {
 			return nil, errors.New("website not filled")
 		}
 		finalRes := Slot{
 			PublicID: pubID,
-			Size:     size,
+			FSize:    size,
 			Type:     SlotTypeWeb,
 		}
 		slotID, err := cyslot.GetWebSlotID(pubID, o.data.Website.WID, size)
 		if err != nil {
 			return nil, errors.New("cant get web slot")
 		}
-		finalRes.ID = slotID
+		finalRes.FID = slotID
 		o.rtb.Slots = append(o.rtb.Slots, &finalRes)
 		return o, nil
 	}
@@ -118,10 +168,10 @@ func AddNativeSlot(count int, pubIDBase string) ShowOptionSetter {
 			pub := fmt.Sprintf(pubIDBase+"%d", i)
 			o.rtb.Slots = append(o.rtb.Slots, &Slot{
 				PublicID: pub,
-				Size:     utils.NativeAdSize,
+				FSize:    cynative.NativeSlotSize,
 				Type:     SlotTypeNative,
 			})
-			pubIdSize[pub] = utils.NativeAdSize
+			pubIdSize[pub] = cynative.NativeSlotSize
 		}
 		fSlotRes, err := cyslot.GetCommonSlotIDs(pubIdSize, o.data.Website.WID)
 		if err != nil {
@@ -157,7 +207,7 @@ func AddVastSlot(basePubID string, l string, first, mid, last bool) ShowOptionSe
 			pubIdSize[pub] = size
 
 			s := &Slot{
-				Size:      size,
+				FSize:     size,
 				PublicID:  pub,
 				Type:      SlotTypeVast,
 				StartTime: length[m][2],
@@ -214,7 +264,7 @@ func AddAppSlot(adsMedia string) ShowOptionSetter {
 		slotString := fmt.Sprintf("%d0%d0%d", o.data.App.ID, o.data.App.UserID, bs)
 		fRes := Slot{
 			Type:       SlotTypeApp,
-			Size:       bs,
+			FSize:      bs,
 			PublicID:   slotString,
 			FullScreen: full,
 		}
