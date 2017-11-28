@@ -26,6 +26,10 @@ type Slot interface {
 	SetShowURL(string)
 	// ShowURL get the show url usable for async calls
 	ShowURL() string
+	// SetClickURL is the setter for click url of this ad in slot
+	SetClickURL(string)
+	// ClickURL is the setter for click url of this ad in slot
+	ClickURL() string
 	// IsSizeAllowed return true if the size is allowed in this slot
 	IsSizeAllowed(int, int) bool
 
