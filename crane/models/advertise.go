@@ -113,7 +113,7 @@ type ad struct {
 	CampaignHourEnd         int                    `json:"-" db:"cp_hour_end"`
 }
 
-func Loader(ctx context.Context) (map[string]kv.Serializable, error) {
+func AdLoader(ctx context.Context) (map[string]kv.Serializable, error) {
 	var res []ad
 	t := time.Now()
 	u := t.Unix()                                                        //return date in unixtimestamp
