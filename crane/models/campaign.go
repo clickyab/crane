@@ -4,6 +4,7 @@ import (
 	"clickyab.com/crane/crane/entity"
 )
 
+// Campaign implement entity advertise interface
 type Campaign struct {
 	ad
 }

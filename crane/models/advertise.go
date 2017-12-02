@@ -158,12 +158,13 @@ func AdLoader(ctx context.Context) (map[string]kv.Serializable, error) {
 	}
 	ads := make(map[string]kv.Serializable, 0)
 	for i := range res {
-		ads[fmt.Sprint(res[i].FID)] = &advertise{ad: res[i]}
+		ads[fmt.Sprint(res[i].FID)] = &Advertise{ad: res[i]}
 	}
 	return ads, nil
 }
 
-type advertise struct {
+// Advertise implement entity advertise interface
+type Advertise struct {
 	ad
 	campaign  entity.Campaign
 	size      *size
@@ -173,105 +174,105 @@ type advertise struct {
 	slot      entity.Slot
 }
 
-func (a *advertise) SetWinnerBID(b int64, c bool) {
+func (a *Advertise) SetWinnerBID(b int64, c bool) {
 	a.winnerBid = b
 }
 
-func (a *advertise) SetSlot(s entity.Slot) {
+func (a *Advertise) SetSlot(s entity.Slot) {
 	a.slot = s
 }
 
-func (a *advertise) Slot() entity.Slot {
+func (a *Advertise) Slot() entity.Slot {
 	return a.slot
 }
 
-func (a *advertise) Decode(w io.Writer) error {
+func (a *Advertise) Decode(w io.Writer) error {
 	g := gob.NewEncoder(w)
 	return g.Encode(a.ad)
 }
 
-func (a *advertise) Encode(r io.Reader) error {
+func (a *Advertise) Encode(r io.Reader) error {
 	g := gob.NewDecoder(r)
 	return g.Decode(a.ad)
 }
 
-func (a *advertise) ID() int64 {
+func (a *Advertise) ID() int64 {
 	return a.FID
 }
 
-func (a *advertise) Type() entity.AdType {
+func (a *Advertise) Type() entity.AdType {
 	return entity.AdType(a.FType)
 }
 
-func (a *advertise) Campaign() entity.Campaign {
+func (a *Advertise) Campaign() entity.Campaign {
 	if a.campaign == nil {
 		a.campaign = &Campaign{ad: a.ad}
 	}
 	return a.campaign
 }
 
-func (a *advertise) SetCPM(c int64) {
+func (a *Advertise) SetCPM(c int64) {
 	a.FCPM = c
 }
 
-func (a *advertise) CPM() int64 {
+func (a *Advertise) CPM() int64 {
 	return a.FCPM
 }
 
-func (a *advertise) WinnerBID() int64 {
+func (a *Advertise) WinnerBID() int64 {
 	return a.winnerBid
 }
 
-func (a *advertise) AdCTR() float64 {
+func (a *Advertise) AdCTR() float64 {
 	return a.FCTR
 }
 
-func (a *advertise) SetCTR(c float64) {
+func (a *Advertise) SetCTR(c float64) {
 	a.ctr = c
 }
 
-func (a *advertise) CTR() float64 {
+func (a *Advertise) CTR() float64 {
 	return a.ctr
 }
 
-func (a *advertise) Width() int {
+func (a *Advertise) Width() int {
 	if a.size == nil {
 		a.size = sizes[a.FAdSize]
 	}
 	return a.size.Width
 }
 
-func (a *advertise) Height() int {
+func (a *Advertise) Height() int {
 	if a.size == nil {
 		a.size = sizes[a.FAdSize]
 	}
 	return a.size.Height
 }
 
-func (a *advertise) Capping() entity.Capping {
+func (a *Advertise) Capping() entity.Capping {
 	return a.capping
 }
 
-func (a *advertise) SetCapping(c entity.Capping) {
+func (a *Advertise) SetCapping(c entity.Capping) {
 	a.capping = c
 }
 
-func (a *advertise) Attributes() map[string]interface{} {
+func (a *Advertise) Attributes() map[string]interface{} {
 	return a.FAdAttribute
 }
 
-func (a *advertise) Duplicate() entity.Advertise {
+func (a *Advertise) Duplicate() entity.Advertise {
 	panic("implement me")
 }
 
-func (a *advertise) Media() string {
+func (a *Advertise) Media() string {
 	if a.FAdImg.Valid {
 		return a.FAdImg.String
 	}
 	return ""
 }
 
-func (a *advertise) TargetURL() string {
+func (a *Advertise) TargetURL() string {
 	if a.FAdURL.Valid {
 		return a.FAdURL.String
 	}
