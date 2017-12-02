@@ -1,4 +1,4 @@
-package models
+package entities
 
 import (
 	"context"
@@ -11,6 +11,7 @@ import (
 
 	"clickyab.com/crane/crane/entity"
 	"github.com/clickyab/services/assert"
+	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/kv"
 	"github.com/clickyab/services/mysql"
 )
@@ -113,6 +114,8 @@ type ad struct {
 	CampaignHourEnd         int                    `json:"-" db:"cp_hour_end"`
 }
 
+var defaultCTR = config.RegisterFloat64("crane.models.default_ctr", 0.1, "default ctr")
+
 func AdLoader(ctx context.Context) (map[string]kv.Serializable, error) {
 	var res []ad
 	t := time.Now()
@@ -158,6 +161,11 @@ func AdLoader(ctx context.Context) (map[string]kv.Serializable, error) {
 	}
 	ads := make(map[string]kv.Serializable, 0)
 	for i := range res {
+		if res[i].FCaCTR.Valid {
+			res[i].FCTR = res[i].FCaCTR.Float64
+		} else {
+			res[i].FCTR = defaultCTR.Float64()
+		}
 		ads[fmt.Sprint(res[i].FID)] = &Advertise{ad: res[i]}
 	}
 	return ads, nil

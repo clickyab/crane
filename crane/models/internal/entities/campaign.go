@@ -1,4 +1,4 @@
-package models
+package entities
 
 import (
 	"clickyab.com/crane/crane/entity"
