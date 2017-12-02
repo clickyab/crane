@@ -27,7 +27,7 @@ func (b *Brand) Encode(r io.Reader) error {
 func BrandLoader(ctx context.Context) (map[string]kv.Serializable, error) {
 	var res []Brand
 
-	q := "SELECT ab_id as id, ab_brand as brand FROM apps_brands"
+	q := "SELECT ab_id as id, ab_brand as brand FROM apps_brands where ab_show=1"
 
 	_, err := NewManager().GetRDbMap().Select(
 		&res,
@@ -61,7 +61,7 @@ func (b *Carrier) Encode(r io.Reader) error {
 func CarrierLoader(ctx context.Context) (map[string]kv.Serializable, error) {
 	var res []Carrier
 
-	q := "SELECT ac_id as id, ac_carrier as carrier FROM apps_carriers"
+	q := "SELECT ac_id as id, ac_carrier as carrier FROM apps_carriers where ac_show=1"
 
 	_, err := NewManager().GetRDbMap().Select(
 		&res,
@@ -94,7 +94,7 @@ func (b *Network) Encode(r io.Reader) error {
 // NetworkLoader for caching networks
 func NetworkLoader(ctx context.Context) (map[string]kv.Serializable, error) {
 	var res []Network
-	q := "SELECT an_id as id, an_network as network FROM apps_networks"
+	q := "SELECT an_id as id, an_network as network FROM apps_networks where an_show=1"
 	_, err := NewManager().GetRDbMap().Select(
 		&res,
 		q,
