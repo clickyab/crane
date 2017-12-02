@@ -27,20 +27,16 @@ type Publisher interface {
 	// SoftFloorCPM is the soft version of floor cpm. if the publisher ahs it, then the system
 	// try to use this as floor, but if this is not available, the FloorCPM is used
 	SoftFloorCPM() int64
-	// UnderFloor return if the publisher allow under floor or not
-	UnderFloor() bool
 	// Name of publisher
 	Name() string
-	// AcceptedTargets return the publisher types
-	AcceptedTargets() []Target
 	// Attributes is the generic attribute system
 	Attributes() map[string]interface{}
 	// BIDType return this publisher bid type
 	BIDType() BIDType
 	// MinCPC is the minimum CPC requested for this requests
 	MinCPC() int64
-	// AcceptedTypes is the type accepted by this impression
-	AcceptedTypes() []AdType
 	// Supplier return the exchange object for this publisher
 	Supplier() string
+	// CTR returns ctr of a slot with specific size
+	CTR(int) float64
 }
