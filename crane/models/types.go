@@ -3,6 +3,7 @@ package models
 import (
 	"database/sql"
 	"database/sql/driver"
+	"strings"
 )
 
 type size struct {
@@ -59,4 +60,16 @@ func (pa SharpArray) Value() (driver.Value, error) {
 	s.String = string(pa)
 
 	return s.Value()
+}
+
+// Value try to get the string slice representation in database
+func (pa SharpArray) Array() []string {
+	var res = make([]string, 0)
+
+	for _, v := range strings.Split(string(pa), "#") {
+		res = append(res, v)
+	}
+
+	return res
+
 }

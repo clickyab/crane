@@ -170,6 +170,19 @@ type advertise struct {
 	capping   entity.Capping
 	ctr       float64
 	winnerBid int64
+	slot      entity.Slot
+}
+
+func (a *advertise) SetWinnerBID(b int64, c bool) {
+	a.winnerBid = b
+}
+
+func (a *advertise) SetSlot(s entity.Slot) {
+	a.slot = s
+}
+
+func (a *advertise) Slot() entity.Slot {
+	return a.slot
 }
 
 func (a *advertise) Decode(w io.Writer) error {
@@ -192,7 +205,7 @@ func (a *advertise) Type() entity.AdType {
 
 func (a *advertise) Campaign() entity.Campaign {
 	if a.campaign == nil {
-		a.campaign = &campaign{ad: a.ad}
+		a.campaign = &Campaign{ad: a.ad}
 	}
 	return a.campaign
 }
@@ -203,10 +216,6 @@ func (a *advertise) SetCPM(c int64) {
 
 func (a *advertise) CPM() int64 {
 	return a.FCPM
-}
-
-func (a *advertise) SetWinnerBID(b int64) {
-	a.winnerBid = b
 }
 
 func (a *advertise) WinnerBID() int64 {

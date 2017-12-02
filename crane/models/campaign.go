@@ -1,74 +1,101 @@
 package models
 
 import (
-	"strings"
-
 	"clickyab.com/crane/crane/entity"
 )
 
-type campaign struct {
+type Campaign struct {
 	ad
 }
 
-func (c *campaign) ID() int64 {
+func (c *Campaign) AppBrands() []string {
+	return c.CampaignAppBrand.Array()
+
+}
+
+func (c *Campaign) AppCarriers() []string {
+	return c.CampaignAppBrand.Array()
+}
+
+func (c *Campaign) WebMobile() bool {
+	return c.CampaignWebMobile == 1
+}
+
+func (c *Campaign) Web() bool {
+	return c.CampaignWeb == 1
+}
+
+func (c *Campaign) Hoods() []string {
+	return c.CampaignHoods.Array()
+}
+
+func (c *Campaign) Isp() []string {
+	c.CampaignISP.Array()
+}
+
+func (c *Campaign) NetProvider() []string {
+	return c.CampaignNetProvider.Array()
+}
+
+func (c *Campaign) ID() int64 {
 	return c.FCampaignID
 }
 
-func (c *campaign) Name() string {
+func (c *Campaign) Name() string {
 	return c.FCampaignName.String
 }
 
-func (c *campaign) MaxBID() int64 {
+func (c *Campaign) MaxBID() int64 {
 	return c.FCampaignMaxBid
 }
 
-func (c *campaign) Frequency() int {
+func (c *Campaign) Frequency() int {
 	return c.FCampaignFrequency
 }
 
-func (c *campaign) Target() entity.Target {
+func (c *Campaign) Target() entity.Target {
 	return entity.Target(c.CampaignNetwork)
 
 }
 
-func (c *campaign) BlackListPublisher() []string {
+func (c *Campaign) BlackListPublisher() []string {
 	if c.CampaignType == 1 {
-		return strings.Split(string(c.CampaignAppFilter), "#")
+		return c.CampaignAppFilter.Array()
 	}
-	return strings.Split(string(c.CampaignWebsiteFilter), "#")
+	return c.CampaignWebsiteFilter.Array()
 }
 
-func (c *campaign) WhiteListPublisher() []string {
+func (c *Campaign) WhiteListPublisher() []string {
 	if c.CampaignType == 1 {
-		return strings.Split(string(c.CampaignPlacement), "#")
+		return c.CampaignPlacement.Array()
 	}
-	return strings.Split(string(c.CampaignApp), "#")
+	return c.CampaignApp.Array()
 }
 
-func (c *campaign) AllowedOS() []string {
+func (c *Campaign) AllowedOS() []string {
 	panic("implement me")
 }
 
-func (c *campaign) Country() []string {
-	return strings.Split(string(c.CampaignCountry), "#")
+func (c *Campaign) Country() []string {
+	return c.CampaignCountry.Array()
 }
 
-func (c *campaign) Province() []string {
-	return strings.Split(string(c.CampaignRegion), "#")
+func (c *Campaign) Province() []string {
+	return c.CampaignRegion.Array()
 }
 
-func (c *campaign) LatLon() (float64, float64, float64) {
+func (c *Campaign) LatLon() (float64, float64, float64) {
 	return c.CampaignLatMap.Float64, c.CampaignLongMap.Float64, c.CampaignRadius.Float64
 }
 
-func (c *campaign) Category() []entity.Category {
+func (c *Campaign) Category() []entity.Category {
 	cat := make([]entity.Category, 0)
-	for _, v := range strings.Split(string(c.CampaignCat), "#") {
+	for _, v := range c.CampaignCat.Array() {
 		cat = append(cat, entity.Category(v))
 	}
 	return cat
 }
 
-func (c *campaign) Attributes() map[string]interface{} {
+func (c *Campaign) Attributes() map[string]interface{} {
 	panic("implement me")
 }
