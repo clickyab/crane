@@ -1,7 +1,10 @@
 package models
 
 import (
+	"fmt"
+
 	"clickyab.com/crane/crane/entity"
+	"clickyab.com/crane/crane/models/internal/entities"
 	"github.com/clickyab/services/pool"
 )
 
@@ -18,4 +21,17 @@ func GetAds() []entity.Advertise {
 	}
 
 	return all
+}
+
+// GetAd try to get advertise based on its id
+func GetAd(adID int64) (entity.Advertise, error) {
+	ad, err := ads.Get(fmt.Sprint(adID), &entities.Advertise{})
+	if err != nil {
+		ad, err = entities.GetAd(adID)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return ad, nil
 }

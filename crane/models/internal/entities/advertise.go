@@ -171,6 +171,45 @@ func AdLoader(ctx context.Context) (map[string]kv.Serializable, error) {
 	return ads, nil
 }
 
+func GetAd(adID int64) (*Advertise, error) {
+	query := `SELECT
+		A.ad_id, C.u_id, ad_name, ad_url,ad_code, ad_title, ad_body, ad_img, ad_status,ad_size,
+	 ad_reject_reason, CA.ca_ctr , ad_conv, ad_time, ad_type, ad_mainText, ad_defineText,
+	 ad_textColor, ad_target, ad_attribute, ad_hash_attribute, A.created_at, A.updated_at,
+	 U.u_email, U.u_balance, C.cp_id, cp_type, cp_billing_type, cp_name, cp_network, cp_placement,
+	 cp_wfilter, cp_retargeting, cp_frequency, cp_segment_id, cp_app_brand, cp_net_provider,
+	 cp_app_lang, cp_app_market, cp_web_mobile, cp_web, cp_application, cp_video, cp_apps_carriers,
+	 cp_longmap, cp_latmap, cp_radius, cp_opt_ctr, cp_opt_conv, cp_opt_br, cp_gender, cp_alexa,
+	 cp_fatfinger, cp_under, cp_geos, cp_region, cp_country, cp_hoods, cp_isp_blacklist, cp_cat,
+	 cp_like_app, cp_app, cp_app_filter, cp_keywords, cp_platforms, cp_platform_version, cp_maxbid,
+	 cp_weekly_budget, cp_daily_budget, cp_total_budget, cp_weekly_spend, cp_total_spend,
+	 cp_today_spend, cp_clicks, cp_ctr, cp_imps, cp_cpm, cp_cpa, cp_cpc, cp_conv, cp_conv_rate,
+	 cp_revenue, cp_roi, cp_start, cp_end, cp_status, cp_lastupdate, cp_hour_start, cp_hour_end,cp_isp,
+	 is_crm, cp_lock,CA.ca_id
+	 	FROM campaigns AS C
+	 	INNER JOIN users AS U ON C.u_id=U.u_id
+		INNER JOIN campaigns_ads AS CA ON C.cp_id=CA.cp_id
+		INNER JOIN ads AS A ON A.ad_id=CA.ad_id
+		WHERE A.ad_id=$1`
+
+	res := Advertise{}
+	err := NewManager().GetRDbMap().SelectOne(
+		&res,
+		query,
+		adID,
+	)
+	if err != nil {
+		return nil, err
+	}
+	if res.FCaCTR.Valid {
+		res.FCTR = res.FCaCTR.Float64
+	} else {
+		res.FCTR = defaultCTR.Float64()
+	}
+
+	return &res, nil
+}
+
 // Advertise implement entity advertise interface
 type Advertise struct {
 	ad
