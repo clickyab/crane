@@ -4,6 +4,16 @@ import (
 	"net"
 )
 
+// Protocol is the scheme of http url
+type Protocol string
+
+const (
+	// HTTP is scheme of request
+	HTTP Protocol = "http"
+	// HTTPS is scheme of request
+	HTTPS Protocol = "https"
+)
+
 // Request get the request from request
 type Request interface {
 	// IP get the real ip from the request
@@ -13,11 +23,9 @@ type Request interface {
 	// Client get the client key (cop)
 	ClientID() string
 	// Protocol return http or https
-	Protocol() string
+	Protocol() Protocol
 	// UserAgent user agent
 	UserAgent() string
 	// Location return the location
 	Location() Location
-	// Attributes get attributes of different type requests
-	Attributes() map[string]string
 }
