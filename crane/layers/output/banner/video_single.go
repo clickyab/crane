@@ -9,7 +9,6 @@ import (
 
 	"fmt"
 
-	"clickyab.com/crane/crane/builder"
 	"clickyab.com/crane/crane/entity"
 )
 
@@ -137,9 +136,9 @@ type videoData struct {
 	Rand   int
 }
 
-func renderVideoBanner(w http.ResponseWriter, ctx *builder.Context, slot entity.Seat, ad entity.Advertise) error {
+func renderVideoBanner(w http.ResponseWriter, ctx entity.Context, slot entity.Seat, ad entity.Advertise) error {
 	src := ad.Media()
-	if ctx.GetCommon().Scheme == "https" {
+	if ctx.Protocol() == entity.HTTPS {
 		src = strings.Replace(src, "http://", "https://", -1)
 	}
 	sa := videoData{

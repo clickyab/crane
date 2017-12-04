@@ -27,4 +27,8 @@ type Context interface {
 	Category() []Category
 	// User return user data
 	User() User
+	// Tiny means that the logo of clickyab should be shown (true) or not
+	Tiny() bool
+	// ShowT
+	ShowT() bool
 }
