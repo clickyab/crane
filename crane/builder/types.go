@@ -71,60 +71,6 @@ type Data struct {
 	CellLocation *models.CellLocation
 }
 
-// Context is the app Context
-type Context struct {
-	common Common
-	app    App
-	rtb    RTB
-	data   Data
-
-	showT int
-}
-
-func (c *Context) IP() net.IP {
-	return c.common.IP
-}
-
-func (c *Context) OS() entity.OS {
-	return c.common.OS
-}
-
-func (c *Context) ClientID() string {
-	panic("implement me")
-}
-
-func (c *Context) Protocol() string {
-	panic("implement me")
-}
-
-func (c *Context) UserAgent() string {
-	panic("implement me")
-}
-
-func (c *Context) Location() entity.Location {
-	panic("implement me")
-}
-
-func (c *Context) Attributes() map[string]string {
-	panic("implement me")
-}
-
-func (c *Context) TrackID() string {
-	panic("implement me")
-}
-
-func (c *Context) Publisher() entity.Publisher {
-	panic("implement me")
-}
-
-func (c *Context) Slots() []entity.Slot {
-	panic("implement me")
-}
-
-func (c *Context) Category() []entity.Category {
-	panic("implement me")
-}
-
 type invalidPub struct {
 }
 
@@ -146,26 +92,6 @@ func (invalidPub) GetActive() bool {
 
 func (invalidPub) GetType() string {
 	return ""
-}
-
-// Common return th Common part of data
-func (c *Context) Common() *Common {
-	return &c.common
-}
-
-// App return th app part of data
-func (c *Context) App() *App {
-	return &c.app
-}
-
-// GetCommon return th rtb part of data
-func (c *Context) GetRTB() *RTB {
-	return &c.rtb
-}
-
-// GetCommon return th data part of data
-func (c *Context) GetData() *Data {
-	return &c.data
 }
 
 // ShowT is a hack to handle a simple redirection (for Clickyab owners need)
