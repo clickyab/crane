@@ -12,7 +12,6 @@ import (
 	"clickyab.com/crane/crane/builder/cyslot"
 	"clickyab.com/crane/crane/builder/cyvast"
 	"clickyab.com/crane/crane/entity"
-	"clickyab.com/gad/utils"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/random"
 )
@@ -35,10 +34,9 @@ const (
 
 // Slot is the slot ID
 type Slot struct {
-	FID      int64
-	PublicID string
-	FSize    int
-	Type     SlotType
+	FPublicID string
+	FSize     int
+	Type      SlotType
 
 	// App related
 	FullScreen string
@@ -56,8 +54,8 @@ type Slot struct {
 	click       string
 }
 
-func (s *Slot) ID() int64 {
-	return s.FID
+func (s *Slot) PublicID() string {
+	return s.FPublicID
 }
 
 func (s *Slot) ReservedHash() string {
@@ -128,10 +126,6 @@ func (s *Slot) IsSizeAllowed(w, h int) bool {
 		return false
 	}
 	return adSize == s.Size()
-}
-
-func (s *Slot) ExtraParams() map[string]string {
-	return s.ExtraParam
 }
 
 // AddWebSlot try to add a web slot to list
