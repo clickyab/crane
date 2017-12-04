@@ -1,35 +1,54 @@
 package filter
 
 import (
-	"clickyab.com/crane/crane/entity"
-	"clickyab.com/crane/crane/reducer"
+	"clickyab.com/crane/crane/builder"
+	"clickyab.com/gad/models"
+	"clickyab.com/gad/utils"
 )
 
-var (
-	// AppSize is a function to handle the app size
-	AppSize = createSizeFilter(entity.TargetApp)
-	// WebSize is the function to handle web size
-	WebSize = createSizeFilter(entity.TargetWeb)
-	// VastSize is the function to handle vast size
-	VastSize = createSizeFilter(entity.TargetVast)
-)
-
-func createSizeFilter(t entity.Target) reducer.FilterFunc {
-	return func(impression entity.Context, advertise entity.Advertise) bool {
-		for _, v := range impression.Publisher().AcceptedTargets() {
-			if v != t {
-				// if the impression is not this type, then pass it by
+// CheckWebSize check if the banner size exists in the request
+func CheckWebSize(c *builder.context, in models.AdData) bool {
+	if in.AdType == utils.AdTypeVideo {
+		for _, size := range c.GetRTB().Slots {
+			if utils.InVideoSize(size.Size) {
 				return true
 			}
 		}
-
-		for _, i := range impression.Slots() {
-			if t.IsSizeAllowed(advertise.Width(), advertise.Height()) && i.IsSizeAllowed(advertise.Width(), advertise.Height()) {
-				return true
-			}
-		}
-
 		return false
 	}
 
+	for _, size := range c.GetRTB().Slots {
+		if size.Size == in.AdSize {
+			return true
+		}
+	}
+	return false
+}
+
+// CheckVastSize check if the banner size fits for Vast Template
+func CheckVastSize(_ *builder.context, in models.AdData) bool {
+	if in.AdType == utils.AdTypeDynamic {
+		return false
+	}
+
+	return in.AdType == utils.AdTypeVideo || utils.InVastSize(in.AdSize)
+}
+
+// CheckAppSize check if the banner size exists in the request
+func CheckAppSize(c *builder.context, in models.AdData) bool {
+	if in.AdType == utils.AdTypeVideo || in.AdType == utils.AdTypeDynamic {
+		return false
+	}
+
+	for _, size := range c.GetRTB().Slots {
+		if size.Size == in.AdSize {
+			return true
+		}
+	}
+	return false
+}
+
+// CheckWebMobileSize check if the banner size exists in the request
+func CheckWebMobileSize(c *builder.context, in models.AdData) bool {
+	return in.AdSize == 8
 }

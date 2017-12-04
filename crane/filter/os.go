@@ -1,16 +1,13 @@
 package filter
 
-import "clickyab.com/crane/crane/entity"
+import (
+	"clickyab.com/crane/crane/entity"
+)
 
-// OS check for os matched in filters
-func OS(impression entity.Context, advertise entity.Advertise) bool {
-	blacklist := advertise.Campaign().AllowedOS()
-	if len(blacklist) == 0 {
-		// No os is blacklisted, so pass it
+// CheckOS is the filter function that check for os in system
+func CheckOS(c entity.Context, in entity.Advertise) bool {
+	if len(in.Campaign().AllowedOS()) == 0 {
 		return true
 	}
-
-	elem := impression.OS().Name
-
-	return hasString(blacklist, elem)
+	return c.Common().OS.Valid && hasString(in.Campaign().AllowedOS(), c.Common().OS.Name)
 }
