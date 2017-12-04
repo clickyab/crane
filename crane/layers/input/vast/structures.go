@@ -14,7 +14,7 @@ type impression struct {
 	publisher  entity.Publisher
 	location   entity.Location
 	os         entity.OS
-	slots      []entity.Slot
+	slots      []entity.Seat
 	categories []entity.Category
 	attributes map[string]string
 	protocol   string

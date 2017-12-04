@@ -2105,7 +2105,7 @@ func getTemplate(size int) *template.Template {
 	return res
 }
 
-func renderDynamicBanner(w http.ResponseWriter, ctx *builder.Context, slot entity.Slot, ad entity.Advertise) error {
+func renderDynamicBanner(w http.ResponseWriter, ctx *builder.Context, slot entity.Seat, ad entity.Advertise) error {
 	attr := &dynamicAttribute{}
 	err := mapstructure.Decode(attr, ad.Attributes())
 	assert.Nil(err)

@@ -7,6 +7,10 @@ import (
 // Protocol is the scheme of http url
 type Protocol string
 
+func (p Protocol) String() string {
+	return string(p)
+}
+
 const (
 	// HTTP is scheme of request
 	HTTP Protocol = "http"

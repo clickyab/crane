@@ -21,7 +21,7 @@ type impression struct {
 	// Attributes is the generic attribute system
 	FAttributes map[string]string `json:"attributes"`
 	// Slots is the slot for this request
-	FSlots []entity.Slot `json:"slots"`
+	FSlots []entity.Seat `json:"slots"`
 	// Category returns category obviously
 	FCategory []entity.Category `json:"category"`
 	// Platform return the publisher Platform
@@ -38,7 +38,7 @@ func (r impression) Publisher() entity.Publisher {
 	return r.FPublisher
 }
 
-func (r impression) Slots() []entity.Slot {
+func (r impression) Slots() []entity.Seat {
 	return r.FSlots
 }
 

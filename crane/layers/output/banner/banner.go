@@ -7,8 +7,6 @@ import (
 
 	"html/template"
 
-	"fmt"
-
 	"clickyab.com/crane/crane/builder"
 	"clickyab.com/crane/crane/entity"
 )
@@ -55,24 +53,25 @@ var bannerTemplate = template.Must(template.New("banner_template").Parse(bannerT
 // bannerData is the single ad id
 type bannerData struct {
 	Link   string
-	Width  string
-	Height string
+	Width  int
+	Height int
 	Src    string
 	Tiny   bool
 	ShowT  bool
 }
 
-func renderWebBanner(w http.ResponseWriter, ctx *builder.Context, slot entity.Slot, ad entity.Advertise) error {
+func renderWebBanner(w http.ResponseWriter, ctx *builder.Context, slot entity.Seat, ad entity.Advertise) error {
 	src := ad.Media()
-	if ctx.GetCommon().Scheme == "https" {
+	if ctx.Protocol() == entity.HTTPS {
 		src = strings.Replace(src, "http://", "https://", -1)
 	}
+
 	sa := bannerData{
 		Link:   slot.ClickURL(),
-		Height: fmt.Sprint(slot.Height()),
-		Width:  fmt.Sprint(slot.Width()),
+		Height: slot.Width(),
+		Width:  slot.Height(),
 		Src:    src,
-		Tiny:   !ctx.GetCommon().NoTiny,
+		Tiny:   !ctx.NoTiny,
 		ShowT:  ctx.ShowT(),
 	}
 

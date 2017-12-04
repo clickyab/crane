@@ -6,22 +6,20 @@ type Seat interface {
 	PublicID() string
 	// ReservedHash of slot
 	ReservedHash() string
+	// Width return width of seat
+	Width() int
+	// Height return height of seat
+	Height() int
 	// Size return the clickyab size
 	Size() int
-	// SetBid set bid for winner
-	SetBid(float64)
 	// Bid return winner bid
 	Bid() float64
 	// Set winner ad for this slot
-	SetWinnerAdvertise(Advertise)
+	SetWinnerAdvertise(Advertise, float64)
 	// WinnerAdvertise return the winner
 	WinnerAdvertise() Advertise
-	// SetShowURL set the show url usable for async calls
-	SetShowURL(string)
 	// ShowURL get the show url usable for async calls
 	ShowURL() string
 	// SetClickURL is the setter for click url of this ad in slot
-	SetClickURL(string)
-	// ClickURL is the setter for click url of this ad in slot
 	ClickURL() string
 }
