@@ -15,7 +15,7 @@ type Context struct {
 	location  entity.Location
 	tid       string
 	publisher entity.Publisher
-	slots     []entity.Slot
+	seats     []entity.Seat
 	cat       []entity.Category
 	protocol  entity.Protocol
 	user      entity.User
@@ -57,8 +57,8 @@ func (c *Context) Publisher() entity.Publisher {
 	return c.publisher
 }
 
-func (c *Context) Slots() []entity.Slot {
-	return c.slots
+func (c *Context) Seats() []entity.Seat {
+	return c.seats
 }
 
 func (c *Context) Category() []entity.Category {

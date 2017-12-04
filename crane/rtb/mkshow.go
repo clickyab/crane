@@ -25,7 +25,7 @@ func getSecondCPM(floorCPM int64, exceedFloor []entity.Advertise) int64 {
 	return secondCPM
 }
 
-func doBid(adData entity.Advertise, website entity.Publisher, slot entity.Slot, floorDiv int64) bool {
+func doBid(adData entity.Advertise, website entity.Publisher, slot entity.Seat, floorDiv int64) bool {
 	adData.SetCTR((adData.AdCTR()*float64(adCTREffect.Int()) + slot.SlotCTR()*float64(slotCTREffect.Int())) / float64(100))
 	adData.SetCPM(int64(float64(adData.Campaign().MaxBID()) * adData.CTR() * 10.0))
 	//exceed cpm floor

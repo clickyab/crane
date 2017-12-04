@@ -53,7 +53,7 @@ func EmptyCapping(ads map[int][]entity.Advertise) map[int][]entity.Advertise {
 }
 
 // GetCapping try to get capping for current ad
-func GetCapping(copID string, ads map[int][]entity.Advertise, ep string, slots ...entity.Slot) map[int][]entity.Advertise {
+func GetCapping(copID string, ads map[int][]entity.Advertise, ep string, slots ...entity.Seat) map[int][]entity.Advertise {
 	var selected = make(map[int64]bool)
 	if ep != "" {
 		s := kv.NewDistributedSet(ep)

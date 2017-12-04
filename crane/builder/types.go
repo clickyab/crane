@@ -60,7 +60,7 @@ type RTB struct {
 	Async            bool // Default is sync, each request must return the data
 	NoCap            bool // Do not use capping system. default is false
 
-	Slots []entity.Slot
+	Slots []entity.Seat
 }
 
 // Data is calculated or fetched data

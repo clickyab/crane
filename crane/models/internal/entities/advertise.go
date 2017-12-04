@@ -218,18 +218,18 @@ type Advertise struct {
 	capping   entity.Capping
 	ctr       float64
 	winnerBid int64
-	slot      entity.Slot
+	slot      entity.Seat
 }
 
 func (a *Advertise) SetWinnerBID(b int64, c bool) {
 	a.winnerBid = b
 }
 
-func (a *Advertise) SetSlot(s entity.Slot) {
+func (a *Advertise) SetSlot(s entity.Seat) {
 	a.slot = s
 }
 
-func (a *Advertise) Slot() entity.Slot {
+func (a *Advertise) Slot() entity.Seat {
 	return a.slot
 }
 

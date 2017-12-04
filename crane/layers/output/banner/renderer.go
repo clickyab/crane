@@ -13,7 +13,7 @@ import (
 type renderer struct {
 }
 
-func (renderer) Render(c context.Context, w http.ResponseWriter, ctx *builder.Context, s entity.Slot, ad entity.Advertise) error {
+func (renderer) Render(c context.Context, w http.ResponseWriter, ctx *builder.Context, s entity.Seat, ad entity.Advertise) error {
 	switch ad.Type() {
 	case entity.AdTypeBanner:
 		return renderWebBanner(w, ctx, s, ad)

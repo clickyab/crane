@@ -137,7 +137,7 @@ type videoData struct {
 	Rand   int
 }
 
-func renderVideoBanner(w http.ResponseWriter, ctx *builder.Context, slot entity.Slot, ad entity.Advertise) error {
+func renderVideoBanner(w http.ResponseWriter, ctx *builder.Context, slot entity.Seat, ad entity.Advertise) error {
 	src := ad.Media()
 	if ctx.GetCommon().Scheme == "https" {
 		src = strings.Replace(src, "http://", "https://", -1)

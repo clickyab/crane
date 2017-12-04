@@ -1,19 +1,28 @@
 package builder
 
 import (
+	"crypto/md5"
 	"fmt"
+	"net/url"
 	"strings"
+	"time"
 
 	"errors"
-
-	"strconv"
 
 	"clickyab.com/crane/crane/builder/cynative"
 	"clickyab.com/crane/crane/builder/cyslot"
 	"clickyab.com/crane/crane/builder/cyvast"
 	"clickyab.com/crane/crane/entity"
 	"github.com/clickyab/services/assert"
+	"github.com/clickyab/services/config"
+	"github.com/clickyab/services/framework/router"
 	"github.com/clickyab/services/random"
+	"github.com/clickyab/services/store/jwt"
+)
+
+var (
+	showExpire  = config.RegisterDuration("crane.builder.seat.show_exp", 1*time.Hour, "determine how long show url is valid")
+	clickExpire = config.RegisterDuration("crane.builder.seat.click_exp", 72*time.Hour, "determine how long click url is valid")
 )
 
 // SlotType is the type of slot
@@ -32,100 +41,123 @@ const (
 	SlotTypeDemand
 )
 
-// Slot is the slot ID
-type Slot struct {
-	FPublicID string
-	FSize     int
-	Type      SlotType
-
-	// App related
-	FullScreen string
-
-	// Vast related
-	StartTime string
-	SkipTime  string
-
-	ExtraParam map[string]string
-
+// seat is the seat for input request
+type seat struct {
+	FPublicID   string
+	FSize       int
 	ctr         float64
 	winnerAd    entity.Advertise
 	reserveHash string
-	showURL     string
+	bid         float64
 	click       string
+	show        string
+
+	publisherID string
+	ua          string
+	ip          string
+	tid         string
+	ref         string
+	susp        string
+	parent      string
+	protocol    entity.Protocol
+	// Host return the target host which is different form request.Host and will be used for routing in click, show, etc
+	// for example if current request.Host is a.clickyab.com and we want to click url hit b.clickyab.com then Host
+	// return b.clickyab.com
+	host string
 }
 
-func (s *Slot) PublicID() string {
+func (s *seat) Width() int {
+	w, _ := cyslot.GetSizeByNum(s.FSize)
+	return w
+
+}
+
+func (s *seat) Height() int {
+	_, h := cyslot.GetSizeByNum(s.FSize)
+	return h
+}
+
+func (s *seat) Bid() float64 {
+	return s.bid
+}
+
+func (s *seat) PublicID() string {
 	return s.FPublicID
 }
 
-func (s *Slot) ReservedHash() string {
+func (s *seat) ReservedHash() string {
 	if s.reserveHash == "" {
 		s.reserveHash = <-random.ID
 	}
-
 	return s.reserveHash
 }
 
-func (s *Slot) Width() int {
-	w, _ := cyslot.GetSizeByNum(s.FSize)
-	width, err := strconv.ParseInt(w, 10, 0)
-	assert.Nil(err)
-	return int(width)
-}
-
-func (s *Slot) Height() int {
-	h, _ := cyslot.GetSizeByNum(s.FSize)
-	height, err := strconv.ParseInt(h, 10, 0)
-	assert.Nil(err)
-	return int(height)
-}
-
-func (s *Slot) Size() int {
+func (s *seat) Size() int {
 	return s.FSize
 }
 
-func (s *Slot) SetSlotCTR(ctr float64) {
-	s.ctr = ctr
-}
-
-func (s *Slot) SlotCTR() float64 {
-	return s.ctr
-}
-
-func (s *Slot) SetWinnerAdvertise(wa entity.Advertise) {
+func (s *seat) SetWinnerAdvertise(wa entity.Advertise, p float64) {
 	s.winnerAd = wa
+	s.bid = p
 }
 
-func (s *Slot) WinnerAdvertise() entity.Advertise {
+func (s *seat) WinnerAdvertise() entity.Advertise {
 	return s.winnerAd
 }
 
-func (s *Slot) SetShowURL(su string) {
-	s.showURL = su
+func (s *seat) ShowURL() string {
+	if s.show != "" {
+		return s.show
+	}
+	if s.winnerAd == nil {
+		panic("no winner")
+	}
+	m := md5.New()
+	j := jwt.NewJWT().Encode(map[string]string{
+		"a": fmt.Sprint(s.winnerAd.ID()),
+		"b": s.publisherID,
+		"c": fmt.Sprint(s.bid),
+		"d": s.publisherID,
+		"e": string(m.Sum([]byte(s.ua + s.ip))),
+	}, showExpire.Duration())
+	s.winnerAd.ID()
+	res, err := router.Path("show", map[string]string{"j": j, "t": s.tid, "ref": s.ref, "parent": s.parent, "s": fmt.Sprint(s.Size())})
+	assert.Nil(err)
+	u := url.URL{
+		Host:   s.host,
+		Scheme: s.protocol.String(),
+		Path:   res,
+	}
+	s.show = u.String()
+	return s.show
 }
 
-func (s *Slot) ShowURL() string {
-	return s.showURL
-}
-
-func (s *Slot) SetClickURL(c string) {
-	s.click = c
-}
-
-func (s *Slot) ClickURL() string {
+func (s *seat) ClickURL() string {
+	if s.click != "" {
+		return s.click
+	}
+	if s.winnerAd == nil {
+		panic("no winner")
+	}
+	m := md5.New()
+	j := jwt.NewJWT().Encode(map[string]string{
+		"a": fmt.Sprint(s.winnerAd.ID()),
+		"b": s.publisherID,
+		"c": fmt.Sprint(s.bid),
+		"d": s.publisherID,
+		"e": string(m.Sum([]byte(s.ua + s.ip))),
+		"f": s.susp,
+	}, showExpire.Duration())
+	s.winnerAd.ID()
+	res, err := router.Path("click", map[string]string{"j": j, "t": s.tid, "ref": s.ref, "parent": s.parent, "s": fmt.Sprint(s.Size())})
+	assert.Nil(err)
+	u := url.URL{
+		Host:   s.host,
+		Scheme: s.protocol.String(),
+		Path:   res,
+	}
+	s.click = u.String()
 	return s.click
-}
-
-func (s *Slot) IsSizeAllowed(w, h int) bool {
-	if s.Type == SlotTypeNative {
-		return true
-	}
-
-	adSize, err := cyslot.GetSize(fmt.Sprintf("%dx%d", w, h))
-	if err != nil {
-		return false
-	}
-	return adSize == s.Size()
 }
 
 // AddWebSlot try to add a web slot to list

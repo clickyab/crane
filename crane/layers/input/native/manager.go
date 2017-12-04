@@ -61,7 +61,7 @@ func New(r entity.Request) (entity.Context, error) {
 
 	res.trackID = <-random.ID
 
-	sResult := make([]entity.Slot, 0)
+	sResult := make([]entity.Seat, 0)
 	attr := make(map[string]interface{})
 	for i := 1; i <= intCount; i++ {
 		//fill slot

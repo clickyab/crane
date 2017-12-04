@@ -15,7 +15,7 @@ type impression struct {
 	pub        entity.Publisher
 	location   entity.Location
 	os         entity.OS
-	slots      []entity.Slot
+	slots      []entity.Seat
 	categories []entity.Category
 	protocol   string
 }
@@ -43,7 +43,7 @@ func (i *impression) OS() entity.OS {
 	return i.os
 }
 
-func (i *impression) Slots() []entity.Slot {
+func (i *impression) Slots() []entity.Seat {
 	return i.slots
 }
 

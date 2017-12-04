@@ -22,7 +22,7 @@ type Context interface {
 	// Publisher return the publisher that this client is going into system from that
 	Publisher() Publisher
 	// Slots is the slot for this request
-	Slots() []Slot
+	Seats() []Seat
 	// Category returns category obviously
 	Category() []Category
 	// User return user data

@@ -4,9 +4,10 @@
 package mock_entity
 
 import (
+	net "net"
+
 	entity "clickyab.com/crane/crane/entity"
 	gomock "github.com/golang/mock/gomock"
-	net "net"
 )
 
 // MockImpression is a mock of Context interface
@@ -132,7 +133,7 @@ func (_mr *MockImpressionMockRecorder) Publisher() *gomock.Call {
 func (_m *MockImpression) Slots() []entity.Slot {
 	ret := _m.ctrl.Call(_m, "Slots")
 	ret0, _ := ret[0].([]entity.Slot)
-	return ret0
+	return ret
 }
 
 // Slots indicates an expected call of Slots
