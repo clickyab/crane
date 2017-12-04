@@ -19,6 +19,8 @@ type Context struct {
 	cat       []entity.Category
 	protocol  entity.Protocol
 	user      entity.User
+
+	NoTiny bool
 }
 
 func (c *Context) Protocol() entity.Protocol {

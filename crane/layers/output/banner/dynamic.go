@@ -7,7 +7,6 @@ import (
 	"strings"
 	"sync"
 
-	"clickyab.com/crane/crane/builder"
 	"clickyab.com/crane/crane/entity"
 	"github.com/clickyab/services/assert"
 	"github.com/mitchellh/mapstructure"
@@ -2105,11 +2104,11 @@ func getTemplate(size int) *template.Template {
 	return res
 }
 
-func renderDynamicBanner(w http.ResponseWriter, ctx *builder.Context, slot entity.Seat, ad entity.Advertise) error {
+func renderDynamicBanner(w http.ResponseWriter, ctx entity.Context, slot entity.Seat, ad entity.Advertise) error {
 	attr := &dynamicAttribute{}
 	err := mapstructure.Decode(attr, ad.Attributes())
 	assert.Nil(err)
-	if ctx.GetCommon().Scheme == "https" {
+	if ctx.Protocol() == entity.HTTPS {
 		attr.Product = strings.Replace(attr.Product, "http://", "https://", -1)
 		attr.Logo = strings.Replace(attr.Logo, "http://", "https://", -1)
 	}

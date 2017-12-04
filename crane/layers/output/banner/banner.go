@@ -7,7 +7,6 @@ import (
 
 	"html/template"
 
-	"clickyab.com/crane/crane/builder"
 	"clickyab.com/crane/crane/entity"
 )
 
@@ -60,7 +59,7 @@ type bannerData struct {
 	ShowT  bool
 }
 
-func renderWebBanner(w http.ResponseWriter, ctx *builder.Context, slot entity.Seat, ad entity.Advertise) error {
+func renderWebBanner(w http.ResponseWriter, ctx entity.Context, slot entity.Seat, ad entity.Advertise) error {
 	src := ad.Media()
 	if ctx.Protocol() == entity.HTTPS {
 		src = strings.Replace(src, "http://", "https://", -1)
@@ -71,8 +70,8 @@ func renderWebBanner(w http.ResponseWriter, ctx *builder.Context, slot entity.Se
 		Height: slot.Width(),
 		Width:  slot.Height(),
 		Src:    src,
-		Tiny:   !ctx.NoTiny,
-		ShowT:  ctx.ShowT(),
+		Tiny:   ctx.Tiny(),
+		ShowT:  false,
 	}
 
 	return bannerTemplate.Execute(w, sa)

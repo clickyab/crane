@@ -5,7 +5,6 @@ import (
 
 	"context"
 
-	"clickyab.com/crane/crane/builder"
 	"clickyab.com/crane/crane/entity"
 	"github.com/clickyab/services/xlog"
 )
@@ -13,7 +12,7 @@ import (
 type renderer struct {
 }
 
-func (renderer) Render(c context.Context, w http.ResponseWriter, ctx *builder.Context, s entity.Seat, ad entity.Advertise) error {
+func (renderer) Render(c context.Context, w http.ResponseWriter, ctx entity.Context, s entity.Seat, ad entity.Advertise) error {
 	switch ad.Type() {
 	case entity.AdTypeBanner:
 		return renderWebBanner(w, ctx, s, ad)
