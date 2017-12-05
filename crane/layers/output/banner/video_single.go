@@ -2,8 +2,8 @@ package banner
 
 import (
 	"html/template"
+	"io"
 	"math/rand"
-	"net/http"
 
 	"strings"
 
@@ -136,15 +136,15 @@ type videoData struct {
 	Rand   int
 }
 
-func renderVideoBanner(w http.ResponseWriter, ctx entity.Context, slot entity.Seat, ad entity.Advertise) error {
-	src := ad.Media()
+func renderVideoBanner(w io.Writer, ctx entity.Context, s entity.Seat) error {
+	src := s.WinnerAdvertise().Media()
 	if ctx.Protocol() == entity.HTTPS {
 		src = strings.Replace(src, "http://", "https://", -1)
 	}
 	sa := videoData{
-		Link:   slot.ClickURL(),
-		Height: fmt.Sprint(slot.Height()),
-		Width:  fmt.Sprint(slot.Width()),
+		Link:   s.ClickURL(),
+		Height: fmt.Sprint(s.Height()),
+		Width:  fmt.Sprint(s.Width()),
 		Src:    src,
 		Tiny:   true,
 		Rand:   rand.Intn(100),

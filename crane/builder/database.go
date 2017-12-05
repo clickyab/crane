@@ -20,7 +20,6 @@ func SetMobileRelatedParam(u *url.URL) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
 		brand := u.Query().Get("brand")
 		network := u.Query().Get("network")
-
 		carrier := strings.Trim(u.Query().Get("carrier"), "# \n\t")
 		if irancel.MatchString(carrier) {
 			carrier = "Irancell"

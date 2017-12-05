@@ -3,7 +3,7 @@ package banner
 import (
 	"fmt"
 	"html/template"
-	"net/http"
+	"io"
 	"strings"
 	"sync"
 
@@ -2104,16 +2104,16 @@ func getTemplate(size int) *template.Template {
 	return res
 }
 
-func renderDynamicBanner(w http.ResponseWriter, ctx entity.Context, slot entity.Seat, ad entity.Advertise) error {
+func renderDynamicBanner(w io.Writer, ctx entity.Context, s entity.Seat) error {
 	attr := &dynamicAttribute{}
-	err := mapstructure.Decode(attr, ad.Attributes())
+	err := mapstructure.Decode(attr, s.WinnerAdvertise().Attributes())
 	assert.Nil(err)
 	if ctx.Protocol() == entity.HTTPS {
 		attr.Product = strings.Replace(attr.Product, "http://", "https://", -1)
 		attr.Logo = strings.Replace(attr.Logo, "http://", "https://", -1)
 	}
-	res := getTemplate(slot.Size())
-	attr.Link = slot.ClickURL()
+	res := getTemplate(s.Size())
+	attr.Link = s.ClickURL()
 	return res.Execute(w, attr)
 }
 

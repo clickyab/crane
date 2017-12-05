@@ -24,6 +24,7 @@ type Context struct {
 	cat       []entity.Category
 	protocol  entity.Protocol
 	user      entity.User
+	currency  string
 
 	NoTiny bool
 
