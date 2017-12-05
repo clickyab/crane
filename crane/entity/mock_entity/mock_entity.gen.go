@@ -667,7 +667,7 @@ func (_m *MockPublisher) MinCPC() int64 {
 	return ret0
 }
 
-// MinCPC indicates an expected call of MinCPC
+// MinBid indicates an expected call of MinBid
 func (_mr *MockPublisherMockRecorder) MinCPC() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "MinCPC")
 }

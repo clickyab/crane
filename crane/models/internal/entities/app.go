@@ -28,6 +28,7 @@ type App struct {
 	TodayCTR    int64         `db:"app_today_ctr"`
 	TodayIMPs   int64         `db:"app_today_imps"`
 	TodayClicks int64         `db:"app_today_clicks"`
+	AppMinBid   int64         `db:"app_minbid"`
 	Category    SharpArray    `db:"app_cat"`
 	CTRStat
 
@@ -68,8 +69,8 @@ func (a *App) BIDType() entity.BIDType {
 	return entity.BIDTypeCPC
 }
 
-func (a *App) MinCPC() int64 {
-	panic("implement minCPC")
+func (a *App) MinBid() int64 {
+	return a.AppMinBid
 }
 
 func (a *App) Supplier() string {
@@ -79,7 +80,7 @@ func (a *App) Supplier() string {
 func AppLoader() (map[string]kv.Serializable, error) {
 	q := fmt.Sprintf(`SELECT
   app_id, u_id, app_token, app_name, en_app_name, app_package, app_supplier, app_floor_cpm,
-  app_status, app_today_ctr, app_today_imps, app_today_clicks, app_cat,
+  app_status, app_today_ctr, app_today_imps, app_today_clicks, app_cat,app_minbid,
   SUM(imp_1) AS imp1, SUM(imp_2) AS imp2, SUM(imp_3) AS imp3, SUM(imp_4) AS imp4, SUM(imp_5) AS imp5,
   SUM(imp_6) AS imp6, SUM(imp_7) AS imp7, SUM(imp_8) AS imp8, SUM(imp_9) AS imp9, SUM(imp_10) AS imp10,
   SUM(imp_11) AS imp11, SUM(imp_12) AS imp12, SUM(imp_13) AS imp13, SUM(imp_14) AS imp14, SUM(imp_15) AS imp15,
@@ -89,11 +90,11 @@ func AppLoader() (map[string]kv.Serializable, error) {
   SUM(click_11) AS click11, SUM(click_12) AS click12, SUM(click_13) AS click13, SUM(click_14) AS click14, SUM(click_15) AS click15,
   SUM(click_16) AS click16, SUM(click_17) AS click17, SUM(click_18) AS click18, SUM(click_19) AS click19, SUM(click_20) AS click20
   FROM %s INNER JOIN ctr_stat ON app_id=pub_id WHERE
-  WHERE date BETWEEN DATE_SUB(NOW(), INTERVAL 2 DAY) AND NOW()
-  AND app_status=1
+  date BETWEEN DATE_SUB(NOW(), INTERVAL 2 DAY) AND NOW()
+  AND app_status=1 AND pub_type=?
   GROUP BY app_id`, appsDBName)
 	var res []App
-	_, err := NewManager().GetRDbMap().Select(&res, q)
+	_, err := NewManager().GetRDbMap().Select(&res, q, "app")
 	if err != nil {
 		return nil, err
 	}

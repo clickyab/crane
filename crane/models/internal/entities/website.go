@@ -54,8 +54,8 @@ func (w *Website) BIDType() entity.BIDType {
 	return entity.BIDTypeCPC
 }
 
-func (w *Website) MinCPC() int64 {
-	panic("implement me")
+func (w *Website) MinBid() int64 {
+	return w.WMinBid
 }
 
 // just supporting banner for now
@@ -81,11 +81,11 @@ func WebsiteLoader(ctx context.Context) (map[string]kv.Serializable, error) {
   FROM websites
   INNER JOIN ctr_stat ON w_id=pub_id
   WHERE date BETWEEN DATE_SUB(NOW(), INTERVAL 2 DAY) AND NOW()
-  AND w_status=1
+  AND w_status=1 AND pub_type=?
   GROUP BY w_id`
 
 	var res []Website
-	if _, err := NewManager().GetRDbMap().Select(&res, q); err != nil {
+	if _, err := NewManager().GetRDbMap().Select(&res, q, "web"); err != nil {
 		return nil, err
 	}
 

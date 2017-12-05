@@ -33,8 +33,8 @@ type Publisher interface {
 	Attributes() map[string]interface{}
 	// BIDType return this publisher bid type
 	BIDType() BIDType
-	// MinCPC is the minimum CPC requested for this requests
-	MinCPC() int64
+	// MinBid is the minimum CPC requested for this requests
+	MinBid() int64
 	// Supplier return the exchange object for this publisher
 	Supplier() string
 	// CTR returns ctr of a slot with specific size
