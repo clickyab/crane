@@ -4,15 +4,20 @@ import (
 	"net"
 
 	"clickyab.com/crane/crane/entity"
+	"clickyab.com/crane/crane/models"
 )
 
 // Context is the app Context
 type Context struct {
-	ip        net.IP
-	os        entity.OS
-	cid       string
-	ua        string
-	location  entity.Location
+	typ string // app,native,vast,app
+
+	ip             net.IP
+	ua             string
+	os             models.OS
+	location       entity.Location
+	browser        string
+	browserVersion string
+
 	tid       string
 	publisher entity.Publisher
 	seats     []entity.Seat
@@ -21,6 +26,18 @@ type Context struct {
 	user      entity.User
 
 	NoTiny bool
+
+	host     string
+	method   string
+	referrer string
+	parent   string
+
+	currencyRate float64
+	noCap        bool
+	noTiny       bool
+	noShowT      bool
+
+	floorDiv int64
 }
 
 func (c *Context) Protocol() entity.Protocol {

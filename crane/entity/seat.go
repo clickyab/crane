@@ -22,4 +22,6 @@ type Seat interface {
 	ShowURL() string
 	// SetClickURL is the setter for click url of this ad in slot
 	ClickURL() string
+	// Supplier return supplier
+	Supplier() string
 }
