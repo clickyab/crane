@@ -41,6 +41,8 @@ type Advertise interface {
 	SetCTR(float64)
 	// CTR get the calculated CTR
 	CTR() float64
+	// Size returns ads size
+	Size() int
 	// Width return the width
 	Width() int
 	// Height return the height of banner

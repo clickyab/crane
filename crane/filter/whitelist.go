@@ -1,16 +1,10 @@
 package filter
 
 import (
-	"clickyab.com/crane/crane/builder"
-	"clickyab.com/gad/models"
+	"clickyab.com/crane/crane/entity"
 )
 
 // CheckWhiteList return boolean
-func CheckWhiteList(c *builder.context, in models.AdData) bool {
-	return in.CampaignPlacement.Has(true, c.GetData().Website.WID)
-}
-
-// CheckAppWhiteList return boolean
-func CheckAppWhiteList(c *builder.context, in models.AdData) bool {
-	return in.CampaignApp.Has(true, c.GetData().App.ID)
+func CheckWhiteList(c entity.Context, in entity.Advertise) bool {
+	return hasString(in.Campaign().WhiteListPublisher(), c.Publisher().Name())
 }

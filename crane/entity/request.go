@@ -32,4 +32,8 @@ type Request interface {
 	UserAgent() string
 	// Location return the location
 	Location() Location
+	// IsMobile shows if its a phone
+	IsMobile() bool
+	// Isp returns request isp name
+	Isp() string
 }
