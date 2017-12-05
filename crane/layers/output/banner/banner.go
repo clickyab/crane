@@ -1,7 +1,7 @@
 package banner
 
 import (
-	"net/http"
+	"io"
 
 	"strings"
 
@@ -59,16 +59,16 @@ type bannerData struct {
 	ShowT  bool
 }
 
-func renderWebBanner(w http.ResponseWriter, ctx entity.Context, slot entity.Seat, ad entity.Advertise) error {
-	src := ad.Media()
+func renderWebBanner(w io.Writer, ctx entity.Context, seat entity.Seat) error {
+	src := seat.WinnerAdvertise().Media()
 	if ctx.Protocol() == entity.HTTPS {
 		src = strings.Replace(src, "http://", "https://", -1)
 	}
 
 	sa := bannerData{
-		Link:   slot.ClickURL(),
-		Height: slot.Width(),
-		Width:  slot.Height(),
+		Link:   seat.ClickURL(),
+		Height: seat.Width(),
+		Width:  seat.Height(),
 		Src:    src,
 		Tiny:   ctx.Tiny(),
 		ShowT:  false,

@@ -31,4 +31,6 @@ type Context interface {
 	Tiny() bool
 	// ShowT
 	ShowT() bool
+	// Currency
+	Currency() string
 }

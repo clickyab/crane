@@ -32,6 +32,17 @@ func SetType(typ string) ShowOptionSetter {
 	}
 }
 
+// SetCurrency is the type setter for context
+func SetCurrency(c string) ShowOptionSetter {
+	return func(o *Context) (*Context, error) {
+		if c != "IRR" && c != "USD" {
+			return o, fmt.Errorf("%s is not valid currency", c)
+		}
+		o.currency = c
+		return o, nil
+	}
+}
+
 // SetIPLocation is the IP and location setter for context, also it extract the IP information
 func SetIPLocation(ip string) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {

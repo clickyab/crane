@@ -1,7 +1,7 @@
 package banner
 
 import (
-	"net/http"
+	"io"
 
 	"context"
 
@@ -9,18 +9,15 @@ import (
 	"github.com/clickyab/services/xlog"
 )
 
-type renderer struct {
-}
-
-func (renderer) Render(c context.Context, w http.ResponseWriter, ctx entity.Context, s entity.Seat, ad entity.Advertise) error {
-	switch ad.Type() {
+func Render(c context.Context, w io.Writer, ctx entity.Context, s entity.Seat) error {
+	switch s.WinnerAdvertise().Type() {
 	case entity.AdTypeBanner:
-		return renderWebBanner(w, ctx, s, ad)
+		return renderWebBanner(w, ctx, s)
 	case entity.AdTypeDynamic:
-		return renderDynamicBanner(w, ctx, s, ad)
+		return renderDynamicBanner(w, ctx, s)
 	case entity.AdTypeVideo:
-		return renderVideoBanner(w, ctx, s, ad)
+		return renderVideoBanner(w, ctx, s)
 	}
 
-	xlog.GetWithField(c, "ad_type", ad.Type()).Panic("invalid ad type")
+	xlog.GetWithField(c, "ad_type", s.WinnerAdvertise().Type()).Panic("invalid ad type")
 }

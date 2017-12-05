@@ -127,7 +127,8 @@ func (s *seat) ShowURL() string {
 		"uaip": string(m.Sum([]byte(s.ua + s.ip.String()))),
 	}, showExpire.Duration())
 	s.winnerAd.ID()
-	res, err := router.Path("show", map[string]string{"jt": j, "tid": s.tid, "ref": s.ref, "parent": s.parent, "size": fmt.Sprint(s.Size())})
+	res, err := router.Path("show", map[string]string{"jt": j, "rh": s.ReservedHash(),
+		"tid": s.tid, "ref": s.ref, "parent": s.parent, "size": fmt.Sprint(s.Size())})
 	assert.Nil(err)
 	u := url.URL{
 		Host:   s.host,
@@ -154,7 +155,8 @@ func (s *seat) ClickURL() string {
 		"susp": fmt.Sprint(s.susp),
 	}, showExpire.Duration())
 	s.winnerAd.ID()
-	res, err := router.Path("click", map[string]string{"jt": j, "tid": s.tid, "ref": s.ref, "parent": s.parent, "size": fmt.Sprint(s.Size())})
+	res, err := router.Path("click", map[string]string{"jt": j, "rh": s.ReservedHash(),
+		"tid": s.tid, "ref": s.ref, "parent": s.parent, "size": fmt.Sprint(s.Size())})
 	assert.Nil(err)
 	u := url.URL{
 		Host:   s.host,
