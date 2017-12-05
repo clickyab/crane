@@ -11,6 +11,7 @@ type Country struct {
 type Province struct {
 	Valid bool   `json:"valid"`
 	Name  string `json:"name"`
+	ID    int64  `json:"id"`
 }
 
 // LatLon is the latitude longitude
@@ -18,6 +19,12 @@ type LatLon struct {
 	Valid bool    `json:"valid"`
 	Lat   float64 `json:"lat"`
 	Lon   float64 `json:"lon"`
+}
+
+type ISP struct {
+	Name  string `json:"name"`
+	Valid bool   `json:"valid"`
+	ID    int64  `json:"id"`
 }
 
 // Location is the location provider
@@ -28,4 +35,6 @@ type Location interface {
 	Province() Province
 	// LatLon return the latitude longitude if any
 	LatLon() LatLon
+	// ISP return isp of the selected req
+	ISP() ISP
 }

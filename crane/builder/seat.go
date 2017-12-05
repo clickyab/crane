@@ -9,6 +9,8 @@ import (
 
 	"errors"
 
+	"net"
+
 	"clickyab.com/crane/crane/builder/cynative"
 	"clickyab.com/crane/crane/builder/cyslot"
 	"clickyab.com/crane/crane/builder/cyvast"
@@ -53,7 +55,7 @@ type seat struct {
 	publicID        string
 	publisherDomain string
 	ua              string
-	ip              string
+	ip              net.IP
 	tid             string
 	ref             string
 	parent          string
@@ -63,12 +65,18 @@ type seat struct {
 	// for example if current request.Host is a.clickyab.com and we want to click url hit b.clickyab.com then Host
 	// return b.clickyab.com
 	host string
+
+	supplier string
 }
 
 func (s *seat) Width() int {
 	w, _ := cyslot.GetSizeByNum(s.size)
 	return w
 
+}
+
+func (s *seat) Supplier() string {
+	return s.supplier
 }
 
 func (s *seat) Height() int {
@@ -116,7 +124,7 @@ func (s *seat) ShowURL() string {
 		"aid":  fmt.Sprint(s.winnerAd.ID()),
 		"dom":  s.publisherDomain,
 		"bid":  fmt.Sprint(s.bid),
-		"uaip": string(m.Sum([]byte(s.ua + s.ip))),
+		"uaip": string(m.Sum([]byte(s.ua + s.ip.String()))),
 	}, showExpire.Duration())
 	s.winnerAd.ID()
 	res, err := router.Path("show", map[string]string{"jt": j, "tid": s.tid, "ref": s.ref, "parent": s.parent, "size": fmt.Sprint(s.Size())})
@@ -142,7 +150,7 @@ func (s *seat) ClickURL() string {
 		"aid":  fmt.Sprint(s.winnerAd.ID()),
 		"dom":  s.publisherDomain,
 		"bid":  fmt.Sprint(s.bid),
-		"uaip": string(m.Sum([]byte(s.ua + s.ip))),
+		"uaip": string(m.Sum([]byte(s.ua + s.ip.String()))),
 		"susp": fmt.Sprint(s.susp),
 	}, showExpire.Duration())
 	s.winnerAd.ID()
