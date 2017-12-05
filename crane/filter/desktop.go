@@ -8,11 +8,11 @@ import (
 func CheckDesktopNetwork(c entity.Context, in entity.Advertise) bool {
 	if in.Campaign().Web() {
 		if !in.Campaign().WebMobile() {
-			return !c.Common().Mobile
+			return !c.IsMobile()
 		}
 	} else {
 		if in.Campaign().WebMobile() {
-			return c.Common().Mobile
+			return c.IsMobile()
 		}
 	}
 	return true

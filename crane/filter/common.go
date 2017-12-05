@@ -20,6 +20,15 @@ func hasInt64(slice []int64, elem int64) bool {
 	return false
 }
 
+func hasInt(slice []int, elem int) bool {
+	for i := range slice {
+		if slice[i] == elem {
+			return true
+		}
+	}
+	return false
+}
+
 // hasCategory check for atleast one category to match. one is ok.
 func hasCategory(impCat []entity.Category, adCat []entity.Category) bool {
 	for _, i := range adCat {
