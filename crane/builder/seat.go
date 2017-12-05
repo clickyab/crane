@@ -43,23 +43,22 @@ const (
 
 // seat is the seat for input request
 type seat struct {
-	FPublicID   string
-	FSize       int
-	ctr         float64
 	winnerAd    entity.Advertise
 	reserveHash string
 	bid         float64
 	click       string
 	show        string
 
-	publisherID string
-	ua          string
-	ip          string
-	tid         string
-	ref         string
-	susp        string
-	parent      string
-	protocol    entity.Protocol
+	size            int
+	publicID        string
+	publisherDomain string
+	ua              string
+	ip              string
+	tid             string
+	ref             string
+	parent          string
+	susp            int
+	protocol        entity.Protocol
 	// Host return the target host which is different form request.Host and will be used for routing in click, show, etc
 	// for example if current request.Host is a.clickyab.com and we want to click url hit b.clickyab.com then Host
 	// return b.clickyab.com
@@ -67,13 +66,13 @@ type seat struct {
 }
 
 func (s *seat) Width() int {
-	w, _ := cyslot.GetSizeByNum(s.FSize)
+	w, _ := cyslot.GetSizeByNum(s.size)
 	return w
 
 }
 
 func (s *seat) Height() int {
-	_, h := cyslot.GetSizeByNum(s.FSize)
+	_, h := cyslot.GetSizeByNum(s.size)
 	return h
 }
 
@@ -82,7 +81,7 @@ func (s *seat) Bid() float64 {
 }
 
 func (s *seat) PublicID() string {
-	return s.FPublicID
+	return s.publicID
 }
 
 func (s *seat) ReservedHash() string {
@@ -93,7 +92,7 @@ func (s *seat) ReservedHash() string {
 }
 
 func (s *seat) Size() int {
-	return s.FSize
+	return s.size
 }
 
 func (s *seat) SetWinnerAdvertise(wa entity.Advertise, p float64) {
@@ -114,14 +113,13 @@ func (s *seat) ShowURL() string {
 	}
 	m := md5.New()
 	j := jwt.NewJWT().Encode(map[string]string{
-		"a": fmt.Sprint(s.winnerAd.ID()),
-		"b": s.publisherID,
-		"c": fmt.Sprint(s.bid),
-		"d": s.publisherID,
-		"e": string(m.Sum([]byte(s.ua + s.ip))),
+		"aid":  fmt.Sprint(s.winnerAd.ID()),
+		"dom":  s.publisherDomain,
+		"bid":  fmt.Sprint(s.bid),
+		"uaip": string(m.Sum([]byte(s.ua + s.ip))),
 	}, showExpire.Duration())
 	s.winnerAd.ID()
-	res, err := router.Path("show", map[string]string{"j": j, "t": s.tid, "ref": s.ref, "parent": s.parent, "s": fmt.Sprint(s.Size())})
+	res, err := router.Path("show", map[string]string{"jt": j, "tid": s.tid, "ref": s.ref, "parent": s.parent, "size": fmt.Sprint(s.Size())})
 	assert.Nil(err)
 	u := url.URL{
 		Host:   s.host,
@@ -141,15 +139,14 @@ func (s *seat) ClickURL() string {
 	}
 	m := md5.New()
 	j := jwt.NewJWT().Encode(map[string]string{
-		"a": fmt.Sprint(s.winnerAd.ID()),
-		"b": s.publisherID,
-		"c": fmt.Sprint(s.bid),
-		"d": s.publisherID,
-		"e": string(m.Sum([]byte(s.ua + s.ip))),
-		"f": s.susp,
+		"aid":  fmt.Sprint(s.winnerAd.ID()),
+		"dom":  s.publisherDomain,
+		"bid":  fmt.Sprint(s.bid),
+		"uaip": string(m.Sum([]byte(s.ua + s.ip))),
+		"susp": fmt.Sprint(s.susp),
 	}, showExpire.Duration())
 	s.winnerAd.ID()
-	res, err := router.Path("click", map[string]string{"j": j, "t": s.tid, "ref": s.ref, "parent": s.parent, "s": fmt.Sprint(s.Size())})
+	res, err := router.Path("click", map[string]string{"jt": j, "tid": s.tid, "ref": s.ref, "parent": s.parent, "size": fmt.Sprint(s.Size())})
 	assert.Nil(err)
 	u := url.URL{
 		Host:   s.host,
