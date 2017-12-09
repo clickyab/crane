@@ -8,10 +8,10 @@ import (
 
 // Serializable represent the object that can be serialized
 type Serializable interface {
-	// Decode is the decoder of this function
-	Decode(io.Writer) error
-	// Encode is the encoder function
-	Encode(io.Reader) error
+	// Encode is the encode of this function
+	Encode(io.Writer) error
+	// Decode is the decode function
+	Decode(io.Reader) error
 }
 
 // CacheProvider is the cacheFactory backend
@@ -35,14 +35,14 @@ type cachable struct {
 
 var cacheFactory CacheProvider
 
-// Decode try to decode cookie profile into gob
-func (cp *cachable) Decode(w io.Writer) error {
+// Encode try to decode cookie profile into gob
+func (cp *cachable) Encode(w io.Writer) error {
 	enc := gob.NewEncoder(w)
 	return enc.Encode(cp.entity)
 }
 
-// Encode try to encode cookie profile from gob
-func (cp *cachable) Encode(i io.Reader) error {
+// Decode try to encode cookie profile from gob
+func (cp *cachable) Decode(i io.Reader) error {
 	dnc := gob.NewDecoder(i)
 	return dnc.Decode(cp.entity)
 }
