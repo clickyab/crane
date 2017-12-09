@@ -15,10 +15,12 @@ type Brand struct {
 	Brand string `json:"-" db:"brand"`
 }
 
+// Decode is decoder
 func (b *Brand) Decode(w io.Writer) error {
 	return gob.NewEncoder(w).Encode(b)
 }
 
+// Encode is encoder
 func (b *Brand) Encode(r io.Reader) error {
 	return gob.NewDecoder(r).Decode(b)
 }
@@ -36,7 +38,7 @@ func BrandLoader(ctx context.Context) (map[string]kv.Serializable, error) {
 	if err != nil {
 		return nil, err
 	}
-	b := make(map[string]kv.Serializable, 0)
+	b := make(map[string]kv.Serializable)
 	for i := range res {
 		b[fmt.Sprint(res[i].ID)] = &res[i]
 	}
@@ -49,10 +51,12 @@ type Carrier struct {
 	Carrier string `json:"-" db:"carrier"`
 }
 
+// Decode is decoder
 func (b *Carrier) Decode(w io.Writer) error {
 	return gob.NewEncoder(w).Encode(b)
 }
 
+// Encode is encoder
 func (b *Carrier) Encode(r io.Reader) error {
 	return gob.NewDecoder(r).Decode(b)
 }
@@ -70,7 +74,7 @@ func CarrierLoader(ctx context.Context) (map[string]kv.Serializable, error) {
 	if err != nil {
 		return nil, err
 	}
-	b := make(map[string]kv.Serializable, 0)
+	b := make(map[string]kv.Serializable)
 	for i := range res {
 		b[fmt.Sprint(res[i].ID)] = &res[i]
 	}
@@ -83,10 +87,12 @@ type Network struct {
 	Network string `json:"-" db:"network"`
 }
 
+// Decode is decoder
 func (b *Network) Decode(w io.Writer) error {
 	return gob.NewEncoder(w).Encode(b)
 }
 
+// Encode is encoder
 func (b *Network) Encode(r io.Reader) error {
 	return gob.NewDecoder(r).Decode(b)
 }
@@ -102,7 +108,7 @@ func NetworkLoader(ctx context.Context) (map[string]kv.Serializable, error) {
 	if err != nil {
 		return nil, err
 	}
-	b := make(map[string]kv.Serializable, 0)
+	b := make(map[string]kv.Serializable)
 	for i := range res {
 		b[fmt.Sprint(res[i].ID)] = &res[i]
 	}

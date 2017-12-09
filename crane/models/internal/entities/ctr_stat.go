@@ -1,5 +1,6 @@
 package entities
 
+// CTRStat is the ctr stat table
 type CTRStat struct {
 	Impression1  int `db:"imp1"`
 	Impression2  int `db:"imp2"`

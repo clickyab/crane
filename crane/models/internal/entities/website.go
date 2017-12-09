@@ -11,7 +11,7 @@ import (
 	"github.com/clickyab/services/kv"
 )
 
-// website type for website
+// Website type for website
 type Website struct {
 	WID         int64          `db:"w_id"`
 	WDomain     string         `db:"w_domain"`
@@ -25,44 +25,47 @@ type Website struct {
 	FCTR [21]float64
 }
 
+// CTR return the ctr based on size of this website
 func (w *Website) CTR(size int) float64 {
 	return w.FCTR[size]
 }
 
+// ID return the website id
 func (w *Website) ID() int64 {
 	return w.WID
 }
 
-// soft floor and floor cpm are the same
+// FloorCPM soft floor and floor cpm are the same
 func (w *Website) FloorCPM() int64 {
 	return w.WFloorCpm.Int64
 }
 
+// SoftFloorCPM the soft flor ans we need to accept this first then fall back to floorcpm
 func (w *Website) SoftFloorCPM() int64 {
 	return w.WFloorCpm.Int64
 }
 
+// Name of the website
 func (w *Website) Name() string {
 	return w.WName.String
 }
 
-func (w *Website) Attributes() map[string]interface{} {
-	return map[string]interface{}{}
-}
-
+// BIDType is the bid type for this website
 func (w *Website) BIDType() entity.BIDType {
 	return entity.BIDTypeCPC
 }
 
+// MinBid return the minimum bid accepted for this
 func (w *Website) MinBid() int64 {
 	return w.WMinBid
 }
 
-// just supporting banner for now
+// AcceptedTypes just supporting banner for now
 func (w *Website) AcceptedTypes() []entity.AdType {
 	return []entity.AdType{entity.AdTypeBanner}
 }
 
+// Supplier of this website
 func (w *Website) Supplier() string {
 	return w.WSupplier
 }
@@ -89,7 +92,7 @@ func WebsiteLoader(ctx context.Context) (map[string]kv.Serializable, error) {
 		return nil, err
 	}
 
-	b := make(map[string]kv.Serializable, 0)
+	b := make(map[string]kv.Serializable)
 	for i := range res {
 		res[i].FCTR = [21]float64{}
 		res[i].FCTR[1] = calc(res[i].Impression1, res[i].Click1)
@@ -118,10 +121,12 @@ func WebsiteLoader(ctx context.Context) (map[string]kv.Serializable, error) {
 	return b, nil
 }
 
-func (b *Website) Decode(w io.Writer) error {
-	return gob.NewEncoder(w).Encode(b)
+// Decode the website in io writer
+func (w *Website) Decode(iw io.Writer) error {
+	return gob.NewEncoder(iw).Encode(w)
 }
 
-func (b *Website) Encode(r io.Reader) error {
-	return gob.NewDecoder(r).Decode(b)
+// Encode is the encoder
+func (w *Website) Encode(r io.Reader) error {
+	return gob.NewDecoder(r).Decode(w)
 }

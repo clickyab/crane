@@ -62,13 +62,11 @@ func (pa SharpArray) Value() (driver.Value, error) {
 	return s.Value()
 }
 
-// Value try to get the string slice representation in database
+// Array is the function to get array of string of this
 func (pa SharpArray) Array() []string {
 	var res = make([]string, 0)
 
-	for _, v := range strings.Split(string(pa), "#") {
-		res = append(res, v)
-	}
+	res = append(res, strings.Split(string(pa), "#")...)
 
 	return res
 

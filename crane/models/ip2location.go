@@ -109,12 +109,10 @@ func GetProvinceISPByIP(ip net.IP) entity.Location {
 }
 
 type location struct {
-	country    entity.Country
-	province   entity.Province
-	isp        entity.ISP
-	latlon     entity.LatLon
-	provinceID int64
-	ispID      int64
+	country  entity.Country
+	province entity.Province
+	isp      entity.ISP
+	latlon   entity.LatLon
 }
 
 func (l *location) Country() entity.Country {

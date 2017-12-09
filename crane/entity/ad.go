@@ -26,21 +26,8 @@ type Advertise interface {
 	Type() AdType
 	// Campaign return the ad campaign
 	Campaign() Campaign
-	// SetCPM set the cpm for this ad in the system after select
-	SetCPM(int64)
-	// CPM return the current cpm
-	CPM() int64
-	// SetWinnerBID set the winner bid for this ad if the add is the winner
-	// the bool parameter means that the capping must increase
-	SetWinnerBID(int64, bool)
-	// WinnerBID return the winner bid
-	WinnerBID() int64
 	// AdCTR the ad ctr from database (its not calculated from )
 	AdCTR() float64
-	// SetCTR set the calculated CTR
-	SetCTR(float64)
-	// CTR get the calculated CTR
-	CTR() float64
 	// Size returns ads size
 	Size() int
 	// Width return the width
@@ -53,10 +40,6 @@ type Advertise interface {
 	SetCapping(Capping)
 	// Attributes return the ad specific attributes
 	Attributes() map[string]interface{}
-	// Duplicate is a hackish function to handle the duplicate of interface
-	Duplicate() Advertise
 	// Media return image of ad
 	Media() string
-	// TargetURL asd
-	TargetURL() string
 }

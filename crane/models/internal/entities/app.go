@@ -14,7 +14,7 @@ import (
 
 const appsDBName = `apps`
 
-// app is the applications structure
+// App is the applications structure
 type App struct {
 	FID         int64         `db:"app_id"`
 	UserID      int64         `db:"u_id"`
@@ -35,48 +35,57 @@ type App struct {
 	FCTR [21]float64
 }
 
+// CTR return the ctr of this app based on the size
+func (a App) CTR(size int) float64 {
+	return a.FCTR[size]
+}
+
+// Decode the decoder
 func (a App) Decode(w io.Writer) error {
 	return gob.NewEncoder(w).Encode(a)
 }
 
+// Encode encoder
 func (a App) Encode(r io.Reader) error {
 	return gob.NewDecoder(r).Decode(a)
 }
 
+// ID app id
 func (a *App) ID() int64 {
 	return a.FID
 }
 
-// needs to be zero if its not set in db
+// FloorCPM needs to be zero if its not set in db
 func (a *App) FloorCPM() int64 {
 	return a.FFloorCPM.Int64
 }
 
-// soft returns actual floor
+// SoftFloorCPM soft returns actual floor
 func (a *App) SoftFloorCPM() int64 {
 	return a.FFloorCPM.Int64
 }
 
+// Name app name
 func (a *App) Name() string {
 	return a.FName
 }
 
-func (a *App) Attributes() map[string]interface{} {
-	return map[string]interface{}{}
-}
-
+// BIDType the bid type of this app
 func (a *App) BIDType() entity.BIDType {
 	return entity.BIDTypeCPC
 }
 
+// MinBid is the minimum bid
 func (a *App) MinBid() int64 {
 	return a.AppMinBid
 }
 
+// Supplier is the supplier object
 func (a *App) Supplier() string {
 	return a.FSupplier
 }
 
+// AppLoader is the loader for cache
 func AppLoader() (map[string]kv.Serializable, error) {
 	q := fmt.Sprintf(`SELECT
   app_id, u_id, app_token, app_name, en_app_name, app_package, app_supplier, app_floor_cpm,

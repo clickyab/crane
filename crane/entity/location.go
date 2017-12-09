@@ -21,6 +21,7 @@ type LatLon struct {
 	Lon   float64 `json:"lon"`
 }
 
+// ISP is the isp struct
 type ISP struct {
 	Name  string `json:"name"`
 	Valid bool   `json:"valid"`

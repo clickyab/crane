@@ -9,6 +9,7 @@ import (
 	"github.com/clickyab/services/xlog"
 )
 
+// Render the advertise
 func Render(c context.Context, w io.Writer, ctx entity.Context, s entity.Seat) error {
 	switch s.WinnerAdvertise().Type() {
 	case entity.AdTypeBanner:

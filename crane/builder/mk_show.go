@@ -107,8 +107,8 @@ func SetEventPage(ep string) ShowOptionSetter {
 	}
 }
 
-// SetEventPage is the event page setter for multi request
-func SetCapping(disable bool) ShowOptionSetter {
+// SetDisableCapping disable capping?
+func SetDisableCapping(disable bool) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
 		o.noCap = disable
 		return o, nil
@@ -127,6 +127,8 @@ func SetTID(id string) ShowOptionSetter {
 		if o.tid == "" {
 			o.tid = createHash(copLen.Int(), []byte(o.ip), []byte(o.ua))
 		}
+
+		o.user = user(o.tid)
 		return o, nil
 	}
 }
