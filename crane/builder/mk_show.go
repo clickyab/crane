@@ -14,16 +14,26 @@ import (
 
 	"crypto/sha1"
 
+	"time"
+
 	"clickyab.com/crane/crane/entity"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/config"
 	"github.com/mssola/user_agent"
 )
 
-// SetType is the type setter for context
-func SetType(typ string) ShowOptionSetter {
+// SetTimestamp set the timestamp. must be first!
+func SetTimestamp() ShowOptionSetter {
 	return func(options *Context) (*Context, error) {
-		if typ != "vast" && typ != "App" && typ != "web" && typ != "native" {
+		options.ts = time.Now()
+		return options, nil
+	}
+}
+
+// SetType is the type setter for context
+func SetType(typ entity.RequestType) ShowOptionSetter {
+	return func(options *Context) (*Context, error) {
+		if typ != entity.RequestTypeDemand && typ != entity.RequestTypeVast && typ != entity.RequestTypeApp && typ != entity.RequestTypeWeb && typ != entity.RequestTypeNative {
 			return nil, fmt.Errorf("type is not supported %s", typ)
 		}
 		options.typ = typ

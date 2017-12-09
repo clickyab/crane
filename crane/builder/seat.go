@@ -50,7 +50,7 @@ type seat struct {
 	alexa           bool
 	mobile          bool
 	iran            bool
-	ftype           string
+	ftype           entity.RequestType
 	size            int
 	publicID        string
 	publisherDomain string
@@ -145,7 +145,7 @@ func (s *seat) ShowURL() string {
 		"dom":  s.publisherDomain,
 		"bid":  fmt.Sprint(s.bid),
 		"uaip": string(m.Sum([]byte(s.ua + s.ip.String()))),
-		"type": s.ftype,
+		"type": s.Type(),
 	}, showExpire.Duration())
 	s.winnerAd.ID()
 	res, err := router.Path("show", map[string]string{"jt": j, "rh": s.ReservedHash(),
@@ -191,5 +191,5 @@ func (s *seat) ClickURL() string {
 }
 
 func (s *seat) Type() string {
-	return s.ftype
+	return string(s.ftype)
 }

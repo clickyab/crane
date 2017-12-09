@@ -2,6 +2,7 @@ package entity
 
 import (
 	"net"
+	"time"
 )
 
 // Protocol is the scheme of http url
@@ -20,6 +21,8 @@ const (
 
 // Request get the request from request
 type Request interface {
+	// Timestamp return the time that this request arrived
+	Timestamp() time.Time
 	// IP get the real ip from the request
 	IP() net.IP
 	// OS return os of the requested client
@@ -38,4 +41,8 @@ type Request interface {
 	EventPage() string
 	// Is this request contain alexa?
 	Alexa() bool
+	// Referrer of the page
+	Referrer() string
+	// Parent is the page contain the ad
+	Parent() string
 }

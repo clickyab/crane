@@ -1,19 +1,25 @@
 package entity
 
-import (
-	"context"
+// RequestType is the request type
+type RequestType string
+
+const (
+	// RequestTypeWeb is web type (for clickyab web)
+	RequestTypeWeb RequestType = "web"
+	// RequestTypeApp is app type (for clickyab sdk only)
+	RequestTypeApp RequestType = "app"
+	// RequestTypeNative is native type (for clickyab native only)
+	RequestTypeNative RequestType = "native"
+	// RequestTypeVast is vast type (for clickyab vast only)
+	RequestTypeVast RequestType = "vast"
+	// RequestTypeDemand is demand type
+	RequestTypeDemand RequestType = "demand"
 )
-
-// ImpressionAttributes is the imp attr key
-type ImpressionAttributes string
-
-// ImpressionLayer interface to handle the input layer
-type ImpressionLayer interface {
-	New(context.Context, Request) (Context, error)
-}
 
 // Context is the single impression object
 type Context interface {
+	// Type return the request type.
+	Type() RequestType
 	// Request data comes from request for every user
 	// like ip,user agent,client id,...
 	Request
