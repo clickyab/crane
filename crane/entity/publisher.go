@@ -29,8 +29,6 @@ type Publisher interface {
 	SoftFloorCPM() int64
 	// Name of publisher
 	Name() string
-	// Attributes is the generic attribute system
-	Attributes() map[string]interface{}
 	// BIDType return this publisher bid type
 	BIDType() BIDType
 	// MinBid is the minimum CPC requested for this requests

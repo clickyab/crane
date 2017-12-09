@@ -9,6 +9,7 @@ import (
 
 	"clickyab.com/crane/crane/entity"
 	"github.com/bsm/openrtb"
+	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/random"
 )
 
@@ -29,11 +30,11 @@ func Rtb(ctx context.Context, c entity.Context, ss []entity.Seat, w io.Writer) h
 		r.Bid = append(r.Bid, b)
 	}
 	j := json.NewEncoder(w)
-	j.Encode(openrtb.BidResponse{
+	assert.Nil(j.Encode(openrtb.BidResponse{
 		Currency: c.Currency(),
 		ID:       <-random.ID,
 		SeatBid:  []openrtb.SeatBid{r},
-	})
+	}))
 	h := http.Header{}
 	h.Set("content-type", "application/json")
 	return h

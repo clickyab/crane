@@ -24,8 +24,6 @@ type Request interface {
 	IP() net.IP
 	// OS return os of the requested client
 	OS() OS
-	// Client get the client key (cop)
-	ClientID() string
 	// Protocol return http or https
 	Protocol() Protocol
 	// UserAgent user agent
@@ -34,8 +32,8 @@ type Request interface {
 	Location() Location
 	// IsMobile shows if its a phone
 	IsMobile() bool
-	// Isp returns request isp name
-	Isp() string
+	// ISP returns request isp name
+	ISP() string
 	// EventPage is a string, generated only from multiple request (not one request to select multiple ad)
 	EventPage() string
 	// Is this request contain alexa?

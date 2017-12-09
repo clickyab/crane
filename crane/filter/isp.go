@@ -6,8 +6,8 @@ import (
 
 //CheckISP find isp
 func CheckISP(c entity.Context, in entity.Advertise) bool {
-	if c.Isp() == "" {
-		return len(in.Campaign().Isp()) == 0
+	if c.ISP() == "" {
+		return len(in.Campaign().ISP()) == 0
 	}
-	return hasString(in.Campaign().Isp(), c.Isp())
+	return hasString(in.Campaign().ISP(), c.ISP())
 }

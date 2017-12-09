@@ -31,5 +31,5 @@ func (a byMulti) Less(i, j int) bool {
 			return a.Ads[i].Type() == entity.AdTypeVideo
 		}
 	}
-	return a.Ads[i].CPM() > a.Ads[j].CPM()
+	return a.Ads[i].cpm > a.Ads[j].cpm
 }

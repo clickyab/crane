@@ -43,7 +43,7 @@ func EmptyCapping(ads map[int][]entity.Advertise) map[int][]entity.Advertise {
 			ads[i][j].SetCapping(capp)
 
 		}
-		sortCap := entity.SortByCap(ads[i])
+		sortCap := sortByCap(ads[i])
 		sort.Sort(sortCap)
 		ads[i] = []entity.Advertise(sortCap)
 	}
@@ -92,7 +92,7 @@ func GetCapping(copID string, ads map[int][]entity.Advertise, ep string, slots .
 		// if not found then reset all capping
 		if !found {
 			logrus.Debugf("Removing key for size %d", size)
-			ck.Drop(sizeCap...)
+			_ = ck.Drop(sizeCap...)
 			for i := range sizeCap {
 				results[sizeCap[i]] = 0
 			}

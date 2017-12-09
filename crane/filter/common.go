@@ -11,15 +11,6 @@ func hasString(slice []string, elem string) bool {
 	return false
 }
 
-func hasInt64(slice []int64, elem int64) bool {
-	for i := range slice {
-		if slice[i] == elem {
-			return true
-		}
-	}
-	return false
-}
-
 func hasInt(slice []int, elem int) bool {
 	for i := range slice {
 		if slice[i] == elem {

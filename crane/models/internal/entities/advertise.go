@@ -113,6 +113,7 @@ type ad struct {
 	CampaignHourEnd         int                    `json:"-" db:"cp_hour_end"`
 }
 
+// AdLoader is the loader of ads
 func AdLoader(ctx context.Context) (map[string]kv.Serializable, error) {
 	var res []ad
 	t := time.Now()
@@ -156,7 +157,7 @@ func AdLoader(ctx context.Context) (map[string]kv.Serializable, error) {
 	if err != nil {
 		return nil, err
 	}
-	ads := make(map[string]kv.Serializable, 0)
+	ads := make(map[string]kv.Serializable)
 	for i := range res {
 		if res[i].FCaCTR.Valid {
 			res[i].FCTR = res[i].FCaCTR.Float64
@@ -168,6 +169,7 @@ func AdLoader(ctx context.Context) (map[string]kv.Serializable, error) {
 	return ads, nil
 }
 
+// GetAd return a single ad
 func GetAd(adID int64) (*Advertise, error) {
 	query := `SELECT
 		A.ad_id, C.u_id, ad_name, ad_url,ad_code, ad_title, ad_body, ad_img, ad_status,ad_size,
@@ -210,36 +212,39 @@ func GetAd(adID int64) (*Advertise, error) {
 // Advertise implement entity advertise interface
 type Advertise struct {
 	ad
-	campaign  entity.Campaign
-	size      *size
-	capping   entity.Capping
-	ctr       float64
-	winnerBid int64
-	slot      entity.Seat
+	campaign entity.Campaign
+	size     *size
+	capping  entity.Capping
 }
 
-func (a *Advertise) SetWinnerBID(b int64, c bool) {
-	a.winnerBid = b
+// Size return the size of ad
+func (a *Advertise) Size() int {
+	return a.FAdSize
 }
 
+// Decode is the decode function for serialize object in io writer
 func (a *Advertise) Decode(w io.Writer) error {
 	g := gob.NewEncoder(w)
 	return g.Encode(a.ad)
 }
 
+// Encode try to encode object from io reader
 func (a *Advertise) Encode(r io.Reader) error {
 	g := gob.NewDecoder(r)
 	return g.Decode(a.ad)
 }
 
+// ID the ad id
 func (a *Advertise) ID() int64 {
 	return a.FID
 }
 
+// Type is the ad type
 func (a *Advertise) Type() entity.AdType {
 	return entity.AdType(a.FType)
 }
 
+// Campaign return the ad campaign object
 func (a *Advertise) Campaign() entity.Campaign {
 	if a.campaign == nil {
 		a.campaign = &Campaign{ad: a.ad}
@@ -247,30 +252,12 @@ func (a *Advertise) Campaign() entity.Campaign {
 	return a.campaign
 }
 
-func (a *Advertise) SetCPM(c int64) {
-	a.FCPM = c
-}
-
-func (a *Advertise) CPM() int64 {
-	return a.FCPM
-}
-
-func (a *Advertise) WinnerBID() int64 {
-	return a.winnerBid
-}
-
+// AdCTR return the calculated ad ctr
 func (a *Advertise) AdCTR() float64 {
 	return a.FCTR
 }
 
-func (a *Advertise) SetCTR(c float64) {
-	a.ctr = c
-}
-
-func (a *Advertise) CTR() float64 {
-	return a.ctr
-}
-
+// Width is the width of ad
 func (a *Advertise) Width() int {
 	if a.size == nil {
 		a.size = sizes[a.FAdSize]
@@ -278,6 +265,7 @@ func (a *Advertise) Width() int {
 	return a.size.Width
 }
 
+// Height is the height of ad
 func (a *Advertise) Height() int {
 	if a.size == nil {
 		a.size = sizes[a.FAdSize]
@@ -285,32 +273,25 @@ func (a *Advertise) Height() int {
 	return a.size.Height
 }
 
+// Capping return the capping object
 func (a *Advertise) Capping() entity.Capping {
 	return a.capping
 }
 
+// SetCapping is the capping setter
 func (a *Advertise) SetCapping(c entity.Capping) {
 	a.capping = c
 }
 
+// Attributes is the attributes required for dynamic ads
 func (a *Advertise) Attributes() map[string]interface{} {
 	return a.FAdAttribute
 }
 
-func (a *Advertise) Duplicate() entity.Advertise {
-	panic("implement me")
-}
-
+// Media return the media address
 func (a *Advertise) Media() string {
 	if a.FAdImg.Valid {
 		return a.FAdImg.String
-	}
-	return ""
-}
-
-func (a *Advertise) TargetURL() string {
-	if a.FAdURL.Valid {
-		return a.FAdURL.String
 	}
 	return ""
 }

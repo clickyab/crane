@@ -47,15 +47,13 @@ type Campaign interface {
 	LatLon() (float64, float64, float64)
 	// Category return the category of this campaign
 	Category() []Category
-	// Attributes return the ad specific attributes
-	Attributes() map[string]interface{}
 	// WebMobile campaign web mobile on or off
 	WebMobile() bool
 	// Web campaign web on or off
 	Web() bool
 	Hoods() []string
-	// Isp list of campaign isp(s)
-	Isp() []string
+	// ISP list of campaign isp(s)
+	ISP() []string
 	// NetProvider net providers for certain campaign
 	NetProvider() []string
 }

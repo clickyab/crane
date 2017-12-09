@@ -19,8 +19,8 @@ import (
 )
 
 var (
-	showExpire  = config.RegisterDuration("crane.builder.seat.show_exp", 1*time.Hour, "determine how long show url is valid")
-	clickExpire = config.RegisterDuration("crane.builder.seat.click_exp", 72*time.Hour, "determine how long click url is valid")
+	showExpire = config.RegisterDuration("crane.builder.seat.show_exp", 1*time.Hour, "determine how long show url is valid")
+	//clickExpire = config.RegisterDuration("crane.builder.seat.click_exp", 72*time.Hour, "determine how long click url is valid")
 )
 
 // SlotType is the type of slot
