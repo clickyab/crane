@@ -170,7 +170,7 @@ func AdLoader(ctx context.Context) (map[string]kv.Serializable, error) {
 }
 
 // GetAd return a single ad
-func GetAd(adID int64) (*Advertise, error) {
+func GetAd(adID int64) (entity.Advertise, error) {
 	query := `SELECT
 		A.ad_id, C.u_id, ad_name, ad_url,ad_code, ad_title, ad_body, ad_img, ad_status,ad_size,
 	 ad_reject_reason, CA.ca_ctr , ad_conv, ad_time, ad_type, ad_mainText, ad_defineText,
@@ -215,11 +215,6 @@ type Advertise struct {
 	campaign entity.Campaign
 	size     *size
 	capping  entity.Capping
-}
-
-// Size return the size of ad
-func (a *Advertise) Size() int {
-	return a.FAdSize
 }
 
 // Decode is the decode function for serialize object in io writer

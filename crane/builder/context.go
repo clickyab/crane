@@ -38,8 +38,16 @@ type Context struct {
 	noCap        bool
 	noTiny       bool
 	multiVideo   bool
+	isp          string
+	floorDiv     int64
+	bid          float64
 
-	floorDiv int64
+	ad entity.Advertise
+}
+
+// Isp get isp from ip2location
+func (c *Context) Isp() string {
+	return c.isp
 }
 
 // Alexa return if user has alexa installed

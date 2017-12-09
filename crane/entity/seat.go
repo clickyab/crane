@@ -26,6 +26,6 @@ type Seat interface {
 	Supplier() string
 	// CTR return current ctr for this size in publisher
 	CTR() float64
-	// ShowT indicate that the request is interesting for iframe injection
-	ShowT() bool
+	// Type of seat
+	Type() string
 }
