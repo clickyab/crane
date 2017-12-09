@@ -2,6 +2,7 @@ package entities
 
 import (
 	"clickyab.com/crane/crane/entity"
+	"github.com/clickyab/services/config"
 )
 
 // Campaign implement entity advertise interface
@@ -31,7 +32,7 @@ func (c *Campaign) Hoods() []string {
 }
 
 func (c *Campaign) Isp() []string {
-	c.CampaignISP.Array()
+	return c.CampaignISP.Array()
 }
 
 func (c *Campaign) NetProvider() []string {
@@ -50,7 +51,12 @@ func (c *Campaign) MaxBID() int64 {
 	return c.FCampaignMaxBid
 }
 
+var minFrequency = config.RegisterInt("clickyab.min_frequency", 2, "")
+
 func (c *Campaign) Frequency() int {
+	if c.FCampaignFrequency <= 0 {
+		c.FCampaignFrequency = minFrequency.Int()
+	}
 	return c.FCampaignFrequency
 }
 

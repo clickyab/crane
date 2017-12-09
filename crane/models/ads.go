@@ -32,5 +32,5 @@ func GetAd(adID int64) (entity.Advertise, error) {
 			return nil, err
 		}
 	}
-	return ad, nil
+	return ad.(entity.Advertise), nil
 }

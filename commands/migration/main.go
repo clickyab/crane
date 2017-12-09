@@ -15,8 +15,8 @@ import (
 	_ "github.com/clickyab/services/mysql/connection/mysql"
 
 	"clickyab.com/crane/commands"
-	"github.com/Sirupsen/logrus"
 	"github.com/rubenv/sql-migrate"
+	"github.com/sirupsen/logrus"
 )
 
 var (
