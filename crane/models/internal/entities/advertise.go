@@ -11,7 +11,6 @@ import (
 
 	"clickyab.com/crane/crane/entity"
 	"github.com/clickyab/services/assert"
-	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/kv"
 	"github.com/clickyab/services/mysql"
 )
@@ -113,8 +112,6 @@ type ad struct {
 	CampaignHourStart       int                    `json:"-" db:"cp_hour_start"`
 	CampaignHourEnd         int                    `json:"-" db:"cp_hour_end"`
 }
-
-var defaultCTR = config.RegisterFloat64("crane.models.default_ctr", 0.1, "default ctr")
 
 func AdLoader(ctx context.Context) (map[string]kv.Serializable, error) {
 	var res []ad
@@ -223,14 +220,6 @@ type Advertise struct {
 
 func (a *Advertise) SetWinnerBID(b int64, c bool) {
 	a.winnerBid = b
-}
-
-func (a *Advertise) SetSlot(s entity.Seat) {
-	a.slot = s
-}
-
-func (a *Advertise) Slot() entity.Seat {
-	return a.slot
 }
 
 func (a *Advertise) Decode(w io.Writer) error {

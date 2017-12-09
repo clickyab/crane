@@ -24,4 +24,6 @@ type Seat interface {
 	ClickURL() string
 	// Supplier return supplier
 	Supplier() string
+	// CTR return current ctr for this size in publisher
+	CTR() float64
 }

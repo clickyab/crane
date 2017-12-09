@@ -51,6 +51,7 @@ type seat struct {
 	click       string
 	show        string
 
+	ftype           string
 	size            int
 	publicID        string
 	publisherDomain string
@@ -67,6 +68,12 @@ type seat struct {
 	host string
 
 	supplier string
+	ctr      float64
+}
+
+func (s *seat) CTR() float64 {
+
+	return s.ctr
 }
 
 func (s *seat) Width() int {
@@ -156,7 +163,7 @@ func (s *seat) ClickURL() string {
 	}, showExpire.Duration())
 	s.winnerAd.ID()
 	res, err := router.Path("click", map[string]string{"jt": j, "rh": s.ReservedHash(),
-		"tid": s.tid, "ref": s.ref, "parent": s.parent, "size": fmt.Sprint(s.Size())})
+		"tid": s.tid, "ref": s.ref, "parent": s.parent, "size": fmt.Sprint(s.Size()), "type": s.Type()})
 	assert.Nil(err)
 	u := url.URL{
 		Host:   s.host,
@@ -165,6 +172,9 @@ func (s *seat) ClickURL() string {
 	}
 	s.click = u.String()
 	return s.click
+}
+func (s *seat) Type() string {
+	return s.ftype
 }
 
 // AddWebSlot try to add a web slot to list

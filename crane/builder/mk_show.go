@@ -67,9 +67,8 @@ func SetOSUserAgent(ua string) ShowOptionSetter {
 		mobile := uaO.Mobile()
 		o.browser, o.browserVersion = uaO.Browser()
 		osID := cyos.FindOsID(platForm)
-		o.os = models.OS{
+		o.os = entity.OS{
 			Name:   os,
-			ID:     osID,
 			Valid:  osID != 0,
 			Mobile: mobile,
 		}
@@ -112,8 +111,8 @@ func SetTID(id, ip, ua string) ShowOptionSetter {
 	}
 }
 
-// SetQueryParameters try to get query parameters from the request and set the
-// proper field
+// SetQueryParameters try to get query parameters from the request and
+// set the proper field
 func SetQueryParameters(u *url.URL, ref string) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
 		o.parent = u.Query().Get("parent")
@@ -171,6 +170,14 @@ func SetNoTiny(noTiny bool) ShowOptionSetter {
 	}
 }
 
+// SetMultiVideo is the option to remove the tiny clickyab marker
+func SetMultiVideo(v bool) ShowOptionSetter {
+	return func(o *Context) (*Context, error) {
+		o.multiVideo = v
+		return o, nil
+	}
+}
+
 // SetDemandSeats try to add demand seat
 func SetDemandSeats(domain, pubType, supplier string, pubID string, size int) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
@@ -190,6 +197,7 @@ func SetDemandSeats(domain, pubType, supplier string, pubID string, size int) Sh
 			publisherDomain: domain,
 			ref:             o.referrer,
 			supplier:        supplier,
+			ftype:           o.typ,
 		})
 		return o, nil
 	}

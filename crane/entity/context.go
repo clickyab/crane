@@ -17,8 +17,6 @@ type Context interface {
 	// Request data comes from request for every user
 	// like ip,user agent,client id,...
 	Request
-	// TrackID return the random id of this imp object
-	TrackID() string
 	// Publisher return the publisher that this client is going into system from that
 	Publisher() Publisher
 	// Slots is the slot for this request
@@ -33,4 +31,8 @@ type Context interface {
 	ShowT() bool
 	// Currency
 	Currency() string
+	// MultiVideo determine this request can have multiple video
+	MultiVideo() bool
+	// FloorDiv is floor-cpm divider
+	FloorDiv() int64
 }

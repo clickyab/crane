@@ -4,7 +4,6 @@ import (
 	"net"
 
 	"clickyab.com/crane/crane/entity"
-	"clickyab.com/crane/crane/models"
 )
 
 // Context is the app Context
@@ -13,7 +12,7 @@ type Context struct {
 
 	ip             net.IP
 	ua             string
-	os             models.OS
+	os             entity.OS
 	location       entity.Location
 	browser        string
 	browserVersion string
@@ -37,8 +36,25 @@ type Context struct {
 	noCap        bool
 	noTiny       bool
 	noShowT      bool
+	multiVideo   bool
 
 	floorDiv int64
+}
+
+func (c *Context) FloorDiv() int64 {
+	return c.floorDiv
+}
+
+func (c *Context) Tiny() bool {
+	return !c.noTiny
+}
+
+func (c *Context) Currency() string {
+	return c.currency
+}
+
+func (c *Context) MultiVideo() bool {
+	return c.multiVideo
 }
 
 func (c *Context) Protocol() entity.Protocol {
@@ -58,7 +74,7 @@ func (c *Context) OS() entity.OS {
 }
 
 func (c *Context) ClientID() string {
-	return c.cid
+	return c.tid
 }
 
 func (c *Context) UserAgent() string {
@@ -67,10 +83,6 @@ func (c *Context) UserAgent() string {
 
 func (c *Context) Location() entity.Location {
 	return c.location
-}
-
-func (c *Context) TrackID() string {
-	return c.tid
 }
 
 func (c *Context) Publisher() entity.Publisher {

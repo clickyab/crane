@@ -12,7 +12,8 @@ import (
 	"github.com/clickyab/services/random"
 )
 
-func ortbWriter(ctx context.Context, c entity.Context, ss []entity.Seat, w io.Writer) http.Header {
+// Rtb write openrtb bid-response to writer
+func Rtb(ctx context.Context, c entity.Context, ss []entity.Seat, w io.Writer) http.Header {
 	r := openrtb.SeatBid{}
 	for _, v := range ss {
 		b := openrtb.Bid{
