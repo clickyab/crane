@@ -18,7 +18,6 @@ const (
 )
 
 var (
-	minFrequency   = config.RegisterInt("clickyab.min_frequency", 2, "")
 	dailyCapExpire = config.RegisterDuration("clickyab.daily_cap_expire", 24*time.Hour, "")
 )
 
@@ -77,9 +76,6 @@ func GetCapping(copID string, ads map[int][]entity.Advertise, ep string, slots .
 		found := false
 		var sizeCap []string
 		for ad := range ads[size] {
-			if ads[size][ad].Campaign().Frequency() <= 0 {
-				ads[size][ad].Campaign().Frequency() = minFrequency.Int()
-			}
 			key := fmt.Sprintf(
 				"%s_%d",
 				adKey,
