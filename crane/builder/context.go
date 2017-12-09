@@ -3,12 +3,15 @@ package builder
 import (
 	"net"
 
+	"time"
+
 	"clickyab.com/crane/crane/entity"
 )
 
 // Context is the app Context
 type Context struct {
-	typ string // app,native,vast,app
+	ts  time.Time
+	typ entity.RequestType
 
 	ip             net.IP
 	ua             string
@@ -38,16 +41,30 @@ type Context struct {
 	noCap        bool
 	noTiny       bool
 	multiVideo   bool
-	isp          string
 	floorDiv     int64
 	bid          float64
 
 	ad entity.Advertise
 }
 
-// Isp get isp from ip2location
-func (c *Context) Isp() string {
-	return c.isp
+// Timestamp return the timestamp of the request
+func (c *Context) Timestamp() time.Time {
+	return c.ts
+}
+
+// Type return the request type
+func (c *Context) Type() entity.RequestType {
+	return c.typ
+}
+
+// Referrer is the request referrer
+func (c *Context) Referrer() string {
+	return c.referrer
+}
+
+// Parent is the request parent
+func (c *Context) Parent() string {
+	return c.parent
 }
 
 // Alexa return if user has alexa installed

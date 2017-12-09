@@ -4,17 +4,22 @@ import (
 	"bytes"
 	"context"
 	"crypto/md5"
+	"errors"
 	"net/http"
 	"net/url"
 	"strconv"
+	"time"
 
 	"clickyab.com/crane/crane/builder"
+	"clickyab.com/crane/crane/entity"
 	"clickyab.com/crane/crane/layers/output/banner"
 	"clickyab.com/crane/crane/models"
 	"clickyab.com/crane/crane/rtb"
-	"clickyab.com/gad/tmp/src/github.com/pkg/errors"
+	"clickyab.com/crane/crane/workers/show"
 	"github.com/clickyab/services/assert"
+	"github.com/clickyab/services/broker"
 	"github.com/clickyab/services/framework"
+	"github.com/clickyab/services/safe"
 	"github.com/clickyab/services/store/jwt"
 )
 
@@ -23,15 +28,9 @@ func extracter(r *url.URL) (map[string]string, error) {
 	if jt == "" {
 		return nil, errors.New("jt not found")
 	}
-	expired, m, err := jwt.NewJWT().Decode([]byte(jt), []string{
-		"aid",
-		"dom",
-		"bid",
-		"uaip",
-		"susp",
-	})
+	expired, m, err := jwt.NewJWT().Decode([]byte(jt), "aid", "dom", "bid", "uaip", "susp")
 	if err != nil {
-		return nil, errors.New("blah bn")
+		return nil, err
 	}
 	if expired {
 		if _, ok := m["susp"]; ok {
@@ -69,13 +68,14 @@ func Show(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	assert.Nil(err)
 
 	c, err := rtb.Select(ctx, nil,
+		builder.SetTimestamp(),
 		builder.SetOSUserAgent(ua),
 		builder.SetIPLocation(ip),
 		builder.SetProtocol(r),
 		builder.SetQueryParameters(r.URL),
 		builder.SetDemandSeats(m["pid"], size),
 		builder.SetTID(m["tid"]),
-		builder.SetType(m["type"]),
+		builder.SetType(entity.RequestType(m["type"])),
 		builder.SetAd(ad),
 		builder.SetBid(bid),
 	)
@@ -84,14 +84,16 @@ func Show(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// todo call show worker
+	pub, _ := context.WithTimeout(ctx, 10*time.Second)
+	safe.GoRoutine(pub, func() {
+		job := show.NewImpressionJob(c, c.Seats()[0])
+		broker.Publish(job)
+	})
 
 	b := &bytes.Buffer{}
 	err = banner.Render(ctx, b, c, c.Seats()[0])
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
+	assert.Nil(err)
+
 	w.WriteHeader(http.StatusOK)
 	assert.Nil(w.Write(b.Bytes()))
 }
