@@ -121,12 +121,12 @@ func WebsiteLoader(ctx context.Context) (map[string]kv.Serializable, error) {
 	return b, nil
 }
 
-// Decode the website in io writer
-func (w *Website) Decode(iw io.Writer) error {
+// Encode is the encode function for serialize object in io writer
+func (w *Website) Encode(iw io.Writer) error {
 	return gob.NewEncoder(iw).Encode(w)
 }
 
-// Encode is the encoder
-func (w *Website) Encode(r io.Reader) error {
+// Decode try to decode object from io reader
+func (w *Website) Decode(r io.Reader) error {
 	return gob.NewDecoder(r).Decode(w)
 }

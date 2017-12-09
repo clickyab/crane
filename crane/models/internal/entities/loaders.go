@@ -15,13 +15,13 @@ type Brand struct {
 	Brand string `json:"-" db:"brand"`
 }
 
-// Decode is decoder
-func (b *Brand) Decode(w io.Writer) error {
+// Encode is the encode function for serialize object in io writer
+func (b *Brand) Encode(w io.Writer) error {
 	return gob.NewEncoder(w).Encode(b)
 }
 
-// Encode is encoder
-func (b *Brand) Encode(r io.Reader) error {
+// Decode try to decode object from io reader
+func (b *Brand) Decode(r io.Reader) error {
 	return gob.NewDecoder(r).Decode(b)
 }
 
@@ -51,13 +51,13 @@ type Carrier struct {
 	Carrier string `json:"-" db:"carrier"`
 }
 
-// Decode is decoder
-func (b *Carrier) Decode(w io.Writer) error {
+// Encode is the encode function for serialize object in io writer
+func (b *Carrier) Encode(w io.Writer) error {
 	return gob.NewEncoder(w).Encode(b)
 }
 
-// Encode is encoder
-func (b *Carrier) Encode(r io.Reader) error {
+// Decode try to decode object from io reader
+func (b *Carrier) Decode(r io.Reader) error {
 	return gob.NewDecoder(r).Decode(b)
 }
 
@@ -87,13 +87,13 @@ type Network struct {
 	Network string `json:"-" db:"network"`
 }
 
-// Decode is decoder
-func (b *Network) Decode(w io.Writer) error {
+// Encode is the encode function for serialize object in io writer
+func (b *Network) Encode(w io.Writer) error {
 	return gob.NewEncoder(w).Encode(b)
 }
 
-// Encode is encoder
-func (b *Network) Encode(r io.Reader) error {
+// Decode try to decode object from io reader
+func (b *Network) Decode(r io.Reader) error {
 	return gob.NewDecoder(r).Decode(b)
 }
 

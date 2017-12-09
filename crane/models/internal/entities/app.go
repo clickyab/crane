@@ -40,13 +40,13 @@ func (a App) CTR(size int) float64 {
 	return a.FCTR[size]
 }
 
-// Decode the decoder
-func (a App) Decode(w io.Writer) error {
+// Encode encoder
+func (a App) Encode(w io.Writer) error {
 	return gob.NewEncoder(w).Encode(a)
 }
 
-// Encode encoder
-func (a App) Encode(r io.Reader) error {
+// Decode the decoder
+func (a App) Decode(r io.Reader) error {
 	return gob.NewDecoder(r).Decode(a)
 }
 
