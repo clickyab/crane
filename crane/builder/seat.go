@@ -145,6 +145,7 @@ func (s *seat) ShowURL() string {
 		"dom":  s.publisherDomain,
 		"bid":  fmt.Sprint(s.bid),
 		"uaip": string(m.Sum([]byte(s.ua + s.ip.String()))),
+		"type": s.ftype,
 	}, showExpire.Duration())
 	s.winnerAd.ID()
 	res, err := router.Path("show", map[string]string{"jt": j, "rh": s.ReservedHash(),
@@ -169,10 +170,12 @@ func (s *seat) ClickURL() string {
 	m := md5.New()
 	j := jwt.NewJWT().Encode(map[string]string{
 		"aid":  fmt.Sprint(s.winnerAd.ID()),
+		"sup":  s.Supplier(),
 		"dom":  s.publisherDomain,
 		"bid":  fmt.Sprint(s.bid),
 		"uaip": string(m.Sum([]byte(s.ua + s.ip.String()))),
 		"susp": fmt.Sprint(s.susp),
+		"pid":  s.PublicID(),
 	}, showExpire.Duration())
 	s.winnerAd.ID()
 	res, err := router.Path("click", map[string]string{"jt": j, "rh": s.ReservedHash(),

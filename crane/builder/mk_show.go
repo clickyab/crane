@@ -31,6 +31,23 @@ func SetType(typ string) ShowOptionSetter {
 	}
 }
 
+// SetBid is the type setter for context
+func SetBid(bid float64) ShowOptionSetter {
+	return func(options *Context) (*Context, error) {
+		options.bid = bid
+		return options, nil
+	}
+}
+
+// SetAd is the type setter for context
+func SetAd(ad entity.Advertise) ShowOptionSetter {
+	return func(options *Context) (*Context, error) {
+
+		options.ad = ad
+		return options, nil
+	}
+}
+
 // SetCurrency is the type setter for context
 func SetCurrency(c string) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
@@ -147,13 +164,10 @@ func SetAlexa(ua string, headers http.Header) ShowOptionSetter {
 
 // SetQueryParameters try to get query parameters from the request and
 // set the proper field
-func SetQueryParameters(u *url.URL, ref string) ShowOptionSetter {
+func SetQueryParameters(u *url.URL) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
 		o.parent = u.Query().Get("parent")
 		o.referrer = u.Query().Get("ref")
-		if o.referrer == "" {
-			o.referrer = ref
-		}
 		return o, nil
 	}
 }

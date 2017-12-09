@@ -27,10 +27,11 @@ func GetAds() []entity.Advertise {
 func GetAd(adID int64) (entity.Advertise, error) {
 	ad, err := ads.Get(fmt.Sprint(adID), &entities.Advertise{})
 	if err != nil {
-		ad, err = entities.GetAd(adID)
+		x, err := entities.GetAd(adID)
 		if err != nil {
 			return nil, err
 		}
+		return x, nil
 	}
 	return ad.(entity.Advertise), nil
 }
