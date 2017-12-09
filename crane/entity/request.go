@@ -36,4 +36,8 @@ type Request interface {
 	IsMobile() bool
 	// Isp returns request isp name
 	Isp() string
+	// EventPage is a string, generated only from multiple request (not one request to select multiple ad)
+	EventPage() string
+	// Is this request contain alexa?
+	Alexa() bool
 }

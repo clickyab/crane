@@ -9,15 +9,14 @@ import (
 
 	"strings"
 
-	"clickyab.com/crane/crane/builder/cyos"
+	"clickyab.com/crane/crane/builder/internal/cyos"
 	"clickyab.com/crane/crane/models"
 
 	"crypto/sha1"
 
-	"errors"
-
 	"clickyab.com/crane/crane/entity"
 	"github.com/clickyab/services/assert"
+	"github.com/clickyab/services/config"
 	"github.com/mssola/user_agent"
 )
 
@@ -100,13 +99,46 @@ func SetProtocol(r *http.Request) ShowOptionSetter {
 	}
 }
 
-// SetTID try to set tid
-func SetTID(id, ip, ua string) ShowOptionSetter {
+// SetEventPage is the event page setter for multi request
+func SetEventPage(ep string) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
+		o.eventPage = ep
+		return o, nil
+	}
+}
+
+// SetEventPage is the event page setter for multi request
+func SetCapping(disable bool) ShowOptionSetter {
+	return func(o *Context) (*Context, error) {
+		o.noCap = disable
+		return o, nil
+	}
+}
+
+var copLen = config.RegisterInt("clickyab.cop_len", 10, "cop key len")
+
+// SetTID try to set tid
+func SetTID(id string) ShowOptionSetter {
+	return func(o *Context) (*Context, error) {
+		if o.ua == "" || o.ip == nil {
+			return nil, fmt.Errorf("use this after setting ip and ua")
+		}
 		o.tid = id
 		if o.tid == "" {
-			o.tid = createHash(copLen.Int(), []byte(ip), []byte(ua))
+			o.tid = createHash(copLen.Int(), []byte(o.ip), []byte(o.ua))
 		}
+		return o, nil
+	}
+}
+
+// SetAlexa try to set Alexa flag if available
+func SetAlexa(ua string, headers http.Header) ShowOptionSetter {
+	return func(o *Context) (*Context, error) {
+		// In go headers are not case sensitive and ok with _ and -
+		if strings.Contains(ua, "Alexa") || headers.Get("ALEXATOOLBAR-ALX_NS_PH") != "" {
+			o.alexa = true
+		}
+
 		return o, nil
 	}
 }
@@ -128,14 +160,6 @@ func SetQueryParameters(u *url.URL, ref string) ShowOptionSetter {
 func SetCurrencyRate(a float64) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
 		o.currencyRate = a
-		return o, nil
-	}
-}
-
-// SetNoShowT custom stuff
-func SetNoShowT(show bool) ShowOptionSetter {
-	return func(o *Context) (*Context, error) {
-		o.noShowT = !show
 		return o, nil
 	}
 }
@@ -174,31 +198,6 @@ func SetNoTiny(noTiny bool) ShowOptionSetter {
 func SetMultiVideo(v bool) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
 		o.multiVideo = v
-		return o, nil
-	}
-}
-
-// SetDemandSeats try to add demand seat
-func SetDemandSeats(domain, pubType, supplier string, pubID string, size int) ShowOptionSetter {
-	return func(o *Context) (*Context, error) {
-		if pubType != "web" && pubType != "app" {
-			return o, errors.New("pub_type not valid (should be web or app)")
-		}
-
-		o.seats = append(o.seats, &seat{
-			ua:              o.ua,
-			parent:          o.parent,
-			tid:             o.tid,
-			host:            o.host,
-			size:            size,
-			publicID:        pubID,
-			protocol:        o.protocol,
-			ip:              o.ip,
-			publisherDomain: domain,
-			ref:             o.referrer,
-			supplier:        supplier,
-			ftype:           o.typ,
-		})
 		return o, nil
 	}
 }

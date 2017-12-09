@@ -5,20 +5,23 @@ import (
 
 	"clickyab.com/crane/crane/builder"
 	"clickyab.com/crane/crane/entity"
-	"clickyab.com/gad/models/selector"
+	"clickyab.com/crane/crane/models"
+	"clickyab.com/crane/crane/reducer"
 )
 
-func Select(c context.Context, sel selector.FilterFunc, opt ...builder.ShowOptionSetter) (map[string]string, map[string]entity.Advertise, error) {
+// Select is the main entry point for this module
+func Select(c context.Context, sel reducer.FilterFunc, opt ...builder.ShowOptionSetter) (entity.Context, error) {
 	// Build context
 	ctx, err := builder.NewContext(opt...)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 	// Apply filters
 	// TODO : after selector fix it
-	ads := map[int][]entity.Advertise{} // selector.Apply(ctx, selector.GetAdData(), sel)
+	ads := reducer.Apply(c, ctx, models.GetAds(), sel)
 
 	// select ads
-	links, selected := selectAds(c, ctx, ads)
-	return links, selected, nil
+	selectAds(c, ctx, ads)
+
+	return ctx, nil
 }
