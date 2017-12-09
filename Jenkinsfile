@@ -13,9 +13,11 @@ node {
     }
     stage('Test') {
         checkout scm
-        sh "docker rm -f redis-jenkins-service-test || true"
-        sh "docker run -d --name redis-jenkins-service-test -p 6379:6379 redis:alpine"
-        sh "./bin/ci-test.sh test"
-        sh "docker rm -f redis-jenkins-service-test"
+        def REDIS_NAME = sh(script: 'cat /dev/urandom | tr -dc "a-zA-Z0-9" | fold -w 32 | head -n 1', returnStdout: true).trim()
+        sh "docker rm -f $REDIS_NAME || true"
+        sh "docker run -d --rm --name $REDIS_NAME redis:alpine"
+        def TEST_SERVICES_REDIS_ADDRESS=sh( script: "docker inspect -f '{{.NetworkSettings.IPAddress}}' $REDIS_NAME", returnStdout: true).trim()
+        sh "TEST_SERVICES_REDIS_ADDRESS=${TEST_SERVICES_REDIS_ADDRESS} ./bin/ci-test.sh test"
+        sh "docker rm -f $REDIS_NAME"
     }
 }
