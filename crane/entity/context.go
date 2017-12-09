@@ -27,12 +27,12 @@ type Context interface {
 	User() User
 	// Tiny means that the logo of clickyab should be shown (true) or not
 	Tiny() bool
-	// ShowT
-	ShowT() bool
 	// Currency
 	Currency() string
 	// MultiVideo determine this request can have multiple video
 	MultiVideo() bool
 	// FloorDiv is floor-cpm divider
 	FloorDiv() int64
+	// Capping is required otr not
+	Capping() bool
 }

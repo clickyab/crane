@@ -7,7 +7,7 @@ import (
 // byMulti sort by multi sort
 type byMulti struct {
 	Video bool
-	Ads   []entity.Advertise
+	Ads   []adAndBid
 }
 
 func (a byMulti) Len() int {

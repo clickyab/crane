@@ -2,7 +2,6 @@ package reducer
 
 import (
 	"context"
-	"fmt"
 
 	"clickyab.com/crane/crane/entity"
 )
@@ -37,18 +36,17 @@ func checkCtx(d <-chan struct{}) bool {
 
 // Apply get the data and then call filter on each of them concurrently, the
 // result is the accepted items
-func Apply(ctx context.Context, imp entity.Context, ads []entity.Advertise, ff FilterFunc) map[string][]entity.Advertise {
+func Apply(ctx context.Context, imp entity.Context, ads []entity.Advertise, ff FilterFunc) map[int][]entity.Advertise {
 	d := ctx.Done()
-	m := make(map[string][]entity.Advertise)
+	m := make(map[int][]entity.Advertise)
 	for i := range ads {
 		if !checkCtx(d) {
 			break
 		}
 		if ff(imp, ads[i]) {
-			n := ads[i].Duplicate()
-			n.SetWinnerBID(0)
+			n := ads[i]
 			// TODO : There is a problem here. if the size is allowed in more other size then what?
-			key := fmt.Sprintf("%dx%d", ads[i].Width(), ads[i].Height())
+			key := n.Size()
 			m[key] = append(m[key], n)
 		}
 	}

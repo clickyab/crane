@@ -25,7 +25,9 @@ type Context struct {
 	user      entity.User
 	currency  string
 
-	NoTiny bool
+	eventPage string
+	alexa     bool
+	NoTiny    bool
 
 	host     string
 	method   string
@@ -35,10 +37,29 @@ type Context struct {
 	currencyRate float64
 	noCap        bool
 	noTiny       bool
-	noShowT      bool
 	multiVideo   bool
 
 	floorDiv int64
+}
+
+func (c *Context) Alexa() bool {
+	return c.alexa
+}
+
+func (c *Context) EventPage() string {
+	return c.eventPage
+}
+
+func (c *Context) Capping() bool {
+	return !c.noCap
+}
+
+func (c *Context) IsMobile() bool {
+	return c.os.Mobile
+}
+
+func (c *Context) Isp() string {
+	return c.location.ISP().Name
 }
 
 func (c *Context) FloorDiv() int64 {
