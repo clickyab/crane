@@ -59,8 +59,4 @@ type Advertise interface {
 	Media() string
 	// TargetURL asd
 	TargetURL() string
-
-	SetSlot(Slot)
-
-	Slot() Slot
 }
