@@ -217,14 +217,19 @@ type Advertise struct {
 	capping  entity.Capping
 }
 
-// Decode is the decode function for serialize object in io writer
-func (a *Advertise) Decode(w io.Writer) error {
+// Size return the size of ad
+func (a *Advertise) Size() int {
+	return a.ad.FAdSize
+}
+
+// Encode is the encode function for serialize object in io writer
+func (a *Advertise) Encode(w io.Writer) error {
 	g := gob.NewEncoder(w)
 	return g.Encode(a.ad)
 }
 
-// Encode try to encode object from io reader
-func (a *Advertise) Encode(r io.Reader) error {
+// Decode try to decode object from io reader
+func (a *Advertise) Decode(r io.Reader) error {
 	g := gob.NewDecoder(r)
 	return g.Decode(a.ad)
 }
