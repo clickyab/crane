@@ -11,15 +11,18 @@ import (
 
 	"fmt"
 
+	"strings"
+
 	"clickyab.com/crane/crane/builder"
 	"clickyab.com/crane/crane/entity"
 	"clickyab.com/crane/crane/models"
+	"clickyab.com/crane/crane/workers/click"
 	"github.com/clickyab/services/assert"
+	"github.com/clickyab/services/broker"
 	"github.com/clickyab/services/framework"
 	"github.com/clickyab/services/safe"
 	"github.com/clickyab/services/store/jwt"
 	"github.com/rs/xmux"
-	"github.com/sirupsen/logrus"
 )
 
 const clickPath = "/click/:rh/:size/:type/:jt"
@@ -95,7 +98,40 @@ func clickBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 	exp, _ := context.WithTimeout(ctx, 10*time.Second)
 	safe.GoRoutine(exp, func() {
-		// call web worker
-		logrus.Debug(c)
+		job := show.NewClickJob(c)
+		broker.Publish(job)
 	})
+	body := replaceParameters(ad.AdTarget(), pub.Name(), ad.Campaign().Name(), m["rh"], ip)
+
+	w.WriteHeader(http.StatusOK)
+	_, err = w.Write([]byte(body))
+	assert.Nil(err)
+}
+
+func replaceParameters(url, domain, campaign, impID, ip string) string {
+	r := strings.NewReplacer(
+		"[app]",
+		domain,
+		"[domain]",
+		domain,
+		"[campaign]",
+		campaign,
+		"{app}",
+		domain,
+		"{domain}",
+		domain,
+		"{campaign}",
+		campaign,
+		"{imp_id}",
+		impID,
+		"{ip}",
+		ip,
+		"[ip]",
+		ip,
+	)
+
+	url = r.Replace(url)
+	return `<html><head><title>` + url + `</title><meta name="robots" content="nofollow"/></head>
+			<body><script>window.setTimeout( function() { window.location.href = '` + url + `' }, 500 );</script></body>
+			</html>`
 }
