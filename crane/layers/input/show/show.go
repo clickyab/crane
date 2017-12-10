@@ -73,7 +73,7 @@ func Show(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetIPLocation(ip),
 		builder.SetProtocol(r),
 		builder.SetQueryParameters(r.URL),
-		builder.SetDemandSeats(m["pid"], size),
+		builder.SetDemandSeats([]builder.SeatDetail{{PubID: m["pid"], Size: size}}),
 		builder.SetTID(m["tid"]),
 		builder.SetType(entity.RequestType(m["type"])),
 		builder.SetAd(ad),
