@@ -22,11 +22,19 @@ type Website struct {
 	WFloorCpm   sql.NullInt64  `db:"w_floor_cpm"`
 	CTRStat
 
+	Supp entity.Supplier
 	FCTR [21]float64
 }
 
 // CTR return the ctr based on size of this website
 func (w *Website) CTR(size int) float64 {
+	if w.FCTR[size] == 0 {
+		if w.Supp != nil {
+			w.FCTR[size] = w.Supp.DefaultCTR()
+		} else {
+			w.FCTR[size] = defaultCTR.Float64()
+		}
+	}
 	return w.FCTR[size]
 }
 
@@ -66,8 +74,8 @@ func (w *Website) AcceptedTypes() []entity.AdType {
 }
 
 // Supplier of this website
-func (w *Website) Supplier() string {
-	return w.WSupplier
+func (w *Website) Supplier() entity.Supplier {
+	return w.Supp
 }
 
 // WebsiteLoader load all confirmed website
@@ -116,7 +124,7 @@ func WebsiteLoader(ctx context.Context) (map[string]kv.Serializable, error) {
 		res[i].FCTR[19] = calc(res[i].Impression19, res[i].Click19)
 		res[i].FCTR[20] = calc(res[i].Impression20, res[i].Click20)
 
-		b[fmt.Sprintf("%s_%s", res[i].WDomain, res[i].WSupplier)] = &res[i]
+		b[fmt.Sprintf("%s/%s", res[i].WSupplier, res[i].WDomain)] = &res[i]
 	}
 	return b, nil
 }

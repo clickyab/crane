@@ -14,8 +14,9 @@ import (
 )
 
 var (
-	websiteExp = config.RegisterDuration("crane.models.expire.website", time.Hour, "expire time of websites")
-	adsExp     = config.RegisterDuration("crane.models.expire.ads", time.Minute, "expire time of ads")
+	websiteExp  = config.RegisterDuration("crane.models.expire.website", time.Hour, "expire time of websites")
+	supplierExp = config.RegisterDuration("crane.models.expire.supplier", time.Hour, "expire time of supplier")
+	adsExp      = config.RegisterDuration("crane.models.expire.ads", time.Minute, "expire time of ads")
 )
 
 type loader struct {
@@ -23,12 +24,18 @@ type loader struct {
 
 func (loader) Initialize() {
 	ctx := context.Background()
+	suppliers = pool.NewPool(entities.SupplierLoader, memorypool.NewMemoryPool(), supplierExp.Duration(), 3)
+	suppliers.Start(ctx)
+	suppliersByName = pool.NewPool(entities.SupplierLoader, memorypool.NewMemoryPool(), supplierExp.Duration(), 3)
+	suppliersByName.Start(ctx)
+
 	websites = pool.NewPool(entities.WebsiteLoader, cachepool.NewCachePool("WS_"), websiteExp.Duration(), 3)
 	websites.Start(ctx)
 	ads = pool.NewPool(entities.AdLoader, memorypool.NewMemoryPool(), adsExp.Duration(), 3)
 	ads.Start(ctx)
 
 	// Wait for the first time load
+	<-suppliers.Notify()
 	<-websites.Notify()
 	<-ads.Notify()
 }

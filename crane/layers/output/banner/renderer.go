@@ -1,16 +1,20 @@
 package banner
 
 import (
-	"io"
-
 	"context"
 
+	"net/http"
+
 	"clickyab.com/crane/crane/entity"
+	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/xlog"
 )
 
 // Render the advertise
-func Render(c context.Context, w io.Writer, ctx entity.Context, s entity.Seat) error {
+func Render(c context.Context, w http.ResponseWriter, ctx entity.Context) error {
+	seats := ctx.Seats()
+	assert.True(len(seats) == 1)
+	s := seats[0]
 	switch s.WinnerAdvertise().Type() {
 	case entity.AdTypeBanner:
 		return renderWebBanner(w, ctx, s)

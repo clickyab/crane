@@ -42,9 +42,13 @@ type Context struct {
 	noTiny       bool
 	multiVideo   bool
 	floorDiv     int64
-	bid          float64
 
-	ad entity.Advertise
+	suspicious int
+}
+
+// Suspicious return zero on ok status and a number on invalid value
+func (c *Context) Suspicious() int {
+	return c.suspicious
 }
 
 // Timestamp return the timestamp of the request

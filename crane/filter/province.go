@@ -10,5 +10,5 @@ func CheckProvince(c entity.Context, in entity.Advertise) bool {
 		return len(in.Campaign().Province()) == 0
 	}
 	// The 1 means iran. watch for it please!
-	return hasString(in.Campaign().Province(), c.Location().Province().Name)
+	return hasString(true, in.Campaign().Province(), c.Location().Province().Name)
 }
