@@ -1,4 +1,4 @@
-package show
+package click
 
 import (
 	"context"
@@ -13,18 +13,16 @@ import (
 
 	"clickyab.com/crane/crane/builder"
 	"clickyab.com/crane/crane/entity"
-	"clickyab.com/crane/crane/layers/output/banner"
 	"clickyab.com/crane/crane/models"
-	"clickyab.com/crane/crane/workers/show"
 	"github.com/clickyab/services/assert"
-	"github.com/clickyab/services/broker"
 	"github.com/clickyab/services/framework"
 	"github.com/clickyab/services/safe"
 	"github.com/clickyab/services/store/jwt"
 	"github.com/rs/xmux"
+	"github.com/sirupsen/logrus"
 )
 
-const showPath = "/banner/:rh/:size/:type/:jt"
+const clickPath = "/click/:rh/:size/:type/:jt"
 
 func extractor(ctx context.Context, r *url.URL) (map[string]string, error) {
 	jt := xmux.Param(ctx, "jt")
@@ -36,7 +34,7 @@ func extractor(ctx context.Context, r *url.URL) (map[string]string, error) {
 		return nil, err
 	}
 	if expired {
-		m["susp"] = "99"
+		m["susp"] = "98"
 	}
 	m["rh"] = xmux.Param(ctx, "rh")
 	m["size"] = xmux.Param(ctx, "size")
@@ -47,20 +45,14 @@ func extractor(ctx context.Context, r *url.URL) (map[string]string, error) {
 	return m, nil
 }
 
-// show is handler for show ad request
-func showBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+// clickBanner is handler for click ad request
+func clickBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	m, err := extractor(ctx, r.URL)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-
-	// Get the supplier
-	sup, err := models.GetSupplierByName(m["sup"])
-	assert.Nil(err)
-	// get the publisher, even its not created then its fine
-	pub, err := models.GetWebSite(sup, m["dom"])
-	assert.Nil(err)
+	//get ad
 	aid, err := strconv.ParseInt(m["aid"], 10, 64)
 	assert.Nil(err)
 	ad, err := models.GetAd(aid)
@@ -69,12 +61,19 @@ func showBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	assert.Nil(err)
 	bid, err := strconv.ParseFloat(m["bid"], 64)
 	assert.Nil(err)
-	susp, err := strconv.Atoi(m["susp"])
-	assert.Nil(err)
+
 	ua, ip := r.UserAgent(), framework.RealIP(r)
+
+	//check for fraud
 	if string(md5.New().Sum([]byte(m["rh"]+fmt.Sprintf("%d", size)+m["type"]+ua+ip))) != m["uaip"] {
 		m["susp"] = "98"
 	}
+	susp, err := strconv.Atoi(m["susp"])
+	assert.Nil(err)
+	sup, err := models.GetSupplierByName(m["sup"])
+	assert.Nil(err)
+	pub, err := models.GetWebSite(sup, m["dom"])
+	assert.Nil(err)
 	// Build context
 	c, err := builder.NewContext(
 		builder.SetTimestamp(),
@@ -83,7 +82,6 @@ func showBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetIPLocation(ip),
 		builder.SetAlexa(ua, http.Header{}),
 		builder.SetProtocolByRequest(r),
-		builder.SetParent(m["parent"], m["ref"]),
 		builder.SetTID(m["tid"]),
 		builder.SetType(entity.RequestType(m["type"])),
 		builder.SetPublisher(pub),
@@ -97,9 +95,7 @@ func showBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 	exp, _ := context.WithTimeout(ctx, 10*time.Second)
 	safe.GoRoutine(exp, func() {
-		job := show.NewImpressionJob(c, c.Seats()...)
-		broker.Publish(job)
+		// call web worker
+		logrus.Debug(c)
 	})
-
-	assert.Nil(banner.Render(ctx, w, c))
 }

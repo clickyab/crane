@@ -19,8 +19,8 @@ import (
 )
 
 var (
-	showExpire = config.RegisterDuration("crane.builder.seat.show_exp", 1*time.Hour, "determine how long show url is valid")
-	//clickExpire = config.RegisterDuration("crane.builder.seat.click_exp", 72*time.Hour, "determine how long click url is valid")
+	showExpire  = config.RegisterDuration("crane.builder.seat.show_exp", 1*time.Hour, "determine how long show url is valid")
+	clickExpire = config.RegisterDuration("crane.builder.seat.click_exp", 72*time.Hour, "determine how long click url is valid")
 )
 
 // SlotType is the type of slot
@@ -139,12 +139,15 @@ func (s *seat) ShowURL() string {
 		panic("no winner")
 	}
 	m := md5.New()
+	data := m.Sum(
+		[]byte(s.ReservedHash() + fmt.Sprint(s.size) + s.Type() + s.ua + s.ip.String()),
+	)
 	j := jwt.NewJWT().Encode(map[string]string{
 		"aid":  fmt.Sprint(s.winnerAd.ID()),
 		"dom":  s.publisher.Name(),
 		"sup":  s.publisher.Supplier().Name(),
 		"bid":  fmt.Sprint(s.bid),
-		"uaip": string(m.Sum([]byte(s.ua + s.ip.String()))),
+		"uaip": string(data),
 		"pid":  s.publicID,
 		"susp": fmt.Sprint(s.susp),
 	}, showExpire.Duration())
@@ -173,16 +176,18 @@ func (s *seat) ClickURL() string {
 		panic("no winner")
 	}
 	m := md5.New()
+	data := m.Sum(
+		[]byte(s.ReservedHash() + fmt.Sprint(s.size) + s.Type() + s.ua + s.ip.String()),
+	)
 	j := jwt.NewJWT().Encode(map[string]string{
 		"aid":  fmt.Sprint(s.winnerAd.ID()),
 		"dom":  s.publisher.Name(),
 		"sup":  s.publisher.Supplier().Name(),
 		"bid":  fmt.Sprint(s.bid),
-		"uaip": string(m.Sum([]byte(s.ua + s.ip.String()))),
+		"uaip": string(data),
 		"susp": fmt.Sprint(s.susp),
 		"pid":  s.PublicID(),
-		"type": s.Type(),
-	}, showExpire.Duration())
+	}, clickExpire.Duration())
 	s.winnerAd.ID()
 	res, err := router.Path("click", map[string]string{"jt": j, "rh": s.ReservedHash(), "size": fmt.Sprint(s.Size()), "type": s.Type()})
 	assert.Nil(err)
