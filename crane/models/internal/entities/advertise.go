@@ -295,3 +295,11 @@ func (a *Advertise) Media() string {
 	}
 	return ""
 }
+
+// AdTarget return the target address
+func (a *Advertise) AdTarget() string {
+	if a.FAdURL.Valid {
+		return a.FAdURL.String
+	}
+	return ""
+}

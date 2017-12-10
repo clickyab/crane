@@ -42,4 +42,6 @@ type Advertise interface {
 	Attributes() map[string]interface{}
 	// Media return image of ad
 	Media() string
+	// AdTarget return ad target of the target
+	AdTarget() string
 }
