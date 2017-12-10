@@ -3,7 +3,6 @@ package builder
 import (
 	"fmt"
 	"net"
-	"net/url"
 
 	"net/http"
 
@@ -94,8 +93,8 @@ func SetRequest(host, method string) ShowOptionSetter {
 	}
 }
 
-// SetProtocol try to find protocol of the request based on the request headers
-func SetProtocol(r *http.Request) ShowOptionSetter {
+// SetProtocolByRequest try to find protocol of the request based on the request headers
+func SetProtocolByRequest(r *http.Request) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
 		o.protocol = entity.HTTP
 		if r.TLS != nil {
@@ -105,6 +104,14 @@ func SetProtocol(r *http.Request) ShowOptionSetter {
 			o.protocol = entity.HTTPS
 		}
 
+		return o, nil
+	}
+}
+
+// SetProtocol try to find protocol of the request based on function parameters
+func SetProtocol(scheme entity.Protocol) ShowOptionSetter {
+	return func(o *Context) (*Context, error) {
+		o.protocol = scheme
 		return o, nil
 	}
 }
@@ -155,12 +162,11 @@ func SetAlexa(ua string, headers http.Header) ShowOptionSetter {
 	}
 }
 
-// SetQueryParameters try to get query parameters from the request and
-// set the proper field
-func SetQueryParameters(u *url.URL) ShowOptionSetter {
+// SetParent is same as SetQueryParameters just for setting parent for demands
+func SetParent(page, ref string) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
-		o.parent = u.Query().Get("parent")
-		o.referrer = u.Query().Get("ref")
+		o.parent = page
+		o.referrer = ref
 		return o, nil
 	}
 }
