@@ -27,11 +27,11 @@ const (
 
 func (c *enc) Encode(m map[string]string, d time.Duration) string {
 	cl := jws.Claims{}
-	cl.Set(exp, time.Now().Add(d).Format(format))
 
 	for k, v := range m {
 		cl.Set(k, v)
 	}
+	cl.Set(exp, time.Now().Add(d).Format(format))
 	cl.SetIssuedAt(time.Now())
 	t := jws.NewJWT(cl, crypto.SigningMethodRS256)
 	res, err := t.Serialize(private)
@@ -39,7 +39,7 @@ func (c *enc) Encode(m map[string]string, d time.Duration) string {
 	return string(res)
 }
 
-func (c *enc) Decode(b []byte, ks []string) (bool, map[string]string, error) {
+func (c *enc) Decode(b []byte, ks ...string) (bool, map[string]string, error) {
 	j, err := jws.ParseJWT(b)
 	if err != nil {
 		return false, nil, err
@@ -60,11 +60,19 @@ func (c *enc) Decode(b []byte, ks []string) (bool, map[string]string, error) {
 		isExp = true
 	}
 	res := make(map[string]string)
-	for _, v := range ks {
-		if !j.Claims().Has(v) {
-			return isExp, nil, fmt.Errorf("key %s not found", v)
+	if len(ks) != 0 {
+		for _, v := range ks {
+			if !j.Claims().Has(v) {
+				return isExp, nil, fmt.Errorf("key %s not found", v)
+			}
+			res[v] = j.Claims().Get(v).(string)
 		}
-		res[v] = j.Claims().Get(v).(string)
+	} else {
+		for k := range j.Claims() {
+			if k != exp && k != "iat" {
+				res[k] = fmt.Sprint(j.Claims().Get(k))
+			}
+		}
 	}
 	return isExp, res, nil
 }
