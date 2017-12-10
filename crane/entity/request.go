@@ -35,8 +35,6 @@ type Request interface {
 	Location() Location
 	// IsMobile shows if its a phone
 	IsMobile() bool
-	// ISP returns request isp name
-	ISP() string
 	// EventPage is a string, generated only from multiple request (not one request to select multiple ad)
 	EventPage() string
 	// Is this request contain alexa?
@@ -45,4 +43,6 @@ type Request interface {
 	Referrer() string
 	// Parent is the page contain the ad
 	Parent() string
+	// Suspicious is means this request is Suspicious
+	Suspicious() int
 }

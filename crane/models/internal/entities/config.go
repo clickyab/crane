@@ -8,5 +8,5 @@ func calc(imp, clk int) float64 {
 	if imp < 1000 || clk == 0 {
 		return defaultCTR.Float64()
 	}
-	return float64(clk) / float64(imp) * 100
+	return 0
 }

@@ -13,12 +13,17 @@ var (
 )
 
 // GetWebSite try to get website. do not use it in initializer
-func GetWebSite(sup, domain string) (entity.Publisher, error) {
+func GetWebSite(sup entity.Supplier, domain string) (entity.Publisher, error) {
 	d := &entities.Website{}
-	res, err := websites.Get(fmt.Sprintf("%s/%s", sup, domain), d)
+	res, err := websites.Get(fmt.Sprintf("%s/%s", sup.Name(), domain), d)
 	if err != nil {
+		if sup.AllowCreate() {
+			return entities.NewFakePublisher(sup, domain), nil
+		}
 		return nil, err
 	}
+	d = res.(*entities.Website)
+	d.Supp = sup
 
-	return res.(entity.Publisher), nil
+	return d, nil
 }

@@ -34,7 +34,7 @@ type Publisher interface {
 	// MinBid is the minimum CPC requested for this requests
 	MinBid() int64
 	// Supplier return the exchange object for this publisher
-	Supplier() string
+	Supplier() Supplier
 	// CTR returns ctr of a slot with specific size
 	CTR(int) float64
 }

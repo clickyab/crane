@@ -4,19 +4,17 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 
 	"clickyab.com/crane/crane/entity"
 	"github.com/bsm/openrtb"
-	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/random"
 )
 
-// Rtb write openrtb bid-response to writer
-func Rtb(ctx context.Context, c entity.Context, ss []entity.Seat, w io.Writer) http.Header {
+// Render write openrtb bid-response to writer
+func Render(_ context.Context, w http.ResponseWriter, ctx entity.Context) error {
 	r := openrtb.SeatBid{}
-	for _, v := range ss {
+	for _, v := range ctx.Seats() {
 		b := openrtb.Bid{
 			ID:         v.ReservedHash(),
 			ImpID:      v.PublicID(),
@@ -29,13 +27,11 @@ func Rtb(ctx context.Context, c entity.Context, ss []entity.Seat, w io.Writer) h
 		}
 		r.Bid = append(r.Bid, b)
 	}
+	w.Header().Set("content-type", "application/json")
 	j := json.NewEncoder(w)
-	assert.Nil(j.Encode(openrtb.BidResponse{
-		Currency: c.Currency(),
+	return j.Encode(openrtb.BidResponse{
+		Currency: ctx.Currency(),
 		ID:       <-random.ID,
 		SeatBid:  []openrtb.SeatBid{r},
-	}))
-	h := http.Header{}
-	h.Set("content-type", "application/json")
-	return h
+	})
 }

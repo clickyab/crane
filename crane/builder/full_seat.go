@@ -1,14 +1,13 @@
 package builder
 
-import "fmt"
+import (
+	"clickyab.com/crane/crane/entity"
+)
 
-// SetDemandSeats try to add demand seat
-func SetDemandSeats(pubID string, size int) ShowOptionSetter {
+// SetFullSeats is a setter for seats in click and show
+func SetFullSeats(pubID string, size int, hash string, ad entity.Advertise, bid float64) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
 		ctr := o.publisher.CTR(size)
-		if ctr <= 0 {
-			return nil, fmt.Errorf("wrong ctr calculation")
-		}
 		ir := o.location.Country().Valid && o.location.Country().ISO == "IR"
 		o.seats = append(o.seats, &seat{
 			ua:        o.ua,
@@ -26,8 +25,12 @@ func SetDemandSeats(pubID string, size int) ShowOptionSetter {
 			publisher: o.publisher,
 			ftype:     o.typ,
 			ctr:       ctr,
-		})
 
+			winnerAd:    ad,
+			bid:         bid,
+			reserveHash: hash,
+			susp:        o.suspicious,
+		})
 		return o, nil
 	}
 }

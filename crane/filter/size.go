@@ -10,7 +10,7 @@ var videoValidSizes = []int{3, 4, 9, 16, 14}
 func CheckWebSize(c entity.Context, in entity.Advertise) bool {
 	if in.Type() == entity.AdTypeVideo {
 		for _, seat := range c.Seats() {
-			if hasInt(videoValidSizes, seat.Size()) {
+			if hasInt(false, videoValidSizes, seat.Size()) {
 				return true
 			}
 		}
@@ -23,9 +23,4 @@ func CheckWebSize(c entity.Context, in entity.Advertise) bool {
 		}
 	}
 	return false
-}
-
-// CheckWebMobileSize check if the banner size exists in the request
-func CheckWebMobileSize(c entity.Context, in entity.Advertise) bool {
-	return in.Size() == 8
 }

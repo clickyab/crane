@@ -41,23 +41,6 @@ func SetType(typ entity.RequestType) ShowOptionSetter {
 	}
 }
 
-// SetBid is the type setter for context
-func SetBid(bid float64) ShowOptionSetter {
-	return func(options *Context) (*Context, error) {
-		options.bid = bid
-		return options, nil
-	}
-}
-
-// SetAd is the type setter for context
-func SetAd(ad entity.Advertise) ShowOptionSetter {
-	return func(options *Context) (*Context, error) {
-
-		options.ad = ad
-		return options, nil
-	}
-}
-
 // SetCurrency is the type setter for context
 func SetCurrency(c string) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
@@ -208,6 +191,14 @@ func SetPublisher(pub entity.Publisher) ShowOptionSetter {
 			return nil, fmt.Errorf("publisher is already set")
 		}
 		o.publisher = pub
+		return o, nil
+	}
+}
+
+//SetSuspicious is the function to set suspicious code, default is zero
+func SetSuspicious(suspCode int) ShowOptionSetter {
+	return func(o *Context) (*Context, error) {
+		o.suspicious = suspCode
 		return o, nil
 	}
 }

@@ -22,10 +22,10 @@ type Seat interface {
 	ShowURL() string
 	// SetClickURL is the setter for click url of this ad in slot
 	ClickURL() string
-	// Supplier return supplier
-	Supplier() string
 	// CTR return current ctr for this size in publisher
 	CTR() float64
 	// Type of seat
 	Type() string
+	// ShowT the fucking iframe injection
+	ShowT() bool
 }
