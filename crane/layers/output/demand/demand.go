@@ -14,9 +14,9 @@ import (
 )
 
 // Rtb write openrtb bid-response to writer
-func Rtb(ctx context.Context, c entity.Context, ss []entity.Seat, w io.Writer) http.Header {
+func Rtb(ctx context.Context, c entity.Context, w io.Writer) http.Header {
 	r := openrtb.SeatBid{}
-	for _, v := range ss {
+	for _, v := range c.Seats() {
 		b := openrtb.Bid{
 			ID:         v.ReservedHash(),
 			ImpID:      v.PublicID(),
