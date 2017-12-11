@@ -20,6 +20,7 @@ type Website struct {
 	WCategories SharpArray     `db:"w_categories"`
 	WMinBid     int64          `db:"w_minbid"`
 	WFloorCpm   sql.NullInt64  `db:"w_floor_cpm"`
+	WFatFinger  int            `db:"w_fatfinger"`
 	CTRStat
 
 	Supp entity.Supplier

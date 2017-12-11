@@ -103,5 +103,6 @@ func lookup(svcName string) ([]string, error) {
 }
 
 func init() {
-	initializer.Register(&initRedis{}, 0)
+	// Redis must be before mysql so the cache work on queries
+	initializer.Register(&initRedis{}, -1)
 }

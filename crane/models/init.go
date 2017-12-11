@@ -24,6 +24,7 @@ type loader struct {
 
 func (loader) Initialize() {
 	ctx := context.Background()
+
 	suppliers = pool.NewPool(entities.SupplierLoader, memorypool.NewMemoryPool(), supplierExp.Duration(), 3)
 	suppliers.Start(ctx)
 	suppliersByName = pool.NewPool(entities.SupplierLoader, memorypool.NewMemoryPool(), supplierExp.Duration(), 3)

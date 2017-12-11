@@ -1,4 +1,4 @@
-package show
+package click
 
 import (
 	"encoding/json"
