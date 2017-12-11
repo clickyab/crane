@@ -86,6 +86,8 @@ func internalSelect(
 				Video: ctx.MultiVideo(),
 			}
 			secBid = false
+		} else {
+			continue
 		}
 
 		sort.Sort(ef)

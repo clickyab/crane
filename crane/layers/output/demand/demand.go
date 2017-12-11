@@ -15,6 +15,10 @@ import (
 func Render(_ context.Context, w http.ResponseWriter, ctx entity.Context) error {
 	r := openrtb.SeatBid{}
 	for _, v := range ctx.Seats() {
+		// What if we have no ad for them?
+		if v.WinnerAdvertise() == nil {
+			continue
+		}
 		b := openrtb.Bid{
 			ID:         v.ReservedHash(),
 			ImpID:      v.PublicID(),

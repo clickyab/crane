@@ -21,6 +21,7 @@ type Website struct {
 	WMinBid     int64          `db:"w_minbid"`
 	WFloorCpm   sql.NullInt64  `db:"w_floor_cpm"`
 	WFatFinger  int            `db:"w_fatfinger"`
+	Status      int            `db:"w_status"`
 	CTRStat
 
 	Supp entity.Supplier
@@ -37,6 +38,29 @@ func (w *Website) CTR(size int) float64 {
 		}
 	}
 	return w.FCTR[size]
+}
+
+func (w *Website) totalImp() (res int64) {
+	return w.Impression1.Int64 +
+		w.Impression2.Int64 +
+		w.Impression3.Int64 +
+		w.Impression4.Int64 +
+		w.Impression5.Int64 +
+		w.Impression6.Int64 +
+		w.Impression7.Int64 +
+		w.Impression8.Int64 +
+		w.Impression9.Int64 +
+		w.Impression10.Int64 +
+		w.Impression11.Int64 +
+		w.Impression12.Int64 +
+		w.Impression13.Int64 +
+		w.Impression14.Int64 +
+		w.Impression15.Int64 +
+		w.Impression16.Int64 +
+		w.Impression17.Int64 +
+		w.Impression18.Int64 +
+		w.Impression19.Int64 +
+		w.Impression20.Int64
 }
 
 // ID return the website id
@@ -81,7 +105,12 @@ func (w *Website) Supplier() entity.Supplier {
 
 // WebsiteLoader load all confirmed website
 func WebsiteLoader(ctx context.Context) (map[string]kv.Serializable, error) {
-	q := `SELECT w_id, w_domain, w_supplier, w_name, w_categories, w_minbid, w_floor_cpm, w_fatfinger,
+	b := make(map[string]kv.Serializable)
+	//return b, nil // Uncomment this line after first time in DEV mode
+
+	const cnt = 10000
+	for j := 0; ; j = j + cnt {
+		q := fmt.Sprintf(`SELECT w_id, w_domain, w_supplier, w_name, w_categories, w_minbid, w_floor_cpm, w_fatfinger, w_status,
   SUM(imp_1) AS imp1, SUM(imp_2) AS imp2, SUM(imp_3) AS imp3, SUM(imp_4) AS imp4, SUM(imp_5) AS imp5,
   SUM(imp_6) AS imp6, SUM(imp_7) AS imp7, SUM(imp_8) AS imp8, SUM(imp_9) AS imp9, SUM(imp_10) AS imp10,
   SUM(imp_11) AS imp11, SUM(imp_12) AS imp12, SUM(imp_13) AS imp13, SUM(imp_14) AS imp14, SUM(imp_15) AS imp15,
@@ -91,41 +120,48 @@ func WebsiteLoader(ctx context.Context) (map[string]kv.Serializable, error) {
   SUM(click_11) AS click11, SUM(click_12) AS click12, SUM(click_13) AS click13, SUM(click_14) AS click14, SUM(click_15) AS click15,
   SUM(click_16) AS click16, SUM(click_17) AS click17, SUM(click_18) AS click18, SUM(click_19) AS click19, SUM(click_20) AS click20
   FROM websites
-  INNER JOIN ctr_stat ON w_id=pub_id
-  WHERE date BETWEEN DATE_SUB(NOW(), INTERVAL 2 DAY) AND NOW()
-  AND w_status=1 AND pub_type=?
-  GROUP BY w_id`
+  LEFT JOIN ctr_stat ON w_id=pub_id AND pub_type=? AND date BETWEEN DATE_SUB(NOW(), INTERVAL 2 DAY) AND NOW()
+  GROUP BY w_id LIMIT %d, %d`, j, j+cnt)
 
-	var res []Website
-	if _, err := NewManager().GetRDbMap().Select(&res, q, "web"); err != nil {
-		return nil, err
-	}
+		var res []Website
+		if _, err := NewManager().GetRDbMap().Select(&res, q, "web"); err != nil {
+			return nil, err
+		}
+		if len(res) == 0 {
+			break
+		}
 
-	b := make(map[string]kv.Serializable)
-	for i := range res {
-		res[i].FCTR = [21]float64{}
-		res[i].FCTR[1] = calc(res[i].Impression1, res[i].Click1)
-		res[i].FCTR[2] = calc(res[i].Impression2, res[i].Click2)
-		res[i].FCTR[3] = calc(res[i].Impression3, res[i].Click3)
-		res[i].FCTR[4] = calc(res[i].Impression4, res[i].Click4)
-		res[i].FCTR[5] = calc(res[i].Impression5, res[i].Click5)
-		res[i].FCTR[6] = calc(res[i].Impression6, res[i].Click6)
-		res[i].FCTR[7] = calc(res[i].Impression7, res[i].Click7)
-		res[i].FCTR[8] = calc(res[i].Impression8, res[i].Click8)
-		res[i].FCTR[9] = calc(res[i].Impression9, res[i].Click9)
-		res[i].FCTR[10] = calc(res[i].Impression10, res[i].Click10)
-		res[i].FCTR[11] = calc(res[i].Impression11, res[i].Click11)
-		res[i].FCTR[12] = calc(res[i].Impression12, res[i].Click12)
-		res[i].FCTR[13] = calc(res[i].Impression13, res[i].Click13)
-		res[i].FCTR[14] = calc(res[i].Impression14, res[i].Click14)
-		res[i].FCTR[15] = calc(res[i].Impression15, res[i].Click15)
-		res[i].FCTR[16] = calc(res[i].Impression16, res[i].Click16)
-		res[i].FCTR[17] = calc(res[i].Impression17, res[i].Click17)
-		res[i].FCTR[18] = calc(res[i].Impression18, res[i].Click18)
-		res[i].FCTR[19] = calc(res[i].Impression19, res[i].Click19)
-		res[i].FCTR[20] = calc(res[i].Impression20, res[i].Click20)
-
-		b[fmt.Sprintf("%s/%s", res[i].WSupplier, res[i].WDomain)] = &res[i]
+		for i := range res {
+			res[i].FCTR = [21]float64{}
+			res[i].FCTR[1] = calc(res[i].Impression1, res[i].Click1)
+			res[i].FCTR[2] = calc(res[i].Impression2, res[i].Click2)
+			res[i].FCTR[3] = calc(res[i].Impression3, res[i].Click3)
+			res[i].FCTR[4] = calc(res[i].Impression4, res[i].Click4)
+			res[i].FCTR[5] = calc(res[i].Impression5, res[i].Click5)
+			res[i].FCTR[6] = calc(res[i].Impression6, res[i].Click6)
+			res[i].FCTR[7] = calc(res[i].Impression7, res[i].Click7)
+			res[i].FCTR[8] = calc(res[i].Impression8, res[i].Click8)
+			res[i].FCTR[9] = calc(res[i].Impression9, res[i].Click9)
+			res[i].FCTR[10] = calc(res[i].Impression10, res[i].Click10)
+			res[i].FCTR[11] = calc(res[i].Impression11, res[i].Click11)
+			res[i].FCTR[12] = calc(res[i].Impression12, res[i].Click12)
+			res[i].FCTR[13] = calc(res[i].Impression13, res[i].Click13)
+			res[i].FCTR[14] = calc(res[i].Impression14, res[i].Click14)
+			res[i].FCTR[15] = calc(res[i].Impression15, res[i].Click15)
+			res[i].FCTR[16] = calc(res[i].Impression16, res[i].Click16)
+			res[i].FCTR[17] = calc(res[i].Impression17, res[i].Click17)
+			res[i].FCTR[18] = calc(res[i].Impression18, res[i].Click18)
+			res[i].FCTR[19] = calc(res[i].Impression19, res[i].Click19)
+			res[i].FCTR[20] = calc(res[i].Impression20, res[i].Click20)
+			n := &res[i]
+			k := fmt.Sprintf("%s/%s", res[i].WSupplier, res[i].WDomain)
+			if d, ok := b[k]; ok {
+				if n.totalImp() < d.(*Website).totalImp() {
+					n = d.(*Website)
+				}
+			}
+			b[k] = n
+		}
 	}
 	return b, nil
 }

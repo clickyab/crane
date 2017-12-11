@@ -22,6 +22,9 @@ func GetWebSite(sup entity.Supplier, domain string) (entity.Publisher, error) {
 		}
 		return nil, err
 	}
+	if d.Status != 1 {
+		return nil, fmt.Errorf("blocked site")
+	}
 	d = res.(*entities.Website)
 	d.Supp = sup
 
