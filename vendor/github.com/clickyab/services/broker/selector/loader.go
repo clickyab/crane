@@ -10,6 +10,7 @@ import (
 
 	"context"
 
+	"github.com/clickyab/services/initializer"
 	"github.com/sirupsen/logrus"
 )
 
@@ -47,6 +48,7 @@ func (cfg) Loaded() {
 			},
 		)
 	case "rabbitmq":
+		initializer.Register(rabbitmq.NewRabbitMQInitializer(), 1)
 		p := rabbitmq.NewRabbitBroker()
 		broker.SetActiveBroker(p)
 	default:

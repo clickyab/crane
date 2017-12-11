@@ -21,13 +21,18 @@ export LDARG=-ldflags $(FLAGS)
 export BUILD=cd $(ROOT) && $(GO) install -v $(LDARG)
 export DBPASS?=$(DEFAULT_PASS)
 export DB_USER?=root
-export DB_NAME?=$(APPNAME)
+export DB_NAME?=clickyab
 export RUSER?=$(APPNAME)
 export RPASS?=$(DEFAULT_PASS)
 export WORK_DIR=$(ROOT)/tmp
 export UGLIFYJS=$(ROOT)/node_modules/.bin/uglifyjs
-export CRN_SERVICES_MYSQL_WDSN=root:bita123@tcp(127.0.0.1:3306)/crane?charset=utf8&parseTime=true
+export CRN_SERVICES_MYSQL_WDSN=root:bita123@tcp(127.0.0.1:3306)/clickyab?charset=utf8&parseTime=true
+export CRN_SERVICES_MYSQL_RDSN?=root:bita123@tcp(127.0.0.1:3306)/clickyab?charset=utf8&parseTime=true
 
 all: codegen
 	$(BUILD) ./...
+
+run-webserver: all ip2location
+	$(ROOT)/bin/crane
+
 include $(ROOT)/scripts/*.mk

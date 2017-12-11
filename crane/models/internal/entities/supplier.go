@@ -95,7 +95,7 @@ func SupplierLoader(ctx context.Context) (map[string]kv.Serializable, error) {
 	q := `SELECT * FROM suppliers`
 
 	var res []Supplier
-	if _, err := NewManager().GetRDbMap().Select(&res, q, "web"); err != nil {
+	if _, err := NewManager().GetRDbMap().Select(&res, q); err != nil {
 		return nil, err
 	}
 

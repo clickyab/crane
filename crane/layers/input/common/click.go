@@ -44,7 +44,7 @@ func clickBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 	exp, _ := context.WithTimeout(ctx, 10*time.Second)
 	safe.GoRoutine(exp, func() {
-		job := show.NewClickJob(c)
+		job := click.NewClickJob(c)
 		broker.Publish(job)
 	})
 	body := replaceParameters(pl.Ad.AdTarget(), pl.Publisher.Name(), pl.Ad.Campaign().Name(), pl.ReserveHash, pl.IP)

@@ -223,6 +223,8 @@ func finalize() {
 	logrus.Debug("Rabbit finalized.")
 }
 
-func init() {
-	initializer.Register(&initRabbit{}, 0)
+// NewRabbitMQInitializer rabbit mq is an exception in domino. we need to register it whenever we
+// select it via selector package
+func NewRabbitMQInitializer() initializer.Interface {
+	return &initRabbit{}
 }

@@ -45,6 +45,7 @@ func (c *consumer) Consume(ctx context.Context) chan<- broker.Delivery {
 	return ch
 }
 
-func init() {
-	assert.Nil(broker.RegisterConsumer(&consumer{}))
+// NewConsumer return a new consumer
+func NewConsumer() broker.Consumer {
+	return &consumer{}
 }
