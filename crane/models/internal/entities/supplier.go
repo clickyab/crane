@@ -19,7 +19,7 @@ type Supplier struct {
 	ID               int64         `db:"id"`
 	FName            string        `db:"name"`
 	FToken           string        `db:"token"`
-	UserID           sql.NullInt64 `db:"user_id"`
+	FUserID          sql.NullInt64 `db:"user_id"`
 	DefaultFloor     int64         `db:"default_floor"`
 	DefaultSoftFloor int64         `db:"default_soft_floor"`
 	DefaultMinBID    int64         `db:"default_min_bid"`
@@ -36,6 +36,11 @@ func (s Supplier) ShowDomain() string {
 	return s.FShowDomain
 }
 
+// UserID return user id of supplier
+func (s *Supplier) UserID() int64 {
+	return s.FUserID.Int64
+}
+
 // TinyMark show tiny clickyb mark
 func (s *Supplier) TinyMark() bool {
 	return s.Tiny > 0
@@ -43,7 +48,7 @@ func (s *Supplier) TinyMark() bool {
 
 // AllowCreate allow create new site on demand?
 func (s *Supplier) AllowCreate() bool {
-	return s.UserID.Valid
+	return s.FUserID.Valid
 }
 
 // Encode is the encode function for serialize object in io writer

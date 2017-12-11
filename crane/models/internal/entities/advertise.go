@@ -217,6 +217,11 @@ type Advertise struct {
 	capping  entity.Capping
 }
 
+// CampaignAdID return campaign_ad primary
+func (a *Advertise) CampaignAdID() int64 {
+	return a.ad.FCampaignAdID
+}
+
 // Size return the size of ad
 func (a *Advertise) Size() int {
 	return a.ad.FAdSize
@@ -296,8 +301,8 @@ func (a *Advertise) Media() string {
 	return ""
 }
 
-// AdTarget return the target address
-func (a *Advertise) AdTarget() string {
+// Target return the target address
+func (a *Advertise) Target() string {
 	if a.FAdURL.Valid {
 		return a.FAdURL.String
 	}

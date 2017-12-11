@@ -55,7 +55,7 @@ func clickBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		job := click.NewClickJob(c)
 		broker.Publish(job)
 	})
-	body := replaceParameters(pl.Ad.AdTarget(), pl.Publisher.Name(), pl.Ad.Campaign().Name(), pl.ReserveHash, pl.IP)
+	body := replaceParameters(pl.Ad.Target(), pl.Publisher.Name(), pl.Ad.Campaign().Name(), pl.ReserveHash, pl.IP)
 
 	w.WriteHeader(http.StatusOK)
 	_, err = w.Write([]byte(body))

@@ -22,4 +22,6 @@ type Supplier interface {
 	TinyMark() bool
 	// ShowDomain is a domain that all links are generated against it
 	ShowDomain() string
+	// UserID return user id of supplier
+	UserID() int64
 }

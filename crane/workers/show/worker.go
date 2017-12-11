@@ -34,7 +34,7 @@ func (c *consumer) Consume(ctx context.Context) chan<- broker.Delivery {
 					assert.Nil(d.Reject(false))
 					continue bigLoop
 				}
-				if err := data.process(); err != nil {
+				if err := data.process(ctx); err != nil {
 					assert.Nil(d.Nack(false, false))
 					continue bigLoop
 				}
