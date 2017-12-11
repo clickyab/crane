@@ -16,6 +16,10 @@ func SetDemandSeats(sd map[string]string) ShowOptionSetter {
 				return nil, err
 			}
 
+			showT := 0
+			if o.noShowT {
+				showT = 2
+			}
 			o.seats = append(o.seats, &seat{
 				ua:        o.ua,
 				parent:    o.parent,
@@ -32,6 +36,7 @@ func SetDemandSeats(sd map[string]string) ShowOptionSetter {
 				publisher: o.publisher,
 				ftype:     o.typ,
 				ctr:       o.publisher.CTR(size),
+				showT:     showT,
 			})
 		}
 		if len(o.seats) == 0 {

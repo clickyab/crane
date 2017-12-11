@@ -1,0 +1,1 @@
+codegen: ip2location
