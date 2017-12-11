@@ -5,6 +5,8 @@ import (
 
 	"net/http"
 
+	"fmt"
+
 	"clickyab.com/crane/crane/entity"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/xlog"
@@ -24,6 +26,6 @@ func Render(c context.Context, w http.ResponseWriter, ctx entity.Context) error 
 		return renderVideoBanner(w, ctx, s)
 	}
 
-	xlog.GetWithField(c, "ad_type", s.WinnerAdvertise().Type()).Panic("invalid ad type")
-	return nil
+	xlog.GetWithField(c, "ad_type", s.WinnerAdvertise().Type()).Error("invalid ad type")
+	return fmt.Errorf("invalid ad type ")
 }

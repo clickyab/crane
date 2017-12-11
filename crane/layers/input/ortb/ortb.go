@@ -84,6 +84,10 @@ func openrtbInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		ua = payload.Device.UA
 		ip = payload.Device.IP
 	}
+	us := ""
+	if payload.User != nil {
+		us = payload.User.ID
+	}
 	// TODO : verify builders
 	b := []builder.ShowOptionSetter{
 		builder.SetTimestamp(),
@@ -93,6 +97,7 @@ func openrtbInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetPublisher(publisher),
 		builder.SetAlexa(ua, http.Header{}),
 		builder.SetProtocol(proto),
+		builder.SetTID(us, ip, ua),
 		builder.SetNoTiny(sup.TinyMark()),
 	}
 

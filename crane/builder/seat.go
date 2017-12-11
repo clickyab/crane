@@ -139,9 +139,10 @@ func (s *seat) ShowURL() string {
 		panic("no winner")
 	}
 	m := md5.New()
-	data := m.Sum(
+	_, _ = m.Write(
 		[]byte(s.ReservedHash() + fmt.Sprint(s.size) + s.Type() + s.ua + s.ip.String()),
 	)
+	data := fmt.Sprintf("%x", m.Sum(nil))
 	j := jwt.NewJWT().Encode(map[string]string{
 		"aid":  fmt.Sprint(s.winnerAd.ID()),
 		"dom":  s.publisher.Name(),
@@ -176,9 +177,10 @@ func (s *seat) ClickURL() string {
 		panic("no winner")
 	}
 	m := md5.New()
-	data := m.Sum(
+	_, _ = m.Write(
 		[]byte(s.ReservedHash() + fmt.Sprint(s.size) + s.Type() + s.ua + s.ip.String()),
 	)
+	data := fmt.Sprintf("%x", m.Sum(nil))
 	j := jwt.NewJWT().Encode(map[string]string{
 		"aid":  fmt.Sprint(s.winnerAd.ID()),
 		"dom":  s.publisher.Name(),
