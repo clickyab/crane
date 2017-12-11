@@ -1,16 +1,17 @@
 package show
 
 import (
+	"context"
 	"encoding/json"
 	"net"
 
 	"time"
 
-	"fmt"
-
 	"clickyab.com/crane/crane/entity"
+	"clickyab.com/crane/crane/models"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/broker"
+	"github.com/clickyab/services/xlog"
 	"github.com/sirupsen/logrus"
 )
 
@@ -72,8 +73,14 @@ func (j *job) Report() func(error) {
 	return j.rep
 }
 
-func (j *job) process() error {
-	return fmt.Errorf("TODO: Implement me")
+func (j *job) process(ctx context.Context) error {
+	for _, v := range j.Seats {
+		err := models.AddImpression(j.Supplier, j.Publisher, j.Referrer, j.ParentURL,
+			v.SlotPublicID, j.CopID, v.AdSize, j.Suspicious, v.AdID, j.IP, v.WinnerBID, j.Alexa, j.Timestamp, j.Type)
+		if errorHandler(ctx, err) {
+			continue
+		}
+	}
 }
 
 // NewImpressionJob return a new job for the worker
@@ -102,4 +109,9 @@ func NewImpressionJob(ctx entity.Context, s ...entity.Seat) broker.Job {
 	}
 
 	return j
+}
+
+func errorHandler(ctx context.Context, err error) bool {
+	xlog.GetWithError(ctx, err)
+	return true
 }
