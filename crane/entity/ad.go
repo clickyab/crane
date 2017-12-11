@@ -42,6 +42,9 @@ type Advertise interface {
 	Attributes() map[string]interface{}
 	// Media return image of ad
 	Media() string
-	// AdTarget return ad target of the target
-	AdTarget() string
+	// Target return ad target of the target
+	Target() string
+	// TODO: remove this later
+	// CampaignAdID return campaign_ad primary
+	CampaignAdID() int64
 }

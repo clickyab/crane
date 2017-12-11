@@ -31,6 +31,5 @@ func GetSupplierByName(name string) (entity.Supplier, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	return res.(entity.Supplier), nil
 }

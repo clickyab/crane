@@ -334,18 +334,6 @@ func (mr *MockAdvertiseMockRecorder) AdCTR() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AdCTR", reflect.TypeOf((*MockAdvertise)(nil).AdCTR))
 }
 
-// AdTarget mocks base method
-func (m *MockAdvertise) AdTarget() string {
-	ret := m.ctrl.Call(m, "AdTarget")
-	ret0, _ := ret[0].(string)
-	return ret0
-}
-
-// AdTarget indicates an expected call of AdTarget
-func (mr *MockAdvertiseMockRecorder) AdTarget() *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AdTarget", reflect.TypeOf((*MockAdvertise)(nil).AdTarget))
-}
-
 // Attributes mocks base method
 func (m *MockAdvertise) Attributes() map[string]interface{} {
 	ret := m.ctrl.Call(m, "Attributes")
@@ -368,6 +356,18 @@ func (m *MockAdvertise) Campaign() entity.Campaign {
 // Campaign indicates an expected call of Campaign
 func (mr *MockAdvertiseMockRecorder) Campaign() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Campaign", reflect.TypeOf((*MockAdvertise)(nil).Campaign))
+}
+
+// CampaignAdID mocks base method
+func (m *MockAdvertise) CampaignAdID() int64 {
+	ret := m.ctrl.Call(m, "CampaignAdID")
+	ret0, _ := ret[0].(int64)
+	return ret0
+}
+
+// CampaignAdID indicates an expected call of CampaignAdID
+func (mr *MockAdvertiseMockRecorder) CampaignAdID() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CampaignAdID", reflect.TypeOf((*MockAdvertise)(nil).CampaignAdID))
 }
 
 // Capping mocks base method
@@ -438,6 +438,18 @@ func (m *MockAdvertise) Size() int {
 // Size indicates an expected call of Size
 func (mr *MockAdvertiseMockRecorder) Size() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Size", reflect.TypeOf((*MockAdvertise)(nil).Size))
+}
+
+// Target mocks base method
+func (m *MockAdvertise) Target() string {
+	ret := m.ctrl.Call(m, "Target")
+	ret0, _ := ret[0].(string)
+	return ret0
+}
+
+// Target indicates an expected call of Target
+func (mr *MockAdvertiseMockRecorder) Target() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Target", reflect.TypeOf((*MockAdvertise)(nil).Target))
 }
 
 // Type mocks base method

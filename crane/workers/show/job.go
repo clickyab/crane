@@ -1,16 +1,17 @@
 package show
 
 import (
+	"context"
 	"encoding/json"
 	"net"
 
 	"time"
 
-	"fmt"
-
 	"clickyab.com/crane/crane/entity"
+	"clickyab.com/crane/crane/models"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/broker"
+	"github.com/clickyab/services/xlog"
 	"github.com/sirupsen/logrus"
 )
 
@@ -20,6 +21,7 @@ type seats struct {
 	AdID         int64   `json:"ad"`
 	AdSize       int     `json:"size"`
 	SlotPublicID string  `json:"slot"`
+	ReserveHash  string  `json:"reserve_hash"`
 	WinnerBID    float64 `json:"wb"`
 }
 
@@ -72,14 +74,26 @@ func (j *job) Report() func(error) {
 	return j.rep
 }
 
-func (j *job) process() error {
-	return fmt.Errorf("TODO: Implement me")
+func (j *job) process(ctx context.Context) error {
+	errs := errorProcess{
+		tasks: len(j.Seats),
+	}
+	for _, v := range j.Seats {
+		err := models.AddImpression(j.Supplier, v.ReserveHash, j.Publisher, j.Referrer, j.ParentURL,
+			v.SlotPublicID, j.CopID, v.AdSize, j.Suspicious, v.AdID, j.IP, v.WinnerBID, j.Alexa, j.Timestamp, j.Type)
+		if err != nil {
+			xlog.GetWithError(ctx, err)
+			errs.add(err)
+		}
+	}
+	return errs.result()
 }
 
 // NewImpressionJob return a new job for the worker
 func NewImpressionJob(ctx entity.Context, s ...entity.Seat) broker.Job {
 	assert.True(len(s) > 0)
 	j := &job{
+
 		IP:         ctx.IP(),
 		CopID:      ctx.User().ID(),
 		UserAgent:  ctx.UserAgent(),
@@ -98,8 +112,32 @@ func NewImpressionJob(ctx entity.Context, s ...entity.Seat) broker.Job {
 			AdSize:       s[i].Size(),
 			SlotPublicID: s[i].PublicID(),
 			WinnerBID:    s[i].Bid(),
+			ReserveHash:  s[i].ReservedHash(),
 		})
 	}
 
 	return j
+}
+
+type errorProcess struct {
+	tasks  int
+	errors []error
+}
+
+func (e *errorProcess) add(a ...error) {
+	e.errors = append(e.errors, a...)
+}
+
+func (e *errorProcess) Error() string {
+	res := ""
+	for i := range e.errors {
+		res += e.errors[i].Error() + "\n"
+	}
+	return res
+}
+func (e *errorProcess) result() error {
+	if len(e.errors) >= e.tasks {
+		return e
+	}
+	return nil
 }

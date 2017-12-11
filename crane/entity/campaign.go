@@ -48,6 +48,7 @@ type Campaign interface {
 	WebMobile() bool
 	// Web campaign web on or off
 	Web() bool
+	// Hoods neighborhood
 	Hoods() []string
 	// ISP list of campaign isp(s)
 	ISP() []string
