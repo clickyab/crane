@@ -6,6 +6,15 @@ import (
 	"github.com/clickyab/services/config"
 )
 
+const (
+	// AppName the application name
+	AppName string = "crane"
+	// Organization the organization name
+	Organization = "clickyab"
+	// Prefix the prefix for config loader from env
+	Prefix = "CRN"
+)
+
 // DefaultConfig for this set of apps
 func DefaultConfig() config.DescriptiveLayer {
 	d := config.NewDescriptiveLayer()

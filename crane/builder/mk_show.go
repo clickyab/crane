@@ -225,6 +225,14 @@ func SetMultiVideo(v bool) ShowOptionSetter {
 	}
 }
 
+// DoNotShowTFrame is the function to disable show t frame (just for demand for now)
+func DoNotShowTFrame() ShowOptionSetter {
+	return func(o *Context) (*Context, error) {
+		o.noShowT = true
+		return o, nil
+	}
+}
+
 func createHash(l int, items ...[]byte) string {
 	h := sha1.New()
 	for i := range items {
