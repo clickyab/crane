@@ -19,7 +19,6 @@ func Select(c context.Context, sel reducer.FilterFunc, opt ...builder.ShowOption
 	// Apply filters
 	// TODO : after selector fix it
 	ads := reducer.Apply(c, ctx, models.GetAds(), sel)
-
 	// select ads
 	selectAds(c, ctx, ads)
 

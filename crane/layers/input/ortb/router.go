@@ -9,7 +9,7 @@ type controller struct {
 }
 
 func (controller) Routes(m framework.Mux) {
-	m.GET("ortb", demandPath, openrtbInput)
+	m.POST("ortb", demandPath, openrtbInput)
 }
 
 func init() {

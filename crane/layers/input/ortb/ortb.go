@@ -124,7 +124,7 @@ func seatDetail(req openrtb.BidRequest) map[string]string {
 			w, h = imp[i].Banner.W, imp[i].Banner.H
 		}
 
-		seats[imp[i].ID] = fmt.Sprintf("%sx%s", w, h)
+		seats[imp[i].ID] = fmt.Sprintf("%dx%d", w, h)
 	}
 	return seats
 }
