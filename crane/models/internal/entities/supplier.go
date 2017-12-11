@@ -105,3 +105,19 @@ func SupplierLoader(ctx context.Context) (map[string]kv.Serializable, error) {
 	}
 	return b, nil
 }
+
+// SupplierLoaderByName load all confirmed website
+func SupplierLoaderByName(ctx context.Context) (map[string]kv.Serializable, error) {
+	q := `SELECT * FROM suppliers`
+
+	var res []Supplier
+	if _, err := NewManager().GetRDbMap().Select(&res, q); err != nil {
+		return nil, err
+	}
+
+	b := make(map[string]kv.Serializable)
+	for i := range res {
+		b[res[i].FName] = &res[i]
+	}
+	return b, nil
+}

@@ -6,7 +6,6 @@ import (
 
 	"clickyab.com/crane/crane/capping"
 	"clickyab.com/crane/crane/entity"
-	"github.com/clickyab/services/assert"
 )
 
 func getSecondCPM(floorCPM int64, exceedFloor []adAndBid) float64 {
@@ -116,7 +115,9 @@ func internalSelect(
 		if !ctx.MultiVideo() {
 			noVideo = noVideo || theAd.Type() == entity.AdTypeVideo
 		}
-		assert.Nil(capping.StoreCapping(ctx.User().ID(), theAd.ID()))
+		capping.StoreCapping(
+			ctx.User().ID(),
+			theAd.ID())
 	}
 }
 

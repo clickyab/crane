@@ -41,6 +41,9 @@ func (w *Website) CTR(size int) float64 {
 }
 
 func (w *Website) totalImp() (res int64) {
+	if w.Status != 1 {
+		return -1
+	}
 	return w.Impression1.Int64 +
 		w.Impression2.Int64 +
 		w.Impression3.Int64 +
@@ -91,11 +94,6 @@ func (w *Website) BIDType() entity.BIDType {
 // MinBid return the minimum bid accepted for this
 func (w *Website) MinBid() int64 {
 	return w.WMinBid
-}
-
-// AcceptedTypes just supporting banner for now
-func (w *Website) AcceptedTypes() []entity.AdType {
-	return []entity.AdType{entity.AdTypeBanner}
 }
 
 // Supplier of this website

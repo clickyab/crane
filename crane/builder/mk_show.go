@@ -135,14 +135,19 @@ func SetDisableCapping(disable bool) ShowOptionSetter {
 var copLen = config.RegisterInt("clickyab.cop_len", 10, "cop key len")
 
 // SetTID try to set tid
-func SetTID(id string) ShowOptionSetter {
+func SetTID(id string, extra ...string) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
 		if o.ua == "" || o.ip == nil {
 			return nil, fmt.Errorf("use this after setting ip and ua")
 		}
 		o.tid = id
 		if o.tid == "" {
-			o.tid = createHash(copLen.Int(), []byte(o.ip), []byte(o.ua))
+			assert.True(len(extra) > 0)
+			ee := make([][]byte, len(extra))
+			for i := range extra {
+				ee[i] = []byte(extra[i])
+			}
+			o.tid = createHash(copLen.Int(), ee...)
 		}
 
 		o.user = user(o.tid)

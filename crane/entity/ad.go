@@ -7,13 +7,13 @@ type (
 
 const (
 	// AdTypeBanner is the banner type
-	AdTypeBanner AdType = 1
+	AdTypeBanner AdType = 0
 	// AdTypeDynamic is the dynamic type. the code is html
 	AdTypeDynamic AdType = 2
 	// AdTypeVideo is the video type
 	AdTypeVideo AdType = 3
 	// AdTypeHTML is the html ad type
-	AdTypeHTML AdType = 5
+	AdTypeHTML AdType = 1
 	// AdTypeNative is the native ad type
 	AdTypeNative AdType = 4
 )

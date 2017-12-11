@@ -12,6 +12,7 @@ import (
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/broker"
 	"github.com/clickyab/services/safe"
+	"github.com/sirupsen/logrus"
 )
 
 const showPath = "/banner/:rh/:size/:type/:jt"
@@ -20,6 +21,7 @@ const showPath = "/banner/:rh/:size/:type/:jt"
 func showBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	pl, err := extractor(ctx, r)
 	if err != nil {
+		logrus.Error(err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -32,7 +34,7 @@ func showBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetAlexa(pl.UserAgent, http.Header{}),
 		builder.SetProtocolByRequest(r),
 		builder.SetParent(pl.Parent, pl.Ref),
-		builder.SetTID(pl.TID),
+		builder.SetTID(pl.TID, pl.IP, pl.UserAgent),
 		builder.SetType(pl.Type),
 		builder.SetPublisher(pl.Publisher),
 		builder.SetSuspicious(pl.Suspicious),
@@ -44,6 +46,7 @@ func showBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	// Build context
 	c, err := builder.NewContext(b...)
 	if err != nil {
+		logrus.Error(err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
