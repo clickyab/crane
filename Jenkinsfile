@@ -1,15 +1,11 @@
 node {
     stage('Prepare') {
         checkout scm
-        sh "make prepare"
+        sh "make clean && make prepare"
     }
     stage('Build') {
         checkout scm
         sh "./bin/ci-test.sh all"
-    }
-    stage('Lint') {
-        checkout scm
-        sh "./bin/ci-test.sh lint"
     }
     stage('Test') {
         checkout scm
@@ -17,7 +13,15 @@ node {
         sh "docker rm -f $REDIS_NAME || true"
         sh "docker run -d --rm --name $REDIS_NAME redis:alpine"
         def TEST_SERVICES_REDIS_ADDRESS=sh( script: "docker inspect -f '{{.NetworkSettings.IPAddress}}' $REDIS_NAME", returnStdout: true).trim()
-        sh "TEST_SERVICES_REDIS_ADDRESS=${TEST_SERVICES_REDIS_ADDRESS} ./bin/ci-test.sh test"
+        sh "./bin/ci-test.sh test"
         sh "docker rm -f $REDIS_NAME"
+    }
+    stage('Lint') {
+        checkout scm
+        sh "./bin/ci-test.sh lint"
+    }
+    stage('Deploy into k8s') {
+        checkout scm
+        sh "APP=crane bash ./bin/herokutor.sh `pwd`"
     }
 }
