@@ -22,6 +22,9 @@ func DefaultConfig() config.DescriptiveLayer {
 	if port == "" {
 		port = "8090"
 	}
+	d.Add("default broker", "services.broker.provider", "rabbitmq")
+	d.Add("dsn", "services.amqp.dsn", "amqp://crane:bita123@127.0.0.1:5672/")
+	d.Add("exchange", "services.amqp.exchange", "crane")
 	d.Add("DESCRIPTION", "service.mysql.wdsn", "root:bita123@tcp(127.0.0.1:3306)/clickyab?charset=utf8&parseTime=true&charset=utf8")
 	d.Add("DESCRIPTION", "service.mysql.rdsn", "root:bita123@tcp(127.0.0.1:3306)/clickyab?charset=utf8&parseTime=true&charset=utf8")
 	d.Add("DESCRIPTION", "exchange.router.listen", ":"+port)

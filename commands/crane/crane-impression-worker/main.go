@@ -5,10 +5,9 @@ import (
 
 	"clickyab.com/crane/commands"
 	"clickyab.com/crane/crane/workers/show"
-	_ "clickyab.com/crane/crane/workers/show"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/broker"
-	_ "github.com/clickyab/services/broker/rabbitmq"
+	_ "github.com/clickyab/services/broker/selector"
 	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/initializer"
 	_ "github.com/clickyab/services/kv/redis"
