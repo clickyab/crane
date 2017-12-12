@@ -120,6 +120,5 @@ func GetCapping(copID string, ads map[int][]entity.Advertise, ep string, slots .
 
 // StoreCapping try to store a capping object
 func StoreCapping(copID string, adID int64) int64 {
-	ck := kv.NewAEAVStore(getCappingKey(copID), dailyCapExpire.Duration())
-	return ck.IncSubKey(fmt.Sprintf("%s_%s", adKey, adID), 1)
+	return kv.NewAEAVStore(getCappingKey(copID), dailyCapExpire.Duration()).IncSubKey(fmt.Sprintf("%s_%d", adKey, adID), 1)
 }

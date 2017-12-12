@@ -123,7 +123,7 @@ func internalSelect(
 
 // selectAds is the only function that one must call to get ads
 func selectAds(_ context.Context, ctx entity.Context, ads map[int][]entity.Advertise) {
-	if !ctx.Capping() {
+	if ctx.Capping() {
 		ep := ctx.EventPage()
 		ads = capping.GetCapping(ctx.User().ID(), ads, ep, ctx.Seats()...)
 	} else {
