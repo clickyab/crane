@@ -26,8 +26,14 @@ type Supplier struct {
 	FBIDType         string        `db:"bid_type"`
 	FDefaultCTR      float64       `db:"default_ctr"`
 	Tiny             int           `db:"tiny_mark"`
+	FShowDomain      string        `db:"show_domain"`
 	CreatedAt        time.Time     `db:"created_at"`
 	UpdatedAt        time.Time     `db:"updated_at"`
+}
+
+// ShowDomain is a domain that all links are generated against it
+func (s Supplier) ShowDomain() string {
+	return s.FShowDomain
 }
 
 // TinyMark show tiny clickyb mark

@@ -35,7 +35,6 @@ type Context struct {
 	NoTiny    bool
 
 	host     string
-	method   string
 	referrer string
 	parent   string
 
