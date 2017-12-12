@@ -6,12 +6,20 @@ import (
 	"clickyab.com/crane/crane/entity"
 )
 
-// PublisherWhiteList check if the publisher is in white list of this or not
-func PublisherWhiteList(impression entity.Context, ad entity.Advertise) bool {
+// WhiteList checker
+type WhiteList struct {
+}
+
+// Check check if the publisher is in white list of this or not
+func (*WhiteList) Check(impression entity.Context, ad entity.Advertise) bool {
 	return hasString(true, ad.Campaign().WhiteListPublisher(), fmt.Sprint(impression.Publisher().ID()))
 }
 
-// PublisherBlackList PublisherBlackList
-func PublisherBlackList(impression entity.Context, ad entity.Advertise) bool {
+// BlackList checker
+type BlackList struct {
+}
+
+// Check PublisherBlackList checker
+func (*BlackList) Check(impression entity.Context, ad entity.Advertise) bool {
 	return !hasString(false, ad.Campaign().BlackListPublisher(), fmt.Sprint(impression.Publisher().ID()))
 }

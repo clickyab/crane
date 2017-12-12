@@ -4,11 +4,8 @@ package entity
 type Target int
 
 const (
-
-	// TargetInvalid is the invalid banner in system
-	TargetInvalid Target = iota
 	// TargetWeb TargetWeb
-	TargetWeb
+	TargetWeb Target = iota
 	// TargetApp is the app targeted campaign
 	TargetApp
 	// TargetVast is the vast target

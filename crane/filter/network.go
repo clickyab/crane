@@ -4,20 +4,41 @@ import (
 	"clickyab.com/crane/crane/entity"
 )
 
-// IsWebNetwork filter network for campaigns
-func IsWebNetwork(c entity.Context, in entity.Advertise) bool {
+// WebNetwork is the web network checker
+type WebNetwork struct {
+}
+
+// Check filter network for campaigns
+func (*WebNetwork) Check(c entity.Context, in entity.Advertise) (b bool) {
 	if in.Campaign().Target() == entity.TargetWeb {
 		return in.Campaign().Web() || in.Campaign().WebMobile()
 	}
-	return in.Campaign().Target() == entity.TargetWeb || in.Campaign().Target() == entity.TargetVast
+	return in.Campaign().Target() == entity.TargetWeb
 }
 
-// IsAppNetwork filter network for campaigns
-func IsAppNetwork(c entity.Context, in entity.Advertise) bool {
+// AppNetwork checker
+type AppNetwork struct {
+}
+
+// Check filter network for campaigns
+func (*AppNetwork) Check(c entity.Context, in entity.Advertise) bool {
 	return in.Campaign().Target() == entity.TargetApp
 }
 
-// IsNativeNetwork filter network for native
-func IsNativeNetwork(c entity.Context, in entity.Advertise) bool {
+// NativeNetwork checker
+type NativeNetwork struct {
+}
+
+// Check filter network for native
+func (*NativeNetwork) Check(c entity.Context, in entity.Advertise) bool {
 	return in.Campaign().Target() == entity.TargetNative
+}
+
+// VastNetwork checker
+type VastNetwork struct {
+}
+
+// Check filter network for native
+func (*VastNetwork) Check(c entity.Context, in entity.Advertise) bool {
+	return in.Campaign().Target() == entity.TargetVast
 }

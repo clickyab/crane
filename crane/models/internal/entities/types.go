@@ -34,7 +34,7 @@ var (
 )
 
 // SharpArray type is the hack to handle # splited text in our database
-type SharpArray string
+type SharpArray []string
 
 // Scan convert the json array ino string slice
 func (pa *SharpArray) Scan(src interface{}) error {
@@ -45,9 +45,15 @@ func (pa *SharpArray) Scan(src interface{}) error {
 	}
 
 	if s.Valid {
-		*pa = SharpArray(s.String)
+		var res []string
+		for _, v := range strings.Split(s.String, "#") {
+			if strings.Trim(v, "\n\t ") != "" {
+				res = append(res, v)
+			}
+		}
+		*pa = SharpArray(res)
 	} else {
-		*pa = ""
+		*pa = []string{}
 	}
 	return nil
 
@@ -56,18 +62,13 @@ func (pa *SharpArray) Scan(src interface{}) error {
 // Value try to get the string slice representation in database
 func (pa SharpArray) Value() (driver.Value, error) {
 	s := sql.NullString{}
-	s.Valid = pa != ""
-	s.String = string(pa)
+	s.Valid = len(pa) != 0
+	s.String = "#" + strings.Join(pa, "#") + "#"
 
 	return s.Value()
 }
 
 // Array is the function to get array of string of this
 func (pa SharpArray) Array() []string {
-	var res = make([]string, 0)
-
-	res = append(res, strings.Split(string(pa), "#")...)
-
-	return res
-
+	return []string(pa)
 }
