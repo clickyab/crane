@@ -22,7 +22,7 @@ func Render(_ context.Context, w http.ResponseWriter, ctx entity.Context) error 
 		b := openrtb.Bid{
 			ID:         v.ReservedHash(),
 			ImpID:      v.PublicID(),
-			AdMarkup:   fmt.Sprintf(`<iframe src="%s" w="%d" h="%d" />`, v.ShowURL(), v.Width(), v.Height()),
+			AdMarkup:   fmt.Sprintf(`<iframe src="%s" width="%d" hight="%d" />`, v.ShowURL(), v.Width(), v.Height()),
 			AdID:       fmt.Sprint(v.WinnerAdvertise().ID()),
 			H:          v.Height(),
 			W:          v.Width(),
