@@ -7,8 +7,6 @@ import (
 
 	"strings"
 
-	"fmt"
-
 	"clickyab.com/crane/crane/entity"
 )
 
@@ -131,8 +129,8 @@ type videoData struct {
 	Link   string
 	Src    string
 	Tiny   bool
-	Width  string
-	Height string
+	Width  int
+	Height int
 	Rand   int
 }
 
@@ -143,8 +141,8 @@ func renderVideoBanner(w io.Writer, ctx entity.Context, s entity.Seat) error {
 	}
 	sa := videoData{
 		Link:   s.ClickURL(),
-		Height: fmt.Sprint(s.Height()),
-		Width:  fmt.Sprint(s.Width()),
+		Height: s.Height(),
+		Width:  s.Width(),
 		Src:    src,
 		Tiny:   true,
 		Rand:   rand.Intn(100),

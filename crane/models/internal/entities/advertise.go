@@ -189,7 +189,7 @@ func GetAd(adID int64) (entity.Advertise, error) {
 	 	INNER JOIN users AS U ON C.u_id=U.u_id
 		INNER JOIN campaigns_ads AS CA ON C.cp_id=CA.cp_id
 		INNER JOIN ads AS A ON A.ad_id=CA.ad_id
-		WHERE A.ad_id=$1`
+		WHERE A.ad_id=?`
 
 	res := Advertise{}
 	err := NewManager().GetRDbMap().SelectOne(
