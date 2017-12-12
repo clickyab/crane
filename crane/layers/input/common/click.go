@@ -11,10 +11,14 @@ import (
 	"clickyab.com/crane/crane/workers/click"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/broker"
+	"github.com/clickyab/services/config"
+	"github.com/clickyab/services/kv"
 	"github.com/clickyab/services/safe"
 )
 
 const clickPath = "/click/:rh/:size/:type/:jt"
+
+var clickExpire = config.RegisterDuration("crane.builder.seat.click_exp", 72*time.Hour, "determine how long click url is valid")
 
 // clickBanner is handler for click ad request
 func clickBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
@@ -41,6 +45,10 @@ func clickBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+
+	// This is a very important thing in click expiry detection. so be aware of it
+	// this X key is not important at all! use another key in click worker
+	kv.NewAEAVStore(pl.ReserveHash, clickExpire.Duration()+time.Hour).IncSubKey("X", 1)
 
 	exp, _ := context.WithTimeout(ctx, 10*time.Second)
 	safe.GoRoutine(exp, func() {
