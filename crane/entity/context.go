@@ -41,4 +41,8 @@ type Context interface {
 	FloorDiv() int64
 	// Capping is required otr not
 	Capping() bool
+	// MinBIDPercentage is a hack to handle min bid on multiple types.
+	// for example for native its 50%, in new design make sure every
+	// type has its own minbid and drop this hack
+	MinBIDPercentage() int
 }

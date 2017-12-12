@@ -4,8 +4,12 @@ import (
 	"clickyab.com/crane/crane/entity"
 )
 
-// CheckOS is the filter function that check for os in system
-func CheckOS(c entity.Context, in entity.Advertise) bool {
+// OS Checker
+type OS struct {
+}
+
+// Check is the filter function that check for os in system
+func (*OS) Check(c entity.Context, in entity.Advertise) bool {
 	if len(in.Campaign().AllowedOS()) == 0 {
 		return true
 	}

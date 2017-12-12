@@ -22,15 +22,18 @@ import (
 const demandPath = "/ortb/:token"
 
 var (
-	// TODO : verify filters
-	webSelector = reducer.Mix(
-		filter.IsWebNetwork,
-		filter.IsWebMobile,
-		filter.CheckDesktopNetwork,
-		filter.CheckWebSize,
-		filter.CheckOS,
-		filter.CheckProvince,
-		filter.CheckISP,
+	ortbSelector = reducer.Mix(
+		&filter.WebSize{},
+		&filter.WebNetwork{},
+		&filter.WebMobile{},
+		&filter.Desktop{},
+		&filter.MinBID{},
+		&filter.OS{},
+		&filter.WhiteList{},
+		&filter.BlackList{},
+		&filter.Category{},
+		&filter.Province{},
+		&filter.ISP{},
 	)
 )
 
@@ -107,7 +110,7 @@ func openrtbInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 	b = append(b, builder.SetDemandSeats(seatDetail(payload)))
 
-	c, err := rtb.Select(ctx, webSelector, b...)
+	c, err := rtb.Select(ctx, ortbSelector, b...)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		xlog.GetWithError(ctx, err).Error("invalid request")

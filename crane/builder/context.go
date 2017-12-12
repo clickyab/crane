@@ -28,6 +28,8 @@ type Context struct {
 	user      entity.User
 	currency  string
 
+	minbidPercentage int
+
 	eventPage string
 	alexa     bool
 	NoTiny    bool
@@ -46,6 +48,18 @@ type Context struct {
 	noShowT bool // Default is showT frame. but for exchange may be we don't want that
 
 	suspicious int
+}
+
+// MinBIDPercentage return the percentage for min bid
+func (c *Context) MinBIDPercentage() int {
+	if c.minbidPercentage <= 0 {
+		c.minbidPercentage = 100
+	}
+	if c.minbidPercentage > 200 {
+		c.minbidPercentage = 200
+	}
+
+	return c.minbidPercentage
 }
 
 // Suspicious return zero on ok status and a number on invalid value
