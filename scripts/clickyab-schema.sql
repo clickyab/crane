@@ -840,7 +840,7 @@ CREATE TABLE `clicks` (
   KEY `ca_id` (`ca_id`,`c_status`,`c_date`),
   KEY `app_id` (`app_id`,`c_date`),
   KEY `sla_id` (`sla_id`,`c_status`,`c_date`),
-  KEY `reserved_hash` (`reserved_hash`),
+  KEY `reserved_hash` (`reserved_hash`)
 ) ENGINE=InnoDB AUTO_INCREMENT=114677544 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
