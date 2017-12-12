@@ -79,7 +79,7 @@ func extractor(ctx context.Context, r *http.Request) (*payloadData, error) {
 	pl.Suspicious, _ = strconv.Atoi(m["susp"])
 	pl.UserAgent, pl.IP = r.UserAgent(), framework.RealIP(r)
 	tmp := md5.New()
-	_, _ = tmp.Write([]byte(m["rh"] + fmt.Sprintf("%d", pl.Size) + m["type"] + pl.UserAgent + pl.IP))
+	_, _ = tmp.Write([]byte(pl.ReserveHash + fmt.Sprint(pl.Size) + string(pl.Type) + pl.UserAgent + pl.IP))
 
 	if fmt.Sprintf("%x", tmp.Sum(nil)) != m["uaip"] {
 		pl.Suspicious = 98
