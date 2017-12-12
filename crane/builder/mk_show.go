@@ -84,11 +84,10 @@ func SetOSUserAgent(ua string) ShowOptionSetter {
 	}
 }
 
-// SetRequest try to set request in context, also all query params needed by the process
-func SetRequest(host, method string) ShowOptionSetter {
+// SetTargetHost try to set request in context, also all query params needed by the process
+func SetTargetHost(host string) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
 		o.host = host
-		o.method = method
 		return o, nil
 	}
 }

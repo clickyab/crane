@@ -95,6 +95,7 @@ func openrtbInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	b := []builder.ShowOptionSetter{
 		builder.SetTimestamp(),
 		builder.SetType(entity.RequestTypeDemand),
+		builder.SetTargetHost(sup.ShowDomain()),
 		builder.SetOSUserAgent(ua),
 		builder.SetIPLocation(ip),
 		builder.SetPublisher(publisher),

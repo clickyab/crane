@@ -27,7 +27,7 @@ func clickBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	c, err := builder.NewContext(
 		builder.SetTimestamp(),
 		builder.SetOSUserAgent(pl.UserAgent),
-		builder.SetRequest(r.Host, r.Method),
+		builder.SetTargetHost(r.Host),
 		builder.SetIPLocation(pl.IP),
 		builder.SetAlexa(pl.UserAgent, http.Header{}),
 		builder.SetProtocolByRequest(r),

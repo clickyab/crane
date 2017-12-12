@@ -20,4 +20,6 @@ type Supplier interface {
 	AllowCreate() bool
 	// TinyMark means we can add our mark to it
 	TinyMark() bool
+	// ShowDomain is a domain that all links are generated against it
+	ShowDomain() string
 }
