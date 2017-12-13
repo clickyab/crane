@@ -2274,6 +2274,8 @@ CREATE TABLE `suppliers` (
   `show_domain` varchar(60) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `rate` float NOT NULL DEFAULT '1',
+
   PRIMARY KEY (`name`),
   UNIQUE KEY `token` (`token`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

@@ -21,6 +21,14 @@ import (
 	"github.com/mssola/user_agent"
 )
 
+// SetRate set the timestamp. must be first!
+func SetRate(r int) ShowOptionSetter {
+	return func(options *Context) (*Context, error) {
+		options.rate = r
+		return options, nil
+	}
+}
+
 // SetTimestamp set the timestamp. must be first!
 func SetTimestamp() ShowOptionSetter {
 	return func(options *Context) (*Context, error) {

@@ -37,6 +37,7 @@ func SetDemandSeats(sd map[string]string) ShowOptionSetter {
 				ftype:     o.typ,
 				ctr:       o.publisher.CTR(size),
 				showT:     showT,
+				rate:      o.rate,
 			})
 		}
 		if len(o.seats) == 0 {
