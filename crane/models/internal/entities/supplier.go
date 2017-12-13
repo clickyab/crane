@@ -29,6 +29,12 @@ type Supplier struct {
 	FShowDomain      string        `db:"show_domain"`
 	CreatedAt        time.Time     `db:"created_at"`
 	UpdatedAt        time.Time     `db:"updated_at"`
+	FRate            int           `db:"rate"`
+}
+
+// Rate return ratio currency conversion to IRR
+func (s Supplier) Rate() int {
+	return s.FRate
 }
 
 // ShowDomain is a domain that all links are generated against it
@@ -41,7 +47,7 @@ func (s *Supplier) UserID() int64 {
 	return s.FUserID.Int64
 }
 
-// TinyMark show tiny clickyb mark
+// TinyMark show tiny clickyab mark
 func (s *Supplier) TinyMark() bool {
 	return s.Tiny > 0
 }

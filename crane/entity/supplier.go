@@ -24,4 +24,6 @@ type Supplier interface {
 	ShowDomain() string
 	// UserID return user id of supplier
 	UserID() int64
+	// Rate return ratio currency conversion to IRR
+	Rate() int
 }

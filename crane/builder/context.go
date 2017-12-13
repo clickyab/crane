@@ -47,6 +47,7 @@ type Context struct {
 	noShowT bool // Default is showT frame. but for exchange may be we don't want that
 
 	suspicious int
+	rate       int
 }
 
 // MinBIDPercentage return the percentage for min bid

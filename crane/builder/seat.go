@@ -69,6 +69,11 @@ type seat struct {
 	ctr       float64
 
 	showT int
+	rate  int
+}
+
+func (s *seat) Rate() int {
+	return s.rate
 }
 
 func (s *seat) ShowT() bool {
