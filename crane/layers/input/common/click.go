@@ -27,6 +27,15 @@ func clickBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+
+	// This is a very important thing in click expiry detection. so be aware of it
+	//TODO : if we lose redis somehow, it can lead to a problematic duplicate click,
+	//TODO : create an offline job to check duplicate click hash in the past 72 hours
+	counter := kv.NewAEAVStore(pl.ReserveHash, clickExpire.Duration()+time.Hour).IncSubKey("C", 1)
+	if counter > 1 {
+		// Duplicate click!
+		pl.Suspicious = 1
+	}
 	// Build context
 	c, err := builder.NewContext(
 		builder.SetTimestamp(),
@@ -45,10 +54,6 @@ func clickBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-
-	// This is a very important thing in click expiry detection. so be aware of it
-	// this X key is not important at all! use another key in click worker
-	kv.NewAEAVStore(pl.ReserveHash, clickExpire.Duration()+time.Hour).IncSubKey("X", 1)
 
 	exp, _ := context.WithTimeout(ctx, 10*time.Second)
 	safe.GoRoutine(exp, func() {
