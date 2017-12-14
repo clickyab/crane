@@ -20,9 +20,14 @@ func Render(_ context.Context, w http.ResponseWriter, ctx entity.Context) error 
 			continue
 		}
 		b := openrtb.Bid{
-			ID:         v.ReservedHash(),
-			ImpID:      v.PublicID(),
-			AdMarkup:   fmt.Sprintf(`<iframe src="%s" width="%d" hight="%d" />`, v.ShowURL(), v.Width(), v.Height()),
+			ID:    v.ReservedHash(),
+			ImpID: v.PublicID(),
+			AdMarkup: fmt.Sprintf(
+				`<iframe src="%s" width="%d" hight="%d" />`,
+				v.ShowURL(),
+				v.Width(),
+				v.Height(),
+			),
 			AdID:       fmt.Sprint(v.WinnerAdvertise().ID()),
 			H:          v.Height(),
 			W:          v.Width(),

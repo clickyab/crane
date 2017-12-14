@@ -91,7 +91,6 @@ func openrtbInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	if payload.User != nil {
 		us = payload.User.ID
 	}
-	// TODO : verify builders
 	b := []builder.ShowOptionSetter{
 		builder.SetTimestamp(),
 		builder.SetType(entity.RequestTypeDemand),
@@ -103,7 +102,9 @@ func openrtbInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetProtocol(proto),
 		builder.SetTID(us, ip, ua),
 		builder.SetNoTiny(sup.TinyMark()),
+
 		// Website of demand has no floor cpm and soft floor cpm associated with them
+		// TODO : decide about this specific values
 		builder.SetFloorCPM(sup.DefaultFloorCPM()),
 		builder.SetSoftFloorCPM(sup.DefaultSoftFloorCPM()),
 		builder.SetRate(float64(sup.Rate())),

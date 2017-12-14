@@ -10,8 +10,46 @@ import (
 )
 
 // AddImpression insert new impression to daily table
+// TODO : multiple insert per one query
 func AddImpression(rh, ref, par, spid, copID string, size, susp int, adid, pubid int64, ip net.IP,
 	bid float64, alexa bool, ts time.Time, typ entity.RequestType) error {
+	var err error
+
+	wID := sql.NullInt64{}
+	appID := sql.NullInt64{}
+	refer := sql.NullString{}
+	parent := sql.NullString{}
+	if typ == entity.RequestTypeDemand {
+		// TODO : check for publisher type in demand too
+		wID = sql.NullInt64{Valid: err == nil, Int64: pubid}
+		refer = sql.NullString{Valid: ref != "", String: ref}
+		parent = sql.NullString{Valid: par != "", String: par}
+	}
+
+	var sID int64
+
+	// find slot id
+	if wID.Valid {
+		sID, err = FindWebSlotID(spid, wID.Int64, size)
+	} else if appID.Valid {
+		sID, err = FindAppSlotID(spid, appID.Int64, size)
+	}
+	if err != nil {
+		return err
+	}
+	// insert slot ad
+	said, err := InsertSlotAd(sID, adid)
+	if err != nil {
+		return err
+	}
+	ca, err := GetAd(adid)
+	if err != nil {
+		return err
+	}
+	var alx int
+	if alexa {
+		alx = 1
+	}
 	q := fmt.Sprintf(`INSERT INTO impressions%s (
 							cp_id,reserved_hash
 							w_id,wp_id,app_id,
@@ -29,46 +67,13 @@ func AddImpression(rh, ref, par, spid, copID string, size, susp int, adid, pubid
 							?,?,?,
 							?,?,?,?
 							)`, time.Now().Format("20060102"))
-	var err error
-
-	wid := sql.NullInt64{}
-	refer := sql.NullString{}
-	parent := sql.NullString{}
-	if typ == entity.RequestTypeDemand {
-		wid = sql.NullInt64{Valid: err == nil, Int64: pubid}
-		refer = sql.NullString{Valid: ref != "", String: ref}
-		parent = sql.NullString{Valid: par != "", String: par}
-	}
-
-	appID := sql.NullInt64{Valid: false}
-
-	// find slot id
-	sid, err := FindSlotID(spid, size)
-	if err != nil {
-		return err
-	}
-	// insert slot ad
-	said, err := InsertSlotAd(sid, adid)
-	if err != nil {
-		return err
-	}
-	ca, err := GetAd(adid)
-	if err != nil {
-		return err
-	}
-	var alx int
-	if alexa {
-		alx = 1
-	}
-
-	ca.Campaign()
 	_, err = NewManager().GetWDbMap().Exec(q,
 		ca.Campaign().ID(), rh,
-		wid, 0, appID,
+		wID, 0, appID,
 		adid, copID, ca.CampaignAdID(),
 		ip.String(), refer, parent,
 		ca.Target(), bid, susp,
 		0, alx, 0,
-		ts.Unix(), ts.Format("20060102"), said, sid)
+		ts.Unix(), ts.Format("20060102"), said, sID)
 	return err
 }

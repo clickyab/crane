@@ -75,6 +75,7 @@ func (j *job) Report() func(error) {
 }
 
 func (j *job) process(ctx context.Context) error {
+	// TODO : multiple seat per one query
 	errs := errorProcess{
 		tasks: len(j.Seats),
 	}

@@ -1,7 +1,6 @@
 package models
 
 import (
-	"errors"
 	"fmt"
 	"net"
 	"time"
@@ -39,9 +38,6 @@ func GetAd(adID int64) (entity.Advertise, error) {
 	return ad.(entity.Advertise), nil
 }
 
-// ErrorNotAllowCreate rise when supplier doesn't allow to add new website or app
-var ErrorNotAllowCreate = errors.New("insert not allowed")
-
 // FindPublisherID return publisher id for given supplier,domain
 func FindPublisherID(sup, domain string, pid int64) (int64, error) {
 	osup, err := GetSupplierByName(sup)
@@ -56,6 +52,7 @@ func FindPublisherID(sup, domain string, pid int64) (int64, error) {
 }
 
 // AddImpression insert new impression to daily table
+// TODO : multiple insert per query
 func AddImpression(supp, reserve, publisher, ref, parent, spid, copID string, size, susp int, adid int64, ip net.IP,
 	bid float64, alexa bool, ts time.Time, typ entity.RequestType) error {
 
