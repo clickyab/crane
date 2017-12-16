@@ -1,11 +1,13 @@
 package builder
 
 import (
+	"time"
+
 	"clickyab.com/crane/crane/entity"
 )
 
 // SetFullSeats is a setter for seats in click and show
-func SetFullSeats(pubID string, size int, hash string, ad entity.Advertise, bid float64) ShowOptionSetter {
+func SetFullSeats(pubID string, size int, hash string, ad entity.Advertise, bid float64, impTime int64) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
 		ctr := o.publisher.CTR(size)
 		ir := o.location.Country().Valid && o.location.Country().ISO == "IR"
@@ -13,6 +15,7 @@ func SetFullSeats(pubID string, size int, hash string, ad entity.Advertise, bid 
 		if o.noShowT {
 			showT = 2
 		}
+		ts := time.Unix(impTime, 0)
 		o.seats = append(o.seats, &seat{
 			ua:        o.ua,
 			parent:    o.parent,
@@ -39,6 +42,7 @@ func SetFullSeats(pubID string, size int, hash string, ad entity.Advertise, bid 
 			minBidPercentage: o.MinBIDPercentage(),
 			minBid:           bid,
 			rate:             1,
+			impTime:          ts,
 		})
 		return o, nil
 	}

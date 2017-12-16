@@ -48,7 +48,7 @@ func clickBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetType(pl.Type),
 		builder.SetPublisher(pl.Publisher),
 		builder.SetSuspicious(pl.Suspicious),
-		builder.SetFullSeats(pl.PublicID, pl.Size, pl.ReserveHash, pl.Ad, pl.Bid),
+		builder.SetFullSeats(pl.PublicID, pl.Size, pl.ReserveHash, pl.Ad, pl.Bid, pl.PreviousTime),
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)

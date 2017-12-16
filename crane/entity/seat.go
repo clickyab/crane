@@ -1,5 +1,7 @@
 package entity
 
+import "time"
+
 // Seat is the slot of the app
 type Seat interface {
 	// PublicID of the slot not changed (permanent)
@@ -32,4 +34,7 @@ type Seat interface {
 	ShowT() bool
 	// MinBid is the minimum CPC requested for this requests
 	MinBid() int64
+	// ImpressionTime is the time of impression (if this is impression seat, on show, its current time,
+	// but if this is click, then its the impression time, not current)
+	ImpressionTime() time.Time
 }
