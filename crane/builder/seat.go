@@ -45,6 +45,7 @@ type seat struct {
 	winnerAd    entity.Advertise
 	reserveHash string
 	bid         float64
+	cpm         float64
 	click       string
 	show        string
 
@@ -73,6 +74,10 @@ type seat struct {
 
 	showT  int
 	minBid float64
+}
+
+func (s *seat) CPM() float64 {
+	return s.cpm
 }
 
 // MinBid return the current minimum bid, apply the min bid percentage and
@@ -132,9 +137,10 @@ func (s *seat) Size() int {
 	return s.size
 }
 
-func (s *seat) SetWinnerAdvertise(wa entity.Advertise, p float64) {
+func (s *seat) SetWinnerAdvertise(wa entity.Advertise, bid float64, cpm float64) {
 	s.winnerAd = wa
-	s.bid = p
+	s.bid = bid
+	s.cpm = cpm
 }
 
 func (s *seat) WinnerAdvertise() entity.Advertise {

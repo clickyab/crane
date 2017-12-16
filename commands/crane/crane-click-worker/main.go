@@ -20,9 +20,9 @@ func main() {
 	config.Initialize(commands.Organization, commands.AppName, commands.Prefix, commands.DefaultConfig())
 	config.DumpConfig(os.Stdout)
 
-	assert.Nil(broker.RegisterConsumer(click.NewConsumer()))
-
 	defer initializer.Initialize()()
+
+	assert.Nil(broker.RegisterConsumer(click.NewConsumer()))
 
 	sig := shell.WaitExitSignal()
 	logrus.Debugf("%s received, exiting...", sig.String())

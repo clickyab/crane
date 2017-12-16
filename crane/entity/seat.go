@@ -14,8 +14,10 @@ type Seat interface {
 	Size() int
 	// Bid return winner bid
 	Bid() float64
-	// Set winner ad for this slot
-	SetWinnerAdvertise(Advertise, float64)
+	// CPM return the cpm of this seat (after winner and bid is set)
+	CPM() float64
+	// Set winner ad for this slot, first is bid, last param is cpm
+	SetWinnerAdvertise(Advertise, float64, float64)
 	// WinnerAdvertise return the winner
 	WinnerAdvertise() Advertise
 	// ShowURL get the show url usable for async calls
