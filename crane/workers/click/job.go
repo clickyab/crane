@@ -33,6 +33,7 @@ type job struct {
 	AdSize       int     `json:"size"`
 	SlotPublicID string  `json:"slot"`
 	WinnerBID    float64 `json:"wb"`
+	Since        int64   `json:"since"`
 
 	Timestamp time.Time `json:"ts"`
 }

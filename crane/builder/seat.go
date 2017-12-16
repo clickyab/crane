@@ -74,6 +74,12 @@ type seat struct {
 
 	showT  int
 	minBid float64
+
+	impTime time.Time
+}
+
+func (s *seat) ImpressionTime() time.Time {
+	return s.impTime
 }
 
 func (s *seat) CPM() float64 {
@@ -167,6 +173,7 @@ func (s *seat) ShowURL() string {
 		"uaip": string(data),
 		"pid":  s.publicID,
 		"susp": fmt.Sprint(s.susp),
+		"now":  fmt.Sprint(time.Now().Unix()),
 	}, showExpire.Duration())
 	s.winnerAd.ID()
 	res := router.MustPath("banner", map[string]string{"rh": s.ReservedHash(), "size": fmt.Sprint(s.size), "jt": j, "type": s.Type()})
@@ -205,6 +212,7 @@ func (s *seat) ClickURL() string {
 		"uaip": string(data),
 		"susp": fmt.Sprint(s.susp),
 		"pid":  s.PublicID(),
+		"now":  fmt.Sprint(time.Now().Unix()),
 	}, clickExpire.Duration())
 	s.winnerAd.ID()
 	res, err := router.Path("click", map[string]string{"jt": j, "rh": s.ReservedHash(), "size": fmt.Sprint(s.Size()), "type": s.Type()})

@@ -20,21 +20,22 @@ type controller struct {
 }
 
 type payloadData struct {
-	ReserveHash string
-	Size        int
-	Type        entity.RequestType
-	TID         string
-	Ref         string
-	Parent      string
-	AdID        int64
-	Ad          entity.Advertise
-	Supplier    entity.Supplier
-	Publisher   entity.Publisher
-	Bid         float64
-	PublicID    string
-	Suspicious  int
-	UserAgent   string
-	IP          string
+	ReserveHash  string
+	Size         int
+	Type         entity.RequestType
+	TID          string
+	Ref          string
+	Parent       string
+	AdID         int64
+	Ad           entity.Advertise
+	Supplier     entity.Supplier
+	Publisher    entity.Publisher
+	Bid          float64
+	PublicID     string
+	Suspicious   int
+	UserAgent    string
+	IP           string
+	PreviousTime int64
 }
 
 func extractor(ctx context.Context, r *http.Request) (*payloadData, error) {
@@ -49,7 +50,12 @@ func extractor(ctx context.Context, r *http.Request) (*payloadData, error) {
 	pl.Ref = r.URL.Query().Get("ref")
 	pl.Parent = r.URL.Query().Get("parent")
 
-	expired, m, err := jwt.NewJWT().Decode([]byte(jt), "aid", "sup", "dom", "bid", "uaip", "susp", "pid")
+	expired, m, err := jwt.NewJWT().Decode([]byte(jt), "aid", "sup", "dom", "bid", "uaip", "susp", "pid", "now")
+	if err != nil {
+		return nil, err
+	}
+
+	pl.PreviousTime, err = strconv.ParseInt(m["now"], 10, 0)
 	if err != nil {
 		return nil, err
 	}
