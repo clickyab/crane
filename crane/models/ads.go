@@ -63,3 +63,19 @@ func AddImpression(supp, reserve, publisher, ref, parent, spid, copID string, si
 
 	return entities.AddImpression(reserve, ref, parent, spid, copID, size, susp, adid, tw, ip, bid, alexa, ts, typ)
 }
+
+// AdClick try to add new click
+func AdClick(supplier, reservedHash, publisher, slotPublicID, referrer, parentURL, os, copID string,
+	susp, size int, fast, adID int64, winnerBid float64, ip net.IP, ts time.Time) error {
+	// find publisher id
+	pubID, err := FindPublisherID(supplier, publisher, 0)
+	if err != nil {
+		return err
+	}
+	click, err := entities.FillClickData(reservedHash, slotPublicID, referrer, parentURL, os, copID,
+		susp, size, fast, adID, winnerBid, ip, ts, pubID)
+	if err != nil {
+		return err
+	}
+	return entities.InsertClick(click)
+}

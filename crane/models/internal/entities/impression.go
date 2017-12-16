@@ -37,8 +37,9 @@ func AddImpression(rh, ref, par, spid, copID string, size, susp int, adid, pubid
 	if err != nil {
 		return err
 	}
-	// insert slot ad
-	said, err := InsertSlotAd(sID, adid)
+
+	// find slot ad
+	said, err := FindSlotAd(sID, adid)
 	if err != nil {
 		return err
 	}
@@ -67,6 +68,7 @@ func AddImpression(rh, ref, par, spid, copID string, size, susp int, adid, pubid
 							?,?,?,
 							?,?,?,?
 							)`, time.Now().Format("20060102"))
+
 	_, err = NewManager().GetWDbMap().Exec(q,
 		ca.Campaign().ID(), rh, size,
 		wID, 0, appID,
