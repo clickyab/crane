@@ -17,7 +17,7 @@ func getSecondCPM(floorCPM int64, exceedFloor []adAndBid) float64 {
 	return secondCPM
 }
 
-func doBid(adData entity.Advertise, website entity.Publisher, slot entity.Seat, floorCPM int64) (float64, int64, bool) {
+func doBid(adData entity.Advertise, slot entity.Seat, floorCPM int64) (float64, int64, bool) {
 	ctr := (adData.AdCTR()*float64(adCTREffect.Int()) + slot.CTR()*float64(slotCTREffect.Int())) / float64(100)
 	cpm := int64(float64(adData.Campaign().MaxBID()) * ctr * 10.0)
 	return ctr, cpm, cpm >= floorCPM
@@ -59,7 +59,7 @@ func internalSelect(
 			if adData.Campaign().MaxBID() < seat.MinBid() {
 				continue
 			}
-			if ctr, cpm, ok := doBid(adData, ctx.Publisher(), seat, ctx.FloorCPM()); ok {
+			if ctr, cpm, ok := doBid(adData, seat, ctx.FloorCPM()); ok {
 				exceedFloor = append(exceedFloor, adAndBid{Advertise: adData, ctr: ctr, cpm: cpm})
 			} else {
 				underFloor = append(underFloor, adAndBid{Advertise: adData, ctr: ctr, cpm: cpm})
