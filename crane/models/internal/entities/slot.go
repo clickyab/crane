@@ -3,8 +3,8 @@ package entities
 // XXX: Be aware of `INSERT ON DUPLICATE`, just use it after trying normal `SELECT`, Do not use
 // Normal Insert
 
-// InsertSlotAd insert into slot to slots_ads table
-func InsertSlotAd(sid, adid int64) (int64, error) {
+// FindSlotAd insert into slot to slots_ads table
+func FindSlotAd(sid, adid int64) (int64, error) {
 	m := NewManager().GetRDbMap()
 	slaID, err := m.SelectInt(`SELECT slot_id FROM slots_ads where slot_id=? AND ad_id=? `, sid, adid)
 	if err == nil && slaID != 0 {

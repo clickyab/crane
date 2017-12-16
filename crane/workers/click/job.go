@@ -6,15 +6,19 @@ import (
 
 	"time"
 
-	"fmt"
-
 	"clickyab.com/crane/crane/entity"
+	"clickyab.com/crane/crane/models"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/broker"
+	"github.com/clickyab/services/config"
 	"github.com/sirupsen/logrus"
 )
 
 const topic = "click"
+
+var (
+	fastClick = config.RegisterInt("clickyab.fast_click", 2, "")
+)
 
 // job is an show (impression) job
 type job struct {
@@ -28,14 +32,16 @@ type job struct {
 	Supplier   string             `json:"sub"`
 	Type       entity.RequestType `json:"t"`
 	Alexa      bool               `json:"a"`
+	OS         entity.OS          `json:"os"`
+	Fast       int64              `json:"fast"`
 
-	AdID         int64   `json:"ad"`
-	AdSize       int     `json:"size"`
-	SlotPublicID string  `json:"slot"`
-	WinnerBID    float64 `json:"wb"`
-	Since        int64   `json:"since"`
-
-	Timestamp time.Time `json:"ts"`
+	AdID         int64     `json:"ad"`
+	AdSize       int       `json:"size"`
+	SlotPublicID string    `json:"slot"`
+	WinnerBID    float64   `json:"wb"`
+	Since        int64     `json:"since"`
+	ReservedHash string    `json:"rh"`
+	Timestamp    time.Time `json:"ts"`
 }
 
 // Encode this job into a byte to send over broker
@@ -70,7 +76,17 @@ func (j *job) Report() func(error) {
 }
 
 func (j *job) process() error {
-	return fmt.Errorf("TODO: Implement me")
+
+	return models.AdClick(j.Supplier,
+		j.ReservedHash,
+		j.Publisher,
+		j.SlotPublicID,
+		j.Referrer,
+		j.ParentURL,
+		j.OS.Name,
+		j.CopID,
+		j.Suspicious,
+		j.AdSize, j.Fast, j.AdID, j.WinnerBID, j.IP, j.Timestamp)
 }
 
 // NewClickJob return a new job for the worker
@@ -78,11 +94,16 @@ func NewClickJob(ctx entity.Context) broker.Job {
 	seats := ctx.Seats()
 	assert.True(len(seats) == 1)
 	s := seats[0]
+	fast := ctx.Timestamp().Unix() - s.ImpressionTime().Unix()
+	susp := ctx.Suspicious()
+	if fast < fastClick.Int64() {
+		susp = 9
+	}
 	j := &job{
 		IP:         ctx.IP(),
 		CopID:      ctx.User().ID(),
 		UserAgent:  ctx.UserAgent(),
-		Suspicious: ctx.Suspicious(),
+		Suspicious: susp,
 		Referrer:   ctx.Referrer(),
 		ParentURL:  ctx.Parent(),
 		Publisher:  ctx.Publisher().Name(),
@@ -90,11 +111,14 @@ func NewClickJob(ctx entity.Context) broker.Job {
 		Type:       ctx.Type(),
 		Timestamp:  ctx.Timestamp(),
 		Alexa:      ctx.Alexa(),
+		OS:         ctx.OS(),
 
 		AdID:         s.WinnerAdvertise().ID(),
 		AdSize:       s.Size(),
 		SlotPublicID: s.PublicID(),
 		WinnerBID:    s.Bid(),
+		ReservedHash: s.ReservedHash(),
+		Fast:         fast,
 	}
 
 	return j

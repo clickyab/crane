@@ -27,7 +27,6 @@ func clickBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-
 	// This is a very important thing in click expiry detection. so be aware of it
 	//TODO : if we lose redis somehow, it can lead to a problematic duplicate click,
 	//TODO : create an offline job to check duplicate click hash in the past 72 hours
@@ -54,7 +53,6 @@ func clickBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-
 	exp, _ := context.WithTimeout(ctx, 10*time.Second)
 	safe.GoRoutine(exp, func() {
 		job := click.NewClickJob(c)
