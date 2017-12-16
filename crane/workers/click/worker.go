@@ -6,6 +6,7 @@ import (
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/broker"
 	"github.com/clickyab/services/safe"
+	"github.com/clickyab/services/xlog"
 )
 
 type consumer struct {
@@ -31,10 +32,12 @@ func (c *consumer) Consume(ctx context.Context) chan<- broker.Delivery {
 				data := job{}
 				err := d.Decode(&data)
 				if err != nil {
+					xlog.GetWithError(ctx, err).Error("click reject")
 					assert.Nil(d.Reject(false))
 					continue bigLoop
 				}
 				if err := data.process(); err != nil {
+					xlog.GetWithError(ctx, err).Error("click nack")
 					assert.Nil(d.Nack(false, false))
 					continue bigLoop
 				}

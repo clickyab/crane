@@ -37,6 +37,7 @@ func (loader) Initialize() {
 
 	// Wait for the first time load
 	<-suppliers.Notify()
+	<-suppliersByName.Notify()
 	<-websites.Notify()
 	<-ads.Notify()
 }
