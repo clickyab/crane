@@ -103,14 +103,18 @@ func internalSelect(
 			// TODO : must not happen, but it happen some how. check it later
 			// since we change the winner bid, do not inc the cap
 			bid = float64(theAd.Campaign().MaxBID())
+			// also fix target cpm
+			targetCPM = theAd.ctr * 10 * bid
 		}
 
 		if bid < float64(seat.MinBid()) {
 			// since we change the winner bid, do not inc the cap
 			bid = float64(seat.MinBid())
+			// also fix target cpm
+			targetCPM = theAd.ctr * 10 * bid
 		}
 		selected[theAd.ID()] = true
-		seat.SetWinnerAdvertise(theAd.Advertise, bid)
+		seat.SetWinnerAdvertise(theAd.Advertise, bid, targetCPM)
 
 		if !ctx.MultiVideo() {
 			noVideo = noVideo || theAd.Type() == entity.AdTypeVideo

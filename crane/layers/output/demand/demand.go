@@ -31,7 +31,7 @@ func Render(_ context.Context, w http.ResponseWriter, ctx entity.Context) error 
 			AdID:       fmt.Sprint(v.WinnerAdvertise().ID()),
 			H:          v.Height(),
 			W:          v.Width(),
-			Price:      v.Bid() / ctx.Rate(),
+			Price:      v.CPM() / ctx.Rate(),
 			CampaignID: openrtb.StringOrNumber(fmt.Sprint(v.WinnerAdvertise().Campaign().ID())),
 		}
 		r.Bid = append(r.Bid, b)
