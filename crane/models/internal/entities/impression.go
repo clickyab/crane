@@ -51,7 +51,7 @@ func AddImpression(rh, ref, par, spid, copID string, size, susp int, adid, pubid
 		alx = 1
 	}
 	q := fmt.Sprintf(`INSERT INTO impressions%s (
-							cp_id,reserved_hash
+							cp_id,reserved_hash,ad_size,
 							w_id,wp_id,app_id,
 							ad_id,cop_id,ca_id,
 							imp_ipaddress,imp_referaddress,imp_parenturl,
@@ -59,7 +59,7 @@ func AddImpression(rh, ref, par, spid, copID string, size, susp int, adid, pubid
 							imp_cookie,imp_alexa,imp_flash,
 							imp_time,imp_date,sla_id,slot_id
 							) VALUES (
-							?,?
+							?,?,?,
 							?,?,?,
 							?,?,?,
 							?,?,?,
@@ -68,7 +68,7 @@ func AddImpression(rh, ref, par, spid, copID string, size, susp int, adid, pubid
 							?,?,?,?
 							)`, time.Now().Format("20060102"))
 	_, err = NewManager().GetWDbMap().Exec(q,
-		ca.Campaign().ID(), rh,
+		ca.Campaign().ID(), rh, size,
 		wID, 0, appID,
 		adid, copID, ca.CampaignAdID(),
 		ip.String(), refer, parent,
