@@ -76,6 +76,8 @@ type seat struct {
 	minBid float64
 
 	impTime time.Time
+
+	showExtraParam map[string]string
 }
 
 func (s *seat) ImpressionTime() time.Time {
@@ -187,6 +189,9 @@ func (s *seat) ShowURL() string {
 	v.Set("tid", s.tid)
 	v.Set("ref", s.ref)
 	v.Set("parent", s.parent)
+	for i := range s.showExtraParam {
+		v.Set(i, s.showExtraParam[i])
+	}
 	u.RawQuery = v.Encode()
 	s.show = u.String()
 	return s.show
