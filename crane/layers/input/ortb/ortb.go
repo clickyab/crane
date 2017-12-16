@@ -74,7 +74,6 @@ func openrtbInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 	proto := entity.HTTP
 	for i := range payload.Imp {
-		payload.Imp[i].BidFloor = payload.Imp[i].BidFloor * float64(sup.Rate())
 		if payload.Imp[i].Secure != 0 {
 			proto = entity.HTTPS
 			break
