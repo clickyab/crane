@@ -68,7 +68,7 @@ VALUES (?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE
 	t := time.Now()
 	res, err := NewManager().GetWDbMap().Exec(q, sup.UserID(),
 		sql.NullString{Valid: true, String: domain},
-		sup, 1, sql.NullString{Valid: true, String: t.String()}, sql.NullString{Valid: true, String: t.String()},
+		sup.Name(), 1, sql.NullString{Valid: true, String: t.String()}, sql.NullString{Valid: true, String: t.String()},
 		int(t.Unix()), PublicIDGen(sup.Name(), domain),
 	)
 

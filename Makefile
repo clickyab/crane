@@ -38,4 +38,7 @@ run-webserver: all ip2location
 run-imp: all ip2location
 	$(ROOT)/bin/crane-impression-worker
 
+run-click: all ip2location
+	$(ROOT)/bin/crane-click-worker
+
 include $(ROOT)/scripts/*.mk

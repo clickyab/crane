@@ -94,9 +94,9 @@ func internalSelect(
 
 		theAd := sorted[0]
 		// Do not do second biding pricing on this ads, they can not pass CPMFloor
-		targetCPM := float64(theAd.Campaign().MaxBID())
+		targetCPM := float64(theAd.Campaign().MaxBID()) * 10 * theAd.ctr
 		if secBid {
-			targetCPM = getSecondCPM(ctx.FloorCPM(), sorted)
+			targetCPM = getSecondCPM(ctx.SoftFloorCPM(), sorted)
 		}
 		bid := winnerBid(targetCPM, theAd.ctr)
 		if bid > float64(theAd.Campaign().MaxBID()) {
