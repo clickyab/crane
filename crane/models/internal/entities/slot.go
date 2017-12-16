@@ -7,7 +7,7 @@ package entities
 func InsertSlotAd(sid, adid int64) (int64, error) {
 	m := NewManager().GetRDbMap()
 	slaID, err := m.SelectInt(`SELECT slot_id FROM slots_ads where slot_id=? AND ad_id=? `, sid, adid)
-	if err == nil {
+	if err == nil && slaID != 0 {
 		return slaID, nil
 	}
 	m = NewManager().GetWDbMap()
@@ -22,6 +22,7 @@ sla_id=LAST_INSERT_ID(sla_id)`
 	if err != nil {
 		return 0, err
 	}
+
 	return res.LastInsertId()
 }
 
@@ -30,7 +31,7 @@ func FindWebSlotID(pid string, wid int64, s int) (int64, error) {
 	m := NewManager().GetRDbMap()
 	// The pubilc is correct. typo is in database
 	slID, err := m.SelectInt(`SELECT slot_id FROM slots where slot_pubilc_id=? AND w_id=? `, pid, wid)
-	if err == nil {
+	if err == nil && slID != 0 {
 		return slID, nil
 	}
 	m = NewManager().GetWDbMap()
@@ -50,7 +51,7 @@ func FindAppSlotID(pid string, appid int64, s int) (int64, error) {
 	m := NewManager().GetRDbMap()
 	// The pubilc is correct. typo is in database
 	slID, err := m.SelectInt(`SELECT slot_id FROM slots where slot_pubilc_id=? AND app_id=? `, pid, appid)
-	if err == nil {
+	if err == nil && slID != 0 {
 		return slID, nil
 	}
 	m = NewManager().GetWDbMap()

@@ -35,4 +35,7 @@ all: codegen
 run-webserver: all ip2location
 	$(ROOT)/bin/crane
 
+run-imp: all ip2location
+	$(ROOT)/bin/crane-impression-worker
+
 include $(ROOT)/scripts/*.mk

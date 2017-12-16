@@ -11,6 +11,7 @@ import (
 	"clickyab.com/crane/crane/workers/show"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/broker"
+	"github.com/clickyab/services/kv"
 	"github.com/clickyab/services/safe"
 	"github.com/sirupsen/logrus"
 )
@@ -25,7 +26,11 @@ func showBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-
+	counter := kv.NewAEAVStore(pl.ReserveHash, clickExpire.Duration()+time.Hour).IncSubKey("I", 1)
+	if counter > 1 {
+		// Duplicate impression!
+		pl.Suspicious = 3
+	}
 	b := []builder.ShowOptionSetter{
 		builder.SetTimestamp(),
 		builder.SetOSUserAgent(pl.UserAgent),

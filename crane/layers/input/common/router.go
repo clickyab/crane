@@ -59,6 +59,7 @@ func extractor(ctx context.Context, r *http.Request) (*payloadData, error) {
 	if err != nil {
 		return nil, err
 	}
+	pl.PublicID = m["pid"]
 	// Get the supplier
 	pl.Supplier, err = models.GetSupplierByName(m["sup"])
 	if err != nil {

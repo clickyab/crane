@@ -4,7 +4,6 @@ import (
 	"clickyab.com/crane/crane/entity"
 	"clickyab.com/crane/crane/models/internal/entities"
 	"github.com/clickyab/services/pool"
-	"github.com/sirupsen/logrus"
 )
 
 var (
@@ -17,7 +16,6 @@ func GetSupplierByToken(key string) (entity.Supplier, error) {
 	d := &entities.Supplier{}
 	res, err := suppliers.Get(key, d)
 	if err != nil {
-		logrus.Panic(err)
 		return nil, err
 	}
 
