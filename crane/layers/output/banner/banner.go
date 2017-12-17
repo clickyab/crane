@@ -28,9 +28,9 @@ const bannerTemplateText = `<!DOCTYPE html>
 	.o{ position:absolute; top:0; left:0; border:0; height:250px; width:300px; z-index: 99; }
 	#showb{ position:absolute; top:0; left:0; border:0; line-height: 250px; height:250px; width:300px; z-index: 100; background: rgba(0, 0, 0, 0.60); text-align: center; }
 	{{ if .Tiny }}
-	.tiny2{ height: 18px; width: 19px; position: absolute; bottom: 0px; right: 0; z-index: 100; background: url("//static.clickyab.com/img/clickyab-tiny.png") right top no-repeat; border-top-left-radius:4px; -moz-border-radius-topleft:4px  }
+	.tiny2{ height: 18px; width: 19px; position: absolute; bottom: 0px; right: 0; z-index: 100; background: url("{{.TinyLogo}}") right top no-repeat; border-top-left-radius:4px; -moz-border-radius-topleft:4px  }
 	.tiny2:hover{ width: 66px;  }
-	.tiny{ height: 18px; width: 19px; position: absolute; top: 0px; right: 0; z-index: 100; background: url("//static.clickyab.com/img/clickyab-tiny.png") right top no-repeat; border-bottom-left-radius:4px; -moz-border-radius-bottomleft:4px  }
+	.tiny{ height: 18px; width: 19px; position: absolute; top: 0px; right: 0; z-index: 100; background: url("{{.TinyLogo}}") right top no-repeat; border-bottom-left-radius:4px; -moz-border-radius-bottomleft:4px  }
 	.tiny:hover{ width: 66px;  }
 	.tiny3{ position: absolute; top: 0px; right: 0; z-index: 100; }
 	{{ end }}
@@ -40,7 +40,7 @@ const bannerTemplateText = `<!DOCTYPE html>
 	</style>
 </head>
 <body>
-    {{ if .Tiny }}<a class="tiny" href="http://clickyab.com/?ref=icon" target="_blank"></a>{{ end }}
+    {{ if .Tiny }}<a class="tiny" href="{{.TinyURL}}" target="_blank"></a>{{ end }}
     <a href="{{ .Link }}" target="_blank"><img  src="{{ .Src }}" border="0" height="{{ .Height }}" width="{{ .Width }}"/></a>
     <br style="clear: both;"/>
     {{ if .ShowT }}<br style="clear: both;"/><iframe src="//t.clickyab.com/" width="1" height="1" frameborder="0"></iframe>{{ end }}
@@ -51,12 +51,14 @@ var bannerTemplate = template.Must(template.New("banner_template").Parse(bannerT
 
 // bannerData is the single ad id
 type bannerData struct {
-	Link   string
-	Width  int
-	Height int
-	Src    string
-	Tiny   bool
-	ShowT  bool
+	Link     string
+	Width    int
+	Height   int
+	Src      string
+	Tiny     bool
+	TinyLogo string
+	TinyURL  string
+	ShowT    bool
 }
 
 func renderWebBanner(w io.Writer, ctx entity.Context, seat entity.Seat) error {
@@ -66,12 +68,14 @@ func renderWebBanner(w io.Writer, ctx entity.Context, seat entity.Seat) error {
 	}
 
 	sa := bannerData{
-		Link:   seat.ClickURL(),
-		Height: seat.Height(),
-		Width:  seat.Width(),
-		Src:    src,
-		Tiny:   ctx.Tiny(),
-		ShowT:  false,
+		Link:     seat.ClickURL(),
+		Height:   seat.Height(),
+		Width:    seat.Width(),
+		Src:      src,
+		Tiny:     ctx.Tiny(),
+		TinyLogo: ctx.Publisher().Supplier().TinyLogo(),
+		TinyURL:  ctx.Publisher().Supplier().TinyURL(),
+		ShowT:    false,
 	}
 
 	return bannerTemplate.Execute(w, sa)

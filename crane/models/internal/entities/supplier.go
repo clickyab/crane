@@ -30,6 +30,18 @@ type Supplier struct {
 	CreatedAt        time.Time     `db:"created_at"`
 	UpdatedAt        time.Time     `db:"updated_at"`
 	FRate            int           `db:"rate"`
+	FTinyLogo        string        `db:"tiny_logo"`
+	FTinyURL         string        `db:"tiny_url"`
+}
+
+// TinyLogo will be the url to the logo (ex: //clickyab.com/tiny.png)
+func (s Supplier) TinyLogo() string {
+	return s.FTinyLogo
+}
+
+// TinyURL is the link of ancher tag of tiny (ex: http://clickyab.com/?ref=tiny)
+func (s Supplier) TinyURL() string {
+	return s.FTinyURL
 }
 
 // Rate return ratio currency conversion to IRR

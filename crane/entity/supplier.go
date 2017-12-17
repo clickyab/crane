@@ -20,6 +20,10 @@ type Supplier interface {
 	AllowCreate() bool
 	// TinyMark means we can add our mark to it
 	TinyMark() bool
+	// TinyLogo will be the url to the logo (ex: //clickyab.com/tiny.png)
+	TinyLogo() string
+	// TinyURL is the link of ancher tag of tiny (ex: http://clickyab.com/?ref=tiny)
+	TinyURL() string
 	// ShowDomain is a domain that all links are generated against it
 	ShowDomain() string
 	// UserID return user id of supplier
