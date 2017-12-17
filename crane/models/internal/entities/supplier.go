@@ -121,7 +121,7 @@ func (s *Supplier) DefaultCTR() float64 {
 
 // SupplierLoader load all confirmed website
 func SupplierLoader(ctx context.Context) (map[string]kv.Serializable, error) {
-	q := `SELECT * FROM suppliers`
+	q := `SELECT id,name,token,user_id,default_floor,default_soft_floor,default_min_bid,bid_type,default_ctr,tiny_mark,show_domain,created_at,updated_at,rate,tiny_logo,tiny_url FROM suppliers`
 
 	var res []Supplier
 	if _, err := NewManager().GetRDbMap().Select(&res, q); err != nil {
@@ -137,7 +137,8 @@ func SupplierLoader(ctx context.Context) (map[string]kv.Serializable, error) {
 
 // SupplierLoaderByName load all confirmed website
 func SupplierLoaderByName(ctx context.Context) (map[string]kv.Serializable, error) {
-	q := `SELECT * FROM suppliers`
+
+	q := `SELECT id,name,token,user_id,default_floor,default_soft_floor,default_min_bid,bid_type,default_ctr,tiny_mark,show_domain,created_at,updated_at,rate,tiny_logo,tiny_url FROM suppliers`
 
 	var res []Supplier
 	if _, err := NewManager().GetRDbMap().Select(&res, q); err != nil {
