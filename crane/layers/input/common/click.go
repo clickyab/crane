@@ -18,7 +18,7 @@ import (
 
 const clickPath = "/click/:rh/:size/:type/:jt"
 
-var clickExpire = config.RegisterDuration("crane.builder.seat.click_exp", 72*time.Hour, "determine how long click url is valid")
+var clickExpire = config.RegisterDuration("crane.context.seat.click_exp", 72*time.Hour, "determine how long click url is valid")
 
 // clickBanner is handler for click ad request
 func clickBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {

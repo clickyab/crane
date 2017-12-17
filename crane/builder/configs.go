@@ -3,5 +3,5 @@ package builder
 import "github.com/clickyab/services/config"
 
 var (
-	chanceShowT = config.RegisterInt("clickyab.chanceshowt", 80, "")
+	chanceShowT = config.RegisterInt("crane.context.chanceshowt", 80, "chance for showing ad")
 )
