@@ -95,6 +95,10 @@ func SetConfigParameter() {
 func setDescription(key, desc string) {
 	lock.Lock()
 	defer lock.Unlock()
+	if d, ok := configs[key]; ok && d != "" && desc == "" {
+		// if the new description is empty and the old one is not, ignore the new one
+		return
+	}
 	configs[key] = desc
 }
 

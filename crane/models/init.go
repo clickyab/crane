@@ -11,6 +11,7 @@ import (
 	"github.com/clickyab/services/pool"
 	"github.com/clickyab/services/pool/drivers/cachepool"
 	"github.com/clickyab/services/pool/drivers/memorypool"
+	"github.com/sirupsen/logrus"
 )
 
 var (
@@ -40,6 +41,8 @@ func (loader) Initialize() {
 	<-suppliersByName.Notify()
 	<-websites.Notify()
 	<-ads.Notify()
+
+	logrus.Debug("Pool initialized and ready")
 }
 
 func init() {
