@@ -61,7 +61,7 @@ func (c *Campaign) MaxBID() int64 {
 	return c.FCampaignMaxBid
 }
 
-var minFrequency = config.RegisterInt("clickyab.min_frequency", 2, "")
+var minFrequency = config.RegisterInt("crane.models.min_frequency", 2, "")
 
 // Frequency campaign frequency
 func (c *Campaign) Frequency() int {
