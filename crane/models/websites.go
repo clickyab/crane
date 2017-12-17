@@ -9,7 +9,8 @@ import (
 )
 
 var (
-	websites pool.Interface
+	websites     pool.Interface
+	websitePubID pool.Interface
 )
 
 // GetWebSite try to get website. do not use it in initializer
@@ -29,6 +30,17 @@ func GetWebSite(sup entity.Supplier, domain string) (entity.Publisher, error) {
 	d.Supp = sup
 
 	return d, nil
+}
+
+// GetWebSiteByPubID try to get website. do not use it in initializer
+func GetWebSiteByPubID(sup entity.Supplier, pubID string) (entity.Publisher, error) {
+	d := &entities.WebsitePubID{}
+	res, err := websites.Get(pubID, d)
+	if err != nil {
+		return nil, err
+	}
+
+	return GetWebSite(sup, res.(*entities.WebsitePubID).Domain)
 }
 
 // GetWebSiteID try to get website. do not use it in initializer

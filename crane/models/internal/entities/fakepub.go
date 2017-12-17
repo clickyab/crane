@@ -11,6 +11,10 @@ func (fakepub) ID() int64 {
 	return 0
 }
 
+func (fakepub) PublicID() string {
+	return ""
+}
+
 // TODO : Floor and soft floor based on supplier
 func (fp *fakepub) FloorCPM() int64 {
 	return fp.s.DefaultFloorCPM()

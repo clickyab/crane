@@ -24,10 +24,17 @@ type Website struct {
 	WFloorCpm   sql.NullInt64  `db:"w_floor_cpm"`
 	WFatFinger  int            `db:"w_fatfinger"`
 	Status      int            `db:"w_status"`
+	WPublicID   string         `db:"w_pub_id"`
 	CTRStat
 
 	Supp entity.Supplier
 	FCTR [21]float64
+}
+
+// WebsitePubID is a hack to handle public id search
+type WebsitePubID struct {
+	PublicID string `db:"w_pub_id"`
+	Domain   string `db:"w_domain"`
 }
 
 // CTR return the ctr based on size of this website
@@ -73,6 +80,11 @@ func (w *Website) ID() int64 {
 	return w.WID
 }
 
+// PublicID return the website PublicID
+func (w *Website) PublicID() string {
+	return w.WPublicID
+}
+
 // FloorCPM soft floor and floor cpm are the same
 func (w *Website) FloorCPM() int64 {
 	return w.WFloorCpm.Int64
@@ -110,7 +122,7 @@ func WebsiteLoader(ctx context.Context) (map[string]kv.Serializable, error) {
 
 	const cnt = 10000
 	for j := 0; ; j = j + cnt {
-		q := fmt.Sprintf(`SELECT w_id, w_domain, w_supplier, w_name, w_categories, w_minbid, w_floor_cpm, w_fatfinger, w_status,
+		q := fmt.Sprintf(`SELECT w_id, w_domain, w_supplier, w_name, w_categories, w_minbid, w_floor_cpm, w_fatfinger, w_status,w_pub_id,
   SUM(imp_1) AS imp1, SUM(imp_2) AS imp2, SUM(imp_3) AS imp3, SUM(imp_4) AS imp4, SUM(imp_5) AS imp5,
   SUM(imp_6) AS imp6, SUM(imp_7) AS imp7, SUM(imp_8) AS imp8, SUM(imp_9) AS imp9, SUM(imp_10) AS imp10,
   SUM(imp_11) AS imp11, SUM(imp_12) AS imp12, SUM(imp_13) AS imp13, SUM(imp_14) AS imp14, SUM(imp_15) AS imp15,
@@ -166,6 +178,22 @@ func WebsiteLoader(ctx context.Context) (map[string]kv.Serializable, error) {
 	return b, nil
 }
 
+// WebsitePubIDLoader load all confirmed website
+func WebsitePubIDLoader(ctx context.Context) (map[string]kv.Serializable, error) {
+	q := `SELECT w_pub_id, w_domain FROM websites WHERE w_status=1`
+	var res []WebsitePubID
+	if _, err := NewManager().GetRDbMap().Select(&res, q); err != nil {
+		return nil, err
+	}
+
+	realRes := make(map[string]kv.Serializable)
+	for i := range res {
+		realRes[res[i].PublicID] = &res[i]
+	}
+
+	return realRes, nil
+}
+
 // Encode is the encode function for serialize object in io writer
 func (w *Website) Encode(iw io.Writer) error {
 	return gob.NewEncoder(iw).Encode(w)
@@ -174,6 +202,16 @@ func (w *Website) Encode(iw io.Writer) error {
 // Decode try to decode object from io reader
 func (w *Website) Decode(r io.Reader) error {
 	return gob.NewDecoder(r).Decode(w)
+}
+
+// Encode is the encode function for serialize object in io writer
+func (wp *WebsitePubID) Encode(w io.Writer) error {
+	return gob.NewEncoder(w).Encode(wp)
+}
+
+// Decode try to decode object from io reader
+func (wp *WebsitePubID) Decode(r io.Reader) error {
+	return gob.NewDecoder(r).Decode(wp)
 }
 
 // PublicIDGen generate public id from supplier name and domain

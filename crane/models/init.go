@@ -33,6 +33,9 @@ func (loader) Initialize() {
 
 	websites = pool.NewPool(entities.WebsiteLoader, cachepool.NewCachePool("WS_"), websiteExp.Duration(), 3)
 	websites.Start(ctx)
+	websitePubID = pool.NewPool(entities.WebsitePubIDLoader, cachepool.NewCachePool("WP_"), websiteExp.Duration(), 3)
+	websitePubID.Start(ctx)
+
 	ads = pool.NewPool(entities.AdLoader, memorypool.NewMemoryPool(), adsExp.Duration(), 3)
 	ads.Start(ctx)
 
@@ -40,6 +43,7 @@ func (loader) Initialize() {
 	<-suppliers.Notify()
 	<-suppliersByName.Notify()
 	<-websites.Notify()
+	<-websitePubID.Notify()
 	<-ads.Notify()
 
 	logrus.Debug("Pool initialized and ready")
