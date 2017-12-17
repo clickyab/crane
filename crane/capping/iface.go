@@ -18,7 +18,7 @@ const (
 )
 
 var (
-	dailyCapExpire = config.RegisterDuration("clickyab.daily_cap_expire", 24*time.Hour, "")
+	dailyCapExpire = config.RegisterDuration("crane.capping.daily_cap_expire", 24*time.Hour, "daily capping expire")
 )
 
 func getCappingKey(copID string) string {

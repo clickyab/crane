@@ -139,7 +139,7 @@ func SetDisableCapping(disable bool) ShowOptionSetter {
 	}
 }
 
-var copLen = config.RegisterInt("clickyab.cop_len", 10, "cop key len")
+var copLen = config.RegisterInt("crane.context.cop_len", 10, "cop key len")
 
 // SetTID try to set tid
 func SetTID(id string, extra ...string) ShowOptionSetter {
