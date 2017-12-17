@@ -6,6 +6,6 @@ import (
 
 var (
 	//develMode     = config.RegisterBoolean("devel_mode", true, "development mode?")
-	adCTREffect   = config.RegisterInt("clickyab.ad_ctr_effect", 70, "")
-	slotCTREffect = config.RegisterInt("clickyab.slot_ctr_effect", 30, "")
+	adCTREffect   = config.RegisterInt("crane.rtb.ad_ctr_effect", 70, "")
+	slotCTREffect = config.RegisterInt("crane.rtb.slot_ctr_effect", 30, "")
 )

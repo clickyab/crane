@@ -17,7 +17,7 @@ import (
 const topic = "click"
 
 var (
-	fastClick = config.RegisterInt("clickyab.fast_click", 2, "")
+	fastClick = config.RegisterInt("crane.worker.fast_click", 2, "")
 )
 
 // job is an show (impression) job
