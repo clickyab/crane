@@ -76,6 +76,11 @@ type seat struct {
 	minBid float64
 
 	impTime time.Time
+	scpm    float64
+}
+
+func (s *seat) SupplierCPM() float64 {
+	return s.scpm
 }
 
 func (s *seat) ImpressionTime() time.Time {
@@ -174,6 +179,7 @@ func (s *seat) ShowURL() string {
 		"pid":  s.publicID,
 		"susp": fmt.Sprint(s.susp),
 		"now":  fmt.Sprint(time.Now().Unix()),
+		"cpm":  fmt.Sprint(s.CPM()),
 	}, showExpire.Duration())
 	s.winnerAd.ID()
 	res := router.MustPath("banner", map[string]string{"rh": s.ReservedHash(), "size": fmt.Sprint(s.size), "jt": j, "type": s.Type()})
@@ -203,6 +209,10 @@ func (s *seat) ClickURL() string {
 	_, _ = m.Write(
 		[]byte(s.ReservedHash() + fmt.Sprint(s.size) + s.Type() + s.ua + s.ip.String()),
 	)
+	cpm := s.cpm
+	if s.scpm != 0 {
+		cpm = s.scpm
+	}
 	data := fmt.Sprintf("%x", m.Sum(nil))
 	j := jwt.NewJWT().Encode(map[string]string{
 		"aid":  fmt.Sprint(s.winnerAd.ID()),
@@ -213,6 +223,7 @@ func (s *seat) ClickURL() string {
 		"susp": fmt.Sprint(s.susp),
 		"pid":  s.PublicID(),
 		"now":  fmt.Sprint(time.Now().Unix()),
+		"cpm":  fmt.Sprint(cpm),
 	}, clickExpire.Duration())
 	s.winnerAd.ID()
 	res, err := router.Path("click", map[string]string{"jt": j, "rh": s.ReservedHash(), "size": fmt.Sprint(s.Size()), "type": s.Type()})

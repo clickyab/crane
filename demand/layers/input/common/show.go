@@ -47,7 +47,7 @@ func showBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	if pl.Type == entity.RequestTypeDemand {
 		b = append(b, builder.DoNotShowTFrame())
 	}
-	b = append(b, builder.SetFullSeats(pl.PublicID, pl.Size, pl.ReserveHash, pl.Ad, pl.Bid, time.Now().Unix()))
+	b = append(b, builder.SetFullSeats(pl.PublicID, pl.Size, pl.ReserveHash, pl.Ad, pl.Bid, time.Now().Unix(), pl.CPM, pl.SCPM))
 	// Build context
 	c, err := builder.NewContext(b...)
 	if err != nil {

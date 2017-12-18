@@ -32,13 +32,13 @@ func GetWebSite(sup entity.Supplier, domain string) (entity.Publisher, error) {
 }
 
 // GetWebSiteID try to get website. do not use it in initializer
-func GetWebSiteID(sup entity.Supplier, domain string, pid int64) (int64, error) {
+func GetWebSiteID(sup entity.Supplier, domain string, pid int64) (entity.Publisher, error) {
 	d := &entities.Website{}
 	res, err := websites.Get(fmt.Sprintf("%s/%s", sup.Name(), domain), d)
 	if err == nil {
 		d = res.(*entities.Website)
 		d.Supp = sup
-		return d.WID, nil
+		return d, nil
 	}
 	return entities.FindOrAddWebsite(sup, domain, pid)
 }

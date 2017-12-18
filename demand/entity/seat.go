@@ -37,4 +37,6 @@ type Seat interface {
 	// ImpressionTime is the time of impression (if this is impression seat, on show, its current time,
 	// but if this is click, then its the impression time, not current)
 	ImpressionTime() time.Time
+	// SupplierCPM return cpm from supplier
+	SupplierCPM() float64
 }

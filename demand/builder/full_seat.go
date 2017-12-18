@@ -7,7 +7,7 @@ import (
 )
 
 // SetFullSeats is a setter for seats in click and show
-func SetFullSeats(pubID string, size int, hash string, ad entity.Advertise, bid float64, impTime int64) ShowOptionSetter {
+func SetFullSeats(pubID string, size int, hash string, ad entity.Advertise, bid float64, impTime int64, cpm, scpm float64) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
 		ctr := o.publisher.CTR(size)
 		ir := o.location.Country().Valid && o.location.Country().ISO == "IR"
@@ -43,6 +43,8 @@ func SetFullSeats(pubID string, size int, hash string, ad entity.Advertise, bid 
 			minBid:           bid,
 			rate:             1,
 			impTime:          ts,
+			cpm:              cpm,
+			scpm:             scpm,
 		})
 		return o, nil
 	}

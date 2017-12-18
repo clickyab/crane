@@ -26,7 +26,7 @@ func FindWebsiteByPublicID(pid int64) (entity.Publisher, error) {
 var ErrorNotAllowCreate = errors.New("insert not allowed")
 
 // FindOrAddWebsite return publisher id for given supplier,domain
-func FindOrAddWebsite(sup entity.Supplier, domain string, pid int64) (int64, error) {
+func FindOrAddWebsite(sup entity.Supplier, domain string, pid int64) (entity.Publisher, error) {
 
 	if pid == 0 {
 		pid = PublicIDGen(sup.Name(), domain)
@@ -35,10 +35,10 @@ func FindOrAddWebsite(sup entity.Supplier, domain string, pid int64) (int64, err
 	w, err := FindWebsiteByPublicID(pid)
 	if err == nil {
 		if w.Supplier().Name() != sup.Name() {
-			return 0, fmt.Errorf("mismatch supplier for domain %s with public id %d. suppliers %s and %s",
+			return nil, fmt.Errorf("mismatch supplier for domain %s with public id %d. suppliers %s and %s",
 				domain, pid, sup.Name(), w.Supplier().Name())
 		}
-		return w.ID(), nil
+		return w, nil
 	}
 
 	ws := make([]Website, 0)
@@ -53,29 +53,45 @@ func FindOrAddWebsite(sup entity.Supplier, domain string, pid int64) (int64, err
 				tw = ws[i]
 			}
 		}
-		return tw.ID(), nil
+		return &tw, nil
 	}
 
 	if err != nil && !sup.AllowCreate() {
-		return 0, ErrorNotAllowCreate
+		return nil, ErrorNotAllowCreate
 	}
 
-	q := `INSERT INTO websites (u_id, w_domain,w_supplier,w_status,created_at,updated_at,w_date, w_pub_id)
-VALUES (?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE
+	tw := Website{
+		WSupplier: sup.Name(),
+		WDomain:   domain,
+		FCTR:      [21]float64{},
+		Status:    1,
+		Supp:      sup,
+		WFloorCpm: sql.NullInt64{Valid: true, Int64: sup.DefaultFloorCPM()},
+		WMinBid:   sup.DefaultMinBid(),
+		WName:     sql.NullString{Valid: true, String: domain},
+		CTRStat:   CTRStat{},
+	}
+	NewManager()
+
+	q := `INSERT INTO websites (u_id, w_domain,w_supplier,w_status,created_at,updated_at,w_date, w_pub_id, w_minbid,w_name,w_floor_cpm)
+VALUES (?,?,?,?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE
   u_id=VALUES(u_id),w_domain=VALUES(w_domain),w_supplier=VALUES(w_supplier),w_status=VALUES(w_status),
   created_at=VALUES(created_at),updated_at=VALUES(updated_at),w_date=VALUES(w_date), w_id=LAST_INSERT_ID(w_id)`
 
 	t := time.Now()
 	res, err := NewManager().GetWDbMap().Exec(q, sup.UserID(),
-		sql.NullString{Valid: true, String: domain},
+		tw.WDomain,
 		sup.Name(), 1, sql.NullString{Valid: true, String: t.String()}, sql.NullString{Valid: true, String: t.String()},
-		int(t.Unix()), PublicIDGen(sup.Name(), domain),
+		int(t.Unix()), PublicIDGen(sup.Name(), domain), tw.WMinBid, tw.WName, tw.WFloorCpm,
 	)
 
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
-
-	return res.LastInsertId()
+	tw.WID, err = res.LastInsertId()
+	if err != nil {
+		return nil, err
+	}
+	return &tw, nil
 
 }

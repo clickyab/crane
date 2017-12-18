@@ -23,6 +23,8 @@ type seats struct {
 	SlotPublicID string  `json:"slot"`
 	ReserveHash  string  `json:"reserve_hash"`
 	WinnerBID    float64 `json:"wb"`
+	CPM          float64 `json:"cpm"`
+	SCPM         float64 `json:"scpm"`
 }
 
 // job is an show (impression) job
@@ -81,7 +83,7 @@ func (j *job) process(ctx context.Context) error {
 	}
 	for _, v := range j.Seats {
 		err := models.AddImpression(j.Supplier, v.ReserveHash, j.Publisher, j.Referrer, j.ParentURL,
-			v.SlotPublicID, j.CopID, v.AdSize, j.Suspicious, v.AdID, j.IP, v.WinnerBID, j.Alexa, j.Timestamp, j.Type)
+			v.SlotPublicID, j.CopID, v.AdSize, j.Suspicious, v.AdID, j.IP, v.WinnerBID, j.Alexa, j.Timestamp, j.Type, v.CPM, v.SCPM)
 		if err != nil {
 			xlog.GetWithError(ctx, err)
 			errs.add(err)
@@ -114,6 +116,8 @@ func NewImpressionJob(ctx entity.Context, s ...entity.Seat) broker.Job {
 			SlotPublicID: s[i].PublicID(),
 			WinnerBID:    s[i].Bid(),
 			ReserveHash:  s[i].ReservedHash(),
+			CPM:          s[i].CPM(),
+			SCPM:         s[i].SupplierCPM(),
 		})
 	}
 

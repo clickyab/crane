@@ -11,17 +11,21 @@ import (
 
 // AddImpression insert new impression to daily table
 // TODO : multiple insert per one query
-func AddImpression(rh, ref, par, spid, copID string, size, susp int, adid, pubid int64, ip net.IP,
-	bid float64, alexa bool, ts time.Time, typ entity.RequestType) error {
+func AddImpression(rh, ref, par, spid, copID string, size, susp int, adid int64, pub entity.Publisher, ip net.IP,
+	bid float64, alexa bool, ts time.Time, typ entity.RequestType, cpm, scpm float64) error {
 	var err error
-
+	impCPM := cpm
+	if scpm != 0 {
+		impCPM = scpm
+	}
+	sDiffCPM := sql.NullFloat64{Valid: scpm != 0, Float64: cpm - scpm}
 	wID := sql.NullInt64{}
 	appID := sql.NullInt64{}
 	refer := sql.NullString{}
 	parent := sql.NullString{}
 	if typ == entity.RequestTypeDemand {
 		// TODO : check for publisher type in demand too
-		wID = sql.NullInt64{Valid: err == nil, Int64: pubid}
+		wID = sql.NullInt64{Valid: err == nil, Int64: pub.ID()}
 		refer = sql.NullString{Valid: ref != "", String: ref}
 		parent = sql.NullString{Valid: par != "", String: par}
 	}
@@ -58,7 +62,9 @@ func AddImpression(rh, ref, par, spid, copID string, size, susp int, adid, pubid
 							imp_ipaddress,imp_referaddress,imp_parenturl,
 							imp_url,imp_winnerbid,imp_status,
 							imp_cookie,imp_alexa,imp_flash,
-							imp_time,imp_date,sla_id,slot_id
+							imp_time,imp_date,sla_id,
+							slot_id, s_name, s_diff_cpm,
+							imp_cpm
 							) VALUES (
 							?,?,?,
 							?,?,?,
@@ -66,7 +72,9 @@ func AddImpression(rh, ref, par, spid, copID string, size, susp int, adid, pubid
 							?,?,?,
 							?,?,?,
 							?,?,?,
-							?,?,?,?
+							?,?,?,
+							?,?,?,
+							?
 							)`, time.Now().Format("20060102"))
 
 	_, err = NewManager().GetWDbMap().Exec(q,
@@ -76,6 +84,8 @@ func AddImpression(rh, ref, par, spid, copID string, size, susp int, adid, pubid
 		ip.String(), refer, parent,
 		ca.Target(), bid, susp,
 		0, alx, 0,
-		ts.Unix(), ts.Format("20060102"), said, sID)
+		ts.Unix(), ts.Format("20060102"), said,
+		sID, pub.Supplier().Name(), sDiffCPM,
+		impCPM)
 	return err
 }

@@ -36,9 +36,12 @@ type payloadData struct {
 	UserAgent    string
 	IP           string
 	PreviousTime int64
+	CPM          float64
+	SCPM         float64
 }
 
 func extractor(ctx context.Context, r *http.Request) (*payloadData, error) {
+	var err error
 	jt := xmux.Param(ctx, "jt")
 	if jt == "" {
 		return nil, errors.New("jt not found")
@@ -50,7 +53,7 @@ func extractor(ctx context.Context, r *http.Request) (*payloadData, error) {
 	pl.Ref = r.URL.Query().Get("ref")
 	pl.Parent = r.URL.Query().Get("parent")
 
-	expired, m, err := jwt.NewJWT().Decode([]byte(jt), "aid", "sup", "dom", "bid", "uaip", "susp", "pid", "now")
+	expired, m, err := jwt.NewJWT().Decode([]byte(jt), "aid", "sup", "dom", "bid", "uaip", "susp", "pid", "now", "cpm")
 	if err != nil {
 		return nil, err
 	}
@@ -59,12 +62,17 @@ func extractor(ctx context.Context, r *http.Request) (*payloadData, error) {
 	if err != nil {
 		return nil, err
 	}
+	pl.CPM, _ = strconv.ParseFloat(m["cpm"], 64)
 	pl.PublicID = m["pid"]
 	// Get the supplier
 	pl.Supplier, err = models.GetSupplierByName(m["sup"])
 	if err != nil {
 		return nil, err
 	}
+
+	pl.SCPM, _ = strconv.ParseFloat(r.URL.Query().Get("scpm"), 64)
+	pl.SCPM = pl.SCPM * float64(pl.Supplier.Rate())
+
 	// get the publisher, even its not created then its fine
 	pl.Publisher, err = models.GetWebSite(pl.Supplier, m["dom"])
 	if err != nil {
