@@ -32,13 +32,16 @@ export CRN_SERVICES_MYSQL_RDSN?=root:bita123@tcp(127.0.0.1:3306)/clickyab?charse
 all: codegen
 	$(BUILD) ./...
 
-run-webserver: all ip2location
-	$(ROOT)/bin/crane
+run-demand: all ip2location
+	$(ROOT)/bin/demand
+
+run-supplier: all ip2location
+	$(ROOT)/bin/supplier
 
 run-imp: all ip2location
-	$(ROOT)/bin/crane-impression-worker
+	$(ROOT)/bin/impression-worker
 
 run-click: all ip2location
-	$(ROOT)/bin/crane-click-worker
+	$(ROOT)/bin/click-worker
 
 include $(ROOT)/scripts/*.mk
