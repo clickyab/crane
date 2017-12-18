@@ -2275,6 +2275,8 @@ CREATE TABLE `suppliers` (
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `rate` float NOT NULL DEFAULT '1',
+  `tiny_logo` varchar(200) NOT NULL,
+  `tiny_url` varchar(200) NOT NULL,
 
   PRIMARY KEY (`name`),
   UNIQUE KEY `token` (`token`)
@@ -2613,6 +2615,20 @@ CREATE TABLE `withdrawal` (
 --
 -- Table structure for table `withdrawal_history`
 --
+DROP TABLE IF EXISTS `daily_report`;
+CREATE TABLE `daily_report`
+(
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  supplier VARCHAR(63) NOT NULL,
+  type ENUM("web", "app") NOT NULL,
+  publisher VARCHAR(63) NOT NULL,
+  imps INT DEFAULT 0 NOT NULL,
+  cpm INT DEFAULT 0 NOT NULL,
+  clicks INT DEFAULT 0 NOT NULL,
+  cpc INT DEFAULT 0 NOT NULL,
+  date INT(11) NOT NULL
+);
+
 
 DROP TABLE IF EXISTS `withdrawal_history`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
