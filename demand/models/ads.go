@@ -38,8 +38,8 @@ func GetAd(adID int64) (entity.Advertise, error) {
 	return ad.(entity.Advertise), nil
 }
 
-// FindPublisherID return publisher id for given supplier,domain
-func FindPublisherID(sup, domain string, pid int64) (entity.Publisher, error) {
+// FindPublisher return publisher id for given supplier,domain
+func FindPublisher(sup, domain string, pid int64) (entity.Publisher, error) {
 	osup, err := GetSupplierByName(sup)
 	if err != nil {
 		return nil, err
@@ -56,7 +56,7 @@ func FindPublisherID(sup, domain string, pid int64) (entity.Publisher, error) {
 func AddImpression(supp, reserve, publisher, ref, parent, spid, copID string, size, susp int, adid int64, ip net.IP,
 	bid float64, alexa bool, ts time.Time, typ entity.RequestType, cpm, scpm float64) error {
 
-	tw, err := FindPublisherID(supp, publisher, 0)
+	tw, err := FindPublisher(supp, publisher, 0)
 	if err != nil {
 		return err
 	}
@@ -68,12 +68,13 @@ func AddImpression(supp, reserve, publisher, ref, parent, spid, copID string, si
 func AdClick(supplier, reservedHash, publisher, slotPublicID, referrer, parentURL, os, copID string,
 	susp, size int, fast, adID int64, winnerBid float64, ip net.IP, ts time.Time) error {
 	// find publisher id
-	pubID, err := FindPublisherID(supplier, publisher, 0)
+	pub, err := FindPublisher(supplier, publisher, 0)
 	if err != nil {
 		return err
 	}
-	click, err := entities.FillClickData(reservedHash, slotPublicID, referrer, parentURL, os, copID,
-		susp, size, fast, adID, winnerBid, ip, ts, pubID.ID())
+
+	click, err := entities.FillClickData(pub.Supplier().Name(), reservedHash, slotPublicID, referrer, parentURL, os, copID,
+		susp, size, fast, adID, winnerBid, ip, ts, pub.ID())
 	if err != nil {
 		return err
 	}

@@ -834,6 +834,7 @@ CREATE TABLE `clicks` (
   `c_date` int(11) DEFAULT '0',
   `ad_size` int(11) NOT NULL DEFAULT '0',
   `reserved_hash` VARCHAR( 63 ) DEFAULT NULL,
+  `c_supplier` VARCHAR( 20 ) DEFAULT "clickyab",
   PRIMARY KEY (`c_id`),
   KEY `c_date` (`c_date`),
   KEY `w_id` (`w_id`,`c_date`),
