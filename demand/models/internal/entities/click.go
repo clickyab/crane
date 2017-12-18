@@ -56,7 +56,7 @@ func FillClickData(rh, slotPubID, ref, parent, os, copID string, susp, size int,
 		reservedHash: rh,
 		winnerBid:    bid,
 		webSiteID:    pubID,
-		appID:        0, //TODO should be filled after app implemented
+		appID:        0, //TODO should be filled after App implemented
 		campaignID:   ad.Campaign().ID(),
 		campaignAdID: ad.CampaignAdID(),
 		slotID:       slotID,
