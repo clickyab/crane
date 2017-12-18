@@ -30,12 +30,13 @@ type Click struct {
 	os           string
 	time         int64
 	date         string
+	supplier     string
 	adSize       int
 	typ          entity.RequestType
 }
 
 // FillClickData try to fill Click structure
-func FillClickData(rh, slotPubID, ref, parent, os, copID string, susp, size int, fast, adID int64, bid float64, ip net.IP, ts time.Time, pubID int64) (*Click, error) {
+func FillClickData(supplier, rh, slotPubID, ref, parent, os, copID string, susp, size int, fast, adID int64, bid float64, ip net.IP, ts time.Time, pubID int64) (*Click, error) {
 	// find slot
 	slotID, err := FindWebSlotID(slotPubID, pubID, size)
 	if err != nil {
@@ -74,6 +75,7 @@ func FillClickData(rh, slotPubID, ref, parent, os, copID string, susp, size int,
 		fast:         fast, //TODO fix after rebase,
 		typ:          entity.RequestTypeDemand,
 		adID:         ad.ID(),
+		supplier:     supplier,
 	}, nil
 
 }
@@ -98,7 +100,7 @@ func InsertClick(c *Click) error {
 	c_fast,
 	c_os,
 	c_time,
-	c_date,ad_size) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
+	c_date,ad_size,c_supplier) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
 
 	wid := sql.NullInt64{Valid: c.webSiteID != 0, Int64: c.webSiteID}
 	referrer := sql.NullString{Valid: c.referrer != "", String: c.referrer}
@@ -107,7 +109,7 @@ func InsertClick(c *Click) error {
 	_, err := NewManager().GetWDbMap().Exec(q,
 		c.reservedHash, c.winnerBid, wid, 0, 0, c.campaignID,
 		c.campaignAdID, c.slotID, c.slotAdID, c.adID, c.copID, 0, c.status,
-		c.ip, referrer, parent, c.fast, c.os, c.time, c.date, c.adSize)
+		c.ip, referrer, parent, c.fast, c.os, c.time, c.date, c.adSize, c.supplier)
 
 	return err
 }
