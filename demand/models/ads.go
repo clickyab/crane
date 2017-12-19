@@ -7,6 +7,7 @@ import (
 
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/demand/models/internal/entities"
+	"clickyab.com/crane/demand/workers/models"
 	"github.com/clickyab/services/pool"
 )
 
@@ -53,15 +54,8 @@ func FindPublisher(sup, domain string, pid int64) (entity.Publisher, error) {
 
 // AddImpression insert new impression to daily table
 // TODO : multiple insert per query
-func AddImpression(supp, reserve, publisher, ref, parent, spid, copID string, size, susp int, adid int64, ip net.IP,
-	bid float64, alexa bool, ts time.Time, typ entity.RequestType, cpm, scpm float64) error {
-
-	tw, err := FindPublisher(supp, publisher, 0)
-	if err != nil {
-		return err
-	}
-
-	return entities.AddImpression(reserve, ref, parent, spid, copID, size, susp, adid, tw, ip, bid, alexa, ts, typ, cpm, scpm)
+func AddImpression(publisher entity.Publisher, impression models.Impression, seat models.Seat) error {
+	return entities.AddImpression(publisher, impression, seat)
 }
 
 // AdClick try to add new click

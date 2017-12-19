@@ -1,12 +1,14 @@
 package entity
 
+type PublisherType int
+
 const (
 	// PublisherTypeApp is the app
-	PublisherTypeApp = 1
+	PublisherTypeApp PublisherType = 1
 	// PublisherTypeWeb is the web
-	PublisherTypeWeb = 2
+	PublisherTypeWeb PublisherType = 2
 	// PublisherTypeVast is the vast
-	PublisherTypeVast = 3
+	PublisherTypeVast PublisherType = 3
 )
 
 // BIDType is the bid type for this imp cpc or cpm
@@ -37,4 +39,6 @@ type Publisher interface {
 	Supplier() Supplier
 	// CTR returns ctr of a slot with specific size
 	CTR(int) float64
+	// Type return type of this publisher
+	Type() PublisherType
 }

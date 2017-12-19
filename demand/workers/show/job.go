@@ -3,12 +3,10 @@ package show
 import (
 	"context"
 	"encoding/json"
-	"net"
-
-	"time"
 
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/demand/models"
+	m "clickyab.com/crane/demand/workers/models"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/broker"
 	"github.com/clickyab/services/xlog"
@@ -17,32 +15,10 @@ import (
 
 const topic = "impression"
 
-type seats struct {
-	AdID         int64   `json:"ad"`
-	AdSize       int     `json:"size"`
-	SlotPublicID string  `json:"slot"`
-	ReserveHash  string  `json:"reserve_hash"`
-	WinnerBID    float64 `json:"wb"`
-	CPM          float64 `json:"cpm"`
-	SCPM         float64 `json:"scpm"`
-}
-
 // job is an show (impression) job
 type job struct {
-	IP         net.IP             `json:"ip"`
-	CopID      string             `json:"cop"`
-	UserAgent  string             `json:"ua"`
-	Suspicious int                `json:"sp"`
-	Referrer   string             `json:"r"`
-	ParentURL  string             `json:"par"`
-	Publisher  string             `json:"pub"`
-	Supplier   string             `json:"sub"`
-	Type       entity.RequestType `json:"t"`
-	Alexa      bool               `json:"a"`
-
-	Seats []seats `json:"s"`
-
-	Timestamp time.Time `json:"ts"`
+	m.Impression
+	Seats []m.Seat `json:"s"`
 }
 
 // Encode this job into a byte to send over broker
@@ -81,9 +57,14 @@ func (j *job) process(ctx context.Context) error {
 	errs := errorProcess{
 		tasks: len(j.Seats),
 	}
+
+	pub, err := models.FindPublisher(j.Supplier, j.Publisher, 0)
+	if err != nil {
+		return err
+	}
 	for _, v := range j.Seats {
-		err := models.AddImpression(j.Supplier, v.ReserveHash, j.Publisher, j.Referrer, j.ParentURL,
-			v.SlotPublicID, j.CopID, v.AdSize, j.Suspicious, v.AdID, j.IP, v.WinnerBID, j.Alexa, j.Timestamp, j.Type, v.CPM, v.SCPM)
+
+		err := models.AddImpression(pub, j.Impression, v)
 		if err != nil {
 			xlog.GetWithError(ctx, err)
 			errs.add(err)
@@ -96,21 +77,22 @@ func (j *job) process(ctx context.Context) error {
 func NewImpressionJob(ctx entity.Context, s ...entity.Seat) broker.Job {
 	assert.True(len(s) > 0)
 	j := &job{
-
-		IP:         ctx.IP(),
-		CopID:      ctx.User().ID(),
-		UserAgent:  ctx.UserAgent(),
-		Suspicious: ctx.Suspicious(),
-		Referrer:   ctx.Referrer(),
-		ParentURL:  ctx.Parent(),
-		Publisher:  ctx.Publisher().Name(),
-		Supplier:   ctx.Publisher().Supplier().Name(),
-		Type:       ctx.Type(),
-		Timestamp:  ctx.Timestamp(),
-		Alexa:      ctx.Alexa(),
+		Impression: m.Impression{
+			IP:         ctx.IP(),
+			CopID:      ctx.User().ID(),
+			UserAgent:  ctx.UserAgent(),
+			Suspicious: ctx.Suspicious(),
+			Referrer:   ctx.Referrer(),
+			ParentURL:  ctx.Parent(),
+			Publisher:  ctx.Publisher().Name(),
+			Supplier:   ctx.Publisher().Supplier().Name(),
+			Type:       ctx.Type(),
+			Timestamp:  ctx.Timestamp(),
+			Alexa:      ctx.Alexa(),
+		},
 	}
 	for i := range s {
-		j.Seats = append(j.Seats, seats{
+		j.Seats = append(j.Seats, m.Seat{
 			AdID:         s[i].WinnerAdvertise().ID(),
 			AdSize:       s[i].Size(),
 			SlotPublicID: s[i].PublicID(),

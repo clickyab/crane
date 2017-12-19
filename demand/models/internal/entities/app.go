@@ -29,10 +29,14 @@ type App struct {
 	AppFatFinger  int            `db:"app_fatfinger"`
 	AppCategories SharpArray     `db:"app_cat"`
 	AppToken      string         `db:"app_token"`
+	FType         entity.PublisherType
+	Supp          entity.Supplier
+	FCTR          [21]float64
 	CTRStat
+}
 
-	Supp entity.Supplier
-	FCTR [21]float64
+func (app *App) Type() entity.PublisherType {
+	return app.FType
 }
 
 func (app *App) Encode(iw io.Writer) error {
@@ -118,6 +122,7 @@ func AppLoader(ctx context.Context) (map[string]kv.Serializable, error) {
 		}
 
 		for i := range res {
+			res[i].FType = entity.PublisherTypeApp
 			res[i].FCTR = [21]float64{}
 			res[i].FCTR[1] = calc(res[i].Impression1, res[i].Click1)
 			res[i].FCTR[2] = calc(res[i].Impression2, res[i].Click2)
