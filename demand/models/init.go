@@ -16,6 +16,7 @@ import (
 
 var (
 	websiteExp  = config.RegisterDuration("crane.models.expire.website", time.Hour, "expire time of websites")
+	appExp      = config.RegisterDuration("crane.models.expire.app", time.Hour, "expire time of apps")
 	supplierExp = config.RegisterDuration("crane.models.expire.supplier", time.Hour, "expire time of supplier")
 	adsExp      = config.RegisterDuration("crane.models.expire.ads", time.Minute, "expire time of ads")
 )
@@ -33,11 +34,14 @@ func (loader) Initialize() {
 
 	websites = pool.NewPool(entities.WebsiteLoader, cachepool.NewCachePool("WS_"), websiteExp.Duration(), 3)
 	websites.Start(ctx)
+	apps = pool.NewPool(entities.AppLoader, cachepool.NewCachePool("APP_"), appExp.Duration(), 3)
+	apps.Start(ctx)
 	ads = pool.NewPool(entities.AdLoader, memorypool.NewMemoryPool(), adsExp.Duration(), 3)
 	ads.Start(ctx)
 
 	// Wait for the first time load
 	<-suppliers.Notify()
+	<-apps.Notify()
 	<-suppliersByName.Notify()
 	<-websites.Notify()
 	<-ads.Notify()

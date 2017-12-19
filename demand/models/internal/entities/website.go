@@ -176,8 +176,8 @@ func (w *Website) Decode(r io.Reader) error {
 	return gob.NewDecoder(r).Decode(w)
 }
 
-// PublicIDGen generate public id from supplier name and domain
-func PublicIDGen(sup, domain string) int64 {
+// WebPublicIDGen generate public id from supplier name and domain
+func WebPublicIDGen(sup, domain string) int64 {
 	crc := crc64.New(crc64.MakeTable(crc64.ECMA))
 	_, err := crc.Write([]byte(sup + "/" + domain))
 	assert.Nil(err)
