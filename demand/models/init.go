@@ -18,6 +18,7 @@ var (
 	websiteExp  = config.RegisterDuration("crane.models.expire.website", time.Hour, "expire time of websites")
 	supplierExp = config.RegisterDuration("crane.models.expire.supplier", time.Hour, "expire time of supplier")
 	adsExp      = config.RegisterDuration("crane.models.expire.ads", time.Minute, "expire time of ads")
+	mobileExp   = config.RegisterDuration("crane.models.expire.mobile", time.Hour, "expire time of networks,brand and carrier")
 )
 
 type loader struct {
@@ -25,7 +26,12 @@ type loader struct {
 
 func (loader) Initialize() {
 	ctx := context.Background()
-
+	networks = pool.NewPool(entities.NetworkLoader, memorypool.NewMemoryPool(), mobileExp.Duration(), 3)
+	networks.Start(ctx)
+	carriers = pool.NewPool(entities.CarrierLoader, memorypool.NewMemoryPool(), mobileExp.Duration(), 3)
+	carriers.Start(ctx)
+	brands = pool.NewPool(entities.BrandLoader, memorypool.NewMemoryPool(), mobileExp.Duration(), 3)
+	brands.Start(ctx)
 	suppliers = pool.NewPool(entities.SupplierLoader, memorypool.NewMemoryPool(), supplierExp.Duration(), 3)
 	suppliers.Start(ctx)
 	suppliersByName = pool.NewPool(entities.SupplierLoaderByName, memorypool.NewMemoryPool(), supplierExp.Duration(), 3)
@@ -37,6 +43,10 @@ func (loader) Initialize() {
 	ads.Start(ctx)
 
 	// Wait for the first time load
+	<-networks.Notify()
+	<-carriers.Notify()
+	<-brands.Notify()
+	<-networks.Notify()
 	<-suppliers.Notify()
 	<-suppliersByName.Notify()
 	<-websites.Notify()
