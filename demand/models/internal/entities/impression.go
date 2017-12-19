@@ -3,56 +3,59 @@ package entities
 import (
 	"database/sql"
 	"fmt"
-	"net"
 	"time"
 
 	"clickyab.com/crane/demand/entity"
+	"clickyab.com/crane/demand/workers/models"
 )
 
 // AddImpression insert new impression to daily table
 // TODO : multiple insert per one query
-func AddImpression(rh, ref, par, spid, copID string, size, susp int, adid int64, pub entity.Publisher, ip net.IP,
-	bid float64, alexa bool, ts time.Time, typ entity.RequestType, cpm, scpm float64) error {
+func AddImpression(p entity.Publisher, m models.Impression, s models.Seat) error {
 	var err error
-	impCPM := cpm
-	if scpm != 0 {
-		impCPM = scpm
+	impCPM := s.CPM
+	if s.SCPM != 0 {
+		impCPM = s.SCPM
 	}
-	sDiffCPM := sql.NullFloat64{Valid: scpm != 0, Float64: cpm - scpm}
+	sDiffCPM := sql.NullFloat64{Valid: s.SCPM != 0, Float64: s.CPM - s.SCPM}
 	wID := sql.NullInt64{}
 	appID := sql.NullInt64{}
 	refer := sql.NullString{}
 	parent := sql.NullString{}
-	if typ == entity.RequestTypeDemand {
+
+	switch m.Type {
+	case entity.RequestTypeDemand:
 		// TODO : check for publisher type in demand too
-		wID = sql.NullInt64{Valid: err == nil, Int64: pub.ID()}
-		refer = sql.NullString{Valid: ref != "", String: ref}
-		parent = sql.NullString{Valid: par != "", String: par}
+		wID = sql.NullInt64{Valid: p.ID() != 0, Int64: p.ID()}
+		refer = sql.NullString{Valid: m.Referrer != "", String: m.Referrer}
+		parent = sql.NullString{Valid: m.ParentURL != "", String: m.ParentURL}
+	case entity.RequestTypeApp:
+		appID = sql.NullInt64{Valid: true, Int64: p.ID()}
 	}
 
 	var sID int64
 
 	// find slot id
 	if wID.Valid {
-		sID, err = FindWebSlotID(spid, wID.Int64, size)
+		sID, err = FindWebSlotID(s.SlotPublicID, wID.Int64, s.AdSize)
 	} else if appID.Valid {
-		sID, err = FindAppSlotID(spid, appID.Int64, size)
+		sID, err = FindAppSlotID(s.SlotPublicID, appID.Int64, s.AdSize)
 	}
 	if err != nil {
 		return err
 	}
 
 	// find slot ad
-	said, err := FindSlotAd(sID, adid)
+	said, err := FindSlotAd(sID, s.AdID)
 	if err != nil {
 		return err
 	}
-	ca, err := GetAd(adid)
+	ca, err := GetAd(s.AdID)
 	if err != nil {
 		return err
 	}
 	var alx int
-	if alexa {
+	if m.Alexa {
 		alx = 1
 	}
 	q := fmt.Sprintf(`INSERT INTO impressions%s (
@@ -78,14 +81,14 @@ func AddImpression(rh, ref, par, spid, copID string, size, susp int, adid int64,
 							)`, time.Now().Format("20060102"))
 
 	_, err = NewManager().GetWDbMap().Exec(q,
-		ca.Campaign().ID(), rh, size,
+		ca.Campaign().ID(), s.ReserveHash, s.AdSize,
 		wID, 0, appID,
-		adid, copID, ca.CampaignAdID(),
-		ip.String(), refer, parent,
-		ca.Target(), bid, susp,
+		s.AdID, m.CopID, ca.CampaignAdID(),
+		m.IP.String(), refer, parent,
+		ca.Target(), s.WinnerBID, m.Suspicious,
 		0, alx, 0,
-		ts.Unix(), ts.Format("20060102"), said,
-		sID, pub.Supplier().Name(), sDiffCPM,
+		m.Timestamp.Unix(), m.Timestamp.Format("20060102"), said,
+		sID, p.Supplier().Name(), sDiffCPM,
 		impCPM)
 	return err
 }

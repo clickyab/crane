@@ -7,6 +7,10 @@ type fakepub struct {
 	s    entity.Supplier
 }
 
+func (fp fakepub) Type() entity.PublisherType {
+	panic("implement me")
+}
+
 func (fakepub) ID() int64 {
 	return 0
 }
