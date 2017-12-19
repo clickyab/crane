@@ -16,8 +16,8 @@ var (
 	rightel  = regexp.MustCompile("(?i)(righ( )?tel(@)?|IRN 20)$") // Some case are like "Rightle | rightel"
 )
 
-// getPhoneData try to insert/retrieve brand for phone
-func getPhoneData(carrier string) string {
+// sanitizeCarrier try to insert/retrieve brand for phone
+func sanitizeCarrier(carrier string) string {
 	if irancel.MatchString(carrier) {
 		carrier = "Irancell"
 	} else if irmci.MatchString(carrier) {
@@ -30,7 +30,7 @@ func getPhoneData(carrier string) string {
 
 // GetCarrierByName is a function to get the carrier by its name
 func GetCarrierByName(name string) (int64, string, error) {
-	name = getPhoneData(name)
+	name = sanitizeCarrier(name)
 	d := &entities.Carrier{}
 	res, err := carriers.Get(name, d)
 	if err != nil {

@@ -54,4 +54,10 @@ type Context interface {
 	BIDType() BIDType
 	// Rate return ratio currency conversion to IRR
 	Rate() float64
+	// Network return network for app
+	Network() (string, int64)
+	// Carrier return carrier for app
+	Carrier() (string, int64)
+	// Brand return brand for app
+	Brand() (string, int64)
 }

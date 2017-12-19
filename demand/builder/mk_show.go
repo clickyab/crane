@@ -262,6 +262,42 @@ func SetMultiVideo(v bool) ShowOptionSetter {
 	}
 }
 
+// SetNetwork is set network id from name
+func SetNetwork(v string) ShowOptionSetter {
+	return func(o *Context) (*Context, error) {
+		i, n, err := models.GetNetworkByName(v)
+		if err != nil {
+			return o, err
+		}
+		o.networkID, o.networkName = i, n
+		return o, nil
+	}
+}
+
+// SetBrand is set brand id from name
+func SetBrand(v string) ShowOptionSetter {
+	return func(o *Context) (*Context, error) {
+		i, n, err := models.GetBrandByName(v)
+		if err != nil {
+			return o, err
+		}
+		o.brandID, o.brandName = i, n
+		return o, nil
+	}
+}
+
+// SetCarrier is set carrier id from name
+func SetCarrier(v string) ShowOptionSetter {
+	return func(o *Context) (*Context, error) {
+		i, n, err := models.GetCarrierByName(v)
+		if err != nil {
+			return o, err
+		}
+		o.carrierID, o.carrierName = i, n
+		return o, nil
+	}
+}
+
 // DoNotShowTFrame is the function to disable show t frame (just for demand for now)
 func DoNotShowTFrame() ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
