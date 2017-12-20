@@ -103,6 +103,7 @@ func SetTargetHost(host string) ShowOptionSetter {
 // SetProtocolByRequest try to find protocol of the request based on the request headers
 func SetProtocolByRequest(r *http.Request) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
+		// TODO : Create framework.Schema() function
 		o.protocol = entity.HTTP
 		if r.TLS != nil {
 			o.protocol = entity.HTTPS
