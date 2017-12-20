@@ -9,7 +9,7 @@ type controller struct {
 }
 
 func (controller) Routes(framework.Mux) {
-	panic("implement me")
+	//panic("implement me")
 }
 
 func init() {
