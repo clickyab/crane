@@ -15,4 +15,4 @@ chown develop. /home/develop/go
 chown develop. /home/develop/go/src
 chown develop. /home/develop/go/src/clickyab.com
 
-sudo -u develop /home/develop/go/src/clickyab.com/crane/bin/provision_user.sh
+sudo -u develop /home/develop/go/src/clickyab.com/crane/scripts/provision_user.sh

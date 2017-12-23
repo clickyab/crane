@@ -14,11 +14,11 @@ BRANCH=${BRANCH_NAME:-master}
 BRANCH=${CHANGE_TARGET:-${BRANCH}}
 CACHE_ROOT=${CACHE_ROOT:-/var/lib/jenkins/cache}
 
+[ -z ${APP} ] && exit_message "The APP is not defined." # WTF, the APP NAME is important
 [ -z ${CHANGE_AUTHOR} ] || exit_message "It's a PR, bail out" 0
 if [[ ( "${BRANCH}" != "master" ) && ( "${BRANCH}" != "dev" ) ]]; then
     exit_message "Its not on correct branch, bail out" 0
 fi
-[ -z ${APP} ] && exit_message "The APP is not defined." # WTF, the APP NAME is important
 
 SCRIPT_DIR=$(readlink -f $(dirname ${BASH_SOURCE[0]}))
 
@@ -60,29 +60,24 @@ done< <(env -0)
 
 TEMPORARY=$(mktemp -d)
 
-
 # Create Rockerfile to build with rocker (the Dockerfile enhancer tool)
 cat > ${TEMPORARY}/Rockerfile <<EOF
-FROM gliderlabs/herokuish
+FROM alpine:3.6
 
-MOUNT {{ .Build }}:/tmp/app
-MOUNT {{ .EnvDir }}:/tmp/env
-MOUNT {{ .Target }}:/tmp/build
-MOUNT {{ .Cache }}:/tmp/cache
+MOUNT {{ .Build }}:/crane
 
 ENV TZ=Asia/Tehran
-RUN ln -snf /usr/share/zoneinfo/\$TZ /etc/localtime && echo \$TZ > /etc/timezone
 
-RUN /bin/herokuish buildpack build && rm -rf /app/pkg && rm -rf /app/tmp
-EXPORT /app/bin /app
-
-FROM ubuntu:16.04
-IMPORT /app
-
-ENV TZ=Asia/Tehran
-RUN ln -snf /usr/share/zoneinfo/\$TZ /etc/localtime && echo \$TZ > /etc/timezone
-
-RUN apt-get update && apt-get install -y tzdata ca-certificates && apt-get clean
+# I don't need to set GOPATH since the Makefile takes care of that
+RUN apk add --no-cache --virtual .build-deps git go libc-dev make tzdata \
+    && cp /usr/share/zoneinfo/\$TZ /etc/localtime && echo \$TZ > /etc/timezone \
+    && apk add --no-cache ca-certificates bash wget && update-ca-certificates \
+    && mkdir -p /gopath/src/clickyab.com/ && cp -r /crane /gopath/src/clickyab.com/ \
+    && cd /gopath/src/clickyab.com/crane && make \
+    && apk del .build-deps \
+    && mkdir -p /app/bin \
+    && mv /gopath/src/clickyab.com/crane/bin/* /app/bin/ \
+    && rm -rf /gopath /go
 
 TAG registry.clickyab.ae/clickyab/{{ .App }}:{{ .Version }}
 PUSH registry.clickyab.ae/clickyab/{{ .App }}:{{ .Version }}
@@ -93,12 +88,18 @@ EOF
 TARGET=$(mktemp -d)
 pushd ${TEMPORARY}
 # Actual build
-rocker build --push -var Build=${BUILD} -var EnvDir=${VARS} -var Cache=${CACHE} -var Target=${TARGET} -var Version=${COMMITCOUNT} -var App=${APP}_${BRANCH}
+PUSH="--push"
+if [[ ( "${BRANCH}" != "master" ) && ( "${BRANCH}" != "dev" ) ]]; then
+    PUSH=""
+fi
+rocker build ${PUSH} -var Build=${SOURCE_DIR} -var EnvDir=${VARS} -var Cache=${CACHE} -var Target=${TARGET} -var Version=${COMMITCOUNT} -var App=${APP}_${BRANCH}
 popd
 
 NAMESPACE="${APP}"
+VERSION="${COMMITCOUNT}"
 if [[ "${BRANCH}" == "dev" ]]; then
     NAMESPACE=${APP}-staging
+    #VERSION="latest"
 fi
 
 echo "${VARS}" >> /tmp/kill-me
@@ -109,5 +110,5 @@ echo "${BUILD_PACKS_DIR}" >> /tmp/kill-me
 
 for WRK_TYP in web-server impression-worker click-worker
 do
-   kubectl -n ${NAMESPACE} set image deployment  ${APP}-${WRK_TYP} ${APP}-${BRANCH}=registry.clickyab.ae/clickyab/${APP}_${BRANCH}:${COMMITCOUNT} --record
+   kubectl -n ${NAMESPACE} set image deployment  ${APP}-${WRK_TYP} ${APP}-${BRANCH}=registry.clickyab.ae/clickyab/${APP}_${BRANCH}:${VERSION} --record
 done
