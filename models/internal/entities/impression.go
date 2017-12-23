@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"clickyab.com/crane/demand/entity"
-	"clickyab.com/crane/demand/workers/models"
+	"clickyab.com/crane/workers/models"
 )
 
 // AddImpression insert new impression to daily table

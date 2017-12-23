@@ -10,9 +10,10 @@ import (
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/demand/filter"
 	"clickyab.com/crane/demand/layers/output/demand"
-	"clickyab.com/crane/demand/models"
 	"clickyab.com/crane/demand/reducer"
 	"clickyab.com/crane/demand/rtb"
+	"clickyab.com/crane/models/suppliers"
+	"clickyab.com/crane/models/website"
 	"github.com/bsm/openrtb"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/xlog"
@@ -39,7 +40,7 @@ var (
 // openrtbInput is the route for rtb input layer
 func openrtbInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	token := xmux.Param(ctx, "token")
-	sup, err := models.GetSupplierByToken(token)
+	sup, err := suppliers.GetSupplierByToken(token)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		return
@@ -66,7 +67,7 @@ func openrtbInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	publisher, err := models.GetWebSite(sup, publisher(payload))
+	publisher, err := website.GetWebSite(sup, publisher(payload))
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		xlog.GetWithError(ctx, err).Error("no publisher")

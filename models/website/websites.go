@@ -1,10 +1,10 @@
-package models
+package website
 
 import (
 	"fmt"
 
 	"clickyab.com/crane/demand/entity"
-	"clickyab.com/crane/demand/models/internal/entities"
+	"clickyab.com/crane/models/internal/entities"
 	"github.com/clickyab/services/pool"
 )
 

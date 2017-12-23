@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"clickyab.com/crane/demand/builder"
-	"clickyab.com/crane/demand/workers/click"
+	"clickyab.com/crane/workers/click"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/broker"
 	"github.com/clickyab/services/config"

@@ -1,11 +1,13 @@
-package models
+package ads
 
 import (
 	"fmt"
 
 	"clickyab.com/crane/demand/entity"
-	"clickyab.com/crane/demand/models/internal/entities"
-	"clickyab.com/crane/demand/workers/models"
+	"clickyab.com/crane/models/internal/entities"
+	"clickyab.com/crane/models/suppliers"
+	"clickyab.com/crane/models/website"
+	"clickyab.com/crane/workers/models"
 	"github.com/clickyab/services/pool"
 )
 
@@ -39,11 +41,11 @@ func GetAd(adID int64) (entity.Advertise, error) {
 
 // FindPublisher return publisher id for given supplier,domain
 func FindPublisher(sup, domain string, pid int64) (entity.Publisher, error) {
-	osup, err := GetSupplierByName(sup)
+	osup, err := suppliers.GetSupplierByName(sup)
 	if err != nil {
 		return nil, err
 	}
-	p, err := GetWebSiteID(osup, domain, pid)
+	p, err := website.GetWebSiteID(osup, domain, pid)
 	if err != nil {
 		return nil, err
 	}

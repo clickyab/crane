@@ -8,7 +8,7 @@ import (
 	"clickyab.com/crane/demand/builder"
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/demand/layers/output/banner"
-	"clickyab.com/crane/demand/workers/show"
+	"clickyab.com/crane/workers/show"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/broker"
 	"github.com/clickyab/services/kv"

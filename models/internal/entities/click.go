@@ -4,7 +4,7 @@ import (
 	"database/sql"
 
 	"clickyab.com/crane/demand/entity"
-	"clickyab.com/crane/demand/workers/models"
+	"clickyab.com/crane/workers/models"
 )
 
 // Click fill structure for Click

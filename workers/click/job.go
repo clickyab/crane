@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 
 	"clickyab.com/crane/demand/entity"
-	"clickyab.com/crane/demand/models"
-	worker "clickyab.com/crane/demand/workers/models"
+	"clickyab.com/crane/models/ads"
+	worker "clickyab.com/crane/workers/models"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/broker"
 	"github.com/clickyab/services/config"
@@ -59,12 +59,12 @@ func (j *job) Report() func(error) {
 }
 
 func (j *job) process() error {
-	pub, err := models.FindPublisher(j.Supplier, j.Publisher, 0)
+	pub, err := ads.FindPublisher(j.Supplier, j.Publisher, 0)
 	if err != nil {
 		return err
 	}
 
-	return models.AdClick(pub, j.Impression, j.Seat, j.OS, j.Fast)
+	return ads.AdClick(pub, j.Impression, j.Seat, j.OS, j.Fast)
 
 }
 
