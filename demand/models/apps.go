@@ -18,7 +18,7 @@ func GetApp(sup entity.Supplier, appPackage string) (entity.Publisher, error) {
 	res, err := apps.Get(fmt.Sprintf("%s/%s", sup.Name(), appPackage), d)
 	if err != nil {
 		if sup.AllowCreate() {
-			return entities.NewFakePublisher(sup, appPackage), nil
+			return entities.NewFakePublisher(sup, appPackage, entity.PublisherTypeApp), nil
 		}
 		return nil, err
 	}
@@ -27,8 +27,6 @@ func GetApp(sup entity.Supplier, appPackage string) (entity.Publisher, error) {
 	}
 	d = res.(*entities.App)
 	d.Supp = sup
-	d.FType = entity.PublisherTypeApp
-
 	return d, nil
 }
 
@@ -39,7 +37,6 @@ func GetAppID(sup entity.Supplier, appPackage string, token string) (int64, erro
 	if err == nil {
 		d = res.(*entities.App)
 		d.Supp = sup
-		d.FType = entity.PublisherTypeApp
 		return d.AppID, nil
 	}
 	app, err := entities.FindOrAddApp(sup, appPackage, token)

@@ -63,7 +63,6 @@ func (j *job) process(ctx context.Context) error {
 		return err
 	}
 	for _, v := range j.Seats {
-
 		err := models.AddImpression(pub, j.Impression, v)
 		if err != nil {
 			xlog.GetWithError(ctx, err)

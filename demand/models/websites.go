@@ -18,7 +18,7 @@ func GetWebSite(sup entity.Supplier, domain string) (entity.Publisher, error) {
 	res, err := websites.Get(fmt.Sprintf("%s/%s", sup.Name(), domain), d)
 	if err != nil {
 		if sup.AllowCreate() {
-			return entities.NewFakePublisher(sup, domain), nil
+			return entities.NewFakePublisher(sup, domain, entity.PublisherTypeWeb), nil
 		}
 		return nil, err
 	}
@@ -26,7 +26,6 @@ func GetWebSite(sup entity.Supplier, domain string) (entity.Publisher, error) {
 		return nil, fmt.Errorf("blocked site")
 	}
 	d = res.(*entities.Website)
-	d.FType = entity.PublisherTypeWeb
 	d.Supp = sup
 
 	return d, nil
@@ -38,7 +37,6 @@ func GetWebSiteID(sup entity.Supplier, domain string, pid int64) (entity.Publish
 	res, err := websites.Get(fmt.Sprintf("%s/%s", sup.Name(), domain), d)
 	if err == nil {
 		d = res.(*entities.Website)
-		d.FType = entity.PublisherTypeWeb
 		d.Supp = sup
 		return d, nil
 	}
