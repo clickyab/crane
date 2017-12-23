@@ -2,12 +2,10 @@ package click
 
 import (
 	"encoding/json"
-	"net"
-
-	"time"
 
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/demand/models"
+	worker "clickyab.com/crane/demand/workers/models"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/broker"
 	"github.com/clickyab/services/config"
@@ -22,25 +20,11 @@ var (
 
 // job is an show (impression) job
 type job struct {
-	IP         net.IP             `json:"ip"`
-	CopID      string             `json:"cop"`
-	UserAgent  string             `json:"ua"`
-	Suspicious int                `json:"sp"`
-	Referrer   string             `json:"r"`
-	ParentURL  string             `json:"par"`
-	Publisher  string             `json:"pub"`
-	Supplier   string             `json:"sub"`
-	Type       entity.RequestType `json:"t"`
-	Alexa      bool               `json:"a"`
-	OS         entity.OS          `json:"os"`
-	Fast       int64              `json:"fast"`
+	worker.Impression
+	worker.Seat
 
-	AdID         int64     `json:"ad"`
-	AdSize       int       `json:"size"`
-	SlotPublicID string    `json:"slot"`
-	WinnerBID    float64   `json:"wb"`
-	ReservedHash string    `json:"rh"`
-	Timestamp    time.Time `json:"ts"`
+	OS   entity.OS `json:"os"`
+	Fast int64     `json:"fast"`
 }
 
 // Encode this job into a byte to send over broker
@@ -75,17 +59,13 @@ func (j *job) Report() func(error) {
 }
 
 func (j *job) process() error {
+	pub, err := models.FindPublisher(j.Supplier, j.Publisher, 0)
+	if err != nil {
+		return err
+	}
 
-	return models.AdClick(j.Supplier,
-		j.ReservedHash,
-		j.Publisher,
-		j.SlotPublicID,
-		j.Referrer,
-		j.ParentURL,
-		j.OS.Name,
-		j.CopID,
-		j.Suspicious,
-		j.AdSize, j.Fast, j.AdID, j.WinnerBID, j.IP, j.Timestamp)
+	return models.AdClick(pub, j.Impression, j.Seat, j.OS, j.Fast)
+
 }
 
 // NewClickJob return a new job for the worker
@@ -99,25 +79,28 @@ func NewClickJob(ctx entity.Context) broker.Job {
 		susp = 9
 	}
 	j := &job{
-		IP:         ctx.IP(),
-		CopID:      ctx.User().ID(),
-		UserAgent:  ctx.UserAgent(),
-		Suspicious: susp,
-		Referrer:   ctx.Referrer(),
-		ParentURL:  ctx.Parent(),
-		Publisher:  ctx.Publisher().Name(),
-		Supplier:   ctx.Publisher().Supplier().Name(),
-		Type:       ctx.Type(),
-		Timestamp:  ctx.Timestamp(),
-		Alexa:      ctx.Alexa(),
-		OS:         ctx.OS(),
-
-		AdID:         s.WinnerAdvertise().ID(),
-		AdSize:       s.Size(),
-		SlotPublicID: s.PublicID(),
-		WinnerBID:    s.Bid(),
-		ReservedHash: s.ReservedHash(),
-		Fast:         fast,
+		Impression: worker.Impression{
+			IP:         ctx.IP(),
+			CopID:      ctx.User().ID(),
+			UserAgent:  ctx.UserAgent(),
+			Suspicious: susp,
+			Referrer:   ctx.Referrer(),
+			ParentURL:  ctx.Parent(),
+			Publisher:  ctx.Publisher().Name(),
+			Supplier:   ctx.Publisher().Supplier().Name(),
+			Type:       ctx.Type(),
+			Timestamp:  ctx.Timestamp(),
+			Alexa:      ctx.Alexa(),
+		},
+		Seat: worker.Seat{
+			AdID:         s.WinnerAdvertise().ID(),
+			AdSize:       s.Size(),
+			SlotPublicID: s.PublicID(),
+			WinnerBID:    s.Bid(),
+			ReserveHash:  s.ReservedHash(),
+		},
+		OS:   ctx.OS(),
+		Fast: fast,
 	}
 
 	return j

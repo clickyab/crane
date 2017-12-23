@@ -1,12 +1,10 @@
 package entities
 
 import (
-	"net"
-	"time"
-
 	"database/sql"
 
 	"clickyab.com/crane/demand/entity"
+	"clickyab.com/crane/demand/workers/models"
 )
 
 // Click fill structure for Click
@@ -14,8 +12,8 @@ type Click struct {
 	reservedHash string
 	winnerBid    float64
 	adID         int64
-	webSiteID    int64
-	appID        int64
+	webSiteID    sql.NullInt64
+	appID        sql.NullInt64
 	campaignID   int64
 	campaignAdID int64
 	slotID       int64
@@ -36,46 +34,62 @@ type Click struct {
 }
 
 // FillClickData try to fill Click structure
-func FillClickData(supplier, rh, slotPubID, ref, parent, os, copID string, susp, size int, fast, adID int64, bid float64, ip net.IP, ts time.Time, pubID int64) (*Click, error) {
-	// find slot
-	slotID, err := FindWebSlotID(slotPubID, pubID, size)
+func FillClickData(p entity.Publisher, m models.Impression, s models.Seat, os entity.OS, fast int64) (*Click, error) {
+
+	var err error
+
+	wID := sql.NullInt64{}
+	appID := sql.NullInt64{}
+
+	if p.Type() == entity.PublisherTypeWeb {
+		wID = sql.NullInt64{Valid: p.ID() != 0, Int64: p.ID()}
+
+	} else if p.Type() == entity.PublisherTypeApp {
+		appID = sql.NullInt64{Valid: p.ID() != 0, Int64: p.ID()}
+	} else {
+		panic("mismatch impression and publisher type")
+	}
+	var sID int64
+
+	// find slot id
+	if wID.Valid {
+		sID, err = FindWebSlotID(s.SlotPublicID, wID.Int64, s.AdSize)
+	} else if appID.Valid {
+		sID, err = FindAppSlotID(s.SlotPublicID, appID.Int64, s.AdSize)
+	}
 	if err != nil {
 		return nil, err
 	}
 
 	//find ad
-	ad, err := GetAd(adID)
+	ad, err := GetAd(s.AdID)
 	if err != nil {
 		return nil, err
 	}
-	//find slot ad
-	slotAdID, err := FindSlotAd(slotID, ad.ID())
-	if err != nil {
-		return nil, err
-	}
+
 	return &Click{
-		reservedHash: rh,
-		winnerBid:    bid,
-		webSiteID:    pubID,
-		appID:        0, //TODO should be filled after App implemented
+		reservedHash: s.ReserveHash,
+		winnerBid:    s.WinnerBID,
+		webSiteID:    wID,
+		appID:        appID,
 		campaignID:   ad.Campaign().ID(),
 		campaignAdID: ad.CampaignAdID(),
-		slotID:       slotID,
-		slotAdID:     slotAdID,
-		copID:        copID,
+		slotID:       sID,
+		slotAdID:     s.AdID,
+		copID:        m.CopID,
 		impID:        0, //TODO not sure about that
-		status:       susp,
-		ip:           ip.String(),
-		referrer:     ref,
-		parent:       parent,
-		os:           os,
-		adSize:       size,
-		time:         ts.Unix(),
-		date:         ts.Format("20060102"),
+		status:       m.Suspicious,
+		ip:           m.IP.String(),
+		referrer:     m.Referrer,
+		parent:       m.ParentURL,
+		os:           os.Name,
+		adSize:       s.AdSize,
+		time:         m.Timestamp.Unix(),
+		date:         m.Timestamp.Format("20060102"),
 		fast:         fast, //TODO fix after rebase,
 		typ:          entity.RequestTypeDemand,
 		adID:         ad.ID(),
-		supplier:     supplier,
+		supplier:     p.Supplier().Name(),
 	}, nil
 
 }
@@ -102,12 +116,11 @@ func InsertClick(c *Click) error {
 	c_time,
 	c_date,ad_size,c_supplier) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
 
-	wid := sql.NullInt64{Valid: c.webSiteID != 0, Int64: c.webSiteID}
 	referrer := sql.NullString{Valid: c.referrer != "", String: c.referrer}
 	parent := sql.NullString{Valid: c.parent != "", String: c.parent}
 
 	_, err := NewManager().GetWDbMap().Exec(q,
-		c.reservedHash, c.winnerBid, wid, 0, 0, c.campaignID,
+		c.reservedHash, c.winnerBid, c.webSiteID, c.appID, 0, c.campaignID,
 		c.campaignAdID, c.slotID, c.slotAdID, c.adID, c.copID, 0, c.status,
 		c.ip, referrer, parent, c.fast, c.os, c.time, c.date, c.adSize, c.supplier)
 
