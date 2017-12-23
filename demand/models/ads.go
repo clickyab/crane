@@ -2,8 +2,6 @@ package models
 
 import (
 	"fmt"
-	"net"
-	"time"
 
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/demand/models/internal/entities"
@@ -58,17 +56,9 @@ func AddImpression(publisher entity.Publisher, impression models.Impression, sea
 	return entities.AddImpression(publisher, impression, seat)
 }
 
-// AdClick try to add new click
-func AdClick(supplier, reservedHash, publisher, slotPublicID, referrer, parentURL, os, copID string,
-	susp, size int, fast, adID int64, winnerBid float64, ip net.IP, ts time.Time) error {
-	// find publisher id
-	pub, err := FindPublisher(supplier, publisher, 0)
-	if err != nil {
-		return err
-	}
-
-	click, err := entities.FillClickData(pub.Supplier().Name(), reservedHash, slotPublicID, referrer, parentURL, os, copID,
-		susp, size, fast, adID, winnerBid, ip, ts, pub.ID())
+func AdClick(p entity.Publisher, m models.Impression, s models.Seat,
+	os entity.OS, fast int64) error {
+	click, err := entities.FillClickData(p, m, s, os, fast)
 	if err != nil {
 		return err
 	}

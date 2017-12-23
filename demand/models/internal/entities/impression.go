@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"time"
 
-	"errors"
-
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/demand/workers/models"
 )
@@ -25,13 +23,13 @@ func AddImpression(p entity.Publisher, m models.Impression, s models.Seat) error
 	refer := sql.NullString{Valid: m.Referrer != "", String: m.Referrer}
 	parent := sql.NullString{Valid: m.ParentURL != "", String: m.ParentURL}
 
-	if (m.Type == entity.RequestTypeDemand || m.Type == entity.RequestTypeWeb) && p.Type() == entity.PublisherTypeWeb {
+	if p.Type() == entity.PublisherTypeWeb {
 		wID = sql.NullInt64{Valid: p.ID() != 0, Int64: p.ID()}
 
-	} else if m.Type == entity.RequestTypeApp && p.Type() == entity.PublisherTypeApp {
+	} else if p.Type() == entity.PublisherTypeApp {
 		appID = sql.NullInt64{Valid: p.ID() != 0, Int64: p.ID()}
 	} else {
-		return errors.New("mismatch impression and publisher type")
+		panic("mismatch impression and publisher type")
 	}
 
 	var sID int64

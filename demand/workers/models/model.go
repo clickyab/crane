@@ -12,7 +12,7 @@ type Seat struct {
 	AdID         int64   `json:"ad"`
 	AdSize       int     `json:"size"`
 	SlotPublicID string  `json:"slot"`
-	ReserveHash  string  `json:"reserve_hash"`
+	ReserveHash  string  `json:"rh"`
 	WinnerBID    float64 `json:"wb"`
 	CPM          float64 `json:"cpm"`
 	SCPM         float64 `json:"scpm"`
