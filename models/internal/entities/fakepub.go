@@ -6,6 +6,16 @@ type fakepub struct {
 	name  string
 	s     entity.Supplier
 	ptype entity.PublisherType
+
+	att map[entity.PublisherAttributes]interface{}
+}
+
+func (fp *fakepub) Attributes() map[entity.PublisherAttributes]interface{} {
+	if fp.att == nil {
+		fp.att = make(map[entity.PublisherAttributes]interface{})
+	}
+
+	return fp.att
 }
 
 func (fp fakepub) Type() entity.PublisherType {
