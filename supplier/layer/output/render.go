@@ -13,10 +13,14 @@ import (
 )
 
 // Render try to render to suitable json
-func Render(ctx context.Context, w io.Writer, resp *openrtb.BidResponse) error {
+func RenderBanner(ctx context.Context, w io.Writer, resp *openrtb.BidResponse, extra string) error {
 	final := make(map[string]string)
 	for i := range resp.SeatBid[0].Bid {
-		final[resp.SeatBid[0].Bid[i].ImpID] = strings.Replace(resp.SeatBid[0].Bid[i].AdMarkup, "${AUCTION_PRICE}", fmt.Sprintf("%f", resp.SeatBid[0].Bid[i].Price), -1)
+		slotId := resp.SeatBid[0].Bid[i].ImpID
+		if slotId == extra {
+			slotId = "m"
+		}
+		final[slotId] = strings.Replace(resp.SeatBid[0].Bid[i].AdMarkup, "${AUCTION_PRICE}", fmt.Sprintf("%f", resp.SeatBid[0].Bid[i].Price), -1)
 	}
 
 	s, err := json.Marshal(final)
