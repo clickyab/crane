@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 
 	"clickyab.com/crane/demand/entity"
-	"clickyab.com/crane/demand/models"
-	m "clickyab.com/crane/demand/workers/models"
+	"clickyab.com/crane/models/ads"
+	m "clickyab.com/crane/workers/models"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/broker"
 	"github.com/clickyab/services/xlog"
@@ -58,12 +58,12 @@ func (j *job) process(ctx context.Context) error {
 		tasks: len(j.Seats),
 	}
 
-	pub, err := models.FindPublisher(j.Supplier, j.Publisher, 0)
+	pub, err := ads.FindPublisher(j.Supplier, j.Publisher, 0)
 	if err != nil {
 		return err
 	}
 	for _, v := range j.Seats {
-		err := models.AddImpression(pub, j.Impression, v)
+		err := ads.AddImpression(pub, j.Impression, v)
 		if err != nil {
 			xlog.GetWithError(ctx, err)
 			errs.add(err)

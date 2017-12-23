@@ -1,4 +1,4 @@
-package models
+package ip2l
 
 import (
 	"net"
