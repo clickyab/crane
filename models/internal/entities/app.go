@@ -32,6 +32,16 @@ type App struct {
 	Supp          entity.Supplier
 	FCTR          [21]float64
 	CTRStat
+
+	att map[entity.PublisherAttributes]interface{} `db:"-"`
+}
+
+func (app *App) Attributes() map[entity.PublisherAttributes]interface{} {
+	if app.att == nil {
+		app.att = make(map[entity.PublisherAttributes]interface{})
+	}
+
+	return app.att
 }
 
 func (app *App) Type() entity.PublisherType {

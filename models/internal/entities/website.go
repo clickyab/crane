@@ -24,9 +24,22 @@ type Website struct {
 	WFloorCpm   sql.NullInt64  `db:"w_floor_cpm"`
 	WFatFinger  int            `db:"w_fatfinger"`
 	Status      int            `db:"w_status"`
+	MobAd       int            `db:"w_mobad"`
 	CTRStat
-	Supp entity.Supplier
+	Supp entity.Supplier `db:"-"`
 	FCTR [21]float64
+
+	att map[entity.PublisherAttributes]interface{}
+}
+
+func (w *Website) Attributes() map[entity.PublisherAttributes]interface{} {
+	if w.att == nil {
+		w.att = make(map[entity.PublisherAttributes]interface{})
+		if w.MobAd > 0 {
+			w.att[entity.PAMobileAd] = true
+		}
+	}
+	return w.att
 }
 
 func (w *Website) Type() entity.PublisherType {
@@ -113,7 +126,7 @@ func WebsiteLoader(ctx context.Context) (map[string]kv.Serializable, error) {
 
 	const cnt = 10000
 	for j := 0; ; j = j + cnt {
-		q := fmt.Sprintf(`SELECT w_id, w_domain, w_supplier, w_name, w_categories, w_minbid, w_floor_cpm, w_fatfinger, w_status,
+		q := fmt.Sprintf(`SELECT w_id, w_domain, w_supplier, w_name, w_categories, w_minbid, w_floor_cpm, w_fatfinger, w_status,w_mobad,
   SUM(imp_1) AS imp1, SUM(imp_2) AS imp2, SUM(imp_3) AS imp3, SUM(imp_4) AS imp4, SUM(imp_5) AS imp5,
   SUM(imp_6) AS imp6, SUM(imp_7) AS imp7, SUM(imp_8) AS imp8, SUM(imp_9) AS imp9, SUM(imp_10) AS imp10,
   SUM(imp_11) AS imp11, SUM(imp_12) AS imp12, SUM(imp_13) AS imp13, SUM(imp_14) AS imp14, SUM(imp_15) AS imp15,

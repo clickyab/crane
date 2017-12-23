@@ -19,6 +19,13 @@ const (
 	BIDTypeCPM BIDType = "CPM"
 )
 
+// PublisherAttributes is the key for publisher attributes
+type PublisherAttributes int
+
+const (
+	PAMobileAd PublisherAttributes = iota
+)
+
 // Publisher is the publisher interface
 type Publisher interface {
 	ID() int64
@@ -39,4 +46,6 @@ type Publisher interface {
 	CTR(int) float64
 	// Type return type of this publisher
 	Type() PublisherType
+	// Attributes si any other attributes that is not generally required for other part of the system
+	Attributes() map[PublisherAttributes]interface{}
 }
