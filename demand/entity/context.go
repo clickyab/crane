@@ -55,9 +55,9 @@ type Context interface {
 	// Rate return ratio currency conversion to IRR
 	Rate() float64
 	// Network return network for app
-	Network() (string, int64)
+	Network() string
 	// Carrier return carrier for app
-	Carrier() (string, int64)
+	Carrier() string
 	// Brand return brand for app
-	Brand() (string, int64)
+	Brand() string
 }

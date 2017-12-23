@@ -266,11 +266,11 @@ func SetMultiVideo(v bool) ShowOptionSetter {
 // SetNetwork is set network id from name
 func SetNetwork(v string) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
-		i, n, err := models.GetNetworkByName(v)
+		n, err := models.GetNetworkByName(v)
 		if err != nil {
 			return o, err
 		}
-		o.networkID, o.networkName = i, n
+		o.networkName = n
 		return o, nil
 	}
 }
@@ -278,11 +278,11 @@ func SetNetwork(v string) ShowOptionSetter {
 // SetBrand is set brand id from name
 func SetBrand(v string) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
-		i, n, err := models.GetBrandByName(v)
+		n, err := models.GetBrandByName(v)
 		if err != nil {
 			return o, err
 		}
-		o.brandID, o.brandName = i, n
+		o.brandName = n
 		return o, nil
 	}
 }
@@ -290,11 +290,11 @@ func SetBrand(v string) ShowOptionSetter {
 // SetCarrier is set carrier id from name
 func SetCarrier(v string) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
-		i, n, err := models.GetCarrierByName(v)
+		n, err := models.GetCarrierByName(v)
 		if err != nil {
 			return o, err
 		}
-		o.carrierID, o.carrierName = i, n
+		o.carrierName = n
 		return o, nil
 	}
 }
