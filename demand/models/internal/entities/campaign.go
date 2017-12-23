@@ -12,13 +12,13 @@ type Campaign struct {
 
 // AppBrands return accepted app brands id
 func (c *Campaign) AppBrands() []string {
-	return c.CampaignAppBrand.Array()
+	return c.CampaignAppBrandName.Array()
 
 }
 
 // AppCarriers return accepted app carriers
 func (c *Campaign) AppCarriers() []string {
-	return c.CampaignAppBrand.Array()
+	return c.CampaignAppsCarriersName.Array()
 }
 
 // WebMobile is this is accepted for web mobile
@@ -43,7 +43,7 @@ func (c *Campaign) ISP() []string {
 
 // NetProvider return accepted net providers id
 func (c *Campaign) NetProvider() []string {
-	return c.CampaignNetProvider.Array()
+	return c.CampaignNetProviderName.Array()
 }
 
 // ID campaign id
