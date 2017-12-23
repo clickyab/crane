@@ -1,4 +1,4 @@
-package app
+package output
 
 import (
 	"html/template"
@@ -222,7 +222,7 @@ type inappContext struct {
 }
 
 //
-func Render(ctx context.Context, w io.Writer, res *openrtb.BidResponse, full string, finger bool, sdk int64, size int) error {
+func RenderApp(ctx context.Context, w io.Writer, res *openrtb.BidResponse, full string, sdk int64, size int) error {
 	closeClass := "largeclose"
 	if size == 8 {
 		closeClass = "close"

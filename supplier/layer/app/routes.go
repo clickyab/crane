@@ -8,8 +8,8 @@ import (
 type controller struct {
 }
 
-func (controller) Routes(framework.Mux) {
-	//panic("implement me")
+func (controller) Routes(r framework.Mux) {
+	r.GET("app-single-ad", "/getapp", getApp)
 }
 
 func init() {
