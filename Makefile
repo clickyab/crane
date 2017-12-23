@@ -30,19 +30,19 @@ export UGLIFYJS=$(ROOT)/node_modules/.bin/uglifyjs
 export CRN_SERVICES_MYSQL_WDSN=root:bita123@tcp(127.0.0.1:3306)/clickyab?charset=utf8&parseTime=true
 export CRN_SERVICES_MYSQL_RDSN?=root:bita123@tcp(127.0.0.1:3306)/clickyab?charset=utf8&parseTime=true
 
-all: codegen
+all: codegen ip2location
 	$(BUILD) ./...
 
-run-demand: all ip2location
+run-demand: all
 	$(ROOT)/bin/demand
 
-run-supplier: all ip2location
+run-supplier: all
 	$(ROOT)/bin/supplier
 
-run-imp: all ip2location
+run-imp: all
 	$(ROOT)/bin/impression-worker
 
-run-click: all ip2location
+run-click: all
 	$(ROOT)/bin/click-worker
 
 include $(ROOT)/scripts/*.mk
