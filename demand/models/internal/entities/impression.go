@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"time"
 
+	"errors"
+
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/demand/workers/models"
 )
@@ -20,17 +22,16 @@ func AddImpression(p entity.Publisher, m models.Impression, s models.Seat) error
 	sDiffCPM := sql.NullFloat64{Valid: s.SCPM != 0, Float64: s.CPM - s.SCPM}
 	wID := sql.NullInt64{}
 	appID := sql.NullInt64{}
-	refer := sql.NullString{}
-	parent := sql.NullString{}
+	refer := sql.NullString{Valid: m.Referrer != "", String: m.Referrer}
+	parent := sql.NullString{Valid: m.ParentURL != "", String: m.ParentURL}
 
-	switch m.Type {
-	case entity.RequestTypeDemand:
-		// TODO : check for publisher type in demand too
+	if (m.Type == entity.RequestTypeDemand || m.Type == entity.RequestTypeWeb) && p.Type() == entity.PublisherTypeWeb {
 		wID = sql.NullInt64{Valid: p.ID() != 0, Int64: p.ID()}
-		refer = sql.NullString{Valid: m.Referrer != "", String: m.Referrer}
-		parent = sql.NullString{Valid: m.ParentURL != "", String: m.ParentURL}
-	case entity.RequestTypeApp:
-		appID = sql.NullInt64{Valid: true, Int64: p.ID()}
+
+	} else if m.Type == entity.RequestTypeApp && p.Type() == entity.PublisherTypeApp {
+		appID = sql.NullInt64{Valid: p.ID() != 0, Int64: p.ID()}
+	} else {
+		return errors.New("mismatch impression and publisher type")
 	}
 
 	var sID int64

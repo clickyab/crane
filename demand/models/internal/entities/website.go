@@ -25,13 +25,12 @@ type Website struct {
 	WFatFinger  int            `db:"w_fatfinger"`
 	Status      int            `db:"w_status"`
 	CTRStat
-	FType entity.PublisherType
-	Supp  entity.Supplier
-	FCTR  [21]float64
+	Supp entity.Supplier
+	FCTR [21]float64
 }
 
 func (w *Website) Type() entity.PublisherType {
-	return w.FType
+	return entity.PublisherTypeWeb
 }
 
 // CTR return the ctr based on size of this website
@@ -136,7 +135,6 @@ func WebsiteLoader(ctx context.Context) (map[string]kv.Serializable, error) {
 		}
 
 		for i := range res {
-			res[i].FType = entity.PublisherTypeWeb
 			res[i].FCTR = [21]float64{}
 			res[i].FCTR[1] = calc(res[i].Impression1, res[i].Click1)
 			res[i].FCTR[2] = calc(res[i].Impression2, res[i].Click2)

@@ -3,12 +3,13 @@ package entities
 import "clickyab.com/crane/demand/entity"
 
 type fakepub struct {
-	name string
-	s    entity.Supplier
+	name  string
+	s     entity.Supplier
+	ptype entity.PublisherType
 }
 
 func (fp fakepub) Type() entity.PublisherType {
-	panic("implement me")
+	return fp.ptype
 }
 
 func (fakepub) ID() int64 {
@@ -45,6 +46,6 @@ func (fp *fakepub) CTR(int) float64 {
 }
 
 // NewFakePublisher return a publisher with fake data
-func NewFakePublisher(s entity.Supplier, name string) entity.Publisher {
-	return &fakepub{name: name, s: s}
+func NewFakePublisher(s entity.Supplier, name string, t entity.PublisherType) entity.Publisher {
+	return &fakepub{name: name, s: s, ptype: t}
 }

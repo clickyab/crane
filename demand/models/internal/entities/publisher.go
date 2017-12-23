@@ -83,7 +83,6 @@ func FindOrAddWebsite(sup entity.Supplier, domain string, pid int64) (entity.Pub
 		WMinBid:   sup.DefaultMinBid(),
 		WName:     sql.NullString{Valid: true, String: domain},
 		CTRStat:   CTRStat{},
-		FType:     entity.PublisherTypeWeb,
 	}
 
 	q := `INSERT INTO websites (u_id, w_domain,w_supplier,w_status,created_at,updated_at,w_date, w_pub_id, w_minbid,w_name,w_floor_cpm)

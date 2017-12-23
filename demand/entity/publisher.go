@@ -7,8 +7,6 @@ const (
 	PublisherTypeApp PublisherType = 1
 	// PublisherTypeWeb is the web
 	PublisherTypeWeb PublisherType = 2
-	// PublisherTypeVast is the vast
-	PublisherTypeVast PublisherType = 3
 )
 
 // BIDType is the bid type for this imp cpc or cpm
