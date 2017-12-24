@@ -92,7 +92,7 @@ PUSH="--push"
 if [[ ( "${BRANCH}" != "master" ) && ( "${BRANCH}" != "dev" ) ]]; then
     PUSH=""
 fi
-rocker build ${PUSH} -var Build=${SOURCE_DIR} -var EnvDir=${VARS} -var Cache=${CACHE} -var Target=${TARGET} -var Version=${COMMITCOUNT} -var App=${APP}_${BRANCH}
+rocker build --no-cache ${PUSH} -var Build=${SOURCE_DIR} -var EnvDir=${VARS} -var Cache=${CACHE} -var Target=${TARGET} -var Version=${COMMITCOUNT} -var App=${APP}_${BRANCH}
 popd
 
 NAMESPACE="${APP}"
