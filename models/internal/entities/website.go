@@ -38,6 +38,9 @@ func (w *Website) Attributes() map[entity.PublisherAttributes]interface{} {
 		if w.MobAd > 0 {
 			w.att[entity.PAMobileAd] = true
 		}
+		if w.WFatFinger > 0 {
+			w.att[entity.PAFatFinger] = true
+		}
 	}
 	return w.att
 }
