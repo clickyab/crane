@@ -128,7 +128,10 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	output.RenderBanner(ctx, w, br, extra)
+	if output.RenderBanner(ctx, w, br, extra) != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 }
 
 func crc(d string) string {
