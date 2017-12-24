@@ -118,6 +118,7 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 			IP:  framework.RealIP(r),
 			DNT: dnt,
 			OS:  ua.OS(),
+			UA:  r.UserAgent(),
 		},
 	}
 	br, err := client.Call(ctx, method.String(), server.String(), bq)
