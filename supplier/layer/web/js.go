@@ -29,5 +29,5 @@ func js(_ context.Context, w http.ResponseWriter, r *http.Request) {
 	// Exactly once!
 	str := strings.Replace(string(data), "{{.URL}}", u.String(), 1)
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(str))
+	_, _ = w.Write([]byte(str))
 }

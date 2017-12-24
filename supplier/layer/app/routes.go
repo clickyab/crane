@@ -8,6 +8,7 @@ import (
 type controller struct {
 }
 
+// Routes is for registering routes
 func (controller) Routes(r framework.Mux) {
 	r.GET("app-single-ad", "/getapp", getApp)
 }

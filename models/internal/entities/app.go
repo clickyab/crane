@@ -36,6 +36,7 @@ type App struct {
 	att map[entity.PublisherAttributes]interface{} `db:"-"`
 }
 
+// Attributes return publisher attributes
 func (app *App) Attributes() map[entity.PublisherAttributes]interface{} {
 	if app.att == nil {
 		app.att = make(map[entity.PublisherAttributes]interface{})
@@ -47,14 +48,17 @@ func (app *App) Attributes() map[entity.PublisherAttributes]interface{} {
 	return app.att
 }
 
+// Type return type of publisher (app or web)
 func (app *App) Type() entity.PublisherType {
 	return entity.PublisherTypeApp
 }
 
+// Encode for serializable
 func (app *App) Encode(iw io.Writer) error {
 	return gob.NewEncoder(iw).Encode(app)
 }
 
+// Decode for serializable
 func (app *App) Decode(r io.Reader) error {
 	return gob.NewDecoder(r).Decode(app)
 }

@@ -9,11 +9,12 @@ import (
 
 	"encoding/json"
 
+	"errors"
+
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/models/apps"
 	"clickyab.com/crane/supplier/client"
 	"clickyab.com/crane/supplier/layer/output"
-	"clickyab.com/gad/tmp/src/github.com/pkg/errors"
 	"github.com/bsm/openrtb"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/config"
@@ -64,14 +65,20 @@ func getApp(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	j, err := json.Marshal(ext)
 	assert.Nil(err)
 	q.Ext = j
+
 	allData(r, q)
+
 	res, err := client.Call(ctx, method.String(), server.String(), q)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+
 	sdkVers, _ := strconv.ParseInt(r.URL.Query().Get("clickyabVersion"), 10, 0)
-	output.RenderApp(ctx, w, res, full, sdkVers, bs)
+	if output.RenderApp(ctx, w, res, full, sdkVers, bs) != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 
 }
 
@@ -93,6 +100,7 @@ func size(s string) (int, int, int, string, error) {
 		return 0, 0, 0, "", errors.New("not valid size")
 	}
 }
+
 func allData(r *http.Request, o *openrtb.BidRequest) {
 
 	ua := user_agent.New(r.UserAgent())

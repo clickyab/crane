@@ -221,7 +221,7 @@ type inappContext struct {
 	AdMarkup      string
 }
 
-//
+// RenderApp will render single ad for app
 func RenderApp(ctx context.Context, w io.Writer, res *openrtb.BidResponse, full string, sdk int64, size int) error {
 	closeClass := "largeclose"
 	if size == 8 {
