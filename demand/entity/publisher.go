@@ -23,7 +23,8 @@ const (
 type PublisherAttributes int
 
 const (
-	PAMobileAd PublisherAttributes = iota
+	PAMobileAd  PublisherAttributes = iota
+	PAFatFinger PublisherAttributes = iota
 )
 
 // Publisher is the publisher interface
