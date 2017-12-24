@@ -39,6 +39,9 @@ type App struct {
 func (app *App) Attributes() map[entity.PublisherAttributes]interface{} {
 	if app.att == nil {
 		app.att = make(map[entity.PublisherAttributes]interface{})
+		if app.AppFatFinger > 0 {
+			app.att[entity.PAFatFinger] = true
+		}
 	}
 
 	return app.att

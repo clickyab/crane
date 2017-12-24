@@ -24,6 +24,7 @@ type PublisherAttributes int
 
 const (
 	PAMobileAd PublisherAttributes = iota
+	PAFatFinger
 )
 
 // Publisher is the publisher interface
