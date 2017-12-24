@@ -209,6 +209,11 @@
 			"Rev": "07efe2b857fb8c02d2dd85c12d0145f58554ec7c"
 		},
 		{
+			"ImportPath": "github.com/rs/cors",
+			"Comment": "v1.2-1-geabcc6a",
+			"Rev": "eabcc6af4bbe5ad3a949d36450326a2b0b9894b8"
+		},
+		{
 			"ImportPath": "github.com/rs/xhandler",
 			"Comment": "v.11-5-g1eb70cf",
 			"Rev": "1eb70cf1520d43c307a89c5dabb7a7efd132fccd"

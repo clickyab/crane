@@ -108,7 +108,7 @@ echo "${TEMPORARY}" >> /tmp/kill-me
 echo "${BUILD_DIR}" >> /tmp/kill-me
 echo "${BUILD_PACKS_DIR}" >> /tmp/kill-me
 
-for WRK_TYP in web-server impression-worker click-worker
+for WRK_TYP in demand-server supplier-server impression-worker click-worker
 do
    kubectl -n ${NAMESPACE} set image deployment  ${APP}-${WRK_TYP} ${APP}-${BRANCH}=registry.clickyab.ae/clickyab/${APP}_${BRANCH}:${VERSION} --record
 done
