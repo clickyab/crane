@@ -7,7 +7,7 @@ import (
 	"clickyab.com/crane/demand/entity"
 )
 
-// Seats is model for show job
+// Seat is model for show and click job
 type Seat struct {
 	AdID         int64   `json:"ad"`
 	AdSize       int     `json:"size"`
@@ -17,6 +17,8 @@ type Seat struct {
 	CPM          float64 `json:"cpm"`
 	SCPM         float64 `json:"scpm"`
 }
+
+// Impression is model for show and click job
 type Impression struct {
 	IP         net.IP             `json:"ip"`
 	CopID      string             `json:"cop"`

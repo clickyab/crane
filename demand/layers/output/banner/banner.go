@@ -40,6 +40,23 @@ const bannerTemplateText = `<!DOCTYPE html>
 	</style>
 </head>
 <body>
+
+	<div class="clickyab-wrapper">
+		{{ if .Tiny }}<a class="tiny" href="{{.TinyURL}}" target="_blank"></a>{{ end }}
+    	{{ if .FatFinger }}<div id="clickyab-overlay-clickable" onclick="showb()"></div> {{ end }}
+    	<a href="{{ .Link }}" target="_blank">
+        	<img  src="{{ .Src }}" border="0" height="{{ .Height }}" width="{{ .Width }}"/>
+    	</a>
+    	<div id="clickyab-overlay"></div>
+    	<div id="clickyab-link">
+        	<a href="{{ .Link }}" target="_blank">
+        مشاهده آگهی
+        	</a>
+    	</div>
+			    <br style="clear: both;"/>
+		    {{ if .ShowT }}<br style="clear: both;"/><iframe src="//t.clickyab.com/" width="1" height="1" frameborder="0"></iframe>{{ end }}
+	</div>
+
     {{ if .Tiny }}<a class="tiny" href="{{.TinyURL}}" target="_blank"></a>{{ end }}
     <a href="{{ .Link }}" target="_blank"><img  src="{{ .Src }}" border="0" height="{{ .Height }}" width="{{ .Width }}"/></a>
     <br style="clear: both;"/>
@@ -51,14 +68,15 @@ var bannerTemplate = template.Must(template.New("banner_template").Parse(bannerT
 
 // bannerData is the single ad id
 type bannerData struct {
-	Link     string
-	Width    int
-	Height   int
-	Src      string
-	Tiny     bool
-	TinyLogo string
-	TinyURL  string
-	ShowT    bool
+	Link      string
+	Width     int
+	Height    int
+	Src       string
+	Tiny      bool
+	TinyLogo  string
+	TinyURL   string
+	ShowT     bool
+	FatFinger bool
 }
 
 func renderWebBanner(w io.Writer, ctx entity.Context, seat entity.Seat) error {
@@ -68,14 +86,15 @@ func renderWebBanner(w io.Writer, ctx entity.Context, seat entity.Seat) error {
 	}
 
 	sa := bannerData{
-		Link:     seat.ClickURL(),
-		Height:   seat.Height(),
-		Width:    seat.Width(),
-		Src:      src,
-		Tiny:     ctx.Tiny(),
-		TinyLogo: ctx.Publisher().Supplier().TinyLogo(),
-		TinyURL:  ctx.Publisher().Supplier().TinyURL(),
-		ShowT:    false,
+		Link:      seat.ClickURL(),
+		Height:    seat.Height(),
+		Width:     seat.Width(),
+		Src:       src,
+		Tiny:      ctx.Tiny(),
+		TinyLogo:  ctx.Publisher().Supplier().TinyLogo(),
+		TinyURL:   ctx.Publisher().Supplier().TinyURL(),
+		ShowT:     false,
+		FatFinger: ctx.FatFinger(),
 	}
 
 	return bannerTemplate.Execute(w, sa)

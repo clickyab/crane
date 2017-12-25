@@ -1,5 +1,6 @@
 package entity
 
+// PublisherType is the type of publisher
 type PublisherType int
 
 const (
@@ -23,7 +24,10 @@ const (
 type PublisherAttributes int
 
 const (
+	// PAMobileAd determine if banner ad show be shown in mobile version or not
 	PAMobileAd PublisherAttributes = iota
+	// PAFatFinger determine sensitivity of touch ads in app
+	PAFatFinger
 )
 
 // Publisher is the publisher interface

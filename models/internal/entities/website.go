@@ -32,16 +32,21 @@ type Website struct {
 	att map[entity.PublisherAttributes]interface{}
 }
 
+// Attributes return publisher attributes
 func (w *Website) Attributes() map[entity.PublisherAttributes]interface{} {
 	if w.att == nil {
 		w.att = make(map[entity.PublisherAttributes]interface{})
 		if w.MobAd > 0 {
 			w.att[entity.PAMobileAd] = true
 		}
+		if w.WFatFinger > 0 {
+			w.att[entity.PAFatFinger] = true
+		}
 	}
 	return w.att
 }
 
+// Type return type of publisher (app or web)
 func (w *Website) Type() entity.PublisherType {
 	return entity.PublisherTypeWeb
 }
