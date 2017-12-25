@@ -43,6 +43,7 @@ func showBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetType(pl.Type),
 		builder.SetPublisher(pl.Publisher),
 		builder.SetSuspicious(pl.Suspicious),
+		builder.SetFatFinger(pl.FatFinger),
 	}
 	if pl.Type == entity.RequestTypeDemand {
 		b = append(b, builder.DoNotShowTFrame())

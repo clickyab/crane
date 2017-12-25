@@ -45,6 +45,7 @@ func SetFullSeats(pubID string, size int, hash string, ad entity.Advertise, bid 
 			impTime:          ts,
 			cpm:              cpm,
 			scpm:             scpm,
+			fatFinger:        o.fatFinger,
 		})
 		return o, nil
 	}

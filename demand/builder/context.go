@@ -53,6 +53,13 @@ type Context struct {
 	networkName,
 	brandName,
 	carrierName string
+
+	fatFinger bool
+}
+
+// FatFinger is for web-mobile and in app
+func (c *Context) FatFinger() bool {
+	return c.fatFinger
 }
 
 func (c *Context) Network() string {

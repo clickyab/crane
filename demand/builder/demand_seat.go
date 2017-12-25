@@ -47,6 +47,7 @@ func SetDemandSeats(sd ...DemandSeatData) ShowOptionSetter {
 				showT:            showT,
 				rate:             o.rate,
 				minBidPercentage: o.MinBIDPercentage(),
+				fatFinger:        o.fatFinger,
 			})
 		}
 		if len(o.seats) == 0 {
