@@ -25,7 +25,7 @@ if (window.clickyab_ad) {
     setTimeout(function () {
       var scriptDom = document.createElement("script");
       scriptDom.setAttribute("id","clickyab-show-js-v2");
-      scriptDom.setAttribute("src", "http://supplier.clickyab.ae/api/multi.js");
+      scriptDom.setAttribute("src", "{{.URL}}");
       document.body.appendChild(scriptDom);
     },0);
   }
