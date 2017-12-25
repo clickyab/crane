@@ -60,4 +60,6 @@ type Context interface {
 	Carrier() string
 	// Brand return brand for app
 	Brand() string
+	// FatFinger return true if we need to prevent sudden click
+	FatFinger() bool
 }

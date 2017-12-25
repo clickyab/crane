@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"strconv"
+
 	"clickyab.com/crane/demand/builder"
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/demand/filter"
@@ -37,6 +39,26 @@ var (
 	)
 )
 
+type simpleMap map[string]interface{}
+
+func (s simpleMap) Bool(k string) bool {
+	d, ok := s[k]
+	if !ok {
+		return false
+	}
+	switch t := d.(type) {
+	case float64:
+		return t != 0
+	case string:
+		b, _ := strconv.ParseBool(t)
+		return b
+	case bool:
+		return t
+	default:
+		return false
+	}
+}
+
 // openrtbInput is the route for rtb input layer
 func openrtbInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	token := xmux.Param(ctx, "token")
@@ -60,6 +82,11 @@ func openrtbInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+
+	// Known extensions are (currently) fat finger
+	var ext = make(simpleMap)
+	_ = json.Unmarshal(payload.Ext, &ext)
+	fatFinger := ext.Bool("fat_finger")
 
 	if err := payload.Validate(); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -102,7 +129,7 @@ func openrtbInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetProtocol(proto),
 		builder.SetTID(us, ip, ua),
 		builder.SetNoTiny(sup.TinyMark()),
-
+		builder.SetFatFinger(fatFinger),
 		// Website of demand has no floor cpm and soft floor cpm associated with them
 		// TODO : decide about this specific values
 		builder.SetFloorCPM(sup.DefaultFloorCPM()),

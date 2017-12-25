@@ -39,4 +39,6 @@ type Seat interface {
 	ImpressionTime() time.Time
 	// SupplierCPM return cpm from supplier
 	SupplierCPM() float64
+	// FatFinger return true if we need to prevent sudden click
+	FatFinger() bool
 }

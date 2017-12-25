@@ -141,6 +141,14 @@ func SetDisableCapping(disable bool) ShowOptionSetter {
 	}
 }
 
+// SetFatFinger enable/disable fat finger? default is disable
+func SetFatFinger(ff bool) ShowOptionSetter {
+	return func(o *Context) (*Context, error) {
+		o.fatFinger = ff
+		return o, nil
+	}
+}
+
 var copLen = config.RegisterInt("crane.context.cop_len", 10, "cop key len")
 
 // SetTID try to set tid
