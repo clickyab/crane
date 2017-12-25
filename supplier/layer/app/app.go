@@ -58,8 +58,10 @@ func getApp(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		"cid": r.URL.Query().Get("cid"),
 		"lac": r.URL.Query().Get("lac"),
 	}
+	var fatFinger bool
 	if _, ok := pub.Attributes()[entity.PAFatFinger]; ok {
 		ext["fat_finger"] = true
+		fatFinger = true
 	}
 
 	j, err := json.Marshal(ext)
@@ -75,7 +77,7 @@ func getApp(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 
 	sdkVers, _ := strconv.ParseInt(r.URL.Query().Get("clickyabVersion"), 10, 0)
-	if output.RenderApp(ctx, w, res, full, sdkVers, bs) != nil {
+	if output.RenderApp(fatFinger, w, res, full, sdkVers, bs) != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
