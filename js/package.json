@@ -4,7 +4,8 @@
   "description": "",
   "keywords": [],
   "main": "dist/show-ad.umd.js",
-  "module": "dist/show-ad.es5.js",
+  "module": "dist/show.v2.js",
+  "migration": "dist/show.js",
   "typings": "dist/types/show-ad.d.ts",
   "files": [
     "dist"
@@ -21,7 +22,7 @@
   "scripts": {
     "lint": "tslint -t codeFrame 'src/**/*.ts' 'test/**/*.ts'",
     "prebuild": "rimraf dist",
-    "build": "tsc && rollup -c rollup.config.ts && rimraf compiled && typedoc --out dist/docs --target es5  -module UMD --theme minimal src",
+    "build": "tsc && rollup -c rollup.config.ts && rimraf compiled && rimraf dist/types",
     "start": "tsc -w & rollup -c rollup.config.ts -w",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -89,8 +90,8 @@
     "prompt": "^1.0.0",
     "replace-in-file": "^3.0.0-beta.2",
     "rimraf": "^2.6.1",
-    "rollup": "^0.51.0",
-    "rollup-plugin-commonjs": "^8.0.2",
+    "rollup": "^0.51.8",
+    "rollup-plugin-commonjs": "^8.2.6",
     "rollup-plugin-node-resolve": "^3.0.0",
     "rollup-plugin-sourcemaps": "^0.4.2",
     "semantic-release": "^8.0.0",
@@ -105,6 +106,8 @@
   },
   "dependencies": {
     "fingerprintjs2": "^1.5.1",
-    "ntypescript": "1.201706190042.1"
+    "ntypescript": "1.201706190042.1",
+    "rollup-plugin-uglify": "^2.0.1",
+    "uglify-es": "^3.3.0"
   }
 }
