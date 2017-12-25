@@ -72,11 +72,16 @@ type seat struct {
 	publisher entity.Publisher
 	ctr       float64
 
-	showT  int
-	minBid float64
+	showT     int
+	fatFinger bool
+	minBid    float64
 
 	impTime time.Time
 	scpm    float64
+}
+
+func (s *seat) FatFinger() bool {
+	return s.fatFinger
 }
 
 func (s *seat) SupplierCPM() float64 {
@@ -118,10 +123,6 @@ func (s *seat) Width() int {
 	w, _ := cyslot.GetSizeByNum(s.size)
 	return w
 
-}
-
-func (s *seat) Publisher() entity.Publisher {
-	return s.publisher
 }
 
 func (s *seat) Height() int {
@@ -170,6 +171,10 @@ func (s *seat) ShowURL() string {
 		[]byte(s.ReservedHash() + fmt.Sprint(s.size) + s.Type() + s.ua + s.ip.String()),
 	)
 	data := fmt.Sprintf("%x", m.Sum(nil))
+	ff := "F"
+	if s.FatFinger() {
+		ff = "T"
+	}
 	j := jwt.NewJWT().Encode(map[string]string{
 		"aid":  fmt.Sprint(s.winnerAd.ID()),
 		"dom":  s.publisher.Name(),
@@ -180,6 +185,7 @@ func (s *seat) ShowURL() string {
 		"susp": fmt.Sprint(s.susp),
 		"now":  fmt.Sprint(time.Now().Unix()),
 		"cpm":  fmt.Sprint(s.CPM()),
+		"ff":   ff,
 	}, showExpire.Duration())
 	s.winnerAd.ID()
 	res := router.MustPath("banner", map[string]string{"rh": s.ReservedHash(), "size": fmt.Sprint(s.size), "jt": j, "type": s.Type()})
@@ -224,6 +230,7 @@ func (s *seat) ClickURL() string {
 		"pid":  s.PublicID(),
 		"now":  fmt.Sprint(time.Now().Unix()),
 		"cpm":  fmt.Sprint(cpm),
+		"ff":   "F", // click not required this
 	}, clickExpire.Duration())
 	s.winnerAd.ID()
 	res, err := router.Path("click", map[string]string{"jt": j, "rh": s.ReservedHash(), "size": fmt.Sprint(s.Size()), "type": s.Type()})

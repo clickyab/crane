@@ -11,7 +11,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.ssh.password = "bita123"
 
   config.vm.provision "shell" do |s|
-    s.path   = "bin/provision.sh"
+    s.path   = "scripts/provision.sh"
     s.args   = [%x(ip addr | grep inet | grep docker0 | awk -F" " '{print $2}'| sed -e 's/\\/.*$//')]
   end
 
@@ -27,6 +27,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provider "docker" do |d|
     d.image = "registry.clickyab.ae/clickyab/baseimage-go"
     d.has_ssh = true
-    d.cmd = ["/bin/bash", "/home/develop/go/src/clickyab.com/crane/bin/init.sh"]
+    d.cmd = ["/bin/bash", "/home/develop/go/src/clickyab.com/crane/scripts/init.sh"]
   end
 end

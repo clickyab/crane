@@ -23,7 +23,7 @@ func Render(_ context.Context, w http.ResponseWriter, ctx entity.Context) error 
 			ID:    v.ReservedHash(),
 			ImpID: v.PublicID(),
 			AdMarkup: fmt.Sprintf(
-				`<iframe src="%s&scpm=${AUCTION_PRICE}" width="%d" hight="%d" />`,
+				`<iframe src="%s&scpm=${AUCTION_PRICE}" width="%d" height="%d" frameborder="0"  scrolling="no"/>`,
 				v.ShowURL(),
 				v.Width(),
 				v.Height(),

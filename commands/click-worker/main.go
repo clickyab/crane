@@ -4,7 +4,7 @@ import (
 	"os"
 
 	"clickyab.com/crane/commands"
-	"clickyab.com/crane/demand/workers/click"
+	"clickyab.com/crane/workers/click"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/broker"
 	_ "github.com/clickyab/services/broker/selector"

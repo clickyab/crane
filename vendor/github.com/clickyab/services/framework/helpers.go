@@ -5,6 +5,7 @@ import (
 	"net"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/clickyab/services/config"
 	"github.com/rs/xhandler"
@@ -12,10 +13,17 @@ import (
 )
 
 const (
-	headerXForwardedFor  = "X-Forwarded-For"
-	headerXRealIP        = "X-Real-IP"
-	headerCFConnectingIP = "CF-Connecting-IP"
-	jsonMIME             = "application/json;charset=UTF-8"
+	headerXForwardedFor   = "X-Forwarded-For"
+	headerXForwardedProto = "X-Forwarded-Proto"
+	headerXRealIP         = "X-Real-IP"
+	headerCFConnectingIP  = "CF-Connecting-IP"
+	headerContentType     = "Content-Type"
+	jsonMIME              = "application/json;charset=UTF-8"
+
+	// HTTP scheme
+	HTTP string = "http"
+	// HTTPS scheme
+	HTTPS string = "https"
 )
 
 // Mix try to mix all middleware with the calling route
@@ -41,7 +49,7 @@ func Any(mux *xmux.Mux, route string, handler Handler) {
 
 // JSON is a helper function to write an json in output
 func JSON(w http.ResponseWriter, code int, i interface{}) {
-	w.Header().Set("Content-Type", jsonMIME)
+	w.Header().Set(headerContentType, jsonMIME)
 	w.WriteHeader(code)
 	enc := json.NewEncoder(w)
 	enc.Encode(i)
@@ -60,6 +68,19 @@ func RealIP(r *http.Request) string {
 		ra, _, _ = net.SplitHostPort(ra)
 	}
 	return ra
+}
+
+// Scheme extract scheme from request
+func Scheme(r *http.Request) string {
+	proto := HTTP
+	if r.TLS != nil {
+		proto = HTTPS
+	}
+	if xh := strings.ToLower(r.Header.Get(headerXForwardedProto)); xh == HTTPS {
+		proto = HTTPS
+	}
+
+	return proto
 }
 
 var (

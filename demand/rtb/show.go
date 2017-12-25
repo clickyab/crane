@@ -5,8 +5,8 @@ import (
 
 	"clickyab.com/crane/demand/builder"
 	"clickyab.com/crane/demand/entity"
-	"clickyab.com/crane/demand/models"
 	"clickyab.com/crane/demand/reducer"
+	"clickyab.com/crane/models/ads"
 )
 
 // Select is the main entry point for this module
@@ -18,9 +18,9 @@ func Select(c context.Context, sel reducer.Filter, opt ...builder.ShowOptionSett
 	}
 	// Apply filters
 	// TODO : after selector fix it
-	ads := reducer.Apply(c, ctx, models.GetAds(), sel)
-	// select ads
-	selectAds(c, ctx, ads)
+	all := reducer.Apply(c, ctx, ads.GetAds(), sel)
+	// select all
+	selectAds(c, ctx, all)
 
 	return ctx, nil
 }

@@ -50,25 +50,28 @@ type Context struct {
 	suspicious int
 	rate       float64
 
-	networkID,
-	brandID,
-	carrierID int64
-
 	networkName,
 	brandName,
 	carrierName string
+
+	fatFinger bool
 }
 
-func (c *Context) Network() (string, int64) {
-	return c.networkName, c.networkID
+// FatFinger is for web-mobile and in app
+func (c *Context) FatFinger() bool {
+	return c.fatFinger
 }
 
-func (c *Context) Carrier() (string, int64) {
-	return c.carrierName, c.carrierID
+func (c *Context) Network() string {
+	return c.networkName
 }
 
-func (c *Context) Brand() (string, int64) {
-	return c.brandName, c.brandID
+func (c *Context) Carrier() string {
+	return c.carrierName
+}
+
+func (c *Context) Brand() string {
+	return c.brandName
 }
 
 // Rate return the rate of this request

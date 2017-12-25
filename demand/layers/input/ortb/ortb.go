@@ -6,13 +6,16 @@ import (
 	"fmt"
 	"net/http"
 
+	"strconv"
+
 	"clickyab.com/crane/demand/builder"
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/demand/filter"
 	"clickyab.com/crane/demand/layers/output/demand"
-	"clickyab.com/crane/demand/models"
 	"clickyab.com/crane/demand/reducer"
 	"clickyab.com/crane/demand/rtb"
+	"clickyab.com/crane/models/suppliers"
+	"clickyab.com/crane/models/website"
 	"github.com/bsm/openrtb"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/xlog"
@@ -36,10 +39,30 @@ var (
 	)
 )
 
+type simpleMap map[string]interface{}
+
+func (s simpleMap) Bool(k string) bool {
+	d, ok := s[k]
+	if !ok {
+		return false
+	}
+	switch t := d.(type) {
+	case float64:
+		return t != 0
+	case string:
+		b, _ := strconv.ParseBool(t)
+		return b
+	case bool:
+		return t
+	default:
+		return false
+	}
+}
+
 // openrtbInput is the route for rtb input layer
 func openrtbInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	token := xmux.Param(ctx, "token")
-	sup, err := models.GetSupplierByToken(token)
+	sup, err := suppliers.GetSupplierByToken(token)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		return
@@ -60,13 +83,18 @@ func openrtbInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Known extensions are (currently) fat finger
+	var ext = make(simpleMap)
+	_ = json.Unmarshal(payload.Ext, &ext)
+	fatFinger := ext.Bool("fat_finger")
+
 	if err := payload.Validate(); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		xlog.GetWithError(ctx, err).Error("invalid data")
 		return
 	}
 
-	publisher, err := models.GetWebSite(sup, publisher(payload))
+	publisher, err := website.GetWebSite(sup, publisher(payload))
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		xlog.GetWithError(ctx, err).Error("no publisher")
@@ -101,7 +129,7 @@ func openrtbInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetProtocol(proto),
 		builder.SetTID(us, ip, ua),
 		builder.SetNoTiny(sup.TinyMark()),
-
+		builder.SetFatFinger(fatFinger),
 		// Website of demand has no floor cpm and soft floor cpm associated with them
 		// TODO : decide about this specific values
 		builder.SetFloorCPM(sup.DefaultFloorCPM()),

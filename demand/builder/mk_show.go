@@ -9,13 +9,14 @@ import (
 	"strings"
 
 	"clickyab.com/crane/demand/builder/internal/cyos"
-	"clickyab.com/crane/demand/models"
 
 	"crypto/sha1"
 
 	"time"
 
 	"clickyab.com/crane/demand/entity"
+	"clickyab.com/crane/models/cell"
+	"clickyab.com/crane/models/ip2l"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/config"
 	"github.com/mssola/user_agent"
@@ -67,7 +68,7 @@ func SetIPLocation(ip string) ShowOptionSetter {
 			return nil, fmt.Errorf("invalid IP %s", ip)
 		}
 		o.ip = ipv4
-		l := models.GetProvinceISPByIP(ipv4)
+		l := ip2l.GetProvinceISPByIP(ipv4)
 		o.location = l
 		return o, nil
 	}
@@ -103,6 +104,7 @@ func SetTargetHost(host string) ShowOptionSetter {
 // SetProtocolByRequest try to find protocol of the request based on the request headers
 func SetProtocolByRequest(r *http.Request) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
+		// TODO : Create framework.Schema() function
 		o.protocol = entity.HTTP
 		if r.TLS != nil {
 			o.protocol = entity.HTTPS
@@ -135,6 +137,14 @@ func SetEventPage(ep string) ShowOptionSetter {
 func SetDisableCapping(disable bool) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
 		o.noCap = disable
+		return o, nil
+	}
+}
+
+// SetFatFinger enable/disable fat finger? default is disable
+func SetFatFinger(ff bool) ShowOptionSetter {
+	return func(o *Context) (*Context, error) {
+		o.fatFinger = ff
 		return o, nil
 	}
 }
@@ -265,11 +275,11 @@ func SetMultiVideo(v bool) ShowOptionSetter {
 // SetNetwork is set network id from name
 func SetNetwork(v string) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
-		i, n, err := models.GetNetworkByName(v)
+		n, err := cell.GetNetworkByName(v)
 		if err != nil {
 			return o, err
 		}
-		o.networkID, o.networkName = i, n
+		o.networkName = n
 		return o, nil
 	}
 }
@@ -277,11 +287,11 @@ func SetNetwork(v string) ShowOptionSetter {
 // SetBrand is set brand id from name
 func SetBrand(v string) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
-		i, n, err := models.GetBrandByName(v)
+		n, err := cell.GetBrandByName(v)
 		if err != nil {
 			return o, err
 		}
-		o.brandID, o.brandName = i, n
+		o.brandName = n
 		return o, nil
 	}
 }
@@ -289,11 +299,11 @@ func SetBrand(v string) ShowOptionSetter {
 // SetCarrier is set carrier id from name
 func SetCarrier(v string) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
-		i, n, err := models.GetCarrierByName(v)
+		n, err := cell.GetCarrierByName(v)
 		if err != nil {
 			return o, err
 		}
-		o.carrierID, o.carrierName = i, n
+		o.carrierName = n
 		return o, nil
 	}
 }

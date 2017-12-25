@@ -9,7 +9,9 @@ import (
 	"strconv"
 
 	"clickyab.com/crane/demand/entity"
-	"clickyab.com/crane/demand/models"
+	"clickyab.com/crane/models/ads"
+	"clickyab.com/crane/models/suppliers"
+	"clickyab.com/crane/models/website"
 	"github.com/clickyab/services/framework"
 	"github.com/clickyab/services/framework/router"
 	"github.com/clickyab/services/store/jwt"
@@ -38,6 +40,7 @@ type payloadData struct {
 	PreviousTime int64
 	CPM          float64
 	SCPM         float64
+	FatFinger    bool
 }
 
 func extractor(ctx context.Context, r *http.Request) (*payloadData, error) {
@@ -53,7 +56,7 @@ func extractor(ctx context.Context, r *http.Request) (*payloadData, error) {
 	pl.Ref = r.URL.Query().Get("ref")
 	pl.Parent = r.URL.Query().Get("parent")
 
-	expired, m, err := jwt.NewJWT().Decode([]byte(jt), "aid", "sup", "dom", "bid", "uaip", "susp", "pid", "now", "cpm")
+	expired, m, err := jwt.NewJWT().Decode([]byte(jt), "aid", "sup", "dom", "bid", "uaip", "susp", "pid", "now", "cpm", "ff")
 	if err != nil {
 		return nil, err
 	}
@@ -65,21 +68,22 @@ func extractor(ctx context.Context, r *http.Request) (*payloadData, error) {
 	pl.CPM, _ = strconv.ParseFloat(m["cpm"], 64)
 	pl.PublicID = m["pid"]
 	// Get the supplier
-	pl.Supplier, err = models.GetSupplierByName(m["sup"])
+	pl.Supplier, err = suppliers.GetSupplierByName(m["sup"])
 	if err != nil {
 		return nil, err
 	}
 
+	pl.FatFinger = m["ff"] == "T"
 	pl.SCPM, _ = strconv.ParseFloat(r.URL.Query().Get("scpm"), 64)
 	pl.SCPM = pl.SCPM * float64(pl.Supplier.Rate())
 
 	// get the publisher, even its not created then its fine
-	pl.Publisher, err = models.GetWebSite(pl.Supplier, m["dom"])
+	pl.Publisher, err = website.GetWebSite(pl.Supplier, m["dom"])
 	if err != nil {
 		return nil, err
 	}
 	pl.AdID, _ = strconv.ParseInt(m["aid"], 10, 64)
-	pl.Ad, err = models.GetAd(pl.AdID)
+	pl.Ad, err = ads.GetAd(pl.AdID)
 	if err != nil {
 		return nil, err
 	}

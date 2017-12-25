@@ -3,6 +3,7 @@ export APPNAME=crane
 export DEFAULT_PASS=bita123
 export GO=$(shell which go)
 export NODE=$(shell which nodejs)
+export NPM=$(shell which npm)
 export GIT=$(shell which git)
 export BIN=$(ROOT)/bin
 export GOPATH=$(abspath $(ROOT)/../../..)

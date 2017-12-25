@@ -1,12 +1,12 @@
 package entity
 
+type PublisherType int
+
 const (
 	// PublisherTypeApp is the app
-	PublisherTypeApp = 1
+	PublisherTypeApp PublisherType = 1
 	// PublisherTypeWeb is the web
-	PublisherTypeWeb = 2
-	// PublisherTypeVast is the vast
-	PublisherTypeVast = 3
+	PublisherTypeWeb PublisherType = 2
 )
 
 // BIDType is the bid type for this imp cpc or cpm
@@ -17,6 +17,13 @@ const (
 	BIDTypeCPC BIDType = "CPC"
 	//BIDTypeCPM is the cost per view type
 	BIDTypeCPM BIDType = "CPM"
+)
+
+// PublisherAttributes is the key for publisher attributes
+type PublisherAttributes int
+
+const (
+	PAMobileAd PublisherAttributes = iota
 )
 
 // Publisher is the publisher interface
@@ -37,4 +44,8 @@ type Publisher interface {
 	Supplier() Supplier
 	// CTR returns ctr of a slot with specific size
 	CTR(int) float64
+	// Type return type of this publisher
+	Type() PublisherType
+	// Attributes si any other attributes that is not generally required for other part of the system
+	Attributes() map[PublisherAttributes]interface{}
 }
