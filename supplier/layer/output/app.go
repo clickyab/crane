@@ -21,11 +21,6 @@ const inappTemplateText = `
     <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>Clickyab</title>
-    <script type="text/javascript">function showb() {
-            document.getElementById("innershow").style.display = "block";
-            document.getElementById("clickyab_overlay").style.display = "block";
-        }
-    </script>
     <style>
     {{ if .FullScreen }}
 *{padding:0;margin:0;}
@@ -43,7 +38,7 @@ a.largeclose{width:32px;height:32px;line-height:30px;font-size:24px;}
     {{ else }}
 *{padding: 0;margin: 0;}
 html,body{width: 100%;height: 100%;background: #fff;}
-a,img{display: block;float: left;width: 100%;height: 100%;cursor: pointer; text-decoration: none}
+a{display: block;float: left;width: 100%;height: 100%;cursor: pointer; text-decoration: none}
 a.close,a.largeclose{
     width: 24px;
     height: 24px;
@@ -87,29 +82,14 @@ a.largeclose{ width: 32px; height: 32px; line-height: 32px; font-size: 24px; }
         width: 100%;
         padding: 10px 0;
         display: none;
-        z-index: 10;
+        z-index: 1000;
         height: auto !important;
     }
-    #showb #clickyab_overlay {
-        display: none;
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        left: 0;
-        top: 0;
-        z-index: 101;
-        background: rgba(0,0,0,0.6);
-        z-index: 1;
 
-    }
     </style>
 </head>
 <body {{ .BodyClass }}>
-<div id="showb" class="adhere" onclick="showb()">
-    <div id="clickyab_overlay"></div>
     {{ .AdMarkup }}
-</div>
-
 <a onclick="{{ if .FullScreen }}AndroidHide(){{ else }}AndroidClose(){{ end }};" class="{{ .CloseClass }}">x</a>
 
 <script type="text/javascript">
