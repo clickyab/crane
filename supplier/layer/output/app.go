@@ -43,7 +43,7 @@ a.largeclose{width:32px;height:32px;line-height:30px;font-size:24px;}
     {{ else }}
 *{padding: 0;margin: 0;}
 html,body{width: 100%;height: 100%;background: #fff;}
-a,img{display: block;float: left;width: 100%;height: 100%;cursor: pointer; text-decoration: none}
+a{display: block;float: left;width: 100%;height: 100%;cursor: pointer; text-decoration: none}
 a.close,a.largeclose{
     width: 24px;
     height: 24px;
@@ -87,7 +87,7 @@ a.largeclose{ width: 32px; height: 32px; line-height: 32px; font-size: 24px; }
         width: 100%;
         padding: 10px 0;
         display: none;
-        z-index: 10;
+        z-index: 1000;
         height: auto !important;
     }
     #showb #clickyab_overlay {
@@ -102,10 +102,21 @@ a.largeclose{ width: 32px; height: 32px; line-height: 32px; font-size: 24px; }
         z-index: 1;
 
     }
+	.clickyab-overlay-click{
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		left: 0;
+		top: 0;
+		z-index: 101;
+	}
     </style>
 </head>
 <body {{ .BodyClass }}>
 <div id="showb" class="adhere" onclick="showb()">
+	{{ if .FatFinger }}
+	<div class="clickyab-overlay-click" onclick="showb()" ></div>
+	{{ end }}
     <div id="clickyab_overlay"></div>
     {{ .AdMarkup }}
 </div>
