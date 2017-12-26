@@ -2,32 +2,48 @@
 
 
 if (window.clickyab_ad) {
+
   var slotDom = document.createElement("div");
   slotDom.setAttribute("class", "clickyab-ad");
 
   var keys = Object.keys(window.clickyab_ad);
-  console.log(keys);
   for (var i = 0; i < keys.length; i++) {
-    console.log(i, keys[i]);
     if (window.clickyab_ad[keys[i]]) {
       slotDom.setAttribute("clickyab-" + keys[i], window.clickyab_ad[keys[i]]);
     }
   }
   document.write(slotDom.outerHTML);
 
-  if (!document.getElementById('clickyab-show-js-v2')){
+  window.addEventListener('DOMContentLoaded', function () {
+    window.totalOfClickyabShowAd = window.totalOfClickyabShowAd || window.calculateAdsCount();
+    window.countOfClickyabShowAd = window.countOfClickyabShowAd ? window.countOfClickyabShowAd + 1 : 1;
+    var time = 1500;
+    if (window.totalOfClickyabShowAd === window.countOfClickyabShowAd) {
+      time = 0;
+    }
 
     window["clickyabParams"] = {
       id: window.clickyab_ad["id"],
       domain: window.clickyab_ad["domain"]
     };
 
+
     setTimeout(function () {
+      // if (!window.injectClickyabMultiJs) {
+      window.injectClickyabMultiJs = true;
       var scriptDom = document.createElement("script");
-      scriptDom.setAttribute("id","clickyab-show-js-v2");
+      scriptDom.setAttribute("id", "clickyab-show-js-v2");
       scriptDom.setAttribute("src", "{{.URL}}");
       document.body.appendChild(scriptDom);
-    },0);
-  }
+      // }
+    }, time);
 
+
+  }, false);
+
+//
+  window.calculateAdsCount = function () {
+    var element = document.getElementsByClassName("clickyab-ad");
+    return element.length;
+  }
 }
