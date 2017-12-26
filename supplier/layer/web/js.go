@@ -6,25 +6,38 @@ import (
 	"net/url"
 	"strings"
 
-	"clickyab.com/crane/demand/entity"
+	"github.com/clickyab/services/framework"
 	"github.com/clickyab/services/framework/router"
 )
 
-var data = MustAsset("show-ad.es5.js")
+var (
+	showV2 = MustAsset("show.v2.js")
+	showV1 = jsV1(MustAsset("show.js"))
+)
 
-// Serve js
-func js(_ context.Context, w http.ResponseWriter, r *http.Request) {
-	proto := entity.HTTP
-	if r.TLS != nil {
-		proto = entity.HTTPS
-	}
-	if xh := strings.ToLower(r.Header.Get("X-Forwarded-Proto")); xh == "https" {
-		proto = entity.HTTPS
-	}
+// Serve jsV2
+func jsV2(_ context.Context, w http.ResponseWriter, r *http.Request) {
+	proto := framework.Scheme(r)
 	u := url.URL{
 		Host:   r.Host,
-		Scheme: proto.String(),
+		Scheme: proto,
 		Path:   router.MustPath("multi-ad", map[string]string{}),
+	}
+	// Exactly once!
+	str := strings.Replace(string(showV2), "{{.URL}}", u.String(), 1)
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write([]byte(str))
+}
+
+type jsV1 []byte
+
+// Serve jsV2
+func (data jsV1) ServeHTTPC(_ context.Context, w http.ResponseWriter, r *http.Request) {
+	proto := framework.Scheme(r)
+	u := url.URL{
+		Host:   r.Host,
+		Scheme: proto,
+		Path:   router.MustPath("multi-js", map[string]string{}),
 	}
 	// Exactly once!
 	str := strings.Replace(string(data), "{{.URL}}", u.String(), 1)
