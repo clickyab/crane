@@ -32,10 +32,11 @@ func getCappingKey(copID string) string {
 
 // EmptyCapping is a hack to handle no capping situation
 func EmptyCapping(ads map[int][]entity.Advertise) map[int][]entity.Advertise {
-	c := make(context)
+	c := newContext()
 	for i := range ads {
 		for j := range ads[i] {
-			capp := c.NewCapping(
+			capp := NewCapping(
+				c,
 				ads[i][j].Campaign().ID(),
 				0,
 				ads[i][j].Campaign().Frequency(),
@@ -63,7 +64,7 @@ func GetCapping(copID string, ads map[int][]entity.Advertise, ep string, slots .
 		}
 
 	}
-	c := make(context)
+	c := newContext()
 	ck := kv.NewAEAVStore(getCappingKey(copID), dailyCapExpire.Duration())
 	results := ck.AllKeys()
 	doneSized := make(map[int]bool)
@@ -106,7 +107,8 @@ func GetCapping(copID string, ads map[int][]entity.Advertise, ep string, slots .
 					ads[size][ad].ID(),
 				)]
 			}
-			capp := c.NewCapping(
+			capp := NewCapping(
+				c,
 				ads[size][ad].Campaign().ID(),
 				0,
 				ads[size][ad].Campaign().Frequency(),
