@@ -5,8 +5,8 @@ import FP from 'fingerprintjs2'
 
 import Effect from './effect'
 
-declare var clickyabParams: { [key: string]: string }
-declare var escape: any
+declare let clickyabParams: { [key: string]: string }
+declare let escape: any
 
 export default class ShowAd {
   private ads: IAd[] = []
@@ -22,10 +22,97 @@ export default class ShowAd {
     }
   }
 
+  isMobile(): number {
+    if (
+      navigator.userAgent.match(/Android/i) ||
+      navigator.userAgent.match(/webOS/i) ||
+      navigator.userAgent.match(/iPhone/i) ||
+      navigator.userAgent.match(/iPad/i) ||
+      navigator.userAgent.match(/iPod/i) ||
+      navigator.userAgent.match(/BlackBerry/i) ||
+      navigator.userAgent.match(/Windows Phone/i)
+    ) {
+      return 1
+    } else {
+      return 0
+    }
+  }
+
+  checkSlotId(elements: Element[], element: Element): any {
+    return new Promise(res => {
+      if (
+        elements.findIndex(
+          e => e.getAttribute('clickyab-slot') === element.getAttribute('clickyab-slot')
+        ) !== -1
+      ) {
+        element.setAttribute('clickyab-slot', element.getAttribute('clickyab-slot') + '1')
+        return this.checkSlotId(elements, element)
+      } else {
+        res()
+      }
+    })
+  }
+
+  findAdsInPage(): Element[] {
+    let elements: Element[] = []
+    const elementsCollection = document.getElementsByClassName(CONFIG.SELECTOR_CLASS)
+    for (let i = 0; i < elementsCollection.length; i++) {
+      this.checkSlotId(elements, elementsCollection.item(i))
+      elements.push(elementsCollection.item(i))
+    }
+    return elements
+  }
+
+  injectMobileAds(src: string) {
+    const div = document.createElement('div')
+    div.setAttribute(
+      'style',
+      `position: fixed; width: 100%; z-index:99999999; left: 0; bottom: 0px; margin: 0; padding: 0; text-align: center;`
+    )
+    div.innerHTML = decodeURIComponent(ad.iframe || '')
+
+    document.getElementsByTagName('body')[0].appendChild(div)
+  }
+
+  getAdSize(ad: IAd): number {
+    const size: string = `${ad.width}_${ad.height}`
+    const sizes: { [index: string]: number } = CONFIG.BANNER_SIZES as { [index: string]: number }
+    return sizes[size] || -1
+  }
+
+  encodeuri(b: string): string {
+    if (typeof encodeURIComponent === 'function') {
+      return encodeURIComponent(b)
+    } else {
+      return escape(b)
+    }
+  }
+
+  setCookie(cname: string, cvalue: string, exdays: number) {
+    const d = new Date()
+    d.setTime(d.getTime() + exdays * 24 * 60 * 60 * 1000)
+    const expires = 'expires=' + d.toUTCString()
+    document.cookie = cname + '=' + cvalue + '; ' + expires
+  }
+
+  getCookie(cname: string): string {
+    const name = cname + '='
+    const ca = document.cookie.split(';')
+    for (let i = 0; i < ca.length; i++) {
+      let c = ca[i]
+      while (c.charAt(0) === ' ') {
+        c = c.substring(1)
+      }
+      if (c.indexOf(name) === 0) {
+        return c.substring(name.length, c.length)
+      }
+    }
+    return ''
+  }
+
   public run() {
     if (window.document.body.getAttribute('clickyab-showAd-ready') === 'true') return
     window.document.body.setAttribute('clickyab-showAd-ready', 'true')
-    console.log('start show ad')
     this.ads = this.findAdsInPage().map(elem => this.parseElementProps(elem))
     this.getAdsFromRemote(ads => {
       this.injectSrc(ads)
@@ -51,6 +138,7 @@ export default class ShowAd {
 
           if (ad.effect) {
             const effectAct = new Effect(ad)
+            // delete effectAct;
           }
         }
       }
@@ -109,31 +197,6 @@ export default class ShowAd {
     })
   }
 
-  private isMobile(): number {
-    if (
-      navigator.userAgent.match(/Android/i) ||
-      navigator.userAgent.match(/webOS/i) ||
-      navigator.userAgent.match(/iPhone/i) ||
-      navigator.userAgent.match(/iPad/i) ||
-      navigator.userAgent.match(/iPod/i) ||
-      navigator.userAgent.match(/BlackBerry/i) ||
-      navigator.userAgent.match(/Windows Phone/i)
-    ) {
-      return 1
-    } else {
-      return 0
-    }
-  }
-
-  private findAdsInPage(): Element[] {
-    let elements: Element[] = []
-    const elementsCollection = document.getElementsByClassName(CONFIG.SELECTOR_CLASS)
-    for (let i = 0; i < elementsCollection.length; i++) {
-      elements.push(elementsCollection.item(i))
-    }
-    return elements
-  }
-
   private parseElementProps(element: Element): IAd {
     let ad: IAd = {
       element: element,
@@ -150,69 +213,5 @@ export default class ShowAd {
 
   private validateAdElement(ad: IAd): boolean {
     return this.getAdSize(ad) !== -1
-  }
-
-  private injectMobileAds(src: string) {
-    const div = document.createElement('div')
-    div.setAttribute(
-      'style',
-      `position: fixed; width: 100%; z-index:99999999; left: 0; bottom: 0px; margin: 0; padding: 0; text-align: center;`
-    )
-    const template: string = `
-              <iframe name="clickyab_ads_frame_m"
-                 style="max-width: 100%;
-                        display: block;
-                        margin: 0 auto;"
-                 width=320
-                 height=50 
-                 frameborder=0 
-                 src="${src}"
-                 marginwidth="0" 
-                 marginheight="0" 
-                 vspace="0" 
-                 hspace="0" 
-                 allowtransparency="true" 
-                 scrolling="no">
-              </iframe>
-            </div>`
-    div.innerHTML = template
-
-    document.getElementsByTagName('body')[0].appendChild(div)
-  }
-
-  private getAdSize(ad: IAd): number {
-    const size: string = `${ad.width}_${ad.height}`
-    const sizes: { [index: string]: number } = CONFIG.BANNER_SIZES as { [index: string]: number }
-    return sizes[size] || -1
-  }
-
-  private encodeuri(b: string): string {
-    if (typeof encodeURIComponent === 'function') {
-      return encodeURIComponent(b)
-    } else {
-      return escape(b)
-    }
-  }
-
-  private setCookie(cname: string, cvalue: string, exdays: number) {
-    const d = new Date()
-    d.setTime(d.getTime() + exdays * 24 * 60 * 60 * 1000)
-    const expires = 'expires=' + d.toUTCString()
-    document.cookie = cname + '=' + cvalue + '; ' + expires
-  }
-
-  private getCookie(cname: string): string {
-    const name = cname + '='
-    const ca = document.cookie.split(';')
-    for (let i = 0; i < ca.length; i++) {
-      let c = ca[i]
-      while (c.charAt(0) === ' ') {
-        c = c.substring(1)
-      }
-      if (c.indexOf(name) === 0) {
-        return c.substring(name.length, c.length)
-      }
-    }
-    return ''
   }
 }
