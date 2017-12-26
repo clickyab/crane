@@ -25,13 +25,9 @@ func (cfg) Initialize() config.DescriptiveLayer {
 
 func (cfg) Loaded() {
 	provider := config.GetString("services.broker.provider")
-	devel := config.GetBool("core.devel_mode")
 
 	switch provider {
 	case "mock":
-		if !devel {
-			logrus.Panic("mock is not allowed when devel is not set")
-		}
 		p := mock.GetChannelBroker()
 		broker.SetActiveBroker(p)
 		safe.GoRoutine(
