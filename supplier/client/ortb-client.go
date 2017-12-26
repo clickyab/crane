@@ -44,7 +44,9 @@ func Call(ctx context.Context, method, url string, pl *openrtb.BidRequest) (*ope
 		xlog.GetWithError(ctx, err).Debug("decode failed")
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	return &bid, nil
 }

@@ -62,14 +62,17 @@ func (c *Context) FatFinger() bool {
 	return c.fatFinger
 }
 
+// Network return network name
 func (c *Context) Network() string {
 	return c.networkName
 }
 
+// Carrier return carrier name
 func (c *Context) Carrier() string {
 	return c.carrierName
 }
 
+// Brand return brand name
 func (c *Context) Brand() string {
 	return c.brandName
 }
