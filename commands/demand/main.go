@@ -12,6 +12,7 @@ import (
 	_ "github.com/clickyab/services/kv/redis"
 	_ "github.com/clickyab/services/mysql/connection/mysql"
 	"github.com/clickyab/services/shell"
+	_ "github.com/clickyab/services/slack"
 	"github.com/sirupsen/logrus"
 )
 

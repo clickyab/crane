@@ -19,6 +19,7 @@ import (
 	"github.com/clickyab/services/initializer"
 	_ "github.com/clickyab/services/mysql/connection/mysql"
 	"github.com/clickyab/services/safe"
+	_ "github.com/clickyab/services/slack"
 	"github.com/sirupsen/logrus"
 )
 
