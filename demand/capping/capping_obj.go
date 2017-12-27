@@ -37,6 +37,7 @@ func NewCapping(ctx *Context, cpID int64, view, freq int) entity.Capping {
 		ctx.m[cpID] = &capping{
 			view:      view,
 			frequency: freq,
+			ads:       make(map[int64]int),
 		}
 	}
 
