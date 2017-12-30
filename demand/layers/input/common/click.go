@@ -2,6 +2,7 @@ package common
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -16,9 +17,16 @@ import (
 	"github.com/clickyab/services/safe"
 )
 
-const clickPath = "/click/:rh/:size/:type/:subtype/:jt"
+const (
+	clickPath = "/click/:rh/:size/:type/:subtype/:jt"
+	prefix    = "CLK_LIMIT"
+	format    = "20060102"
+)
 
-var clickExpire = config.RegisterDuration("crane.context.seat.click_exp", 72*time.Hour, "determine how long click url is valid")
+var (
+	clickExpire     = config.RegisterDuration("crane.context.seat.click_exp", 72*time.Hour, "determine how long click url is valid")
+	dailyClickLimit = config.RegisterInt64("crane.context.seat.click_limit", 3, "determine limit click for ip per day")
+)
 
 // clickBanner is handler for click ad request
 func clickBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
@@ -31,6 +39,12 @@ func clickBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	//TODO : if we lose redis somehow, it can lead to a problematic duplicate click,
 	//TODO : create an offline job to check duplicate click hash in the past 72 hours
 	counter := kv.NewAEAVStore(pl.ReserveHash, clickExpire.Duration()+time.Hour).IncSubKey("C", 1)
+
+	kv := kv.NewAEAVStore(fmt.Sprintf("%s_%s_%s", prefix, time.Now().Format(format), pl.IP), 24*time.Hour)
+	if kv.IncSubKey("C", 1) > dailyClickLimit.Int64() {
+		pl.Suspicious = 96
+	}
+
 	if counter > 1 {
 		// Duplicate click!
 		pl.Suspicious = 1
