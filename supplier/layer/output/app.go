@@ -96,6 +96,18 @@ a.largeclose{ width: 32px; height: 32px; line-height: 32px; font-size: 24px; }
 <a onclick="{{ if .FullScreen }}AndroidHide(){{ else }}AndroidClose(){{ end }};" class="{{ .CloseClass }}">x</a>
 
 <script type="text/javascript">
+	if (window.addEventListener) {
+		window.addEventListener("message", onMessage, false);
+	}
+	else if (window.attachEvent) {
+		window.attachEvent("onmessage", onMessage, false);
+	}
+
+	function onMessage(event) {
+		var data = event.data;
+		onClickyabClicked(event.data.url,null,null)
+	}
+
     function showHitted() {
         document.getElementById("hitted").style.display = 'block';
     }
