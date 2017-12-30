@@ -91,12 +91,11 @@ a.largeclose{ width: 32px; height: 32px; line-height: 32px; font-size: 24px; }
 	}
     </style>
 </head>
-<body {{ .BodyClass }}>
+<body class="{{ .BodyClass }}">
     {{ .AdMarkup }}
 <a onclick="{{ if .FullScreen }}AndroidHide(){{ else }}AndroidClose(){{ end }};" class="{{ .CloseClass }}">x</a>
 
 <script type="text/javascript">
-
     function showHitted() {
         document.getElementById("hitted").style.display = 'block';
     }
