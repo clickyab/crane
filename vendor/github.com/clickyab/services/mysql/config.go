@@ -26,6 +26,7 @@ var (
 
 	validSecondsSlaveBehind = config.RegisterInt64("services.mysql.replication.delay", 30, "max time slave can be behind")
 	dbReplicated            = config.RegisterBoolean("services.mysql.replication.status", false, "is rdb replicated?")
+	needWrite               = config.RegisterBoolean("services.mysql.need.write", true, "is this instance need write?")
 )
 
 func init() {
