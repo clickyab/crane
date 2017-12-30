@@ -38,12 +38,26 @@ const bannerTemplateText = `<!DOCTYPE html>
 	img.adhere {max-width:100%;height:auto;}
 	video {background: #232323 none repeat scroll 0 0;}
 	</style>
+
 </head>
 <body>
     {{ if .Tiny }}<a class="tiny" href="{{.TinyURL}}" target="_blank"></a>{{ end }}
-    <a href="{{ .Link }}" target="_blank"><img  src="{{ .Src }}" border="0" height="{{ .Height }}" width="{{ .Width }}" style="width:100vw;height:100vh;"/></a>
+    <a id="click_banner_id" href="{{ .Link }}" target="_blank"><img src="{{ .Src }}" border="0" height="{{ .Height }}" width="{{ .Width }}" style="width:100vw;height:100vh;"/></a>
     <br style="clear: both;"/>
     {{ if .ShowT }}<br style="clear: both;"/><iframe src="//t.clickyab.com/" width="1" height="1" frameborder="0"></iframe>{{ end }}
+	<script>
+	var elem = document.getElementById("click_banner_id");
+	elem.addEventListener("click", click);
+    function click(e) {
+        window.parent.postMessage({
+			'url': elem.getAttribute("href")
+		}, "*");
+        {{if .PreventDefault}}
+        e.preventDefault();
+        return false
+        {{end}}
+    }
+	</script>
 </body>
 </html>`
 
@@ -51,14 +65,15 @@ var bannerTemplate = template.Must(template.New("banner_template").Parse(bannerT
 
 // bannerData is the single ad id
 type bannerData struct {
-	Link     string
-	Width    int
-	Height   int
-	Src      string
-	Tiny     bool
-	TinyLogo string
-	TinyURL  string
-	ShowT    bool
+	Link           string
+	Width          int
+	Height         int
+	Src            string
+	Tiny           bool
+	TinyLogo       string
+	TinyURL        string
+	ShowT          bool
+	PreventDefault bool
 }
 
 func renderWebBanner(w io.Writer, ctx entity.Context, seat entity.Seat) error {
@@ -68,14 +83,15 @@ func renderWebBanner(w io.Writer, ctx entity.Context, seat entity.Seat) error {
 	}
 
 	sa := bannerData{
-		Link:     seat.ClickURL(),
-		Height:   seat.Height(),
-		Width:    seat.Width(),
-		Src:      src,
-		Tiny:     ctx.Tiny(),
-		TinyLogo: ctx.Publisher().Supplier().TinyLogo(),
-		TinyURL:  ctx.Publisher().Supplier().TinyURL(),
-		ShowT:    false,
+		Link:           seat.ClickURL(),
+		Height:         seat.Height(),
+		Width:          seat.Width(),
+		Src:            src,
+		Tiny:           ctx.Tiny(),
+		TinyLogo:       ctx.Publisher().Supplier().TinyLogo(),
+		TinyURL:        ctx.Publisher().Supplier().TinyURL(),
+		ShowT:          false,
+		PreventDefault: ctx.Publisher().Type() == entity.PublisherTypeApp,
 	}
 
 	return bannerTemplate.Execute(w, sa)
