@@ -16,7 +16,7 @@ import (
 	"github.com/clickyab/services/safe"
 )
 
-const clickPath = "/click/:rh/:size/:type/:jt"
+const clickPath = "/click/:rh/:size/:type/:subtype/:jt"
 
 var clickExpire = config.RegisterDuration("crane.context.seat.click_exp", 72*time.Hour, "determine how long click url is valid")
 
@@ -44,7 +44,7 @@ func clickBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetAlexa(pl.UserAgent, http.Header{}),
 		builder.SetProtocolByRequest(r),
 		builder.SetTID(pl.TID, pl.IP, pl.UserAgent),
-		builder.SetType(pl.Type),
+		builder.SetType(pl.Type, pl.SubType),
 		builder.SetPublisher(pl.Publisher),
 		builder.SetSuspicious(pl.Suspicious),
 		builder.SetFatFinger(pl.FatFinger),

@@ -25,12 +25,12 @@ import (
 
 var (
 	sup    entity.Supplier = &supplier{}
-	server                 = config.RegisterString("crane.supplier.app.url", "", "route for app")
+	server                 = config.RegisterString("crane.supplier.banner.url", "", "route for app")
 	method                 = config.RegisterString("crane.supplier.app.method", "POST", "method for app request")
 )
 
 func getApp(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-	pub, err := models.GetApp(sup, r.URL.Query().Get("package"))
+	pub, err := apps.GetApp(sup, r.URL.Query().Get("package"))
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 	}

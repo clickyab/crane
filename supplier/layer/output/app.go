@@ -37,7 +37,7 @@ a.largeclose{width:32px;height:32px;line-height:30px;font-size:24px;}
 .landscape a.largeclose{left:448px;}
     {{ else }}
 *{padding: 0;margin: 0;}
-html,body{width: 100%;height: 100%;background: #fff;}
+html,body{width: 100%;height: 100%;background: #fff;overflow:hidden;}
 a{display: block;float: left;width: 100%;height: 100%;cursor: pointer; text-decoration: none}
 a.close,a.largeclose{
     width: 24px;
@@ -85,7 +85,10 @@ a.largeclose{ width: 32px; height: 32px; line-height: 32px; font-size: 24px; }
         z-index: 1000;
         height: auto !important;
     }
-
+	iframe {
+		width: 100vw;
+		height: 100vh;
+	}
     </style>
 </head>
 <body {{ .BodyClass }}>
@@ -198,7 +201,7 @@ type inappContext struct {
 	SdkVersion    int64
 	RefreshMinute int
 	NoAd          bool
-	AdMarkup      string
+	AdMarkup      template.HTML
 }
 
 // RenderApp will render single ad for app
@@ -223,6 +226,6 @@ func RenderApp(ctx context.Context, w io.Writer, res *openrtb.BidResponse, full 
 		BodyClass:     full,
 		SdkVersion:    sdk,
 		NoAd:          noAd,
-		AdMarkup:      adMarkup,
+		AdMarkup:      template.HTML(adMarkup),
 	})
 }

@@ -1,4 +1,4 @@
-package models
+package apps
 
 import (
 	"time"
@@ -14,7 +14,7 @@ import (
 )
 
 var (
-	appExp = config.RegisterDuration("crane.models.expire.app", time.Hour, "expire time of apps")
+	appExp = config.RegisterDuration("crane.models.expire.app", time.Hour, "expire time of app")
 )
 
 type loader struct {
@@ -22,11 +22,11 @@ type loader struct {
 
 func (loader) Initialize() {
 	ctx := context.Background()
-	apps = pool.NewPool(entities.AppLoader, cachepool.NewCachePool("APP_"), appExp.Duration(), 3)
-	apps.Start(ctx)
+	app = pool.NewPool(entities.AppLoader, cachepool.NewCachePool("APP_"), appExp.Duration(), 3)
+	app.Start(ctx)
 
 	// Wait for the first time load
-	<-apps.Notify()
+	<-app.Notify()
 
 	logrus.Debug("Pool initialized and ready")
 }

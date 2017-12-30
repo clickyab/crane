@@ -41,7 +41,7 @@ const bannerTemplateText = `<!DOCTYPE html>
 </head>
 <body>
     {{ if .Tiny }}<a class="tiny" href="{{.TinyURL}}" target="_blank"></a>{{ end }}
-    <a href="{{ .Link }}" target="_blank"><img  src="{{ .Src }}" border="0" height="{{ .Height }}" width="{{ .Width }}"/></a>
+    <a href="{{ .Link }}" target="_blank"><img  src="{{ .Src }}" border="0" height="{{ .Height }}" width="{{ .Width }}" style="width:100vw;height:100vh;"/></a>
     <br style="clear: both;"/>
     {{ if .ShowT }}<br style="clear: both;"/><iframe src="//t.clickyab.com/" width="1" height="1" frameborder="0"></iframe>{{ end }}
 </body>
