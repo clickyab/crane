@@ -30,6 +30,8 @@ type Seat interface {
 	CTR() float64
 	// Type of seat
 	Type() string
+	// SubType of seat
+	SubType() string
 	// ShowT the fucking iframe injection
 	ShowT() bool
 	// MinBid is the minimum CPC requested for this requests

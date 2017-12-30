@@ -10,6 +10,7 @@ import (
 
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/models/ads"
+	"clickyab.com/crane/models/apps"
 	"clickyab.com/crane/models/suppliers"
 	"clickyab.com/crane/models/website"
 	"github.com/clickyab/services/framework"
@@ -25,6 +26,7 @@ type payloadData struct {
 	ReserveHash  string
 	Size         int
 	Type         entity.RequestType
+	SubType      entity.RequestType
 	TID          string
 	Ref          string
 	Parent       string
@@ -52,10 +54,10 @@ func extractor(ctx context.Context, r *http.Request) (*payloadData, error) {
 	pl := payloadData{}
 	pl.ReserveHash = xmux.Param(ctx, "rh")
 	pl.Type = entity.RequestType(xmux.Param(ctx, "type"))
+	pl.SubType = entity.RequestType(xmux.Param(ctx, "subtype"))
 	pl.TID = r.URL.Query().Get("tid")
 	pl.Ref = r.URL.Query().Get("ref")
 	pl.Parent = r.URL.Query().Get("parent")
-
 	expired, m, err := jwt.NewJWT().Decode([]byte(jt), "aid", "sup", "dom", "bid", "uaip", "susp", "pid", "now", "cpm", "ff")
 	if err != nil {
 		return nil, err
@@ -78,9 +80,16 @@ func extractor(ctx context.Context, r *http.Request) (*payloadData, error) {
 	pl.SCPM = pl.SCPM * float64(pl.Supplier.Rate())
 
 	// get the publisher, even its not created then its fine
-	pl.Publisher, err = website.GetWebSite(pl.Supplier, m["dom"])
+	if pl.SubType == entity.RequestTypeWeb {
+		pl.Publisher, err = website.GetWebSite(pl.Supplier, m["dom"])
+	} else if pl.SubType == entity.RequestTypeApp {
+		pl.Publisher, err = apps.GetApp(pl.Supplier, m["dom"])
+	} else {
+		err = errors.New("not supported subtype")
+	}
+
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("can not find publisher")
 	}
 	pl.AdID, _ = strconv.ParseInt(m["aid"], 10, 64)
 	pl.Ad, err = ads.GetAd(pl.AdID)

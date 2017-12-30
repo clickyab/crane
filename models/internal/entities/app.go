@@ -80,7 +80,7 @@ func (app *App) SoftFloorCPM() int64 {
 
 // Name return name of app
 func (app *App) Name() string {
-	return app.AppName.String
+	return app.AppPackage
 }
 
 // BIDType return bid type cpc,cpm
@@ -113,6 +113,7 @@ func (app *App) CTR(size int) float64 {
 // AppLoader load all confirmed apps
 func AppLoader(ctx context.Context) (map[string]kv.Serializable, error) {
 	b := make(map[string]kv.Serializable)
+	//return b, nil // Uncomment this line after first time in DEV mode
 
 	const cnt = 10000
 	for j := 0; ; j = j + cnt {

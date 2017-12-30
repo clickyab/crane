@@ -20,6 +20,8 @@ const (
 type Context interface {
 	// Type return the request type.
 	Type() RequestType
+	// SubType is the request sub type. normally used for demand
+	SubType() RequestType
 	// Request data comes from request for every user
 	// like ip,user agent,client id,...
 	Request

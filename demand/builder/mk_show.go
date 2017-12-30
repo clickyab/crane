@@ -37,14 +37,25 @@ func SetTimestamp() ShowOptionSetter {
 		return options, nil
 	}
 }
+func validateType(typ entity.RequestType) bool {
+	if typ != entity.RequestTypeDemand && typ != entity.RequestTypeVast && typ != entity.RequestTypeApp && typ != entity.RequestTypeWeb && typ != entity.RequestTypeNative {
+		return false
+	}
+	return true
+}
 
 // SetType is the type setter for context
-func SetType(typ entity.RequestType) ShowOptionSetter {
+func SetType(typ entity.RequestType, subType entity.RequestType) ShowOptionSetter {
 	return func(options *Context) (*Context, error) {
-		if typ != entity.RequestTypeDemand && typ != entity.RequestTypeVast && typ != entity.RequestTypeApp && typ != entity.RequestTypeWeb && typ != entity.RequestTypeNative {
+		if !validateType(typ) {
 			return nil, fmt.Errorf("type is not supported %s", typ)
 		}
+		if !validateType(subType) {
+			return nil, fmt.Errorf("sub type is not supported %s", subType)
+		}
+
 		options.typ = typ
+		options.subTyp = subType
 		return options, nil
 	}
 }
