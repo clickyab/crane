@@ -327,6 +327,15 @@ func DoNotShowTFrame() ShowOptionSetter {
 	}
 }
 
+// SetPreventDefault is a simple workaround for our old sdk. the old sdk do not pass click to higher level
+// and we use post message to handle that, pre 4 sdk are that way
+func SetPreventDefault(prevent bool) ShowOptionSetter {
+	return func(o *Context) (*Context, error) {
+		o.preventDefault = prevent
+		return o, nil
+	}
+}
+
 func createHash(l int, items ...[]byte) string {
 	h := sha1.New()
 	for i := range items {

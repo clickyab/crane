@@ -91,7 +91,7 @@ func renderWebBanner(w io.Writer, ctx entity.Context, seat entity.Seat) error {
 		TinyLogo:       ctx.Publisher().Supplier().TinyLogo(),
 		TinyURL:        ctx.Publisher().Supplier().TinyURL(),
 		ShowT:          false,
-		PreventDefault: ctx.Publisher().Type() == entity.PublisherTypeApp,
+		PreventDefault: ctx.PreventDefault(),
 	}
 
 	return bannerTemplate.Execute(w, sa)

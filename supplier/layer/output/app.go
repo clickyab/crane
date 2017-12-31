@@ -96,6 +96,7 @@ a.largeclose{ width: 32px; height: 32px; line-height: 32px; font-size: 24px; }
 <a onclick="{{ if .FullScreen }}AndroidHide(){{ else }}AndroidClose(){{ end }};" class="{{ .CloseClass }}">x</a>
 
 <script type="text/javascript">
+    {{ if lt .SdkVersion 5 }}
 	if (window.addEventListener) {
 		window.addEventListener("message", onMessage, false);
 	}
@@ -107,7 +108,7 @@ a.largeclose{ width: 32px; height: 32px; line-height: 32px; font-size: 24px; }
 		var data = event.data;
 		onClickyabClicked(event.data.url,null,null)
 	}
-
+	{{ end }}
     function showHitted() {
         document.getElementById("hitted").style.display = 'block';
     }
@@ -173,7 +174,7 @@ a.largeclose{ width: 32px; height: 32px; line-height: 32px; font-size: 24px; }
             setTimeout(function () {
                 AndroidHasNoAds();
             }, 100);// 0.1 sec
-            {{ else if eq .SdkVersion 4 }}
+            {{ else if ge .SdkVersion 4 }}
             setTimeout(function () {
                 AndroidSetHasAds(false);
             }, 100);// 0.1 sec
@@ -183,7 +184,7 @@ a.largeclose{ width: 32px; height: 32px; line-height: 32px; font-size: 24px; }
             }, 100);// 0.1 sec
             {{ end }}
         {{ else }}
-            {{ if eq .SdkVersion 4 }}
+            {{ if ge .SdkVersion 4 }}
             setTimeout(function () {
                 AndroidSetHasAds(true);
             }, 100);// 0.1 sec

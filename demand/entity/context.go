@@ -64,4 +64,6 @@ type Context interface {
 	Brand() string
 	// FatFinger return true if we need to prevent sudden click
 	FatFinger() bool
+	// PreventDefault is a way to handle old sdk version
+	PreventDefault() bool
 }
