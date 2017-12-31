@@ -10,7 +10,8 @@ type controller struct {
 
 // Routes is for registering routes
 func (controller) Routes(r framework.Mux) {
-	r.GET("app-single-ad", "/getapp", getApp)
+	r.GET("app-single-ad", "/api/getapp", getApp)
+	r.GET("app-single-ad-bc", "/ads/inapp.php", getApp)
 }
 
 func init() {
