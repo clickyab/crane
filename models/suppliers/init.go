@@ -28,10 +28,28 @@ func (loader) Initialize() {
 	suppliersByName.Start(ctx)
 
 	// Wait for the first time load
-	<-suppliers.Notify()
-	<-suppliersByName.Notify()
+	res := fanIn(suppliers.Notify(), suppliersByName.Notify())
+	for i := 0; i < 2; i++ {
+		<-res
+	}
 
 	logrus.Debug("Pool initialized and ready")
+}
+
+func fanIn(input1, input2 <-chan time.Time) <-chan time.Time {
+	c := make(chan time.Time)
+	go func() {
+		for {
+			select {
+			case s := <-input1:
+				c <- s
+			case s := <-input2:
+				c <- s
+			}
+		}
+	}()
+
+	return c
 }
 
 func init() {
