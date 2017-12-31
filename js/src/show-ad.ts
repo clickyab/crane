@@ -161,11 +161,12 @@ export default class ShowAd {
   }
 
   private injectMobileAds(src: string) {
-    const div = document.createElement('div')
+    const div = document.createElement('div');
     div.setAttribute(
       'style',
       `position: fixed; width: 100%; z-index:99999999; left: 0; bottom: 0px; margin: 0; padding: 0; text-align: center;`
-    )
+    );
+    div.style.height = "50px";
     div.innerHTML = src;
 
     document.getElementsByTagName('body')[0].appendChild(div)
