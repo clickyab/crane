@@ -56,6 +56,13 @@ type Context struct {
 	carrierName string
 
 	fatFinger bool
+	// Just in application, for older sdk, we need to add prevent default on clicks
+	preventDefault bool
+}
+
+// PreventDefault is a boolean value to handle old sdk wrong way of click
+func (c *Context) PreventDefault() bool {
+	return c.preventDefault
 }
 
 // FatFinger is for web-mobile and in app

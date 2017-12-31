@@ -82,6 +82,7 @@ func openrtbInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	var ext = make(simpleMap)
 	_ = json.Unmarshal(payload.Ext, &ext)
 	fatFinger := ext.Bool("fat_finger")
+	prevent := ext.Bool("prevent_default")
 
 	if err := payload.Validate(); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -96,6 +97,7 @@ func openrtbInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	if payload.Site != nil {
 		publisher, err = website.GetWebSite(sup, payload.Site.Domain)
 		subType = entity.RequestTypeWeb
+		prevent = false // do not accept prevent default on web request
 	} else if payload.App != nil {
 		publisher, err = apps.GetApp(sup, payload.App.Bundle)
 		subType = entity.RequestTypeApp
@@ -142,6 +144,7 @@ func openrtbInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetFloorCPM(sup.DefaultFloorCPM()),
 		builder.SetSoftFloorCPM(sup.DefaultSoftFloorCPM()),
 		builder.SetRate(float64(sup.Rate())),
+		builder.SetPreventDefault(prevent),
 	}
 	// TODO : if we need to implement native/app/vast then the next line must be activated and customized
 	//b = append(b, builder.SetFloorPercentage(100), builder.SetMinBidPercentage(100))

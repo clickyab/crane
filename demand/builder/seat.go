@@ -189,7 +189,10 @@ func (s *seat) ShowURL() string {
 		"ff":   ff,
 	}, showExpire.Duration())
 	s.winnerAd.ID()
-	res := router.MustPath("banner", map[string]string{"rh": s.ReservedHash(), "size": fmt.Sprint(s.size), "jt": j, "type": s.Type(), "subtype": s.SubType()})
+	res := router.MustPath(
+		"banner",
+		map[string]string{"rh": s.ReservedHash(), "size": fmt.Sprint(s.size), "jt": j, "type": s.Type(), "subtype": s.SubType()},
+	)
 	u := url.URL{
 		Host:   s.host,
 		Scheme: s.protocol.String(),
@@ -234,7 +237,10 @@ func (s *seat) ClickURL() string {
 		"ff":   "F", // click not required this
 	}, clickExpire.Duration())
 	s.winnerAd.ID()
-	res, err := router.Path("click", map[string]string{"jt": j, "rh": s.ReservedHash(), "size": fmt.Sprint(s.Size()), "type": s.Type(), "subtype": s.SubType()})
+	res, err := router.Path(
+		"click",
+		map[string]string{"jt": j, "rh": s.ReservedHash(), "size": fmt.Sprint(s.Size()), "type": s.Type(), "subtype": s.SubType()},
+	)
 	assert.Nil(err)
 	u := url.URL{
 		Host:   s.host,
