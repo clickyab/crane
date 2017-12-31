@@ -39,7 +39,6 @@ export default class ShowAd {
   }
 
   private setStyle(ad: IAd) {
-    ad.element.style.width = ad.width + 'px'
     ad.element.style.height = ad.height + 'px'
     ad.element.style.textAlign = 'center'
     return ad
@@ -167,24 +166,7 @@ export default class ShowAd {
       'style',
       `position: fixed; width: 100%; z-index:99999999; left: 0; bottom: 0px; margin: 0; padding: 0; text-align: center;`
     )
-    const template: string = `
-              <iframe name="clickyab_ads_frame_m"
-                 style="max-width: 100%;
-                        display: block;
-                        margin: 0 auto;"
-                 width=320
-                 height=50 
-                 frameborder=0 
-                 src="${src}"
-                 marginwidth="0" 
-                 marginheight="0" 
-                 vspace="0" 
-                 hspace="0" 
-                 allowtransparency="true" 
-                 scrolling="no">
-              </iframe>
-            </div>`
-    div.innerHTML = template
+    div.innerHTML = src;
 
     document.getElementsByTagName('body')[0].appendChild(div)
   }
