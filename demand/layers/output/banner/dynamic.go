@@ -2106,7 +2106,7 @@ func getTemplate(size int) *template.Template {
 
 func renderDynamicBanner(w io.Writer, ctx entity.Context, s entity.Seat) error {
 	attr := &dynamicAttribute{}
-	err := mapstructure.Decode(attr, s.WinnerAdvertise().Attributes())
+	err := mapstructure.Decode(s.WinnerAdvertise().Attributes(), attr)
 	assert.Nil(err)
 	if ctx.Protocol() == entity.HTTPS {
 		attr.Product = strings.Replace(attr.Product, "http://", "https://", -1)

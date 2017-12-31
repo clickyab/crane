@@ -10,8 +10,9 @@ import (
 
 // Context is the app Context
 type Context struct {
-	ts  time.Time
-	typ entity.RequestType
+	ts     time.Time
+	typ    entity.RequestType
+	subTyp entity.RequestType
 
 	ip             net.IP
 	ua             string
@@ -55,6 +56,13 @@ type Context struct {
 	carrierName string
 
 	fatFinger bool
+	// Just in application, for older sdk, we need to add prevent default on clicks
+	preventDefault bool
+}
+
+// PreventDefault is a boolean value to handle old sdk wrong way of click
+func (c *Context) PreventDefault() bool {
+	return c.preventDefault
 }
 
 // FatFinger is for web-mobile and in app
@@ -125,6 +133,11 @@ func (c *Context) Timestamp() time.Time {
 // Type return the request type
 func (c *Context) Type() entity.RequestType {
 	return c.typ
+}
+
+// SubType return the request type
+func (c *Context) SubType() entity.RequestType {
+	return c.subTyp
 }
 
 // Referrer is the request referrer

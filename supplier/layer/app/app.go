@@ -25,12 +25,12 @@ import (
 
 var (
 	sup    entity.Supplier = &supplier{}
-	server                 = config.RegisterString("crane.supplier.app.url", "", "route for app")
+	server                 = config.RegisterString("crane.supplier.banner.url", "", "route for app")
 	method                 = config.RegisterString("crane.supplier.app.method", "POST", "method for app request")
 )
 
 func getApp(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-	pub, err := models.GetApp(sup, r.URL.Query().Get("package"))
+	pub, err := apps.GetApp(sup, r.URL.Query().Get("package"))
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 	}
@@ -61,6 +61,12 @@ func getApp(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	if _, ok := pub.Attributes()[entity.PAFatFinger]; ok {
 		ext["fat_finger"] = true
 	}
+	sdkVers, _ := strconv.ParseInt(r.URL.Query().Get("clickyabVersion"), 10, 0)
+	if sdkVers <= 4 {
+		// older version of sdk (pre 5) use a method to handle click which is not correct.
+		// this is a workaround for that
+		ext["prevent_default"] = true
+	}
 
 	j, err := json.Marshal(ext)
 	assert.Nil(err)
@@ -74,7 +80,6 @@ func getApp(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sdkVers, _ := strconv.ParseInt(r.URL.Query().Get("clickyabVersion"), 10, 0)
 	if output.RenderApp(ctx, w, res, full, sdkVers, bs) != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return

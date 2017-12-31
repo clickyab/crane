@@ -43,6 +43,7 @@ func SetDemandSeats(sd ...DemandSeatData) ShowOptionSetter {
 				ref:              o.referrer,
 				publisher:        o.publisher,
 				ftype:            o.typ,
+				subType:          o.subTyp,
 				ctr:              o.publisher.CTR(size),
 				showT:            showT,
 				rate:             o.rate,

@@ -106,7 +106,7 @@ func (w *Website) SoftFloorCPM() int64 {
 
 // Name of the website
 func (w *Website) Name() string {
-	return w.WName.String
+	return w.WDomain
 }
 
 // BIDType is the bid type for this website

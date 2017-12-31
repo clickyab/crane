@@ -1,4 +1,4 @@
-package models
+package apps
 
 import (
 	"fmt"
@@ -9,13 +9,13 @@ import (
 )
 
 var (
-	apps pool.Interface
+	app pool.Interface
 )
 
 // GetApp try to get app. do not use it in initializer
 func GetApp(sup entity.Supplier, appPackage string) (entity.Publisher, error) {
 	d := &entities.App{}
-	res, err := apps.Get(fmt.Sprintf("%s/%s", sup.Name(), appPackage), d)
+	res, err := app.Get(fmt.Sprintf("%s/%s", sup.Name(), appPackage), d)
 	if err != nil {
 		if sup.AllowCreate() {
 			return entities.NewFakePublisher(sup, appPackage, entity.PublisherTypeApp), nil
@@ -33,7 +33,7 @@ func GetApp(sup entity.Supplier, appPackage string) (entity.Publisher, error) {
 // GetAppID try to get app. do not use it in initializer
 func GetAppID(sup entity.Supplier, appPackage string, token string) (int64, error) {
 	d := &entities.App{}
-	res, err := apps.Get(fmt.Sprintf("%s/%s", sup.Name(), appPackage), d)
+	res, err := app.Get(fmt.Sprintf("%s/%s", sup.Name(), appPackage), d)
 	if err == nil {
 		d = res.(*entities.App)
 		d.Supp = sup

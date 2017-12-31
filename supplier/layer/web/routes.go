@@ -9,10 +9,10 @@ type controller struct {
 }
 
 func (controller) Routes(r framework.Mux) {
-	r.GET("multi-js", "/multi.js", jsV2)
-	r.RootMux().GET("/show.js", showV1)
+	r.GET("multi-js", "/api/multi.js", jsV2)
+	r.GET("show-js", "/show.js", showV1.ServeHTTPC)
 	// fix the following line after writing the actual route
-	r.GET("multi-ad", "/getad", getAd)
+	r.GET("multi-ad", "/api/getad", getAd)
 
 }
 

@@ -16,7 +16,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-const showPath = "/banner/:rh/:size/:type/:jt"
+const showPath = "/banner/:rh/:size/:type/:subtype/:jt"
 
 // show is handler for show ad request
 func showBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
@@ -40,7 +40,7 @@ func showBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetProtocolByRequest(r),
 		builder.SetParent(pl.Parent, pl.Ref),
 		builder.SetTID(pl.TID, pl.IP, pl.UserAgent),
-		builder.SetType(pl.Type),
+		builder.SetType(pl.Type, pl.SubType),
 		builder.SetPublisher(pl.Publisher),
 		builder.SetSuspicious(pl.Suspicious),
 		builder.SetFatFinger(pl.FatFinger),
@@ -56,7 +56,6 @@ func showBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-
 	exp, _ := context.WithTimeout(ctx, 10*time.Second)
 	safe.GoRoutine(exp, func() {
 		job := show.NewImpressionJob(c, c.Seats()...)

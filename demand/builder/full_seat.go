@@ -31,6 +31,7 @@ func SetFullSeats(pubID string, size int, hash string, ad entity.Advertise, bid 
 			ref:       o.referrer,
 			publisher: o.publisher,
 			ftype:     o.typ,
+			subType:   o.subTyp,
 			ctr:       ctr,
 
 			winnerAd:    ad,

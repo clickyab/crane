@@ -172,7 +172,7 @@ func updateRdbMap(ctx context.Context) {
 }
 
 func fillSafeArray() {
-	tmp := []*gorp.DbMap{}
+	var tmp []*gorp.DbMap
 	for i := range rdbmap {
 		if err := ping(dbReplicated.Bool(), rdbmap[i]); err == nil {
 			tmp = append(tmp, rdbmap[i])
@@ -211,9 +211,11 @@ func doMigration() {
 
 // Healthy return true if the databases are ok and ready for ping
 func (in *initMysql) Healthy(context.Context) error {
-	rErr := ping(dbReplicated.Bool(), rdbmap...)
-	wErr := ping(false, wdbmap)
-
+	rErr := ping(dbReplicated.Bool(), safeRead...)
+	var wErr error
+	if needWrite.Bool() {
+		wErr = ping(false, wdbmap)
+	}
 	if rErr != nil || wErr != nil {
 		return fmt.Errorf("mysql PING failed, read error was %s and write error was %s", rErr, wErr)
 	}

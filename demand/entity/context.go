@@ -20,6 +20,8 @@ const (
 type Context interface {
 	// Type return the request type.
 	Type() RequestType
+	// SubType is the request sub type. normally used for demand
+	SubType() RequestType
 	// Request data comes from request for every user
 	// like ip,user agent,client id,...
 	Request
@@ -62,4 +64,6 @@ type Context interface {
 	Brand() string
 	// FatFinger return true if we need to prevent sudden click
 	FatFinger() bool
+	// PreventDefault is a way to handle old sdk version
+	PreventDefault() bool
 }

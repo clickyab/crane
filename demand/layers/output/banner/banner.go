@@ -15,15 +15,7 @@ const bannerTemplateText = `<!DOCTYPE html>
 <head>
 	<meta name="robots" content="nofollow">
 	<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-{{ if .FatFinger }}
-		<script type="text/javascript">
-        function showb() {
-            document.getElementById("clickyab-overlay").style.display = "block";
-            document.getElementById("clickyab-link").style.display = "block";
-        }
-    </script>
-{{ end }}
-<style>
+	<style>
 	html, body, div, span, applet, object, iframe,h1, h2, h3, h4, h5, h6, p, blockquote, pre,a, abbr, acronym, address, big, cite, code,del, dfn, em, font, img, ins, kbd, q, s, samp,small, strike, strong, sub, sup, tt, var,dl, dt, dd, ol, ul, li,fieldset, form, label, legend,table, caption, tbody, tfoot, thead, tr, th, td { margin: 0; padding: 0; border: 0; outline: 0; font-weight: inherit; font-style: inherit; font-size: 100%; font-family: inherit; vertical-align: baseline;}
 	:focus {outline: 0;}
 	body {line-height: 1;color: black;background: white;}
@@ -46,29 +38,26 @@ const bannerTemplateText = `<!DOCTYPE html>
 	img.adhere {max-width:100%;height:auto;}
 	video {background: #232323 none repeat scroll 0 0;}
 	</style>
+
 </head>
 <body>
-
-	<div class="clickyab-wrapper">
-		{{ if .Tiny }}<a class="tiny" href="{{.TinyURL}}" target="_blank"></a>{{ end }}
-    	{{ if .FatFinger }}<div id="clickyab-overlay-clickable" onclick="showb()"></div> {{ end }}
-    	<a href="{{ .Link }}" target="_blank">
-        	<img  src="{{ .Src }}" border="0" height="{{ .Height }}" width="{{ .Width }}"/>
-    	</a>
-    	{{ if .FatFinger }}<div id="clickyab-overlay"></div> {{ end }}
-    	<div id="clickyab-link">
-        	<a href="{{ .Link }}" target="_blank">
-        مشاهده آگهی
-        	</a>
-    	</div>
-			    <br style="clear: both;"/>
-		    {{ if .ShowT }}<br style="clear: both;"/><iframe src="//t.clickyab.com/" width="1" height="1" frameborder="0"></iframe>{{ end }}
-	</div>
-
     {{ if .Tiny }}<a class="tiny" href="{{.TinyURL}}" target="_blank"></a>{{ end }}
-    <a href="{{ .Link }}" target="_blank"><img  src="{{ .Src }}" border="0" height="{{ .Height }}" width="{{ .Width }}"/></a>
+    <a id="click_banner_id" href="{{ .Link }}" target="_blank"><img src="{{ .Src }}" border="0" height="{{ .Height }}" width="{{ .Width }}" style="width:100vw;height:100vh;"/></a>
     <br style="clear: both;"/>
     {{ if .ShowT }}<br style="clear: both;"/><iframe src="//t.clickyab.com/" width="1" height="1" frameborder="0"></iframe>{{ end }}
+	<script>
+	var elem = document.getElementById("click_banner_id");
+	elem.addEventListener("click", click);
+    function click(e) {
+        window.parent.postMessage({
+			'url': elem.getAttribute("href")
+		}, "*");
+        {{if .PreventDefault}}
+        e.preventDefault();
+        return false
+        {{end}}
+    }
+	</script>
 </body>
 </html>`
 
@@ -76,15 +65,15 @@ var bannerTemplate = template.Must(template.New("banner_template").Parse(bannerT
 
 // bannerData is the single ad id
 type bannerData struct {
-	Link      string
-	Width     int
-	Height    int
-	Src       string
-	Tiny      bool
-	TinyLogo  string
-	TinyURL   string
-	ShowT     bool
-	FatFinger bool
+	Link           string
+	Width          int
+	Height         int
+	Src            string
+	Tiny           bool
+	TinyLogo       string
+	TinyURL        string
+	ShowT          bool
+	PreventDefault bool
 }
 
 func renderWebBanner(w io.Writer, ctx entity.Context, seat entity.Seat) error {
@@ -94,15 +83,15 @@ func renderWebBanner(w io.Writer, ctx entity.Context, seat entity.Seat) error {
 	}
 
 	sa := bannerData{
-		Link:      seat.ClickURL(),
-		Height:    seat.Height(),
-		Width:     seat.Width(),
-		Src:       src,
-		Tiny:      ctx.Tiny(),
-		TinyLogo:  ctx.Publisher().Supplier().TinyLogo(),
-		TinyURL:   ctx.Publisher().Supplier().TinyURL(),
-		ShowT:     false,
-		FatFinger: ctx.FatFinger(),
+		Link:           seat.ClickURL(),
+		Height:         seat.Height(),
+		Width:          seat.Width(),
+		Src:            src,
+		Tiny:           ctx.Tiny(),
+		TinyLogo:       ctx.Publisher().Supplier().TinyLogo(),
+		TinyURL:        ctx.Publisher().Supplier().TinyURL(),
+		ShowT:          false,
+		PreventDefault: ctx.PreventDefault(),
 	}
 
 	return bannerTemplate.Execute(w, sa)

@@ -37,7 +37,7 @@ a.largeclose{width:32px;height:32px;line-height:30px;font-size:24px;}
 .landscape a.largeclose{left:448px;}
     {{ else }}
 *{padding: 0;margin: 0;}
-html,body{width: 100%;height: 100%;background: #fff;}
+html,body{width: 100%;height: 100%;background: #fff;overflow:hidden;}
 a{display: block;float: left;width: 100%;height: 100%;cursor: pointer; text-decoration: none}
 a.close,a.largeclose{
     width: 24px;
@@ -85,15 +85,30 @@ a.largeclose{ width: 32px; height: 32px; line-height: 32px; font-size: 24px; }
         z-index: 1000;
         height: auto !important;
     }
-
+	iframe {
+		width: 100vw;
+		height: 100vh;
+	}
     </style>
 </head>
-<body {{ .BodyClass }}>
+<body class="{{ .BodyClass }}">
     {{ .AdMarkup }}
 <a onclick="{{ if .FullScreen }}AndroidHide(){{ else }}AndroidClose(){{ end }};" class="{{ .CloseClass }}">x</a>
 
 <script type="text/javascript">
+    {{ if lt .SdkVersion 5 }}
+	if (window.addEventListener) {
+		window.addEventListener("message", onMessage, false);
+	}
+	else if (window.attachEvent) {
+		window.attachEvent("onmessage", onMessage, false);
+	}
 
+	function onMessage(event) {
+		var data = event.data;
+		onClickyabClicked(event.data.url,null,null)
+	}
+	{{ end }}
     function showHitted() {
         document.getElementById("hitted").style.display = 'block';
     }
@@ -159,7 +174,7 @@ a.largeclose{ width: 32px; height: 32px; line-height: 32px; font-size: 24px; }
             setTimeout(function () {
                 AndroidHasNoAds();
             }, 100);// 0.1 sec
-            {{ else if eq .SdkVersion 4 }}
+            {{ else if ge .SdkVersion 4 }}
             setTimeout(function () {
                 AndroidSetHasAds(false);
             }, 100);// 0.1 sec
@@ -169,7 +184,7 @@ a.largeclose{ width: 32px; height: 32px; line-height: 32px; font-size: 24px; }
             }, 100);// 0.1 sec
             {{ end }}
         {{ else }}
-            {{ if eq .SdkVersion 4 }}
+            {{ if ge .SdkVersion 4 }}
             setTimeout(function () {
                 AndroidSetHasAds(true);
             }, 100);// 0.1 sec
@@ -198,7 +213,7 @@ type inappContext struct {
 	SdkVersion    int64
 	RefreshMinute int
 	NoAd          bool
-	AdMarkup      string
+	AdMarkup      template.HTML
 }
 
 // RenderApp will render single ad for app
@@ -223,6 +238,6 @@ func RenderApp(ctx context.Context, w io.Writer, res *openrtb.BidResponse, full 
 		BodyClass:     full,
 		SdkVersion:    sdk,
 		NoAd:          noAd,
-		AdMarkup:      adMarkup,
+		AdMarkup:      template.HTML(adMarkup),
 	})
 }

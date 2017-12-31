@@ -8,12 +8,15 @@ import (
 
 	"strconv"
 
+	"errors"
+
 	"clickyab.com/crane/demand/builder"
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/demand/filter"
 	"clickyab.com/crane/demand/layers/output/demand"
 	"clickyab.com/crane/demand/reducer"
 	"clickyab.com/crane/demand/rtb"
+	apps "clickyab.com/crane/models/apps"
 	"clickyab.com/crane/models/suppliers"
 	"clickyab.com/crane/models/website"
 	"github.com/bsm/openrtb"
@@ -75,18 +78,11 @@ func openrtbInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO : Remove it when app is ready
-	// NOTE : This check is not here for so long, so check it again whenever you need to use site
-	if payload.Site == nil {
-		xlog.Get(ctx).Error("can not support app yet")
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
 	// Known extensions are (currently) fat finger
 	var ext = make(simpleMap)
 	_ = json.Unmarshal(payload.Ext, &ext)
 	fatFinger := ext.Bool("fat_finger")
+	prevent := ext.Bool("prevent_default")
 
 	if err := payload.Validate(); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -94,7 +90,20 @@ func openrtbInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	publisher, err := website.GetWebSite(sup, publisher(payload))
+	var (
+		publisher entity.Publisher
+		subType   entity.RequestType
+	)
+	if payload.Site != nil {
+		publisher, err = website.GetWebSite(sup, payload.Site.Domain)
+		subType = entity.RequestTypeWeb
+		prevent = false // do not accept prevent default on web request
+	} else if payload.App != nil {
+		publisher, err = apps.GetApp(sup, payload.App.Bundle)
+		subType = entity.RequestTypeApp
+	} else {
+		err = errors.New("not supported")
+	}
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		xlog.GetWithError(ctx, err).Error("no publisher")
@@ -120,7 +129,7 @@ func openrtbInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 	b := []builder.ShowOptionSetter{
 		builder.SetTimestamp(),
-		builder.SetType(entity.RequestTypeDemand),
+		builder.SetType(entity.RequestTypeDemand, subType),
 		builder.SetTargetHost(sup.ShowDomain()),
 		builder.SetOSUserAgent(ua),
 		builder.SetIPLocation(ip),
@@ -135,6 +144,7 @@ func openrtbInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetFloorCPM(sup.DefaultFloorCPM()),
 		builder.SetSoftFloorCPM(sup.DefaultSoftFloorCPM()),
 		builder.SetRate(float64(sup.Rate())),
+		builder.SetPreventDefault(prevent),
 	}
 	// TODO : if we need to implement native/app/vast then the next line must be activated and customized
 	//b = append(b, builder.SetFloorPercentage(100), builder.SetMinBidPercentage(100))
@@ -173,14 +183,4 @@ func seatDetail(req openrtb.BidRequest) []builder.DemandSeatData {
 		})
 	}
 	return seats
-}
-
-func publisher(req openrtb.BidRequest) string {
-	if req.Site != nil {
-		return req.Site.Domain
-	}
-	if req.App != nil {
-		return req.App.Domain
-	}
-	panic("invalid")
 }

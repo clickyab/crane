@@ -2,11 +2,13 @@ package commands
 
 import (
 	"github.com/clickyab/services/config"
+	// Activate slack
+	_ "github.com/clickyab/services/slack"
 )
 
 const (
 	// AppName the application name
-	AppName string = "crane"
+	AppName = "crane"
 	// Organization the organization name
 	Organization = "clickyab"
 	// Prefix the prefix for config loader from env
