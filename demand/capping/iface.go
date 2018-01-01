@@ -21,17 +21,18 @@ var (
 	dailyCapExpire = config.RegisterDuration("crane.capping.daily_cap_expire", 24*time.Hour, "daily capping expire")
 )
 
-func getCappingKey(copID string) string {
+func getCappingKey(mode entity.CappingMode, copID string) string {
 	return fmt.Sprintf(
-		"%s_%s_%s",
+		"%s_%d_%s_%s",
 		cappingKey,
+		int(mode),
 		copID,
 		time.Now().Format("060102"),
 	)
 }
 
 // EmptyCapping is a hack to handle no capping situation
-func EmptyCapping(ads map[int][]entity.Advertise) map[int][]entity.Advertise {
+func noCappingMode(ads map[int][]entity.Advertise) map[int][]entity.Advertise {
 	c := newContext()
 	for i := range ads {
 		for j := range ads[i] {
@@ -52,9 +53,24 @@ func EmptyCapping(ads map[int][]entity.Advertise) map[int][]entity.Advertise {
 	return ads
 }
 
-// GetCapping try to get capping for current ad
-func GetCapping(copID string, ads map[int][]entity.Advertise, ep string, slots ...entity.Seat) map[int][]entity.Advertise {
+// ApplyCapping is an entry for set capping in ads
+func ApplyCapping(mode entity.CappingMode, copID string, ads map[int][]entity.Advertise, ep string, slots ...entity.Seat) map[int][]entity.Advertise {
+	switch mode {
+	case entity.CappingNone:
+		return noCappingMode(ads)
+	case entity.CappingReset:
+		return resetCappingMode(copID, ads, ep, slots...)
+	case entity.CappingStrict:
+		return strictCappingMode(copID, ads, ep, slots...)
+	}
+	panic("invalid capping mode")
+}
+
+func strictCappingMode(copID string, ads map[int][]entity.Advertise, ep string, slots ...entity.Seat) map[int][]entity.Advertise {
 	var selected = make(map[int64]bool)
+
+	// evenet page is an old hack to handle ads in same page in multiple request. maybe we should retire it
+	// TODO : remove event page after 31 March 2018 if there is no need for it
 	if ep != "" {
 		s := kv.NewDistributedSet(ep)
 
@@ -65,7 +81,57 @@ func GetCapping(copID string, ads map[int][]entity.Advertise, ep string, slots .
 
 	}
 	c := newContext()
-	ck := kv.NewAEAVStore(getCappingKey(copID), dailyCapExpire.Duration())
+	ck := kv.NewAEAVStore(getCappingKey(entity.CappingStrict, copID), dailyCapExpire.Duration())
+	results := ck.AllKeys()
+	doneSized := make(map[int]bool)
+	resp := make(map[int][]entity.Advertise)
+	for i := range slots {
+		size := slots[i].Size()
+		if doneSized[size] {
+			continue
+		}
+		doneSized[size] = true
+		for ad := range ads[size] {
+			key := fmt.Sprintf(
+				"%s_%d",
+				adKey,
+				ads[size][ad].ID(),
+			)
+			view := results[key]
+			n := float64(view) / float64(ads[size][ad].Campaign().Frequency())
+			if n <= 1 && !selected[ads[size][ad].ID()] {
+				passed := ads[size][ad]
+				capp := NewCapping(
+					c,
+					ads[size][ad].Campaign().ID(),
+					0,
+					ads[size][ad].Campaign().Frequency(),
+				)
+				capp.IncView(passed.ID(), int(view), false)
+				passed.SetCapping(capp)
+				resp[size] = append(resp[size], passed)
+			}
+		}
+	}
+	return resp
+}
+
+// GetCapping try to get capping for current ad
+func resetCappingMode(copID string, ads map[int][]entity.Advertise, ep string, slots ...entity.Seat) map[int][]entity.Advertise {
+	var selected = make(map[int64]bool)
+	// evenet page is an old hack to handle ads in same page in multiple request. maybe we should retire it
+	// TODO : remove event page after 31 March 2018 if there is no need for it
+	if ep != "" {
+		s := kv.NewDistributedSet(ep)
+
+		for _, v := range s.Members() {
+			vInt, _ := strconv.ParseInt(v, 10, 0)
+			selected[vInt] = true
+		}
+
+	}
+	c := newContext()
+	ck := kv.NewAEAVStore(getCappingKey(entity.CappingReset, copID), dailyCapExpire.Duration())
 	results := ck.AllKeys()
 	doneSized := make(map[int]bool)
 	for i := range slots {
@@ -84,8 +150,8 @@ func GetCapping(copID string, ads map[int][]entity.Advertise, ep string, slots .
 			)
 			view := results[key]
 			sizeCap = append(sizeCap, key)
-			n := int(view) / ads[size][ad].Campaign().Frequency()
-			if n <= 1 {
+			n := float64(view) / float64(ads[size][ad].Campaign().Frequency())
+			if n < 1 {
 				found = true
 				break // there is still one campaign
 			}
@@ -121,6 +187,6 @@ func GetCapping(copID string, ads map[int][]entity.Advertise, ep string, slots .
 }
 
 // StoreCapping try to store a capping object
-func StoreCapping(copID string, adID int64) int64 {
-	return kv.NewAEAVStore(getCappingKey(copID), dailyCapExpire.Duration()).IncSubKey(fmt.Sprintf("%s_%d", adKey, adID), 1)
+func StoreCapping(mode entity.CappingMode, copID string, adID int64) int64 {
+	return kv.NewAEAVStore(getCappingKey(mode, copID), dailyCapExpire.Duration()).IncSubKey(fmt.Sprintf("%s_%d", adKey, adID), 1)
 }
