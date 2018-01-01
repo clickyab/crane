@@ -144,10 +144,10 @@ func SetEventPage(ep string) ShowOptionSetter {
 	}
 }
 
-// SetDisableCapping disable capping?
-func SetDisableCapping(disable bool) ShowOptionSetter {
+// SetCappingMode set the capping mode
+func SetCappingMode(mode entity.CappingMode) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
-		o.noCap = disable
+		o.cappingMode = mode
 		return o, nil
 	}
 }

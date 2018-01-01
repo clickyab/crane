@@ -16,6 +16,18 @@ const (
 	RequestTypeDemand RequestType = "demand"
 )
 
+// CappingMode decide how to handle capping
+type CappingMode int
+
+const (
+	// CappingStrict means we have capping and the capping is strictly used
+	CappingStrict CappingMode = iota
+	// CappingReset means we have capping but we reset it when the capping is full
+	CappingReset
+	// CappingNone means no capping at all
+	CappingNone
+)
+
 // Context is the single impression object
 type Context interface {
 	// Type return the request type.
@@ -42,7 +54,7 @@ type Context interface {
 	// FloorDiv is floor-cpm divider
 	FloorPercentage() int64
 	// Capping is required otr not
-	Capping() bool
+	Capping() CappingMode
 	// MinBIDPercentage is a hack to handle min bid on multiple types.
 	// for example for native its 50%, in new design make sure every
 	// type has its own minbid and drop this hack
