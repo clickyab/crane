@@ -62,6 +62,21 @@ func (s simpleMap) Bool(k string) bool {
 	}
 }
 
+func (s simpleMap) String(k string) string {
+	d, ok := s[k]
+	if !ok {
+		return ""
+	}
+	switch t := d.(type) {
+	case string:
+		return t
+	case []byte:
+		return string(t)
+	default:
+		return ""
+	}
+}
+
 // openrtbInput is the route for rtb input layer
 func openrtbInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	token := xmux.Param(ctx, "token")
@@ -79,10 +94,18 @@ func openrtbInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Known extensions are (currently) fat finger
-	var ext = make(simpleMap)
+	var (
+		ext         = make(simpleMap)
+		cappingMode = entity.CappingStrict
+	)
 	_ = json.Unmarshal(payload.Ext, &ext)
 	fatFinger := ext.Bool("fat_finger")
 	prevent := ext.Bool("prevent_default")
+	capping := ext.String("capping_mode")
+	// Currently not supporting no cap (this is intentional)
+	if capping == "reset" {
+		cappingMode = entity.CappingReset
+	}
 
 	if err := payload.Validate(); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -145,6 +168,7 @@ func openrtbInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetSoftFloorCPM(sup.DefaultSoftFloorCPM()),
 		builder.SetRate(float64(sup.Rate())),
 		builder.SetPreventDefault(prevent),
+		builder.SetCappingMode(cappingMode),
 	}
 	// TODO : if we need to implement native/app/vast then the next line must be activated and customized
 	//b = append(b, builder.SetFloorPercentage(100), builder.SetMinBidPercentage(100))
