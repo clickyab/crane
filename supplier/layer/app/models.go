@@ -7,6 +7,10 @@ import (
 type supplier struct {
 }
 
+func (s *supplier) UnderFloor() bool {
+	panic("implement me")
+}
+
 func (s *supplier) Name() string {
 	return "clickyab"
 }

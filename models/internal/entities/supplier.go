@@ -31,6 +31,7 @@ type Supplier struct {
 	FRate            int           `db:"rate"`
 	FTinyLogo        string        `db:"tiny_logo"`
 	FTinyURL         string        `db:"tiny_url"`
+	FUnderFloor      int           `db:"under_floor"`
 }
 
 // TinyLogo will be the url to the logo (ex: //clickyab.com/tiny.png)
@@ -118,9 +119,15 @@ func (s *Supplier) DefaultCTR() float64 {
 	return s.FDefaultCTR
 }
 
+// UnderFloor means that this supplier allow to pass underfloor value.
+// normally used only for clickyab
+func (s *Supplier) UnderFloor() bool {
+	return s.FUnderFloor != 0
+}
+
 // SupplierLoader load all confirmed website
 func SupplierLoader(ctx context.Context) (map[string]kv.Serializable, error) {
-	q := `SELECT name,token,user_id,default_floor,default_soft_floor,default_min_bid,bid_type,default_ctr,tiny_mark,show_domain,created_at,updated_at,rate,tiny_logo,tiny_url FROM suppliers`
+	q := `SELECT name,token,user_id,default_floor,default_soft_floor,default_min_bid,bid_type,default_ctr,tiny_mark,show_domain,created_at,updated_at,rate,tiny_logo,tiny_url,under_floor FROM suppliers`
 
 	var res []Supplier
 	if _, err := NewManager().GetRDbMap().Select(&res, q); err != nil {
@@ -137,7 +144,7 @@ func SupplierLoader(ctx context.Context) (map[string]kv.Serializable, error) {
 // SupplierLoaderByName load all confirmed website
 func SupplierLoaderByName(ctx context.Context) (map[string]kv.Serializable, error) {
 
-	q := `SELECT name,token,user_id,default_floor,default_soft_floor,default_min_bid,bid_type,default_ctr,tiny_mark,show_domain,created_at,updated_at,rate,tiny_logo,tiny_url FROM suppliers`
+	q := `SELECT name,token,user_id,default_floor,default_soft_floor,default_min_bid,bid_type,default_ctr,tiny_mark,show_domain,created_at,updated_at,rate,tiny_logo,tiny_url,under_floor FROM suppliers`
 
 	var res []Supplier
 	if _, err := NewManager().GetRDbMap().Select(&res, q); err != nil {

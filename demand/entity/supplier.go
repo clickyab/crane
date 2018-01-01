@@ -30,4 +30,7 @@ type Supplier interface {
 	UserID() int64
 	// Rate return ratio currency conversion to IRR
 	Rate() int
+	// UnderFloor means that this supplier allow to pass underfloor value.
+	// normally used only for clickyab
+	UnderFloor() bool
 }
