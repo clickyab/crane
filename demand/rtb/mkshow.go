@@ -10,7 +10,9 @@ import (
 
 func getSecondCPM(floorCPM int64, exceedFloor []adAndBid) float64 {
 	var secondCPM = float64(floorCPM)
-	if len(exceedFloor) > 1 && exceedFloor[0].Capping().Selected() == exceedFloor[1].Capping().Selected() {
+	if len(exceedFloor) > 1 && // if there is more than one
+		exceedFloor[1].secBid && // the next is also a second bid ad
+		exceedFloor[0].Capping().Selected() == exceedFloor[1].Capping().Selected() { // and second is not selected already
 		secondCPM = float64(exceedFloor[1].cpm)
 	}
 
@@ -30,8 +32,9 @@ func winnerBid(cpm float64, ctr float64) float64 {
 
 type adAndBid struct {
 	entity.Advertise
-	ctr float64
-	cpm int64
+	ctr    float64
+	cpm    int64
+	secBid bool
 }
 
 // WARNING : DO NOT ADD PARAMETER TO THIS FUNCTION
@@ -46,7 +49,12 @@ func internalSelect(
 		var (
 			exceedFloor []adAndBid
 			underFloor  []adAndBid
+			soft        = ctx.Publisher().SoftFloorCPM()
 		)
+		// soft floor is smaller than hard floor
+		if soft < seat.MinBid() {
+			soft = seat.MinBid()
+		}
 
 		for _, adData := range ads[seat.Size()] {
 			if adData.Type() == entity.AdTypeVideo && noVideo {
@@ -55,20 +63,34 @@ func internalSelect(
 			if selected[adData.ID()] {
 				continue
 			}
-			// Drop if the min bid is lesser than requested min bid
-			if adData.Campaign().MaxBID() < seat.MinBid() {
-				continue
-			}
-			if ctr, cpm, ok := doBid(adData, seat, ctx.FloorCPM()); ok {
-				exceedFloor = append(exceedFloor, adAndBid{Advertise: adData, ctr: ctr, cpm: cpm})
+
+			if ctr, cpm, ok := doBid(adData, seat, seat.MinBid()); ok {
+				// a pass!
+				exceedFloor = append(
+					exceedFloor,
+					adAndBid{
+						Advertise: adData,
+						ctr:       ctr,
+						cpm:       cpm,
+						secBid:    cpm >= soft,
+					},
+				)
 			} else {
-				underFloor = append(underFloor, adAndBid{Advertise: adData, ctr: ctr, cpm: cpm})
+				underFloor = append(
+					underFloor,
+					adAndBid{
+						Advertise: adData,
+						ctr:       ctr,
+						cpm:       cpm,
+						secBid:    false,
+					},
+				)
 			}
 		}
-		var sorted []adAndBid
+
 		var (
+			sorted []adAndBid
 			ef     byMulti
-			secBid bool
 		)
 
 		// order is to get data from exceed flor, then capp passed and if the config allowed,
@@ -78,13 +100,12 @@ func internalSelect(
 				Ads:   exceedFloor,
 				Video: ctx.MultiVideo(),
 			}
-			secBid = true
-		} else if len(underFloor) > 0 {
+		} else if ctx.Publisher().Supplier().UnderFloor() && len(underFloor) > 0 {
+			// under floor means we want to fill the seat at any cost. normally our own seat
 			ef = byMulti{
 				Ads:   underFloor,
 				Video: ctx.MultiVideo(),
 			}
-			secBid = false
 		} else {
 			continue
 		}
@@ -95,9 +116,10 @@ func internalSelect(
 		theAd := sorted[0]
 		// Do not do second biding pricing on this ads, they can not pass CPMFloor
 		targetCPM := float64(theAd.Campaign().MaxBID()) * 10 * theAd.ctr
-		if secBid {
+		if theAd.secBid {
 			targetCPM = getSecondCPM(ctx.SoftFloorCPM(), sorted)
 		}
+
 		bid := winnerBid(targetCPM, theAd.ctr)
 		if bid > float64(theAd.Campaign().MaxBID()) {
 			// TODO : must not happen, but it happen some how. check it later
@@ -105,13 +127,18 @@ func internalSelect(
 			bid = float64(theAd.Campaign().MaxBID())
 			// also fix target cpm
 			targetCPM = theAd.ctr * 10 * bid
+			if targetCPM < float64(seat.MinBid()) {
+				targetCPM = float64(seat.MinBid())
+			}
 		}
 
 		if bid < float64(seat.MinBid()) {
 			// since we change the winner bid, do not inc the cap
 			bid = float64(seat.MinBid())
 			// also fix target cpm
-			targetCPM = theAd.ctr * 10 * bid
+			// XXX: NO! DO NOT FIX THE TARGET CPM. LET IT BE THE WAY IT IS :)
+			// DO NOT REMOVE THIS COMMENT
+			// targetCPM = theAd.ctr * 10 * bid
 		}
 		selected[theAd.ID()] = true
 		seat.SetWinnerAdvertise(theAd.Advertise, bid, targetCPM)
