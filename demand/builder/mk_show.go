@@ -163,20 +163,19 @@ func SetFatFinger(ff bool) ShowOptionSetter {
 var copLen = config.RegisterInt("crane.context.cop_len", 10, "cop key len")
 
 // SetTID try to set tid
-func SetTID(id string, extra ...string) ShowOptionSetter {
+func SetTID(id string, ip, ua string, extra ...string) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
 		if o.ua == "" || o.ip == nil {
 			return nil, fmt.Errorf("use this after setting ip and ua")
 		}
-		o.tid = id
-		if o.tid == "" {
-			assert.True(len(extra) > 0)
-			ee := make([][]byte, len(extra))
-			for i := range extra {
-				ee[i] = []byte(extra[i])
-			}
-			o.tid = createHash(copLen.Int(), ee...)
+		ee := make([][]byte, len(extra)+3)
+		ee[0] = []byte(id)
+		ee[1] = []byte(ip)
+		ee[2] = []byte(ua)
+		for i := range extra {
+			ee[i+3] = []byte(extra[i])
 		}
+		o.tid = createHash(copLen.Int(), ee...)
 
 		o.user = user(o.tid)
 		return o, nil
