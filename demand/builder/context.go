@@ -37,7 +37,6 @@ type Context struct {
 	referrer string
 	parent   string
 
-	noCap            bool
 	noTiny           bool
 	multiVideo       bool
 	floorPercentage  int64
@@ -58,6 +57,7 @@ type Context struct {
 	fatFinger bool
 	// Just in application, for older sdk, we need to add prevent default on clicks
 	preventDefault bool
+	cappingMode    entity.CappingMode
 }
 
 // PreventDefault is a boolean value to handle old sdk wrong way of click
@@ -161,8 +161,8 @@ func (c *Context) EventPage() string {
 }
 
 // Capping is enabled or not?
-func (c *Context) Capping() bool {
-	return !c.noCap
+func (c *Context) Capping() entity.CappingMode {
+	return c.cappingMode
 }
 
 // IsMobile return if the request is from mobile
