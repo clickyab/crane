@@ -55,8 +55,9 @@ func getApp(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		},
 	}
 	ext := map[string]interface{}{
-		"cid": r.URL.Query().Get("cid"),
-		"lac": r.URL.Query().Get("lac"),
+		"cid":          r.URL.Query().Get("cid"),
+		"lac":          r.URL.Query().Get("lac"),
+		"capping_mode": "reset",
 	}
 	if _, ok := pub.Attributes()[entity.PAFatFinger]; ok {
 		ext["fat_finger"] = true
