@@ -45,12 +45,12 @@ BUILD_PACKS_DIR=$(mktemp -d)
 pushd ${SOURCE_DIR}
 GIT_WORK_TREE=${BUILD} git checkout -f HEAD
 
-export LONGHASH=$(git log -n1 --pretty="format:%H" | cat)
-export SHORTHASH=$(git log -n1 --pretty="format:%h"| cat)
-export COMMITDATE=$(git log -n1 --date="format:%D-%H-%I-%S" --pretty="format:%cd"| sed -e "s/\//-/g")
-export IMPDATE=$(date +%Y%m%d)
-export COMMITCOUNT=$(git rev-list HEAD --count| cat)
-export BUILDDATE=$(date "+%D/%H/%I/%S"| sed -e "s/\//-/g")
+export LONG_HASH=$(git log -n1 --pretty="format:%H" | cat)
+export SHORT_HASH=$(git log -n1 --pretty="format:%h"| cat)
+export COMMIT_DATE=$(git log -n1 --date="format:%D-%H-%I-%S" --pretty="format:%cd"| sed -e "s/\//-/g")
+export IMP_DATE=$(date +%Y%m%d)
+export COMMIT_COUNT=$(git rev-list HEAD --count| cat)
+export BUILD_DATE=$(date "+%D/%H/%I/%S"| sed -e "s/\//-/g")
 popd
 
 # Populate env for herokuish
@@ -63,6 +63,13 @@ TEMPORARY=$(mktemp -d)
 # Create Rockerfile to build with rocker (the Dockerfile enhancer tool)
 cat > ${TEMPORARY}/Rockerfile <<EOF
 FROM alpine:3.6
+
+ENV LONG_HASH ${LONG_HASH}
+ENV SHORT_HASH ${SHORT_HASH}
+ENV COMMIT_DATE ${COMMIT_DATE}
+ENV IMP_DATE ${IMP_DATE}
+ENV COMMIT_COUNT ${COMMIT_COUNT}
+ENV BUILD_DATE ${BUILD_DATE}
 
 MOUNT {{ .Build }}:/crane
 
@@ -92,7 +99,7 @@ PUSH="--push"
 if [[ ( "${BRANCH}" != "master" ) && ( "${BRANCH}" != "dev" ) ]]; then
     PUSH=""
 fi
-rocker build --no-cache ${PUSH} -var Build=${SOURCE_DIR} -var EnvDir=${VARS} -var Cache=${CACHE} -var Target=${TARGET} -var Version=${COMMITCOUNT} -var App=${APP}_${BRANCH}
+rocker build --no-cache ${PUSH} -var Build=${BUILD} -var EnvDir=${VARS} -var Cache=${CACHE} -var Target=${TARGET} -var Version=${COMMITCOUNT} -var App=${APP}_${BRANCH}
 popd
 
 NAMESPACE="${APP}"
