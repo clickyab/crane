@@ -99,11 +99,11 @@ PUSH="--push"
 if [[ ( "${BRANCH}" != "master" ) && ( "${BRANCH}" != "dev" ) ]]; then
     PUSH=""
 fi
-rocker build --no-cache ${PUSH} -var Build=${BUILD} -var EnvDir=${VARS} -var Cache=${CACHE} -var Target=${TARGET} -var Version=${COMMITCOUNT} -var App=${APP}_${BRANCH}
+rocker build --no-cache ${PUSH} -var Build=${BUILD} -var EnvDir=${VARS} -var Cache=${CACHE} -var Target=${TARGET} -var Version=${COMMIT_COUNT} -var App=${APP}_${BRANCH}
 popd
 
 NAMESPACE="${APP}"
-VERSION="${COMMITCOUNT}"
+VERSION="${COMMIT_COUNT}"
 if [[ "${BRANCH}" == "dev" ]]; then
     NAMESPACE=${APP}-staging
     #VERSION="latest"
