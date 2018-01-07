@@ -104,8 +104,9 @@ func (c *Campaign) Province() []string {
 }
 
 // LatLon allowed lat lon radius
-func (c *Campaign) LatLon() (float64, float64, float64) {
-	return c.CampaignLatMap.Float64, c.CampaignLongMap.Float64, c.CampaignRadius.Float64
+func (c *Campaign) LatLon() (bool, float64, float64, float64) {
+	b := c.CampaignLatMap.Valid && c.CampaignLongMap.Valid && c.CampaignRadius.Valid
+	return b, c.CampaignLatMap.Float64, c.CampaignLongMap.Float64, c.CampaignRadius.Float64
 }
 
 // Category allowed category
