@@ -41,7 +41,7 @@ type Campaign interface {
 	// Province returns province ID
 	Province() []string
 	//LatLon return LanLon and radius to accept ad
-	LatLon() (float64, float64, float64)
+	LatLon() (bool, float64, float64, float64)
 	// Category return the category of this campaign
 	Category() []Category
 	// WebMobile campaign web mobile on or off
