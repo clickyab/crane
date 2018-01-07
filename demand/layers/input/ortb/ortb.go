@@ -10,6 +10,8 @@ import (
 
 	"errors"
 
+	"strings"
+
 	"clickyab.com/crane/demand/builder"
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/demand/filter"
@@ -28,7 +30,7 @@ import (
 const demandPath = "/ortb/:token"
 
 var (
-	ortbSelector = reducer.Mix(
+	ortbWebSelector = reducer.Mix(
 		&filter.WebSize{},
 		&filter.WebNetwork{},
 		&filter.WebMobile{},
@@ -39,6 +41,20 @@ var (
 		&filter.Category{},
 		&filter.Province{},
 		&filter.ISP{},
+	)
+
+	ortbAppSelector = reducer.Mix(
+		&filter.AppSize{},
+		&filter.AppNetwork{},
+		&filter.AppBrand{},
+		&filter.AppNetwork{},
+		&filter.AppCarrier{},
+		&filter.WhiteList{},
+		&filter.BlackList{},
+		&filter.Category{},
+		&filter.Province{},
+		&filter.ISP{},
+		&filter.AreaInGlob{},
 	)
 )
 
@@ -116,17 +132,21 @@ func openrtbInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	var (
 		publisher entity.Publisher
 		subType   entity.RequestType
+		selector  reducer.Filter
 	)
 	if payload.Site != nil {
 		publisher, err = website.GetWebSite(sup, payload.Site.Domain)
 		subType = entity.RequestTypeWeb
 		prevent = false // do not accept prevent default on web request
+		selector = ortbWebSelector
 	} else if payload.App != nil {
 		publisher, err = apps.GetApp(sup, payload.App.Bundle)
 		subType = entity.RequestTypeApp
+		selector = ortbAppSelector
 	} else {
 		err = errors.New("not supported")
 	}
+
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		xlog.GetWithError(ctx, err).Error("no publisher")
@@ -143,13 +163,20 @@ func openrtbInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	ua := ""
 	ip := ""
 	if payload.Device != nil {
-		ua = payload.Device.UA
-		ip = payload.Device.IP
+		ua = strings.Trim(payload.Device.UA, "\n\t ")
+		ip = strings.Trim(payload.Device.IP, "\n\t ")
 	}
 	us := ""
 	if payload.User != nil {
 		us = payload.User.ID
 	}
+
+	if ua == "" || ip == "" {
+		w.WriteHeader(http.StatusNotFound)
+		xlog.GetWithError(ctx, err).Error("no ip/no ua")
+		return
+	}
+
 	b := []builder.ShowOptionSetter{
 		builder.SetTimestamp(),
 		builder.SetType(entity.RequestTypeDemand, subType),
@@ -176,10 +203,10 @@ func openrtbInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	if payload.Site != nil {
 		b = append(b, builder.SetParent(payload.Site.Page, payload.Site.Ref))
 	}
+	sd := seatDetail(payload)
+	b = append(b, builder.SetDemandSeats(sd...))
 
-	b = append(b, builder.SetDemandSeats(seatDetail(payload)...))
-
-	c, err := rtb.Select(ctx, ortbSelector, b...)
+	c, err := rtb.Select(ctx, selector, b...)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		xlog.GetWithError(ctx, err).Error("invalid request")
@@ -195,7 +222,6 @@ func seatDetail(req openrtb.BidRequest) []builder.DemandSeatData {
 		seats = make([]builder.DemandSeatData, 0)
 		w, h  int
 	)
-
 	for i := range imp {
 		if imp[i].Banner != nil {
 			w, h = imp[i].Banner.W, imp[i].Banner.H
