@@ -67,6 +67,9 @@ func internalSelect(
 		}
 
 		for _, adData := range ads[seat.Size()] {
+			if !seat.Acceptable(adData) {
+				continue
+			}
 			if adData.Type() == entity.AdTypeVideo && noVideo {
 				continue
 			}
@@ -103,7 +106,7 @@ func internalSelect(
 			ef     byMulti
 		)
 
-		// order is to get data from exceed flor, then capp passed and if the config allowed,
+		// order is to get data from exceed floor, then capp passed and if the config allowed,
 		// use the under floor. for under floor there is no second biding pricing
 		if len(exceedFloor) > 0 {
 			ef = byMulti{

@@ -46,3 +46,20 @@ func (*AppSize) Check(c entity.Context, in entity.Advertise) bool {
 	}
 	return false
 }
+
+// VideoSize checker
+type VideoSize struct {
+}
+
+// Check check if the banner size exists in the request
+func (*VideoSize) Check(c entity.Context, in entity.Advertise) bool {
+	if in.Type() == entity.AdTypeVideo {
+		return true
+	}
+	for _, seat := range c.Seats() {
+		if seat.Size() == in.Size() {
+			return true
+		}
+	}
+	return false
+}

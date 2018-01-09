@@ -12,6 +12,7 @@ import (
 
 	"clickyab.com/crane/demand/builder/internal/cyslot"
 	"clickyab.com/crane/demand/entity"
+	"github.com/clickyab/services/array"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/framework/router"
@@ -79,6 +80,9 @@ type seat struct {
 
 	impTime time.Time
 	scpm    float64
+
+	// Video related stuff
+	mimes []string
 }
 
 func (s *seat) FatFinger() bool {
@@ -262,4 +266,11 @@ func (s *seat) Type() string {
 
 func (s *seat) SubType() string {
 	return string(s.subType)
+}
+
+func (s *seat) Acceptable(advertise entity.Advertise) bool {
+	if len(s.mimes) > 0 {
+		return array.StringInArray(advertise.MimeType(), s.mimes...)
+	}
+	return true
 }
