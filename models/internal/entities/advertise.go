@@ -114,6 +114,7 @@ type ad struct {
 	CampaignLastupdate       int                    `json:"-" db:"cp_lastupdate"`
 	CampaignHourStart        int                    `json:"-" db:"cp_hour_start"`
 	CampaignHourEnd          int                    `json:"-" db:"cp_hour_end"`
+	FMimeType                sql.NullString         `db:"ad_mime"`
 }
 
 // AdLoader is the loader of ads
@@ -137,7 +138,7 @@ func AdLoader(ctx context.Context) (map[string]kv.Serializable, error) {
 	 cp_weekly_budget, cp_daily_budget, cp_total_budget, cp_weekly_spend, cp_total_spend,
 	 cp_today_spend, cp_clicks, cp_ctr, cp_imps, cp_cpm, cp_cpa, cp_cpc, cp_conv, cp_conv_rate,
 	 cp_revenue, cp_roi, cp_start, cp_end, cp_status, cp_lastupdate, cp_hour_start, cp_hour_end,cp_isp,
-	 is_crm, cp_lock,cp_app_brand_name,cp_app_carrier_name,cp_net_provider_name,CA.ca_id
+	 is_crm, cp_lock,cp_app_brand_name,cp_app_carrier_name,cp_net_provider_name,CA.ca_id, A.ad_mime
 	 	FROM campaigns AS C
 	 	INNER JOIN users AS U ON C.u_id=U.u_id
 		INNER JOIN campaigns_ads AS CA ON C.cp_id=CA.cp_id
@@ -310,4 +311,9 @@ func (a *Advertise) Target() string {
 		return a.FAdURL.String
 	}
 	return ""
+}
+
+// MimeType return the media mime type
+func (a *Advertise) MimeType() string {
+	return a.FMimeType.String
 }

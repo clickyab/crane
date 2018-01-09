@@ -8,12 +8,16 @@ import (
 	"fmt"
 
 	"clickyab.com/crane/demand/entity"
+	"clickyab.com/gad/src/version"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/xlog"
 )
 
+var vs = version.GetVersion()
+
 // Render the advertise
 func Render(c context.Context, w http.ResponseWriter, ctx entity.Context) error {
+	w.Header().Set("crane-version", fmt.Sprint(vs.Count))
 	seats := ctx.Seats()
 	assert.True(len(seats) == 1)
 	s := seats[0]
