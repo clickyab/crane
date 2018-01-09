@@ -43,4 +43,18 @@ type Seat interface {
 	SupplierCPM() float64
 	// FatFinger return true if we need to prevent sudden click
 	FatFinger() bool
+	// Some seat need extra filter so the specific ad could be removed, for example in mime-type if a seat
+	// only accept video/mp4 but another seat in same imp accept image/jpeg then we can not use normal filters
+	Acceptable(Advertise) bool
+}
+
+// VastSeat is a seat with vast compatibility
+type VastSeat interface {
+	Seat
+	// Linear is only usable in vast subsystem!
+	Linear() bool
+	// Duration is the function to handle the vast duration
+	Duration() time.Duration
+	// SkipAfter duration in vast
+	SkipAfter() time.Duration
 }

@@ -12,10 +12,6 @@ const (
 	AdTypeDynamic AdType = 2
 	// AdTypeVideo is the video type
 	AdTypeVideo AdType = 3
-	// AdTypeHTML is the html ad type
-	AdTypeHTML AdType = 1
-	// AdTypeNative is the native ad type
-	AdTypeNative AdType = 4
 )
 
 // Advertise is the single advertise interface
@@ -47,4 +43,6 @@ type Advertise interface {
 	// TODO: remove this later
 	// CampaignAdID return campaign_ad primary
 	CampaignAdID() int64
+	// MimeType of media
+	MimeType() string
 }

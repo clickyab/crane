@@ -56,6 +56,19 @@ var (
 		&filter.ISP{},
 		&filter.AreaInGlob{},
 	)
+
+	ortbVastSelector = reducer.Mix(
+		&filter.VideoSize{},
+		&filter.VastNetwork{},
+		&filter.WebMobile{},
+		&filter.Desktop{},
+		&filter.OS{},
+		&filter.WhiteList{},
+		&filter.BlackList{},
+		&filter.Category{},
+		&filter.Province{},
+		&filter.ISP{},
+	)
 )
 
 type simpleMap map[string]interface{}
@@ -93,8 +106,8 @@ func (s simpleMap) String(k string) string {
 	}
 }
 
-// openrtbInput is the route for rtb input layer
-func openrtbInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+// openRTBInput is the route for rtb input layer
+func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	token := xmux.Param(ctx, "token")
 	sup, err := suppliers.GetSupplierByToken(token)
 	if err != nil {
@@ -114,6 +127,7 @@ func openrtbInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		ext         = make(simpleMap)
 		cappingMode = entity.CappingStrict
 	)
+	// If this is not a valid json, just pass by.
 	_ = json.Unmarshal(payload.Ext, &ext)
 	fatFinger := ext.Bool("fat_finger")
 	prevent := ext.Bool("prevent_default")
@@ -203,7 +217,10 @@ func openrtbInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	if payload.Site != nil {
 		b = append(b, builder.SetParent(payload.Site.Page, payload.Site.Ref))
 	}
-	sd := seatDetail(payload)
+	sd, vast := seatDetail(payload)
+	if vast {
+		selector = ortbVastSelector
+	}
 	b = append(b, builder.SetDemandSeats(sd...))
 
 	c, err := rtb.Select(ctx, selector, b...)
@@ -216,21 +233,45 @@ func openrtbInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	assert.Nil(demand.Render(ctx, w, c))
 }
 
-func seatDetail(req openrtb.BidRequest) []builder.DemandSeatData {
+func intInArray(v int, all ...int) bool {
+	for i := range all {
+		if v == all[i] {
+			return true
+		}
+	}
+
+	return false
+}
+
+func seatDetail(req openrtb.BidRequest) ([]builder.DemandSeatData, bool) {
 	var (
 		imp   = req.Imp
 		seats = make([]builder.DemandSeatData, 0)
 		w, h  int
+		vast  bool
 	)
 	for i := range imp {
-		if imp[i].Banner != nil {
+		var t builder.SeatType
+		if imp[i].Video != nil {
+			w, h = imp[i].Video.W, imp[i].Video.H
+			t = builder.SeatTypeVideo
+			// We just support version 3
+			if !intInArray(3, append(imp[i].Video.Protocols, imp[i].Video.Protocol)...) {
+				continue
+			}
+			vast = true
+		} else if imp[i].Banner != nil {
 			w, h = imp[i].Banner.W, imp[i].Banner.H
+			t = builder.SeatTypeBanner
 		}
 		seats = append(seats, builder.DemandSeatData{
 			MinBid: imp[i].BidFloor,
 			PubID:  imp[i].ID,
 			Size:   fmt.Sprintf("%dx%d", w, h),
+			Type:   t,
+			Video:  imp[i].Video,
+			Banner: imp[i].Banner,
 		})
 	}
-	return seats
+	return seats, vast
 }
