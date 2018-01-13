@@ -17,6 +17,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.network "forwarded_port", guest: 8090,    	host: 80       # nginx
   config.vm.network "forwarded_port", guest: 8080,    	host: 8080     # goconvey
+  config.vm.network "forwarded_port", guest: 2345,    	host: 2345     # dlv
   config.vm.network "forwarded_port", guest: 15672,     host: 15672    # rabbitmq management
   config.vm.network "forwarded_port", guest: 22,        host: 5555     # ssh server
   config.vm.network "forwarded_port", guest: 9898,      host: 9898     # ssh server
@@ -27,6 +28,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provider "docker" do |d|
     d.image = "registry.clickyab.ae/clickyab/baseimage-go"
     d.has_ssh = true
+    d.privileged = true
     d.cmd = ["/bin/bash", "/home/develop/go/src/clickyab.com/crane/scripts/init.sh"]
   end
 end
