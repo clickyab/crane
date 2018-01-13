@@ -16,104 +16,104 @@ import (
 )
 
 type ad struct {
-	FID                      int64                  `json:"-" db:"ad_id"`
-	FType                    int                    `json:"-" db:"ad_type"`
-	FCPM                     int64                  `json:"-" db:"cpm"`
-	FCampaignFrequency       int                    `json:"-" db:"cp_frequency"`
-	FCTR                     float64                `json:"-" db:"ctr"`
-	FCaCTR                   sql.NullFloat64        `json:"-" db:"ca_ctr"`
-	FCampaignMaxBid          int64                  `json:"-" db:"cp_maxbid"`
-	FCampaignID              int64                  `json:"-" db:"cp_id"`
-	FCampaignName            sql.NullString         `json:"-" db:"cp_name"`
-	FAdSize                  int                    `json:"-" db:"ad_size"`
-	FUserID                  int64                  `json:"-" db:"u_id"`
-	FAdName                  sql.NullString         `json:"-" db:"ad_name"`
-	FAdURL                   sql.NullString         `json:"-" db:"ad_url"`
-	FAdCode                  sql.NullString         `json:"-" db:"ad_code"`
-	FAdTitle                 sql.NullString         `json:"-" db:"ad_title"`
-	FAdBody                  sql.NullString         `json:"-" db:"ad_body"`
-	FAdImg                   sql.NullString         `json:"-" db:"ad_img"`
-	FAdStatus                int                    `json:"-" db:"ad_status"`
-	FAdRejectReason          sql.NullString         `json:"-" db:"ad_reject_reason"`
-	FAdConversion            int                    `json:"-" db:"ad_conv"`
-	FAdTime                  int                    `json:"-" db:"ad_time"`
-	FAdMainText              sql.NullString         `json:"-" db:"ad_mainText"`
-	FAdDefineText            sql.NullString         `json:"-" db:"ad_defineText"`
-	FAdTextColor             sql.NullString         `json:"-" db:"ad_textColor"`
-	FAdTarget                sql.NullString         `json:"-" db:"ad_target"`
-	FAdAttribute             mysql.GenericJSONField `json:"-" db:"ad_attribute"`
-	FAdHashAttribute         sql.NullString         `json:"-" db:"ad_hash_attribute"`
-	FCreatedAt               sql.NullString         `json:"-" db:"created_at"`
-	FUpdatedAt               sql.NullString         `json:"-" db:"updated_at"`
-	FUserEmail               string                 `json:"-" db:"u_email"`
-	FUserBalance             string                 `json:"-" db:"u_balance"`
-	FIsCrm                   int                    `json:"-" db:"is_crm"`
-	FCpLock                  int                    `json:"-" db:"cp_lock"`
-	FCampaignAdID            int64                  `json:"-" db:"ca_id"`
-	CampaignType             int                    `json:"-" db:"cp_type"`
-	CampaignBillingType      sql.NullString         `json:"-" db:"cp_billing_type"`
-	CampaignNetwork          int                    `json:"-" db:"cp_network"`
-	CampaignPlacement        SharpArray             `json:"-" db:"cp_placement"`
-	CampaignWebsiteFilter    SharpArray             `json:"-" db:"cp_wfilter"`
-	CampaignRetargeting      sql.NullString         `json:"-" db:"cp_retargeting"`
-	CampaignSegmentID        sql.NullInt64          `json:"-" db:"cp_segment_id"`
-	CampaignNetProvider      SharpArray             `json:"-" db:"cp_net_provider"`
-	CampaignNetProviderName  SharpArray             `json:"-" db:"cp_net_provider_name"`
-	CampaignAppBrand         SharpArray             `json:"-" db:"cp_app_brand"`
-	CampaignAppBrandName     SharpArray             `json:"-" db:"cp_app_brand_name"`
-	CampaignAppLang          sql.NullString         `json:"-" db:"cp_app_lang"`
-	CampaignAppMarket        sql.NullInt64          `json:"-" db:"cp_app_market"`
-	CampaignWebMobile        int                    `json:"-" db:"cp_web_mobile"`
-	CampaignWeb              int                    `json:"-" db:"cp_web"`
-	CampaignApplication      int                    `json:"-" db:"cp_application"`
-	CampaignVideo            int                    `json:"-" db:"cp_video"`
-	CampaignAppsCarriers     SharpArray             `json:"-" db:"cp_apps_carriers"`
-	CampaignAppsCarriersName SharpArray             `json:"-" db:"cp_app_carrier_name"`
-	CampaignLongMap          sql.NullFloat64        `json:"-" db:"cp_longmap"`
-	CampaignLatMap           sql.NullFloat64        `json:"-" db:"cp_latmap"`
-	CampaignRadius           sql.NullFloat64        `json:"-" db:"cp_radius"`
-	CampaignOptCTR           int                    `json:"-" db:"cp_opt_ctr"`
-	CampaignOptConv          int                    `json:"-" db:"cp_opt_conv"`
-	CampaignOptBr            int                    `json:"-" db:"cp_opt_br"`
-	CampaignGender           int                    `json:"-" db:"cp_gender"`
-	CampaignAlexa            int                    `json:"-" db:"cp_alexa"`
-	CampaignFatfinger        int                    `json:"-" db:"cp_fatfinger"`
-	CampaignUnder            int                    `json:"-" db:"cp_under"`
-	CampaignGeos             SharpArray             `json:"-" db:"cp_geos"`
-	CampaignISP              SharpArray             `json:"-" db:"cp_isp"`
-	CampaignRegion           SharpArray             `json:"-" db:"cp_region"`
-	CampaignCountry          SharpArray             `json:"-" db:"cp_country"`
-	CampaignHoods            SharpArray             `json:"-" db:"cp_hoods"`
-	CampaignIspBlacklist     SharpArray             `json:"-" db:"cp_isp_blacklist"`
-	CampaignCat              SharpArray             `json:"-" db:"cp_cat"`
-	CampaignLikeApp          SharpArray             `json:"-" db:"cp_like_app"`
-	CampaignApp              SharpArray             `json:"-" db:"cp_app"`
-	CampaignAppFilter        SharpArray             `json:"-" db:"cp_app_filter"`
-	CampaignKeywords         SharpArray             `json:"-" db:"cp_keywords"`
-	CampaignPlatforms        SharpArray             `json:"-" db:"cp_platforms"`
-	CampaignPlatformVersion  SharpArray             `json:"-" db:"cp_platform_version"`
-	CampaignWeeklyBudget     int                    `json:"-" db:"cp_weekly_budget"`
-	CampaignDailyBudget      int                    `json:"-" db:"cp_daily_budget"`
-	CampaignTotalBudget      int                    `json:"-" db:"cp_total_budget"`
-	CampaignWeeklySpend      int                    `json:"-" db:"cp_weekly_spend"`
-	CampaignTotalSpend       int                    `json:"-" db:"cp_total_spend"`
-	CampaignTodaySpend       int                    `json:"-" db:"cp_today_spend"`
-	CampaignClicks           int                    `json:"-" db:"cp_clicks"`
-	CampaignCTR              float64                `json:"-" db:"cp_ctr"`
-	CampaignImps             int                    `json:"-" db:"cp_imps"`
-	CampaignCPM              int                    `json:"-" db:"cp_cpm"`
-	CampaignCPA              int                    `json:"-" db:"cp_cpa"`
-	CampaignCPC              int                    `json:"-" db:"cp_cpc"`
-	CampaignConv             int                    `json:"-" db:"cp_conv"`
-	CampaignConvRate         float64                `json:"-" db:"cp_conv_rate"`
-	CampaignRevenue          int                    `json:"-" db:"cp_revenue"`
-	CampaignRoi              int                    `json:"-" db:"cp_roi"`
-	CampaignStart            int                    `json:"-" db:"cp_start"`
-	CampaignEnd              int                    `json:"-" db:"cp_end"`
-	CampaignStatus           int                    `json:"-" db:"cp_status"`
-	CampaignLastupdate       int                    `json:"-" db:"cp_lastupdate"`
-	CampaignHourStart        int                    `json:"-" db:"cp_hour_start"`
-	CampaignHourEnd          int                    `json:"-" db:"cp_hour_end"`
+	FID                      int64                  `db:"ad_id"`
+	FType                    int                    `db:"ad_type"`
+	FCPM                     int64                  `db:"cpm"`
+	FCampaignFrequency       int                    `db:"cp_frequency"`
+	FCTR                     float64                `db:"ctr"`
+	FCaCTR                   sql.NullFloat64        `db:"ca_ctr"`
+	FCampaignMaxBid          int64                  `db:"cp_maxbid"`
+	FCampaignID              int64                  `db:"cp_id"`
+	FCampaignName            sql.NullString         `db:"cp_name"`
+	FAdSize                  int                    `db:"ad_size"`
+	FUserID                  int64                  `db:"u_id"`
+	FAdName                  sql.NullString         `db:"ad_name"`
+	FAdURL                   sql.NullString         `db:"ad_url"`
+	FAdCode                  sql.NullString         `db:"ad_code"`
+	FAdTitle                 sql.NullString         `db:"ad_title"`
+	FAdBody                  sql.NullString         `db:"ad_body"`
+	FAdImg                   sql.NullString         `db:"ad_img"`
+	FAdStatus                int                    `db:"ad_status"`
+	FAdRejectReason          sql.NullString         `db:"ad_reject_reason"`
+	FAdConversion            int                    `db:"ad_conv"`
+	FAdTime                  int                    `db:"ad_time"`
+	FAdMainText              sql.NullString         `db:"ad_mainText"`
+	FAdDefineText            sql.NullString         `db:"ad_defineText"`
+	FAdTextColor             sql.NullString         `db:"ad_textColor"`
+	FAdTarget                sql.NullString         `db:"ad_target"`
+	FAdAttribute             mysql.GenericJSONField `db:"ad_attribute"`
+	FAdHashAttribute         sql.NullString         `db:"ad_hash_attribute"`
+	FCreatedAt               sql.NullString         `db:"created_at"`
+	FUpdatedAt               sql.NullString         `db:"updated_at"`
+	FUserEmail               string                 `db:"u_email"`
+	FUserBalance             string                 `db:"u_balance"`
+	FIsCrm                   int                    `db:"is_crm"`
+	FCpLock                  int                    `db:"cp_lock"`
+	FCampaignAdID            int64                  `db:"ca_id"`
+	CampaignType             int                    `db:"cp_type"`
+	CampaignBillingType      sql.NullString         `db:"cp_billing_type"`
+	CampaignNetwork          int                    `db:"cp_network"`
+	CampaignPlacement        SharpArray             `db:"cp_placement"`
+	CampaignWebsiteFilter    SharpArray             `db:"cp_wfilter"`
+	CampaignRetargeting      sql.NullString         `db:"cp_retargeting"`
+	CampaignSegmentID        sql.NullInt64          `db:"cp_segment_id"`
+	CampaignNetProvider      SharpArray             `db:"cp_net_provider"`
+	CampaignNetProviderName  SharpArray             `db:"cp_net_provider_name"`
+	CampaignAppBrand         SharpArray             `db:"cp_app_brand"`
+	CampaignAppBrandName     SharpArray             `db:"cp_app_brand_name"`
+	CampaignAppLang          sql.NullString         `db:"cp_app_lang"`
+	CampaignAppMarket        sql.NullInt64          `db:"cp_app_market"`
+	CampaignWebMobile        int                    `db:"cp_web_mobile"`
+	CampaignWeb              int                    `db:"cp_web"`
+	CampaignApplication      int                    `db:"cp_application"`
+	CampaignVideo            int                    `db:"cp_video"`
+	CampaignAppsCarriers     SharpArray             `db:"cp_apps_carriers"`
+	CampaignAppsCarriersName SharpArray             `db:"cp_app_carrier_name"`
+	CampaignLongMap          sql.NullFloat64        `db:"cp_longmap"`
+	CampaignLatMap           sql.NullFloat64        `db:"cp_latmap"`
+	CampaignRadius           sql.NullFloat64        `db:"cp_radius"`
+	CampaignOptCTR           int                    `db:"cp_opt_ctr"`
+	CampaignOptConv          int                    `db:"cp_opt_conv"`
+	CampaignOptBr            int                    `db:"cp_opt_br"`
+	CampaignGender           int                    `db:"cp_gender"`
+	CampaignAlexa            int                    `db:"cp_alexa"`
+	CampaignFatfinger        int                    `db:"cp_fatfinger"`
+	CampaignUnder            int                    `db:"cp_under"`
+	CampaignGeos             SharpArray             `db:"cp_geos"`
+	CampaignISP              SharpArray             `db:"cp_isp"`
+	CampaignRegion           SharpArray             `db:"cp_region"`
+	CampaignCountry          SharpArray             `db:"cp_country"`
+	CampaignHoods            SharpArray             `db:"cp_hoods"`
+	CampaignIspBlacklist     SharpArray             `db:"cp_isp_blacklist"`
+	CampaignCat              SharpArray             `db:"cp_cat"`
+	CampaignLikeApp          SharpArray             `db:"cp_like_app"`
+	CampaignApp              SharpArray             `db:"cp_app"`
+	CampaignAppFilter        SharpArray             `db:"cp_app_filter"`
+	CampaignKeywords         SharpArray             `db:"cp_keywords"`
+	CampaignPlatforms        SharpArray             `db:"cp_platforms"`
+	CampaignPlatformVersion  SharpArray             `db:"cp_platform_version"`
+	CampaignWeeklyBudget     int                    `db:"cp_weekly_budget"`
+	CampaignDailyBudget      int                    `db:"cp_daily_budget"`
+	CampaignTotalBudget      int                    `db:"cp_total_budget"`
+	CampaignWeeklySpend      int                    `db:"cp_weekly_spend"`
+	CampaignTotalSpend       int                    `db:"cp_total_spend"`
+	CampaignTodaySpend       int                    `db:"cp_today_spend"`
+	CampaignClicks           int                    `db:"cp_clicks"`
+	CampaignCTR              float64                `db:"cp_ctr"`
+	CampaignImps             int                    `db:"cp_imps"`
+	CampaignCPM              int                    `db:"cp_cpm"`
+	CampaignCPA              int                    `db:"cp_cpa"`
+	CampaignCPC              int                    `db:"cp_cpc"`
+	CampaignConv             int                    `db:"cp_conv"`
+	CampaignConvRate         float64                `db:"cp_conv_rate"`
+	CampaignRevenue          int                    `db:"cp_revenue"`
+	CampaignRoi              int                    `db:"cp_roi"`
+	CampaignStart            int                    `db:"cp_start"`
+	CampaignEnd              int                    `db:"cp_end"`
+	CampaignStatus           int                    `db:"cp_status"`
+	CampaignLastupdate       int                    `db:"cp_lastupdate"`
+	CampaignHourStart        int                    `db:"cp_hour_start"`
+	CampaignHourEnd          int                    `db:"cp_hour_end"`
 	FMimeType                sql.NullString         `db:"ad_mime"`
 }
 
