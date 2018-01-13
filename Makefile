@@ -36,13 +36,25 @@ all: codegen
 run-demand: all ip2location
 	$(ROOT)/bin/demand
 
+debug-demand: debuger
+	$(BIN)/dlv --listen=:2345 --headless=true --api-version=2 exec $(BIN)/demand
+
 run-supplier: all ip2location
 	$(ROOT)/bin/supplier
+
+debug-supplier: debuger
+	$(BIN)/dlv --listen=:2345 --headless=true --api-version=2 exec $(BIN)/supplier
 
 run-imp: all ip2location
 	$(ROOT)/bin/impression-worker
 
+debug-imp: ip2location debuger
+	$(BIN)/dlv --listen=:2345 --headless=true --api-version=2 exec $(BIN)/impression-worker
+
 run-click: all ip2location
 	$(ROOT)/bin/click-worker
+
+debug-click: ip2location debuger
+	$(BIN)/dlv --listen=:2345 --headless=true --api-version=2 exec $(BIN)/click-worker
 
 include $(ROOT)/scripts/*.mk
