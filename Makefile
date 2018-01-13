@@ -37,7 +37,7 @@ run-demand: all ip2location
 	$(ROOT)/bin/demand
 
 debug-demand: debuger
-	$(BIN)/dlv --listen=:2345 --headless=true --api-version=2 exec $(BIN)/demand
+	cd $(ROOT)/bin && $(BIN)/dlv --listen=:2345 --headless=true --api-version=2 debug clickyab.com/crane/commands/demand
 
 run-supplier: all ip2location
 	$(ROOT)/bin/supplier

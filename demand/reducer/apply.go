@@ -35,16 +35,24 @@ func Mix(f ...Filter) Filter {
 	return &mixer{f: f}
 }
 
+var videoSize = []int{3, 4, 9, 16, 14}
+
 // Apply get the data and then call filter on each of them concurrently, the
 // result is the accepted items
-func Apply(ctx context.Context, imp entity.Context, ads []entity.Advertise, ff Filter) map[int][]entity.Advertise {
+func Apply(_ context.Context, imp entity.Context, ads []entity.Advertise, ff Filter) map[int][]entity.Advertise {
 	m := make(map[int][]entity.Advertise)
 	for i := range ads {
 		if ff.Check(imp, ads[i]) {
 			n := ads[i]
-			// TODO : There is a problem here. if the size is allowed in more other size then what?
 			key := n.Size()
-			m[key] = append(m[key], n)
+			// TODO : a hack for video size, search for better way, if you have time
+			if ads[i].Type() == entity.AdTypeVideo {
+				for _, vs := range videoSize {
+					m[vs] = append(m[key], n)
+				}
+			} else {
+				m[key] = append(m[key], n)
+			}
 		}
 	}
 	return m
