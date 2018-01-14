@@ -1,0 +1,492 @@
+{
+  "ID": 100,
+  "Data": {
+    "FID": 100,
+    "FType": 3,
+    "FCPM": 0,
+    "FCampaignFrequency": 2,
+    "FCTR": 0.1,
+    "FCaCTR": {
+      "Float64": 0.1,
+      "Valid": true
+    },
+    "FCampaignMaxBid": 3000,
+    "FCampaignID": 200,
+    "FCampaignName": {
+      "String": "Test Campaign",
+      "Valid": true
+    },
+    "FAdSize": 19,
+    "FUserID": 48096,
+    "FAdName": {
+      "String": "AdName",
+      "Valid": true
+    },
+    "FAdURL": {
+      "String": "http://clickyab.com",
+      "Valid": true
+    },
+    "FAdCode": {
+      "String": "",
+      "Valid": false
+    },
+    "FAdTitle": {
+      "String": "",
+      "Valid": false
+    },
+    "FAdBody": {
+      "String": "",
+      "Valid": false
+    },
+    "FAdImg": {
+      "String": "http://static.clickyab.com/ad/video/20180110-7476975-6fc73384b929682ad3afb164bed22c9a15463881.cy",
+      "Valid": true
+    },
+    "FAdStatus": 1,
+    "FAdRejectReason": {
+      "String": "",
+      "Valid": false
+    },
+    "FAdConversion": 0,
+    "FAdTime": 1499249773,
+    "FAdMainText": {
+      "String": "",
+      "Valid": false
+    },
+    "FAdDefineText": {
+      "String": "",
+      "Valid": false
+    },
+    "FAdTextColor": {
+      "String": "",
+      "Valid": false
+    },
+    "FAdTarget": {
+      "String": "",
+      "Valid": false
+    },
+    "FAdAttribute": {
+      "duration":18
+    },
+    "FAdHashAttribute": {
+      "String": "",
+      "Valid": false
+    },
+    "FCreatedAt": {
+      "String": "2017-07-05T14:46:13Z",
+      "Valid": true
+    },
+    "FUpdatedAt": {
+      "String": "0001-01-01T00:00:00Z",
+      "Valid": true
+    },
+    "FUserEmail": "info@reihancarpet.com",
+    "FUserBalance": "48753974",
+    "FIsCrm": 1,
+    "FCpLock": 0,
+    "FCampaignAdID": 107644,
+    "CampaignType": 0,
+    "CampaignBillingType": {
+      "String": "CPC",
+      "Valid": true
+    },
+    "CampaignNetwork": 2,
+    "CampaignPlacement": [],
+    "CampaignWebsiteFilter": [
+      "459",
+      "527",
+      "2885",
+      "3043",
+      "3490",
+      "3643",
+      "3835",
+      "4052",
+      "5065",
+      "6027",
+      "9544",
+      "10166",
+      "14777",
+      "14870",
+      "16902",
+      "18086",
+      "18230",
+      "18270",
+      "18583",
+      "18692",
+      "19677",
+      "20093",
+      "21321",
+      "24560",
+      "26836",
+      "28900",
+      "29199",
+      "29211",
+      "29360",
+      "31071",
+      "31609",
+      "31684",
+      "31792",
+      "31798",
+      "33682",
+      "34040",
+      "34182",
+      "34524",
+      "34769",
+      "34955",
+      "34991",
+      "35166",
+      "35167",
+      "35223",
+      "35619",
+      "35872",
+      "35947",
+      "35965",
+      "36054",
+      "36111",
+      "36127",
+      "36279",
+      "36401",
+      "36473",
+      "36519",
+      "36623",
+      "36698",
+      "36728",
+      "36911",
+      "37022",
+      "37099",
+      "37126",
+      "37138",
+      "37144"
+    ],
+    "CampaignRetargeting": {
+      "String": "",
+      "Valid": false
+    },
+    "CampaignSegmentID": {
+      "Int64": 0,
+      "Valid": false
+    },
+    "CampaignNetProvider": [],
+    "CampaignNetProviderName": [],
+    "CampaignAppBrand": [],
+    "CampaignAppBrandName": [],
+    "CampaignAppLang": {
+      "String": "",
+      "Valid": false
+    },
+    "CampaignAppMarket": {
+      "Int64": 0,
+      "Valid": false
+    },
+    "CampaignWebMobile": 1,
+    "CampaignWeb": 1,
+    "CampaignApplication": 0,
+    "CampaignVideo": 0,
+    "CampaignAppsCarriers": [],
+    "CampaignAppsCarriersName": [],
+    "CampaignLongMap": {
+      "Float64": 0,
+      "Valid": false
+    },
+    "CampaignLatMap": {
+      "Float64": 0,
+      "Valid": false
+    },
+    "CampaignRadius": {
+      "Float64": 0,
+      "Valid": true
+    },
+    "CampaignOptCTR": 0,
+    "CampaignOptConv": 0,
+    "CampaignOptBr": 0,
+    "CampaignGender": 0,
+    "CampaignAlexa": 0,
+    "CampaignFatfinger": 1,
+    "CampaignUnder": 0,
+    "CampaignGeos": [],
+    "CampaignISP": [],
+    "CampaignRegion": [],
+    "CampaignCountry": [],
+    "CampaignHoods": [],
+    "CampaignIspBlacklist": [],
+    "CampaignCat": [],
+    "CampaignLikeApp": [],
+    "CampaignApp": [],
+    "CampaignAppFilter": [],
+    "CampaignKeywords": [],
+    "CampaignPlatforms": [],
+    "CampaignPlatformVersion": [],
+    "CampaignWeeklyBudget": 0,
+    "CampaignDailyBudget": 599999,
+    "CampaignTotalBudget": 150000000,
+    "CampaignWeeklySpend": 127845215,
+    "CampaignTotalSpend": 128413735,
+    "CampaignTodaySpend": 585378,
+    "CampaignClicks": 56047,
+    "CampaignCTR": 0.0781608,
+    "CampaignImps": 71707235,
+    "CampaignCPM": 1791,
+    "CampaignCPA": 0,
+    "CampaignCPC": 2291,
+    "CampaignConv": 0,
+    "CampaignConvRate": 0,
+    "CampaignRevenue": 0,
+    "CampaignRoi": 0,
+    "CampaignStart": 1497987000,
+    "CampaignEnd": 0,
+    "CampaignStatus": 1,
+    "CampaignLastupdate": 20180112,
+    "CampaignHourStart": 0,
+    "CampaignHourEnd": 24,
+    "FMimeType": {
+      "String": "video/mp4",
+      "Valid": true
+    }
+  }
+}
+{
+  "ID": 101,
+  "Data": {
+    "FID": 101,
+    "FType": 3,
+    "FCPM": 0,
+    "FCampaignFrequency": 2,
+    "FCTR": 0.1,
+    "FCaCTR": {
+      "Float64": 0.1,
+      "Valid": true
+    },
+    "FCampaignMaxBid": 3000,
+    "FCampaignID": 200,
+    "FCampaignName": {
+      "String": "Test Campaign22",
+      "Valid": true
+    },
+    "FAdSize": 19,
+    "FUserID": 48096,
+    "FAdName": {
+      "String": "AdName",
+      "Valid": true
+    },
+    "FAdURL": {
+      "String": "http://clickyab.com",
+      "Valid": true
+    },
+    "FAdCode": {
+      "String": "",
+      "Valid": false
+    },
+    "FAdTitle": {
+      "String": "",
+      "Valid": false
+    },
+    "FAdBody": {
+      "String": "",
+      "Valid": false
+    },
+    "FAdImg": {
+      "String": "http://static.clickyab.com/ad/video/20180110-7476975-6fc73384b929682ad3afb164bed22c9a15463881.cy",
+      "Valid": true
+    },
+    "FAdStatus": 1,
+    "FAdRejectReason": {
+      "String": "",
+      "Valid": false
+    },
+    "FAdConversion": 0,
+    "FAdTime": 1499249773,
+    "FAdMainText": {
+      "String": "",
+      "Valid": false
+    },
+    "FAdDefineText": {
+      "String": "",
+      "Valid": false
+    },
+    "FAdTextColor": {
+      "String": "",
+      "Valid": false
+    },
+    "FAdTarget": {
+      "String": "",
+      "Valid": false
+    },
+    "FAdAttribute": {
+      "duration":18
+    },
+    "FAdHashAttribute": {
+      "String": "",
+      "Valid": false
+    },
+    "FCreatedAt": {
+      "String": "2017-07-05T14:46:13Z",
+      "Valid": true
+    },
+    "FUpdatedAt": {
+      "String": "0001-01-01T00:00:00Z",
+      "Valid": true
+    },
+    "FUserEmail": "info@reihancarpet.com",
+    "FUserBalance": "48753974",
+    "FIsCrm": 1,
+    "FCpLock": 0,
+    "FCampaignAdID": 107644,
+    "CampaignType": 0,
+    "CampaignBillingType": {
+      "String": "CPC",
+      "Valid": true
+    },
+    "CampaignNetwork": 2,
+    "CampaignPlacement": [],
+    "CampaignWebsiteFilter": [
+      "459",
+      "527",
+      "2885",
+      "3043",
+      "3490",
+      "3643",
+      "3835",
+      "4052",
+      "5065",
+      "6027",
+      "9544",
+      "10166",
+      "14777",
+      "14870",
+      "16902",
+      "18086",
+      "18230",
+      "18270",
+      "18583",
+      "18692",
+      "19677",
+      "20093",
+      "21321",
+      "24560",
+      "26836",
+      "28900",
+      "29199",
+      "29211",
+      "29360",
+      "31071",
+      "31609",
+      "31684",
+      "31792",
+      "31798",
+      "33682",
+      "34040",
+      "34182",
+      "34524",
+      "34769",
+      "34955",
+      "34991",
+      "35166",
+      "35167",
+      "35223",
+      "35619",
+      "35872",
+      "35947",
+      "35965",
+      "36054",
+      "36111",
+      "36127",
+      "36279",
+      "36401",
+      "36473",
+      "36519",
+      "36623",
+      "36698",
+      "36728",
+      "36911",
+      "37022",
+      "37099",
+      "37126",
+      "37138",
+      "37144"
+    ],
+    "CampaignRetargeting": {
+      "String": "",
+      "Valid": false
+    },
+    "CampaignSegmentID": {
+      "Int64": 0,
+      "Valid": false
+    },
+    "CampaignNetProvider": [],
+    "CampaignNetProviderName": [],
+    "CampaignAppBrand": [],
+    "CampaignAppBrandName": [],
+    "CampaignAppLang": {
+      "String": "",
+      "Valid": false
+    },
+    "CampaignAppMarket": {
+      "Int64": 0,
+      "Valid": false
+    },
+    "CampaignWebMobile": 1,
+    "CampaignWeb": 1,
+    "CampaignApplication": 0,
+    "CampaignVideo": 0,
+    "CampaignAppsCarriers": [],
+    "CampaignAppsCarriersName": [],
+    "CampaignLongMap": {
+      "Float64": 0,
+      "Valid": false
+    },
+    "CampaignLatMap": {
+      "Float64": 0,
+      "Valid": false
+    },
+    "CampaignRadius": {
+      "Float64": 0,
+      "Valid": true
+    },
+    "CampaignOptCTR": 0,
+    "CampaignOptConv": 0,
+    "CampaignOptBr": 0,
+    "CampaignGender": 0,
+    "CampaignAlexa": 0,
+    "CampaignFatfinger": 1,
+    "CampaignUnder": 0,
+    "CampaignGeos": [],
+    "CampaignISP": [],
+    "CampaignRegion": [],
+    "CampaignCountry": [],
+    "CampaignHoods": [],
+    "CampaignIspBlacklist": [],
+    "CampaignCat": [],
+    "CampaignLikeApp": [],
+    "CampaignApp": [],
+    "CampaignAppFilter": [],
+    "CampaignKeywords": [],
+    "CampaignPlatforms": [],
+    "CampaignPlatformVersion": [],
+    "CampaignWeeklyBudget": 0,
+    "CampaignDailyBudget": 599999,
+    "CampaignTotalBudget": 150000000,
+    "CampaignWeeklySpend": 127845215,
+    "CampaignTotalSpend": 128413735,
+    "CampaignTodaySpend": 585378,
+    "CampaignClicks": 56047,
+    "CampaignCTR": 0.0781608,
+    "CampaignImps": 71707235,
+    "CampaignCPM": 1791,
+    "CampaignCPA": 0,
+    "CampaignCPC": 2291,
+    "CampaignConv": 0,
+    "CampaignConvRate": 0,
+    "CampaignRevenue": 0,
+    "CampaignRoi": 0,
+    "CampaignStart": 1497987000,
+    "CampaignEnd": 0,
+    "CampaignStatus": 1,
+    "CampaignLastupdate": 20180112,
+    "CampaignHourStart": 0,
+    "CampaignHourEnd": 24,
+    "FMimeType": {
+      "String": "video/mp4",
+      "Valid": true
+    }
+  }
+}
