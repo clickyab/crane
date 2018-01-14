@@ -66,3 +66,7 @@ func (s *supplier) UserID() int64 {
 func (s *supplier) Rate() int {
 	panic("implement me")
 }
+
+func (s *supplier) Share() int {
+	panic("implement me")
+}
