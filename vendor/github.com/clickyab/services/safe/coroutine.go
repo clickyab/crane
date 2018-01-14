@@ -25,6 +25,25 @@ func mkTitle(err interface{}, title error, commits int64, short string) error {
 	return title
 }
 
+// ContinuesGoRoutine is a safe go routine system with recovery, its continue after recovery
+func ContinuesGoRoutine(c context.Context, f func(x context.CancelFunc) time.Duration, extra ...interface{}) context.Context {
+	ctx, cl := context.WithCancel(c)
+	var s time.Duration
+	go func() {
+		for i := 1; ; i++ {
+			Routine(func() { s = f(cl) }, extra...)
+			select {
+			case <-ctx.Done():
+				logrus.Debugf("finalize function and exit")
+				return
+			case <-time.After(s):
+				logrus.Debugf("restart the routine for %d time", i)
+			}
+		}
+	}()
+	return ctx
+}
+
 // GoRoutine is a safe go routine system with recovery and a way to inform finish of the routine
 func GoRoutine(c context.Context, f func(), extra ...interface{}) context.Context {
 	ctx, cl := context.WithCancel(c)
@@ -44,26 +63,6 @@ func GoRoutine(c context.Context, f func(), extra ...interface{}) context.Contex
 	}()
 
 	return ctx
-}
-
-// ContinuesGoRoutine is a safe go routine system with recovery, its continue after recovery
-func ContinuesGoRoutine(c context.Context, f func(context.CancelFunc), delay time.Duration, extra ...interface{}) context.Context {
-	parent, cnl := context.WithCancel(c)
-	go func() {
-		for i := 1; ; i++ {
-			ctx := GoRoutine(c, func() { f(cnl) }, extra...)
-			select {
-			case <-ctx.Done():
-				time.Sleep(delay)
-				logrus.Debugf("restart the routine for %d time", i)
-			case <-parent.Done():
-				logrus.Debugf("finalize function and exit")
-				return
-			}
-		}
-	}()
-
-	return parent
 }
 
 // Routine is a safe routine system with recovery
