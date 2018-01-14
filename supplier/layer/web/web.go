@@ -21,6 +21,7 @@ import (
 	"github.com/bsm/openrtb"
 	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/framework"
+	"github.com/clickyab/services/random"
 	"github.com/clickyab/services/xlog"
 	"github.com/mssola/user_agent"
 )
@@ -57,6 +58,13 @@ var sizesModel = map[int]*size{
 }
 var sup entity.Supplier = &supplier{}
 
+//	d		: domain
+//	l		: location
+//	r		: ref
+//	c		: count of impression. must match with slot count // TODO : do we need it?
+//	s		: slots
+//	m		: mobile
+//	tid		: tracking id
 func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	d := r.URL.Query().Get("d")
 	pub, err := website.GetWebSite(sup, d)
@@ -65,15 +73,10 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	id := r.URL.Query().Get("i")
 	l := r.URL.Query().Get("l")
 	ref := r.URL.Query().Get("r")
 	dnt, _ := strconv.Atoi(r.Header.Get("DNT"))
-	m, err := strconv.Atoi(r.URL.Query().Get("m"))
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
+	m := r.URL.Query().Get("m") != ""
 	tid := r.URL.Query().Get("tid")
 	s := r.URL.Query().Get("s")
 	c, err := strconv.Atoi(r.URL.Query().Get("c"))
@@ -83,7 +86,7 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 	_, ok := pub.Attributes()[entity.PAMobileAd]
 	extra := ""
-	if ok && m == 1 {
+	if ok && m {
 		extra = crc(d)
 	}
 	imps, err := exSlot(ctx, s, c, r, extra)
@@ -94,16 +97,19 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 
 	ua := user_agent.New(r.UserAgent())
-
+	mi := 0
+	if m {
+		mi = 1
+	}
 	bq := &openrtb.BidRequest{
-		ID: id,
+		ID: <-random.ID,
 		User: &openrtb.User{
 			ID: tid,
 		},
 		Imp:     imps,
 		AllImps: c,
 		Site: &openrtb.Site{
-			Mobile: m,
+			Mobile: mi,
 			Page:   l,
 			Ref:    ref,
 			Inventory: openrtb.Inventory{
@@ -144,7 +150,7 @@ func crc(d string) string {
 }
 
 func exSlot(ctx context.Context, s string, l int, r *http.Request, extra string) ([]openrtb.Impression, error) {
-
+	sec := secure(r)
 	res := make([]openrtb.Impression, 0)
 	ts := strings.Split(s, ",")
 	if len(ts) != l {
@@ -171,7 +177,7 @@ func exSlot(ctx context.Context, s string, l int, r *http.Request, extra string)
 
 		res = append(res, openrtb.Impression{
 			ID:     tv[0],
-			Secure: secure(r),
+			Secure: sec,
 			Banner: &openrtb.Banner{
 				ID: tv[0],
 				H:  h,
@@ -183,7 +189,7 @@ func exSlot(ctx context.Context, s string, l int, r *http.Request, extra string)
 	if extra != "" {
 		res = append(res, openrtb.Impression{
 			ID:     extra,
-			Secure: secure(r),
+			Secure: sec,
 			Banner: &openrtb.Banner{
 				ID: extra,
 				H:  50,

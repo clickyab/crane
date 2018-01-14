@@ -1,0 +1,24 @@
+{
+  "Token":"123456789",
+  "Data": {
+    "FName": "clickyab",
+    "FToken": "123456789",
+    "FUserID": {
+      "Int64": 0,
+      "Valid": false
+    },
+    "DefaultFloor": 2000,
+    "DefaultSoftFloor": 2000,
+    "DefaultMinBID": 2500,
+    "FBIDType": "cpm",
+    "FDefaultCTR": 0.1,
+    "Tiny": 1,
+    "FShowDomain": "127.0.0.1:5000",
+    "CreatedAt": "2017-12-26T14:28:13Z",
+    "UpdatedAt": "0001-01-01T00:00:00Z",
+    "FRate": 1,
+    "FTinyLogo": "//static.clickyab.com/img/adchoices-tiny.png",
+    "FTinyURL": "https://www.3rdad.com/privacy",
+    "FUnderFloor": 1
+  }
+}

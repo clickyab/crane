@@ -5,9 +5,9 @@ import (
 
 	"clickyab.com/crane/commands"
 	_ "clickyab.com/crane/supplier/layer/app"
+	_ "clickyab.com/crane/supplier/layer/video"
 	_ "clickyab.com/crane/supplier/layer/web"
 	// CORS is required for supplier
-
 	_ "clickyab.com/crane/supplier/middleware/cors"
 	"github.com/clickyab/services/assert"
 	_ "github.com/clickyab/services/broker/selector"

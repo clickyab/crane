@@ -29,6 +29,8 @@ export WORK_DIR=$(ROOT)/tmp
 export UGLIFYJS=$(ROOT)/node_modules/.bin/uglifyjs
 export CRN_SERVICES_MYSQL_WDSN=root:bita123@tcp(127.0.0.1:3306)/clickyab?charset=utf8&parseTime=true
 export CRN_SERVICES_MYSQL_RDSN?=root:bita123@tcp(127.0.0.1:3306)/clickyab?charset=utf8&parseTime=true
+export CRN_DEBUG_MODELS_ADS_EXTRA_FILE=$(ROOT)/extra/ads.json
+export CRN_DEBUG_MODELS_SUPPLIER_EXTRA_FILE=$(ROOT)/extra/sup.json
 
 all: codegen
 	$(BUILD) ./...
