@@ -1,12 +1,14 @@
 package suppliers
 
 import (
+	"fmt"
 	"time"
 
 	"context"
 
 	"clickyab.com/crane/models/internal/entities"
 	"github.com/clickyab/services/config"
+	"github.com/clickyab/services/kv"
 	"github.com/clickyab/services/mysql"
 	"github.com/clickyab/services/pool"
 	"github.com/clickyab/services/pool/drivers/memorypool"
@@ -15,16 +17,52 @@ import (
 
 var (
 	supplierExp = config.RegisterDuration("crane.models.expire.supplier", time.Hour, "expire time of supplier")
+	extraSup    = config.RegisterString("debug.models.supplier.extra_file", "", "extra file to load for suppliers")
 )
+
+type tokenPattern struct {
+	Data  entities.Supplier `json:"data"`
+	Token string            `json:"token"`
+}
+
+func (p tokenPattern) Value() kv.Serializable {
+	return &p.Data
+}
+
+func (p tokenPattern) Key() string {
+	return fmt.Sprint(p.Token)
+}
+
+type namePattern struct {
+	Data  entities.Supplier `json:"data"`
+	Token string            `json:"token"`
+}
+
+func (p namePattern) Value() kv.Serializable {
+	return &p.Data
+}
+
+func (p namePattern) Key() string {
+	return fmt.Sprint(p.Data.FName)
+}
 
 type loader struct {
 }
 
 func (loader) Initialize() {
 	ctx := context.Background()
-	suppliers = pool.NewPool(entities.SupplierLoader, memorypool.NewMemoryPool(), supplierExp.Duration(), 10*time.Second, 3)
+	tokenLoader := entities.SupplierLoader
+	if extraSup.String() != "" {
+		tokenLoader = pool.DebugLoaderGenerator(tokenLoader, extraSup.String(), tokenPattern{})
+	}
+	suppliers = pool.NewPool(tokenLoader, memorypool.NewMemoryPool(), supplierExp.Duration(), 10*time.Second, 3)
 	suppliers.Start(ctx)
-	suppliersByName = pool.NewPool(entities.SupplierLoaderByName, memorypool.NewMemoryPool(), supplierExp.Duration(), 10*time.Second, 3)
+
+	nameLoader := entities.SupplierLoaderByName
+	if extraSup.String() != "" {
+		nameLoader = pool.DebugLoaderGenerator(tokenLoader, extraSup.String(), namePattern{})
+	}
+	suppliersByName = pool.NewPool(nameLoader, memorypool.NewMemoryPool(), supplierExp.Duration(), 10*time.Second, 3)
 	suppliersByName.Start(ctx)
 
 	// Wait for the first time load

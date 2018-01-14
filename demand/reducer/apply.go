@@ -3,8 +3,6 @@ package reducer
 import (
 	"context"
 
-	"fmt"
-
 	"clickyab.com/crane/demand/entity"
 )
 
@@ -21,7 +19,7 @@ func (m *mixer) Check(c entity.Context, a entity.Advertise) (b bool) {
 	for i := range m.f {
 		if !m.f[i].Check(c, a) {
 			// Un-coment this for debug
-			fmt.Printf("\nfalse on %T", m.f[i])
+			//fmt.Printf("\nfalse on %T", m.f[i])
 			return false
 		}
 	}
