@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"strconv"
 
+	"strings"
+
 	"clickyab.com/crane/models/website"
 	"clickyab.com/crane/supplier/client"
 	"clickyab.com/crane/supplier/layer/output"
@@ -30,6 +32,7 @@ var sup = &supplier{}
 //	ln		: length
 //	m		: mobile
 //	tid		: tracking id
+//  mimes   : comma separated accepted mime types
 func vast(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	d := r.URL.Query().Get("d")
 	pub, err := website.GetWebSite(sup, d)
@@ -44,8 +47,12 @@ func vast(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	m := r.URL.Query().Get("m") != ""
 	tid := r.URL.Query().Get("tid")
 	ln := r.URL.Query().Get("ln")
+	var mimes []string
+	if mim := strings.Trim(r.URL.Query().Get("mimes"), "\n\t "); mim != "" {
+		mimes = strings.Split(mim, ",")
+	}
 
-	imps, seats := getImps(r, fmt.Sprint(pub.ID()), getSlots(ln))
+	imps, seats := getImps(r, fmt.Sprint(pub.ID()), getSlots(ln), mimes...)
 
 	ua := user_agent.New(r.UserAgent())
 	mi := 0
