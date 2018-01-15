@@ -183,6 +183,7 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	sd, vast := seatDetail(payload)
 	if vast {
 		selector = ortbVastSelector
+		b = append(b, builder.SetMultiVideo(true))
 	}
 	b = append(b, builder.SetDemandSeats(sd...))
 
