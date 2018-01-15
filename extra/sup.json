@@ -13,12 +13,13 @@
     "FBIDType": "cpm",
     "FDefaultCTR": 0.1,
     "Tiny": 1,
-    "FShowDomain": "127.0.0.1:5000",
+    "FShowDomain": "127.0.0.1:8080",
     "CreatedAt": "2017-12-26T14:28:13Z",
     "UpdatedAt": "0001-01-01T00:00:00Z",
     "FRate": 1,
     "FTinyLogo": "//static.clickyab.com/img/adchoices-tiny.png",
     "FTinyURL": "https://www.3rdad.com/privacy",
-    "FUnderFloor": 1
+    "FUnderFloor": 1,
+    "FShare":100
   }
 }

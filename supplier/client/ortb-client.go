@@ -47,6 +47,5 @@ func Call(ctx context.Context, method, url string, pl *openrtb.BidRequest) (*ope
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-	fmt.Printf("%+v", bid)
 	return &bid, nil
 }

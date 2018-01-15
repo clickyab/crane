@@ -224,7 +224,7 @@ func RenderApp(ctx context.Context, w io.Writer, res *openrtb.BidResponse, full 
 	}
 	var noAd bool
 	var adMarkup string
-	if len(res.SeatBid[0].Bid) == 0 {
+	if len(res.SeatBid) == 0 || len(res.SeatBid[0].Bid) == 0 {
 		noAd = true
 	} else {
 		adMarkup = res.SeatBid[0].Bid[0].AdMarkup
