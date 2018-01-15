@@ -121,7 +121,7 @@ func bannerMarkup(ctx entity.Context, s entity.Seat) *openrtb.Bid {
 
 // Render write open-rtb bid-response to writer
 func Render(_ context.Context, w http.ResponseWriter, ctx entity.Context) error {
-	r := openrtb.SeatBid{}
+	var r []openrtb.SeatBid
 	w.Header().Set("crane-version", fmt.Sprint(vs.Count))
 	for _, v := range ctx.Seats() {
 		// What if we have no ad for them?
@@ -137,7 +137,7 @@ func Render(_ context.Context, w http.ResponseWriter, ctx entity.Context) error 
 		}
 
 		if bid != nil {
-			r.Bid = append(r.Bid, *bid)
+			r = append(r, openrtb.SeatBid{Bid: []openrtb.Bid{*bid}})
 		}
 	}
 	w.Header().Set("content-type", "application/json")
@@ -145,6 +145,6 @@ func Render(_ context.Context, w http.ResponseWriter, ctx entity.Context) error 
 	return j.Encode(openrtb.BidResponse{
 		Currency: ctx.Currency(),
 		ID:       <-random.ID,
-		SeatBid:  []openrtb.SeatBid{r},
+		SeatBid:  r,
 	})
 }
