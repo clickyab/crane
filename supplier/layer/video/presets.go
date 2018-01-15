@@ -9,6 +9,7 @@ import (
 
 	"clickyab.com/crane/supplier/layer/output"
 	"github.com/bsm/openrtb"
+	"github.com/clickyab/services/array"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/framework"
@@ -20,7 +21,7 @@ var (
 	midConfig   = config.RegisterString("crane.supplier.vast.preset.mid", "start/linear/7/3,end/linear/10/3", "mid preset.Format is start_time/type/duration{/skip, only for linear}")
 	longConfig  = config.RegisterString("crane.supplier.vast.preset.long", "start/linear/7/3", "long preset.Format is start_time/type/duration{/skip, only for linear}")
 	maxDuration = config.RegisterInt("crane.supplier.vast.max_duration", 60, "maximum duration in sec")
-	mime        = config.RegisterString("crane.supplier.vast.mimes", "video/mp4,image/png,image/gif,image/jpeg", "comma separated list of accepted types")
+	mime        = config.RegisterString("crane.supplier.vast.mimes.default", "video/mp4,image/png,image/gif,image/jpeg", "comma separated list of accepted types")
 )
 
 const (
@@ -110,21 +111,39 @@ func getSlots(l string) map[string]output.Seat {
 	panic("what? " + p)
 }
 
-// the first map is just an array of map, the key is the start value (from the seat) but the returning map is a bit
-// tricky, the key is the id, so we can identify each slot in response
-func getImps(r *http.Request, baseID string, s map[string]output.Seat) ([]openrtb.Impression, map[string]output.Seat) {
+func getMimes(requsted ...string) []string {
 	var (
-		res   []openrtb.Impression
-		times = make(map[string]output.Seat)
-		sec   = secure(r)
+		res   []string
 		mimes []string
 	)
-
 	for _, m := range strings.Split(mime.String(), ",") {
 		if n := strings.Trim(m, "\n\t "); n != "" {
 			mimes = append(mimes, n)
 		}
 	}
+
+	for i := range requsted {
+		n := strings.Trim(requsted[i], "\n\t ")
+		if n != "" && array.StringInArray(n, mimes...) {
+			res = append(res, n)
+		}
+	}
+
+	if len(res) == 0 {
+		return mimes
+	}
+	return res
+}
+
+// the first map is just an array of map, the key is the start value (from the seat) but the returning map is a bit
+// tricky, the key is the id, so we can identify each slot in response
+func getImps(r *http.Request, baseID string, s map[string]output.Seat, requestedMime ...string) ([]openrtb.Impression, map[string]output.Seat) {
+	var (
+		res   []openrtb.Impression
+		times = make(map[string]output.Seat)
+		sec   = secure(r)
+		mimes = getMimes(requestedMime...)
+	)
 
 	assert.True(len(mimes) > 0)
 
