@@ -46,7 +46,7 @@ func Apply(_ context.Context, imp entity.Context, ads []entity.Advertise, ff Fil
 			// TODO : a hack for video size, search for better way, if you have time
 			if ads[i].Type() == entity.AdTypeVideo {
 				for _, vs := range videoSize {
-					m[vs] = append(m[key], n)
+					m[vs] = append(m[vs], n)
 				}
 			} else {
 				m[key] = append(m[key], n)
