@@ -40,8 +40,7 @@ func getApp(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	q := &openrtb.BidRequest{
-		ID:      <-random.ID,
-		AllImps: 1,
+		ID: <-random.ID,
 		Imp: []openrtb.Impression{
 			{
 				ID:     <-random.ID,
