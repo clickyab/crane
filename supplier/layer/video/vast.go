@@ -64,8 +64,7 @@ func vast(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		User: &openrtb.User{
 			ID: tid,
 		},
-		Imp:     imps,
-		AllImps: len(imps),
+		Imp: imps,
 		Site: &openrtb.Site{
 			Mobile: mi,
 			Page:   l,
