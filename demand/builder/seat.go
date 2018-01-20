@@ -10,8 +10,8 @@ import (
 
 	"net"
 
-	"clickyab.com/crane/demand/builder/internal/cyslot"
 	"clickyab.com/crane/demand/entity"
+	"clickyab.com/crane/demand/internal/cyslot"
 	"github.com/clickyab/services/array"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/config"

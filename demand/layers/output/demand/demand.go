@@ -49,13 +49,18 @@ func vastMarkup(ctx entity.Context, s entity.VastSeat) *openrtb.Bid {
 
 			MediaFiles: []vast.MediaFile{
 				{
-					Height: s.Height(),
-					Width:  s.Width(),
-					Type:   s.WinnerAdvertise().MimeType(),
-					URI:    click.String(),
+					Height:   s.Height(),
+					Width:    s.Width(),
+					Type:     s.WinnerAdvertise().MimeType(),
+					URI:      s.WinnerAdvertise().Media(),
+					Delivery: "streaming",
 				},
 			},
-
+			VideoClicks: &vast.VideoClicks{
+				ClickThroughs: []vast.VideoClick{
+					{ID: <-random.ID, URI: s.ClickURL()},
+				},
+			},
 			TrackingEvents: []vast.Tracking{
 				{
 					URI:   tracking.String(),
