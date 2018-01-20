@@ -29,6 +29,7 @@ var (
 		16: {Width: 320, Height: 480},
 		17: {Width: 48, Height: 320},
 		18: {Width: 128, Height: 128},
+		19: {Width: 800, Height: 440}, // This last entry is here for vast.
 	}
 )
 var sizes = map[string]int{
@@ -51,6 +52,8 @@ var sizes = map[string]int{
 	"128x128":  18,
 }
 
+var videoSize = []int{3, 4, 9, 16, 14}
+
 // GetSize return the size of a banner in clickyab std
 func GetSize(size string) (int, error) {
 	s, ok := sizes[size]
@@ -61,14 +64,6 @@ func GetSize(size string) (int, error) {
 	return 0, fmt.Errorf("size %s is not valid", size)
 }
 
-// ValidWebSlotSize return true if the size is valid
-func ValidWebSlotSize(s int) bool {
-	if _, ok := sizesModel[s]; ok {
-		return true
-	}
-	return false
-}
-
 // GetSizeByNum return the size (order: width, height)
 func GetSizeByNum(num int) (int, int) {
 	if v, ok := sizesModel[num]; ok {
@@ -76,4 +71,9 @@ func GetSizeByNum(num int) (int, int) {
 	}
 	panic("not valid size")
 
+}
+
+// GetVideoSize return the sizes available for vast
+func GetVideoSize() []int {
+	return videoSize
 }
