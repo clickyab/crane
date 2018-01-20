@@ -40,5 +40,13 @@ type VastNetwork struct {
 
 // Check filter network for native
 func (*VastNetwork) Check(c entity.Context, in entity.Advertise) bool {
-	return in.Campaign().Target() == entity.TargetVast
+	// TODO : the following line is correct. but, since we use an invalid form of ads in our system, we should comment it
+	//return in.Campaign().Target() == entity.TargetVast
+	if in.Campaign().Target() != entity.TargetVast {
+		// TODO : remove it when the new console is awaken!
+		if in.Size() != 9 && in.Campaign().Target() != entity.TargetWeb { // there is a fucking decision to show web size 9 in vast network.
+			return false
+		}
+	}
+	return true
 }
