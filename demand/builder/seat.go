@@ -25,22 +25,6 @@ var (
 	clickExpire = config.RegisterDuration("crane.context.seat.click_exp", 72*time.Hour, "determine how long click url is valid")
 )
 
-// SlotType is the type of slot
-type SlotType int
-
-const (
-	// SlotTypeWeb web slot
-	SlotTypeWeb SlotType = iota
-	// SlotTypeApp App slot
-	SlotTypeApp
-	// SlotTypeVast vast slot
-	SlotTypeVast
-	// SlotTypeNative native slot
-	SlotTypeNative
-	// SlotTypeDemand demand slot
-	SlotTypeDemand
-)
-
 // seat is the seat for input request
 type seat struct {
 	winnerAd    entity.Advertise
