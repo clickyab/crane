@@ -53,6 +53,7 @@ a.close,a.largeclose{
     display: inline-block;
     font-family: verdana,helvetica,arial,sans-serif;
     font-weight: bold;
+	z-index: 9999 !important;
 }
 a.largeclose{ width: 32px; height: 32px; line-height: 32px; font-size: 24px; }
     {{ end }}
@@ -61,7 +62,7 @@ a.largeclose{ width: 32px; height: 32px; line-height: 32px; font-size: 24px; }
         position: relative;border: 0;line-height: 1;
         height: 100%;
         width: 100%;
-        z-index: 100;
+        z-index: 9999 !important;
         text-align: center;
     }
     #showb a {
