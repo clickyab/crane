@@ -4,7 +4,6 @@ import (
 	"os"
 
 	"clickyab.com/crane/commands"
-	_ "clickyab.com/crane/demand/layers/input/common"
 	_ "clickyab.com/crane/demand/layers/input/ortb"
 	_ "github.com/clickyab/services/broker/selector"
 	"github.com/clickyab/services/config"

@@ -1,4 +1,4 @@
-package common
+package ortb
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 
 	"clickyab.com/crane/demand/builder"
 	"clickyab.com/crane/demand/entity"
-	"clickyab.com/crane/demand/layers/output/banner"
+	"clickyab.com/crane/demand/layers/output/pixel"
 	"clickyab.com/crane/workers/show"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/broker"
@@ -16,13 +16,12 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-const showPath = "/banner/:rh/:size/:type/:subtype/:jt"
+const pixelPath = "/pixel/:rh/:size/:type/:subtype/:jt"
 
-// show is handler for show ad request
-func showBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+// showPixel for ads which is not rendered by us.
+func showPixel(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	pl, err := extractor(ctx, r)
 	if err != nil {
-		logrus.Error(err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -62,5 +61,5 @@ func showBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		broker.Publish(job)
 	})
 
-	assert.Nil(banner.Render(ctx, w, c))
+	assert.Nil(pixel.Render(ctx, w, c))
 }
