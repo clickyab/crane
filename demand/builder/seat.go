@@ -13,7 +13,6 @@ import (
 	"clickyab.com/crane/demand/internal/cyslot"
 	"clickyab.com/crane/demand/internal/hash"
 	"github.com/clickyab/services/array"
-	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/framework/router"
 	"github.com/clickyab/services/random"
@@ -148,10 +147,7 @@ func (s *seat) WinnerAdvertise() entity.Advertise {
 	return s.winnerAd
 }
 
-func (s *seat) ShowURL() string {
-	if s.show != "" {
-		return s.show
-	}
+func (s *seat) makeURL(route string, params map[string]string, cpm float64) *url.URL {
 	if s.winnerAd == nil {
 		panic("no winner")
 	}
@@ -173,15 +169,16 @@ func (s *seat) ShowURL() string {
 		"pid":  s.publicID,
 		"susp": fmt.Sprint(s.susp),
 		"now":  fmt.Sprint(time.Now().Unix()),
-		"cpm":  fmt.Sprint(s.CPM()),
+		"cpm":  fmt.Sprint(cpm),
 		"ff":   ff,
 	}, showExpire.Duration())
 	s.winnerAd.ID()
+	params["jt"] = j
 	res := router.MustPath(
-		"banner",
-		map[string]string{"rh": s.ReservedHash(), "size": fmt.Sprint(s.size), "jt": j, "type": s.Type(), "subtype": s.SubType()},
+		route,
+		params,
 	)
-	u := url.URL{
+	u := &url.URL{
 		Host:   s.host,
 		Scheme: s.protocol.String(),
 		Path:   res,
@@ -192,6 +189,22 @@ func (s *seat) ShowURL() string {
 	v.Set("ref", s.ref)
 	v.Set("parent", s.parent)
 	u.RawQuery = v.Encode()
+	return u
+}
+
+func (s *seat) ShowURL() string {
+	if s.show != "" {
+		return s.show
+	}
+	if s.winnerAd == nil {
+		panic("no winner")
+	}
+
+	u := s.makeURL(
+		"banner",
+		map[string]string{"rh": s.ReservedHash(), "size": fmt.Sprint(s.size), "type": s.Type(), "subtype": s.SubType()},
+		s.cpm,
+	)
 	s.show = u.String()
 	return s.show
 }
@@ -207,40 +220,12 @@ func (s *seat) ClickURL() string {
 	if s.scpm != 0 {
 		cpm = s.scpm
 	}
-	mode := 0
-	if s.publisher.Type() == entity.PublisherTypeApp {
-		mode = 1
-	}
-	data := hash.Sign(mode, s.ReservedHash(), fmt.Sprint(s.size), s.Type(), s.ua, s.ip.String())
 
-	j := jwt.NewJWT().Encode(map[string]string{
-		"aid":  fmt.Sprint(s.winnerAd.ID()),
-		"dom":  s.publisher.Name(),
-		"sup":  s.publisher.Supplier().Name(),
-		"bid":  fmt.Sprint(s.bid),
-		"uaip": string(data),
-		"susp": fmt.Sprint(s.susp),
-		"pid":  s.PublicID(),
-		"now":  fmt.Sprint(time.Now().Unix()),
-		"cpm":  fmt.Sprint(cpm),
-		"ff":   "F", // click not required this
-	}, clickExpire.Duration())
-	s.winnerAd.ID()
-	res, err := router.Path(
+	u := s.makeURL(
 		"click",
-		map[string]string{"jt": j, "rh": s.ReservedHash(), "size": fmt.Sprint(s.Size()), "type": s.Type(), "subtype": s.SubType()},
+		map[string]string{"rh": s.ReservedHash(), "size": fmt.Sprint(s.Size()), "type": s.Type(), "subtype": s.SubType()},
+		cpm,
 	)
-	assert.Nil(err)
-	u := url.URL{
-		Host:   s.host,
-		Scheme: s.protocol.String(),
-		Path:   res,
-	}
-	v := url.Values{}
-	v.Set("tid", s.tid)
-	v.Set("ref", s.ref)
-	v.Set("parent", s.parent)
-	u.RawQuery = v.Encode()
 	s.click = u.String()
 	return s.click
 }
