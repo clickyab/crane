@@ -124,6 +124,7 @@ func extractor(ctx context.Context, r *http.Request) (*payloadData, error) {
 func (controller) Routes(m framework.Mux) {
 	m.GET("banner", showPath, showBanner)
 	m.GET("click", clickPath, clickBanner)
+	m.GET("pixel", pixelPath, showPixel)
 }
 
 func init() {

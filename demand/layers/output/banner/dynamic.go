@@ -2113,7 +2113,7 @@ func renderDynamicBanner(w io.Writer, ctx entity.Context, s entity.Seat) error {
 		attr.Logo = strings.Replace(attr.Logo, "http://", "https://", -1)
 	}
 	res := getTemplate(s.Size())
-	attr.Link = s.ClickURL()
+	attr.Link = s.ClickURL().String()
 	return res.Execute(w, attr)
 }
 
