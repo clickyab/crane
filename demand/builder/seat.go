@@ -30,8 +30,11 @@ type seat struct {
 	reserveHash string
 	bid         float64
 	cpm         float64
-	click       string
-	show        string
+
+	// url cache
+	click *url.URL
+	imp   *url.URL
+	win   *url.URL
 
 	alexa    bool
 	mobile   bool
@@ -147,7 +150,62 @@ func (s *seat) WinnerAdvertise() entity.Advertise {
 	return s.winnerAd
 }
 
-func (s *seat) makeURL(route string, params map[string]string, cpm float64) *url.URL {
+func (s *seat) ImpressionURL() *url.URL {
+	if s.imp != nil {
+		return s.imp
+	}
+	if s.winnerAd == nil {
+		panic("no winner")
+	}
+
+	s.imp = s.makeURL(
+		"banner",
+		map[string]string{"rh": s.ReservedHash(), "size": fmt.Sprint(s.size), "type": s.Type(), "subtype": s.SubType()},
+		s.cpm,
+		showExpire.Duration(),
+	)
+	return s.imp
+}
+
+func (s *seat) ClickURL() *url.URL {
+	if s.click != nil {
+		return s.click
+	}
+	if s.winnerAd == nil {
+		panic("no winner")
+	}
+	cpm := s.cpm
+	if s.scpm != 0 {
+		cpm = s.scpm
+	}
+
+	s.click = s.makeURL(
+		"click",
+		map[string]string{"rh": s.ReservedHash(), "size": fmt.Sprint(s.Size()), "type": s.Type(), "subtype": s.SubType()},
+		cpm,
+		clickExpire.Duration(),
+	)
+	return s.click
+}
+
+func (s *seat) WinRequest() *url.URL {
+	if s.win != nil {
+		return s.win
+	}
+	if s.winnerAd == nil {
+		panic("no winner")
+	}
+
+	s.win = s.makeURL(
+		"winner",
+		map[string]string{"rh": s.ReservedHash(), "size": fmt.Sprint(s.Size()), "type": s.Type(), "subtype": s.SubType()},
+		s.cpm,
+		time.Hour, // TODO : fix me when there is actually a code to handle it
+	)
+	return s.win
+}
+
+func (s *seat) makeURL(route string, params map[string]string, cpm float64, expire time.Duration) *url.URL {
 	if s.winnerAd == nil {
 		panic("no winner")
 	}
@@ -171,7 +229,7 @@ func (s *seat) makeURL(route string, params map[string]string, cpm float64) *url
 		"now":  fmt.Sprint(time.Now().Unix()),
 		"cpm":  fmt.Sprint(cpm),
 		"ff":   ff,
-	}, showExpire.Duration())
+	}, expire)
 	s.winnerAd.ID()
 	params["jt"] = j
 	res := router.MustPath(
@@ -190,44 +248,6 @@ func (s *seat) makeURL(route string, params map[string]string, cpm float64) *url
 	v.Set("parent", s.parent)
 	u.RawQuery = v.Encode()
 	return u
-}
-
-func (s *seat) ShowURL() string {
-	if s.show != "" {
-		return s.show
-	}
-	if s.winnerAd == nil {
-		panic("no winner")
-	}
-
-	u := s.makeURL(
-		"banner",
-		map[string]string{"rh": s.ReservedHash(), "size": fmt.Sprint(s.size), "type": s.Type(), "subtype": s.SubType()},
-		s.cpm,
-	)
-	s.show = u.String()
-	return s.show
-}
-
-func (s *seat) ClickURL() string {
-	if s.click != "" {
-		return s.click
-	}
-	if s.winnerAd == nil {
-		panic("no winner")
-	}
-	cpm := s.cpm
-	if s.scpm != 0 {
-		cpm = s.scpm
-	}
-
-	u := s.makeURL(
-		"click",
-		map[string]string{"rh": s.ReservedHash(), "size": fmt.Sprint(s.Size()), "type": s.Type(), "subtype": s.SubType()},
-		cpm,
-	)
-	s.click = u.String()
-	return s.click
 }
 
 func (s *seat) Type() string {

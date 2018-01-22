@@ -83,7 +83,7 @@ func renderWebBanner(w io.Writer, ctx entity.Context, seat entity.Seat) error {
 	}
 
 	sa := bannerData{
-		Link:           seat.ClickURL(),
+		Link:           seat.ClickURL().String(),
 		Height:         seat.Height(),
 		Width:          seat.Width(),
 		Src:            src,

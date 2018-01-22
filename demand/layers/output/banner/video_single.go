@@ -144,7 +144,7 @@ func renderVideoBanner(w io.Writer, ctx entity.Context, s entity.Seat) error {
 		src = strings.Replace(src, "http://", "https://", -1)
 	}
 	sa := videoData{
-		Link:     s.ClickURL(),
+		Link:     s.ClickURL().String(),
 		Height:   s.Height(),
 		Width:    s.Width(),
 		Src:      src,

@@ -1,6 +1,9 @@
 package entity
 
-import "time"
+import (
+	"net/url"
+	"time"
+)
 
 // Seat is the slot of the app
 type Seat interface {
@@ -23,9 +26,11 @@ type Seat interface {
 	// WinnerAdvertise return the winner
 	WinnerAdvertise() Advertise
 	// ShowURL get the show url usable for async calls
-	ShowURL() string
-	// SetClickURL is the setter for click url of this ad in slot
-	ClickURL() string
+	ImpressionURL() *url.URL
+	// ClickURL is the click url for this advertise
+	ClickURL() *url.URL
+	// WinRequest is the win request url for this advertise
+	WinRequest() *url.URL
 	// CTR return current ctr for this size in publisher
 	CTR() float64
 	// Type of seat

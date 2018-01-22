@@ -32,8 +32,7 @@ func vastMarkup(ctx entity.Context, s entity.VastSeat) *openrtb.Bid {
 		AdID: fmt.Sprint(s.WinnerAdvertise().ID()),
 	}
 
-	click, err := url.Parse(s.ClickURL())
-	assert.Nil(err)
+	click := s.ClickURL()
 	var tracking = &url.URL{}
 	*tracking = *click
 	q := tracking.Query()
@@ -58,7 +57,7 @@ func vastMarkup(ctx entity.Context, s entity.VastSeat) *openrtb.Bid {
 			},
 			VideoClicks: &vast.VideoClicks{
 				ClickThroughs: []vast.VideoClick{
-					{ID: <-random.ID, URI: s.ClickURL()},
+					{URI: s.ClickURL().String()},
 				},
 			},
 			TrackingEvents: []vast.Tracking{
@@ -87,6 +86,9 @@ func vastMarkup(ctx entity.Context, s entity.VastSeat) *openrtb.Bid {
 					Creatives: []vast.Creative{
 						cv,
 					},
+					Impressions: []vast.Impression{
+						{URI: s.ImpressionURL().String()},
+					},
 				},
 			},
 		},
@@ -112,7 +114,7 @@ func bannerMarkup(ctx entity.Context, s entity.Seat) *openrtb.Bid {
 		ImpID: s.PublicID(),
 		AdMarkup: fmt.Sprintf(
 			`<iframe src="%s&scpm=${AUCTION_PRICE}" width="%d" height="%d" frameborder="0"  scrolling="no"></iframe>`,
-			s.ShowURL(),
+			s.ImpressionURL().String(),
 			s.Width(),
 			s.Height(),
 		),
