@@ -1,7 +1,6 @@
 package builder
 
 import (
-	"crypto/md5"
 	"fmt"
 	"math"
 	"math/rand"
@@ -12,6 +11,7 @@ import (
 
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/demand/internal/cyslot"
+	"clickyab.com/crane/demand/internal/hash"
 	"github.com/clickyab/services/array"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/config"
@@ -155,11 +155,11 @@ func (s *seat) ShowURL() string {
 	if s.winnerAd == nil {
 		panic("no winner")
 	}
-	m := md5.New()
-	_, _ = m.Write(
-		[]byte(s.ReservedHash() + fmt.Sprint(s.size) + s.Type() + s.ua + s.ip.String()),
-	)
-	data := fmt.Sprintf("%x", m.Sum(nil))
+	mode := 0
+	if s.publisher.Type() == entity.PublisherTypeApp {
+		mode = 1
+	}
+	data := hash.Sign(mode, s.ReservedHash(), fmt.Sprint(s.size), s.Type(), s.ua, s.ip.String())
 	ff := "F"
 	if s.FatFinger() {
 		ff = "T"
@@ -203,15 +203,16 @@ func (s *seat) ClickURL() string {
 	if s.winnerAd == nil {
 		panic("no winner")
 	}
-	m := md5.New()
-	_, _ = m.Write(
-		[]byte(s.ReservedHash() + fmt.Sprint(s.size) + s.Type() + s.ua + s.ip.String()),
-	)
 	cpm := s.cpm
 	if s.scpm != 0 {
 		cpm = s.scpm
 	}
-	data := fmt.Sprintf("%x", m.Sum(nil))
+	mode := 0
+	if s.publisher.Type() == entity.PublisherTypeApp {
+		mode = 1
+	}
+	data := hash.Sign(mode, s.ReservedHash(), fmt.Sprint(s.size), s.Type(), s.ua, s.ip.String())
+
 	j := jwt.NewJWT().Encode(map[string]string{
 		"aid":  fmt.Sprint(s.winnerAd.ID()),
 		"dom":  s.publisher.Name(),

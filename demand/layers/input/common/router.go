@@ -2,13 +2,13 @@ package common
 
 import (
 	"context"
-	"crypto/md5"
 	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
 
 	"clickyab.com/crane/demand/entity"
+	"clickyab.com/crane/demand/internal/hash"
 	"clickyab.com/crane/models/ads"
 	"clickyab.com/crane/models/apps"
 	"clickyab.com/crane/models/suppliers"
@@ -106,10 +106,12 @@ func extractor(ctx context.Context, r *http.Request) (*payloadData, error) {
 	}
 	pl.Suspicious, _ = strconv.Atoi(m["susp"])
 	pl.UserAgent, pl.IP = r.UserAgent(), framework.RealIP(r)
-	tmp := md5.New()
-	_, _ = tmp.Write([]byte(pl.ReserveHash + fmt.Sprint(pl.Size) + string(pl.Type) + pl.UserAgent + pl.IP))
-
-	if fmt.Sprintf("%x", tmp.Sum(nil)) != m["uaip"] {
+	mode := 0
+	if pl.Publisher.Type() == entity.PublisherTypeApp {
+		mode = 1
+	}
+	tmp := hash.Sign(mode, pl.ReserveHash, fmt.Sprint(pl.Size), string(pl.Type), pl.UserAgent, pl.IP)
+	if tmp != m["uaip"] {
 		pl.Suspicious = 98
 	}
 
