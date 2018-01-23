@@ -20,7 +20,7 @@ type AreaInGlob struct {
 }
 
 // Check filter area in glob
-func (*AreaInGlob) Check(c entity.Context, in entity.Advertise) bool {
+func (*AreaInGlob) Check(c entity.Context, in entity.Creative) bool {
 	b, lat, lon, radius := in.Campaign().LatLon()
 	ll := c.Location().LatLon()
 	if !ll.Valid {

@@ -22,9 +22,9 @@ type Seat interface {
 	// CPM return the cpm of this seat (after winner and bid is set)
 	CPM() float64
 	// Set winner ad for this slot, first is bid, last param is cpm
-	SetWinnerAdvertise(Advertise, float64, float64)
+	SetWinnerAdvertise(Creative, float64, float64)
 	// WinnerAdvertise return the winner
-	WinnerAdvertise() Advertise
+	WinnerAdvertise() Creative
 	// ShowURL get the show url usable for async calls
 	ImpressionURL() *url.URL
 	// ClickURL is the click url for this advertise
@@ -50,7 +50,7 @@ type Seat interface {
 	FatFinger() bool
 	// Some seat need extra filter so the specific ad could be removed, for example in mime-type if a seat
 	// only accept video/mp4 but another seat in same imp accept image/jpeg then we can not use normal filters
-	Acceptable(Advertise) bool
+	Acceptable(Creative) bool
 }
 
 // VastSeat is a seat with vast compatibility

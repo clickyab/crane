@@ -14,8 +14,8 @@ const (
 	AdTypeVideo AdType = 3
 )
 
-// Advertise is the single advertise interface
-type Advertise interface {
+// Creative is the single advertise interface
+type Creative interface {
 	// GetID return the id of advertise
 	ID() int64
 	// Type return the type of ad

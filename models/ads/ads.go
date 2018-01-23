@@ -14,12 +14,12 @@ import (
 var ads pool.Interface
 
 // GetAds return all ads in system
-func GetAds() []entity.Advertise {
+func GetAds() []entity.Creative {
 	data := ads.All()
-	all := make([]entity.Advertise, len(data))
+	all := make([]entity.Creative, len(data))
 	var c int
 	for i := range data {
-		all[c] = data[i].(entity.Advertise)
+		all[c] = data[i].(entity.Creative)
 		c++
 	}
 
@@ -27,7 +27,7 @@ func GetAds() []entity.Advertise {
 }
 
 // GetAd try to get advertise based on its id
-func GetAd(adID int64) (entity.Advertise, error) {
+func GetAd(adID int64) (entity.Creative, error) {
 	ad, err := ads.Get(fmt.Sprint(adID), &entities.Advertise{})
 	if err != nil {
 		x, err := entities.GetAd(adID)
@@ -36,7 +36,7 @@ func GetAd(adID int64) (entity.Advertise, error) {
 		}
 		return x, nil
 	}
-	return ad.(entity.Advertise), nil
+	return ad.(entity.Creative), nil
 }
 
 // FindPublisher return publisher id for given supplier,domain

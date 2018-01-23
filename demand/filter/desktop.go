@@ -9,7 +9,7 @@ type Desktop struct {
 }
 
 // Check filter network for desktop
-func (*Desktop) Check(c entity.Context, in entity.Advertise) bool {
+func (*Desktop) Check(c entity.Context, in entity.Creative) bool {
 	if in.Campaign().Web() {
 		if !in.Campaign().WebMobile() {
 			return !c.IsMobile()

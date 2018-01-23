@@ -11,7 +11,7 @@ type WebSize struct {
 }
 
 // Check check if the banner size exists in the request
-func (*WebSize) Check(c entity.Context, in entity.Advertise) bool {
+func (*WebSize) Check(c entity.Context, in entity.Creative) bool {
 	if in.Type() == entity.AdTypeVideo {
 		for _, seat := range c.Seats() {
 			if hasInt(false, videoValidSizes, seat.Size()) {
@@ -34,7 +34,7 @@ type AppSize struct {
 }
 
 // Check check if the banner size exists in the request
-func (*AppSize) Check(c entity.Context, in entity.Advertise) bool {
+func (*AppSize) Check(c entity.Context, in entity.Creative) bool {
 	// TODO : fix the dynamic click and remove the second condition
 	if in.Type() == entity.AdTypeVideo || in.Type() == entity.AdTypeDynamic {
 		return false
@@ -52,7 +52,7 @@ type VideoSize struct {
 }
 
 // Check check if the banner size exists in the request
-func (*VideoSize) Check(c entity.Context, in entity.Advertise) bool {
+func (*VideoSize) Check(c entity.Context, in entity.Creative) bool {
 	if in.Type() == entity.AdTypeVideo {
 		return true
 	}

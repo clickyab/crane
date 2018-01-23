@@ -9,7 +9,7 @@ type WebNetwork struct {
 }
 
 // Check filter network for campaigns
-func (*WebNetwork) Check(c entity.Context, in entity.Advertise) (b bool) {
+func (*WebNetwork) Check(c entity.Context, in entity.Creative) (b bool) {
 	if in.Campaign().Target() == entity.TargetWeb {
 		return in.Campaign().Web() || in.Campaign().WebMobile()
 	}
@@ -21,7 +21,7 @@ type AppNetwork struct {
 }
 
 // Check filter network for campaigns
-func (*AppNetwork) Check(c entity.Context, in entity.Advertise) bool {
+func (*AppNetwork) Check(c entity.Context, in entity.Creative) bool {
 	return in.Campaign().Target() == entity.TargetApp
 }
 
@@ -30,7 +30,7 @@ type NativeNetwork struct {
 }
 
 // Check filter network for native
-func (*NativeNetwork) Check(c entity.Context, in entity.Advertise) bool {
+func (*NativeNetwork) Check(c entity.Context, in entity.Creative) bool {
 	return in.Campaign().Target() == entity.TargetNative
 }
 
@@ -39,7 +39,7 @@ type VastNetwork struct {
 }
 
 // Check filter network for native
-func (*VastNetwork) Check(c entity.Context, in entity.Advertise) bool {
+func (*VastNetwork) Check(c entity.Context, in entity.Creative) bool {
 	// TODO : the following line is correct. but, since we use an invalid form of ads in our system, we should comment it
 	//return in.Campaign().Target() == entity.TargetVast
 	if in.Campaign().Target() != entity.TargetVast {

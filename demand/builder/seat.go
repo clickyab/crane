@@ -26,7 +26,7 @@ var (
 
 // seat is the seat for input request
 type seat struct {
-	winnerAd    entity.Advertise
+	winnerAd    entity.Creative
 	reserveHash string
 	bid         float64
 	cpm         float64
@@ -140,13 +140,13 @@ func (s *seat) Size() int {
 	return s.size
 }
 
-func (s *seat) SetWinnerAdvertise(wa entity.Advertise, bid float64, cpm float64) {
+func (s *seat) SetWinnerAdvertise(wa entity.Creative, bid float64, cpm float64) {
 	s.winnerAd = wa
 	s.bid = bid
 	s.cpm = cpm
 }
 
-func (s *seat) WinnerAdvertise() entity.Advertise {
+func (s *seat) WinnerAdvertise() entity.Creative {
 	return s.winnerAd
 }
 
@@ -258,7 +258,7 @@ func (s *seat) SubType() string {
 	return string(s.subType)
 }
 
-func (s *seat) Acceptable(advertise entity.Advertise) bool {
+func (s *seat) Acceptable(advertise entity.Creative) bool {
 	if len(s.mimes) > 0 {
 		return array.StringInArray(advertise.MimeType(), s.mimes...)
 	}
