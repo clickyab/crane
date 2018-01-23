@@ -1,8 +1,9 @@
 package hash
 
 import (
-	"crypto/md5"
 	"fmt"
+
+	"github.com/clickyab/services/simplehash"
 )
 
 // Sign is a method to handle the signing of the request
@@ -13,7 +14,5 @@ func Sign(mode int, hash, size, t, ua, ip string) string {
 	} else {
 		res = hash + size + t + ip
 	}
-	m := md5.New()
-	_, _ = m.Write([]byte(res))
-	return fmt.Sprintf("%d%x", mode, m.Sum(nil))
+	return simplehash.MD5(fmt.Sprintf("%d%s", mode, res))
 }

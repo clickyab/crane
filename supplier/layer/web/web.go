@@ -10,8 +10,6 @@ import (
 
 	"fmt"
 
-	"hash/crc32"
-
 	"errors"
 
 	"clickyab.com/crane/demand/entity"
@@ -22,6 +20,7 @@ import (
 	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/framework"
 	"github.com/clickyab/services/random"
+	"github.com/clickyab/services/simplehash"
 	"github.com/clickyab/services/xlog"
 	"github.com/mssola/user_agent"
 )
@@ -87,9 +86,9 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	_, ok := pub.Attributes()[entity.PAMobileAd]
 	extra := ""
 	if ok && m {
-		extra = crc(d)
+		extra = simplehash.CRC32(d)
 	}
-	imps, err := exSlot(ctx, s, c, r, extra)
+	imps, err := exSlot(ctx, s, c, r, pub.FloorCPM(), extra)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 
@@ -101,10 +100,14 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	if m {
 		mi = 1
 	}
+
+	rIP := framework.RealIP(r)
+	rUserAgent := r.UserAgent()
+
 	bq := &openrtb.BidRequest{
 		ID: <-random.ID,
 		User: &openrtb.User{
-			ID: tid,
+			ID: webUserIDGenerator(tid, rUserAgent, rIP),
 		},
 		Imp: imps,
 		Site: &openrtb.Site{
@@ -120,10 +123,10 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 			},
 		},
 		Device: &openrtb.Device{
-			IP:  framework.RealIP(r),
+			IP:  rIP,
 			DNT: dnt,
 			OS:  ua.OS(),
-			UA:  r.UserAgent(),
+			UA:  rUserAgent,
 		},
 	}
 
@@ -142,13 +145,7 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func crc(d string) string {
-	x := crc32.New(crc32.IEEETable)
-	_, _ = x.Write([]byte(d))
-	return fmt.Sprint(x.Sum32())
-}
-
-func exSlot(ctx context.Context, s string, l int, r *http.Request, extra string) ([]openrtb.Impression, error) {
+func exSlot(ctx context.Context, s string, l int, r *http.Request, pubFloor int64, extra string) ([]openrtb.Impression, error) {
 	sec := secure(r)
 	res := make([]openrtb.Impression, 0)
 	ts := strings.Split(s, ",")
@@ -182,6 +179,7 @@ func exSlot(ctx context.Context, s string, l int, r *http.Request, extra string)
 				H:  h,
 				W:  w,
 			},
+			BidFloor: float64(pubFloor),
 		})
 
 	}
@@ -194,6 +192,7 @@ func exSlot(ctx context.Context, s string, l int, r *http.Request, extra string)
 				H:  50,
 				W:  320,
 			},
+			BidFloor: float64(pubFloor),
 		})
 	}
 	return res, nil
@@ -204,4 +203,9 @@ func secure(r *http.Request) openrtb.NumberOrString {
 		return openrtb.NumberOrString(1)
 	}
 	return openrtb.NumberOrString(0)
+}
+
+// webUserIDGenerator create userID for web request
+func webUserIDGenerator(tid, ua, ip string) string {
+	return simplehash.MD5(fmt.Sprintf("%s%s%s", tid, ua, ip))
 }

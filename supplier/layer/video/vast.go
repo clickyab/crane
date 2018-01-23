@@ -15,6 +15,7 @@ import (
 	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/framework"
 	"github.com/clickyab/services/random"
+	"github.com/clickyab/services/simplehash"
 	"github.com/mssola/user_agent"
 )
 
@@ -36,7 +37,6 @@ var sup = &supplier{}
 func vast(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	d := r.URL.Query().Get("d")
 	pub, err := website.GetWebSite(sup, d)
-
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -52,17 +52,21 @@ func vast(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		mimes = strings.Split(mim, ",")
 	}
 
-	imps, seats := getImps(r, fmt.Sprint(pub.ID()), getSlots(ln), mimes...)
+	imps, seats := getImps(r, fmt.Sprint(pub.ID()), getSlots(ln), pub.FloorCPM(), mimes...)
 
 	ua := user_agent.New(r.UserAgent())
 	mi := 0
 	if m {
 		mi = 1
 	}
+
+	rIP := framework.RealIP(r)
+	rUserAgent := r.UserAgent()
+
 	bq := &openrtb.BidRequest{
 		ID: <-random.ID,
 		User: &openrtb.User{
-			ID: tid,
+			ID: vastUserIDGenerator(tid, rUserAgent, rIP),
 		},
 		Imp: imps,
 		Site: &openrtb.Site{
@@ -78,10 +82,10 @@ func vast(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 			},
 		},
 		Device: &openrtb.Device{
-			IP:  framework.RealIP(r),
+			IP:  rIP,
 			DNT: dnt,
 			OS:  ua.OS(),
-			UA:  r.UserAgent(),
+			UA:  rUserAgent,
 		},
 	}
 
@@ -98,4 +102,9 @@ func vast(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+}
+
+// vastUserIDGenerator create user id for vast
+func vastUserIDGenerator(tid, ua, ip string) string {
+	return simplehash.MD5(fmt.Sprintf("%s%s%s", tid, ua, ip))
 }
