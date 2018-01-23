@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"clickyab.com/crane/demand/entity"
-	"clickyab.com/crane/demand/internal/cyslot"
 )
 
 // Filter is the interface to filter ads
@@ -36,20 +35,11 @@ func Mix(f ...Filter) Filter {
 
 // Apply get the data and then call filter on each of them concurrently, the
 // result is the accepted items
-func Apply(_ context.Context, imp entity.Context, ads []entity.Advertise, ff Filter) map[int][]entity.Advertise {
-	m := make(map[int][]entity.Advertise)
+func Apply(_ context.Context, imp entity.Context, ads []entity.Advertise, ff Filter) []entity.Advertise {
+	var m = make([]entity.Advertise, 0, len(ads))
 	for i := range ads {
 		if ff.Check(imp, ads[i]) {
-			n := ads[i]
-			key := n.Size()
-			// TODO : a hack for video size, search for better way, if you have time
-			if ads[i].Type() == entity.AdTypeVideo {
-				for _, vs := range cyslot.GetVideoSize() {
-					m[vs] = append(m[vs], n)
-				}
-			} else {
-				m[key] = append(m[key], n)
-			}
+			m = append(m)
 		}
 	}
 	return m
