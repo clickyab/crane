@@ -8,7 +8,7 @@ mockgen:
 
 mockentity: $(LINTER) mockgen
 	mkdir -p $(ROOT)/crane/entity/mock_entity
-	$(BIN)/mockgen -destination=$(ROOT)/demand/entity/mock_entity/mock_entity.gen.go clickyab.com/crane/demand/entity Context,Advertise,Campaign,Publisher,Location,Seat,Supplier,Request
+	$(BIN)/mockgen -destination=$(ROOT)/demand/entity/mock_entity/mock_entity.gen.go clickyab.com/crane/demand/entity Context,Creative,Campaign,Publisher,Location,Seat,Supplier,Request
 
 
 .PHONY: lint $(SUBDIRS) $(ENTITIES) mockentity

@@ -9,7 +9,7 @@ type Province struct {
 }
 
 //Check find province client in campaign
-func (*Province) Check(c entity.Context, in entity.Advertise) bool {
+func (*Province) Check(c entity.Context, in entity.Creative) bool {
 	if c.Location().Province().Name == "" {
 		return len(in.Campaign().Province()) == 0
 	}

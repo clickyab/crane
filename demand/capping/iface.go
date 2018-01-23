@@ -5,6 +5,8 @@ import (
 	"strconv"
 	"time"
 
+	"sort"
+
 	"clickyab.com/crane/demand/entity"
 	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/kv"
@@ -31,7 +33,7 @@ func getCappingKey(mode entity.CappingMode, copID string) string {
 }
 
 // EmptyCapping is a hack to handle no capping situation
-func noCappingMode(ads []entity.Advertise) []entity.Advertise {
+func noCappingMode(ads []entity.Creative) []entity.Creative {
 	c := newContext()
 	for i := range ads {
 		capp := NewCapping(
@@ -43,12 +45,12 @@ func noCappingMode(ads []entity.Advertise) []entity.Advertise {
 		ads[i].SetCapping(capp)
 
 	}
-
+	// No need to sort this one :)
 	return ads
 }
 
 // ApplyCapping is an entry for set capping in ads
-func ApplyCapping(mode entity.CappingMode, copID string, ads []entity.Advertise, ep string, slots ...entity.Seat) []entity.Advertise {
+func ApplyCapping(mode entity.CappingMode, copID string, ads []entity.Creative, ep string, slots ...entity.Seat) []entity.Creative {
 	switch mode {
 	case entity.CappingNone:
 		return noCappingMode(ads)
@@ -60,7 +62,7 @@ func ApplyCapping(mode entity.CappingMode, copID string, ads []entity.Advertise,
 	panic("invalid capping mode")
 }
 
-func strictCappingMode(copID string, ads []entity.Advertise, ep string, slots ...entity.Seat) []entity.Advertise {
+func strictCappingMode(copID string, ads []entity.Creative, ep string, slots ...entity.Seat) []entity.Creative {
 	var selected = make(map[int64]bool)
 
 	// evenet page is an old hack to handle ads in same page in multiple request. maybe we should retire it
@@ -78,7 +80,7 @@ func strictCappingMode(copID string, ads []entity.Advertise, ep string, slots ..
 	ck := kv.NewAEAVStore(getCappingKey(entity.CappingStrict, copID), dailyCapExpire.Duration())
 	results := ck.AllKeys()
 
-	resp := make([]entity.Advertise, 0, len(ads))
+	resp := make([]entity.Creative, 0, len(ads))
 	for i := range ads {
 		key := fmt.Sprintf(
 			"%s_%d",
@@ -101,12 +103,13 @@ func strictCappingMode(copID string, ads []entity.Advertise, ep string, slots ..
 			resp = append(resp, passed)
 		}
 	}
-
-	return resp
+	s := sortByCap(resp)
+	sort.Sort(s)
+	return []entity.Creative(s)
 }
 
 // GetCapping try to get capping for current ad
-func resetCappingMode(copID string, ads []entity.Advertise, ep string, slots ...entity.Seat) []entity.Advertise {
+func resetCappingMode(copID string, ads []entity.Creative, ep string, slots ...entity.Seat) []entity.Creative {
 	var selected = make(map[int64]bool)
 	// evenet page is an old hack to handle ads in same page in multiple request. maybe we should retire it
 	// TODO : remove event page after 31 March 2018 if there is no need for it
@@ -126,9 +129,9 @@ func resetCappingMode(copID string, ads []entity.Advertise, ep string, slots ...
 	done := make(map[int][]struct {
 		Key  string
 		View int64
-		entity.Advertise
+		entity.Creative
 	})
-	resp := make([]entity.Advertise, 0, len(ads))
+	resp := make([]entity.Creative, 0, len(ads))
 	for i := range ads {
 		size := ads[i].Size()
 		if _, ok := has[size]; ok {
@@ -152,17 +155,17 @@ func resetCappingMode(copID string, ads []entity.Advertise, ep string, slots ...
 			capp.IncView(ads[i].ID(), int(view), false)
 			ads[i].SetCapping(capp)
 			resp = append(resp, ads[i])
-			has[size] += 1
+			has[size]++
 		} else if n > 1 {
 			// capping is passed
 			done[size] = append(done[size], struct {
 				Key  string
 				View int64
-				entity.Advertise
+				entity.Creative
 			}{
-				Key:       key,
-				View:      view,
-				Advertise: ads[i],
+				Key:      key,
+				View:     view,
+				Creative: ads[i],
 			})
 		}
 	}
@@ -180,7 +183,7 @@ func resetCappingMode(copID string, ads []entity.Advertise, ep string, slots ...
 				)
 				capp.IncView(done[size][i].ID(), int(done[size][i].View), false)
 				done[size][i].SetCapping(capp)
-				resp = append(resp, done[size][i].Advertise)
+				resp = append(resp, done[size][i].Creative)
 			}
 		} else {
 			// reset this size
@@ -194,13 +197,15 @@ func resetCappingMode(copID string, ads []entity.Advertise, ep string, slots ...
 				)
 				sizedCap[i] = done[size][i].Key
 				done[size][i].SetCapping(capp)
-				resp = append(resp, done[size][i].Advertise)
+				resp = append(resp, done[size][i].Creative)
 			}
 			logrus.Debugf("remove key for size %d", size)
-			ck.Drop(sizedCap...)
+			_ = ck.Drop(sizedCap...)
 		}
 	}
-	return ads
+	s := sortByCap(resp)
+	sort.Sort(s)
+	return []entity.Creative(s)
 }
 
 // StoreCapping try to store a capping object

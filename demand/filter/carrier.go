@@ -9,6 +9,6 @@ type AppCarrier struct {
 }
 
 // Check test if campaign accept carrier
-func (*AppCarrier) Check(c entity.Context, in entity.Advertise) bool {
+func (*AppCarrier) Check(c entity.Context, in entity.Creative) bool {
 	return hasString(true, in.Campaign().AppCarriers(), c.Carrier())
 }

@@ -8,14 +8,14 @@ import (
 
 // Filter is the interface to filter ads
 type Filter interface {
-	Check(entity.Context, entity.Advertise) bool
+	Check(entity.Context, entity.Creative) bool
 }
 
 type mixer struct {
 	f []Filter
 }
 
-func (m *mixer) Check(c entity.Context, a entity.Advertise) (b bool) {
+func (m *mixer) Check(c entity.Context, a entity.Creative) (b bool) {
 	for i := range m.f {
 		if !m.f[i].Check(c, a) {
 			// Un-coment this for debug
@@ -35,8 +35,8 @@ func Mix(f ...Filter) Filter {
 
 // Apply get the data and then call filter on each of them concurrently, the
 // result is the accepted items
-func Apply(_ context.Context, imp entity.Context, ads []entity.Advertise, ff Filter) []entity.Advertise {
-	var m = make([]entity.Advertise, 0, len(ads))
+func Apply(_ context.Context, imp entity.Context, ads []entity.Creative, ff Filter) []entity.Creative {
+	var m = make([]entity.Creative, 0, len(ads))
 	for i := range ads {
 		if ff.Check(imp, ads[i]) {
 			m = append(m)

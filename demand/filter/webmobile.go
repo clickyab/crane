@@ -9,7 +9,7 @@ type WebMobile struct {
 }
 
 // Check return if the campaign is ok for web mobile
-func (*WebMobile) Check(c entity.Context, in entity.Advertise) bool {
+func (*WebMobile) Check(c entity.Context, in entity.Creative) bool {
 	if c.IsMobile() {
 		return in.Campaign().WebMobile()
 	}

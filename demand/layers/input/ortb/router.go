@@ -31,7 +31,7 @@ type payloadData struct {
 	Ref          string
 	Parent       string
 	AdID         int64
-	Ad           entity.Advertise
+	Ad           entity.Creative
 	Supplier     entity.Supplier
 	Publisher    entity.Publisher
 	Bid          float64

@@ -174,7 +174,7 @@ func AdLoader(ctx context.Context) (map[string]kv.Serializable, error) {
 }
 
 // GetAd return a single ad
-func GetAd(adID int64) (entity.Advertise, error) {
+func GetAd(adID int64) (entity.Creative, error) {
 	query := `SELECT
 		A.ad_id, C.u_id, ad_name, ad_url,ad_code, ad_title, ad_body, ad_img, ad_status,ad_size,
 	 ad_reject_reason, CA.ca_ctr , ad_conv, ad_time, ad_type, ad_mainText, ad_defineText,

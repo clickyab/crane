@@ -19,7 +19,7 @@ func getSecondCPM(floorCPM int64, exceedFloor []adAndBid) float64 {
 	return secondCPM
 }
 
-func doBid(adData entity.Advertise, slot entity.Seat, floorCPM int64) (float64, int64, bool) {
+func doBid(adData entity.Creative, slot entity.Seat, floorCPM int64) (float64, int64, bool) {
 	ctr := (adData.AdCTR()*float64(adCTREffect.Int()) + slot.CTR()*float64(slotCTREffect.Int())) / float64(100)
 	cpm := int64(float64(adData.Campaign().MaxBID()) * ctr * 10.0)
 	return ctr, cpm, cpm >= floorCPM
@@ -39,7 +39,7 @@ func decShare(sup entity.Supplier, price float64) float64 {
 }
 
 type adAndBid struct {
-	entity.Advertise
+	entity.Creative
 	ctr    float64
 	cpm    int64
 	secBid bool
@@ -48,7 +48,7 @@ type adAndBid struct {
 // WARNING : DO NOT ADD PARAMETER TO THIS FUNCTION
 func internalSelect(
 	ctx entity.Context,
-	ads []entity.Advertise,
+	ads []entity.Creative,
 ) {
 	var noVideo bool                 // once set, never unset it again
 	selected := make(map[int64]bool) // all ad selected in this session, to make sure they are not repeated
@@ -82,20 +82,20 @@ func internalSelect(
 				exceedFloor = append(
 					exceedFloor,
 					adAndBid{
-						Advertise: creative,
-						ctr:       ctr,
-						cpm:       cpm,
-						secBid:    cpm >= soft,
+						Creative: creative,
+						ctr:      ctr,
+						cpm:      cpm,
+						secBid:   cpm >= soft,
 					},
 				)
 			} else {
 				underFloor = append(
 					underFloor,
 					adAndBid{
-						Advertise: creative,
-						ctr:       ctr,
-						cpm:       cpm,
-						secBid:    false,
+						Creative: creative,
+						ctr:      ctr,
+						cpm:      cpm,
+						secBid:   false,
 					},
 				)
 			}
@@ -149,7 +149,7 @@ func internalSelect(
 		}
 		selected[theAd.ID()] = true
 		// Only decrease share for CPM (which is reported to supplier) not bid (which is used by us)
-		seat.SetWinnerAdvertise(theAd.Advertise, bid, decShare(ctx.Publisher().Supplier(), targetCPM))
+		seat.SetWinnerAdvertise(theAd.Creative, bid, decShare(ctx.Publisher().Supplier(), targetCPM))
 
 		if !ctx.MultiVideo() {
 			noVideo = noVideo || theAd.Type() == entity.AdTypeVideo
@@ -163,7 +163,7 @@ func internalSelect(
 }
 
 // selectAds is the only function that one must call to get ads
-func selectAds(_ context.Context, ctx entity.Context, ads []entity.Advertise) {
+func selectAds(_ context.Context, ctx entity.Context, ads []entity.Creative) {
 	ads = capping.ApplyCapping(ctx.Capping(), ctx.User().ID(), ads, ctx.EventPage(), ctx.Seats()...)
 	internalSelect(ctx, ads)
 }
