@@ -2676,3 +2676,28 @@ CREATE TABLE `withdrawal_history` (
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2017-12-12 11:39:12
+
+CREATE TABLE `win_requests` (
+  `hash` varchar(60) NOT NULL,
+  `supplier` varchar(20) NOT NULL,
+  `publisher_id` int(11) NOT NULL,
+  `campaign_id` int(11) NOT NULL,
+  `creative_id` int(11) NOT NULL,
+  `cpm` int(11) NOT NULL,
+  `cpc` int(11) NOT NULL,
+  `type` int(11) NOT NULL,
+  `created_at` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+PARTITION BY HASH (MONTH(created_at))
+PARTITIONS 6;
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `win_requests`
+--
+ALTER TABLE `win_requests`
+  ADD PRIMARY KEY (`hash`,`created_at`);
+COMMIT;
