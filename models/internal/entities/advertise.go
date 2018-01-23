@@ -221,6 +221,16 @@ type Advertise struct {
 	capping  entity.Capping
 }
 
+// MaxBID is the max bid of campaign
+func (a *Advertise) MaxBID() int64 {
+	return a.FCampaignMaxBid
+}
+
+// Target is target of campaign (creative in new design)
+func (a *Advertise) Target() entity.Target {
+	return entity.Target(a.CampaignNetwork)
+}
+
 // CampaignAdID return campaign_ad primary
 func (a *Advertise) CampaignAdID() int64 {
 	return a.ad.FCampaignAdID
@@ -299,18 +309,12 @@ func (a *Advertise) Attributes() map[string]interface{} {
 
 // Media return the media address
 func (a *Advertise) Media() string {
-	if a.FAdImg.Valid {
-		return a.FAdImg.String
-	}
-	return ""
+	return a.FAdImg.String
 }
 
-// Target return the target address
-func (a *Advertise) Target() string {
-	if a.FAdURL.Valid {
-		return a.FAdURL.String
-	}
-	return ""
+// TargetURL return the target address
+func (a *Advertise) TargetURL() string {
+	return a.FAdURL.String
 }
 
 // MimeType return the media mime type

@@ -65,11 +65,6 @@ func SetDemandSeats(sd ...DemandSeatData) ShowOptionSetter {
 				size = 9
 			}
 
-			showT := 0
-			if o.noShowT {
-				showT = 2
-			}
-
 			seat := seat{
 				ua:               o.ua,
 				parent:           o.parent,
@@ -88,7 +83,6 @@ func SetDemandSeats(sd ...DemandSeatData) ShowOptionSetter {
 				ftype:            o.typ,
 				subType:          o.subTyp,
 				ctr:              o.publisher.CTR(size),
-				showT:            showT,
 				rate:             o.rate,
 				minBidPercentage: o.MinBIDPercentage(),
 				fatFinger:        o.fatFinger,

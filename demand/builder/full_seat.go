@@ -11,10 +11,6 @@ func SetFullSeats(pubID string, size int, hash string, ad entity.Creative, bid f
 	return func(o *Context) (*Context, error) {
 		ctr := o.publisher.CTR(size)
 		ir := o.location.Country().Valid && o.location.Country().ISO == "IR"
-		showT := 0
-		if o.noShowT {
-			showT = 2
-		}
 		ts := time.Unix(impTime, 0)
 		o.seats = append(o.seats, &seat{
 			ua:        o.ua,
@@ -38,7 +34,6 @@ func SetFullSeats(pubID string, size int, hash string, ad entity.Creative, bid f
 			bid:         bid,
 			reserveHash: hash,
 			susp:        o.suspicious,
-			showT:       showT,
 			// No need to following data
 			minBidPercentage: o.MinBIDPercentage(),
 			minBid:           bid,

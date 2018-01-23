@@ -56,11 +56,6 @@ func (c *Campaign) Name() string {
 	return c.FCampaignName.String
 }
 
-// MaxBID campaign allowed maximum bid
-func (c *Campaign) MaxBID() int64 {
-	return c.FCampaignMaxBid
-}
-
 var minFrequency = config.RegisterInt("crane.models.min_frequency", 2, "min frequency for campaign")
 
 // Frequency campaign frequency
@@ -69,12 +64,6 @@ func (c *Campaign) Frequency() int {
 		c.FCampaignFrequency = minFrequency.Int()
 	}
 	return c.FCampaignFrequency
-}
-
-// Target target network
-func (c *Campaign) Target() entity.Target {
-	return entity.Target(c.CampaignNetwork)
-
 }
 
 // BlackListPublisher campaign black list publishers
