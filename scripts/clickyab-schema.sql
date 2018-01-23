@@ -54,6 +54,7 @@ CREATE TABLE `ads` (
   `ad_hash_attribute` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT '0000-00-00 00:00:00',
+  `ad_mime` varchar(50) null ,
   PRIMARY KEY (`ad_id`),
   KEY `u_id` (`u_id`),
   KEY `ad_size` (`ad_size`,`ad_status`),
@@ -673,6 +674,9 @@ CREATE TABLE `campaigns_new` (
   `longmap` varchar(200) DEFAULT NULL,
   `latmap` varchar(200) DEFAULT NULL,
   `radius` int(11) DEFAULT NULL,
+  `cp_app_brand_name` text null,
+  `cp_app_carrier_name` text null,
+  `cp_net_provider_name` text null,
   PRIMARY KEY (`cp_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2281,6 +2285,8 @@ CREATE TABLE `suppliers` (
   `rate` float NOT NULL DEFAULT '1',
   `tiny_logo` varchar(200) NOT NULL,
   `tiny_url` varchar(200) NOT NULL,
+  `under_floor` BOOLEAN NOT NULL DEFAULT '0',
+  `share` INT NOT NULL DEFAULT '100',
 
   PRIMARY KEY (`name`),
   UNIQUE KEY `token` (`token`)
