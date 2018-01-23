@@ -188,7 +188,7 @@ func (s *seat) ClickURL() *url.URL {
 	return s.click
 }
 
-func (s *seat) WinRequest() *url.URL {
+func (s *seat) WinNoticeRequest() *url.URL {
 	if s.win != nil {
 		return s.win
 	}
@@ -197,7 +197,7 @@ func (s *seat) WinRequest() *url.URL {
 	}
 
 	s.win = s.makeURL(
-		"winner",
+		"notice",
 		map[string]string{"rh": s.ReservedHash(), "size": fmt.Sprint(s.Size()), "type": s.Type(), "subtype": s.SubType()},
 		s.cpm,
 		time.Hour, // TODO : fix me when there is actually a code to handle it

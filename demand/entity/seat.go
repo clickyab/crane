@@ -30,7 +30,7 @@ type Seat interface {
 	// ClickURL is the click url for this advertise
 	ClickURL() *url.URL
 	// WinRequest is the win request url for this advertise
-	WinRequest() *url.URL
+	WinNoticeRequest() *url.URL
 	// CTR return current ctr for this size in publisher
 	CTR() float64
 	// Type of seat
