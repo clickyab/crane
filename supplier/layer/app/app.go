@@ -20,6 +20,7 @@ import (
 	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/framework"
 	"github.com/clickyab/services/random"
+	"github.com/clickyab/services/simplehash"
 	"github.com/mssola/user_agent"
 )
 
@@ -50,6 +51,7 @@ func getApp(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 					H:  height,
 					ID: <-random.ID,
 				},
+				BidFloor: float64(pub.FloorCPM()),
 			},
 		},
 	}
@@ -117,6 +119,12 @@ func allData(r *http.Request, o *openrtb.BidRequest) {
 	lat, lon := 0.0, 0.0
 	gps := strings.Split(r.URL.Query().Get("gps"), ",")
 
+	// 4 data for creating user id
+	androidID := r.URL.Query().Get("androidid")
+	deviceID := r.URL.Query().Get("deviceid")
+	operator := r.URL.Query().Get("operator")
+	model := r.URL.Query().Get("model")
+
 	if len(gps) == 2 {
 		lat, _ = strconv.ParseFloat(gps[0], 64)
 		lon, _ = strconv.ParseFloat(gps[1], 64)
@@ -148,7 +156,7 @@ func allData(r *http.Request, o *openrtb.BidRequest) {
 	}
 
 	o.User = &openrtb.User{
-		ID: r.URL.Query().Get("androidid"),
+		ID: appUserIDGenerator(androidID, deviceID, operator, model),
 		Geo: &openrtb.Geo{
 			Lat: lat,
 			Lon: lon,
@@ -162,4 +170,9 @@ func secure(r *http.Request) openrtb.NumberOrString {
 		return openrtb.NumberOrString(1)
 	}
 	return openrtb.NumberOrString(0)
+}
+
+// appUserIDGenerator create cop id for app
+func appUserIDGenerator(androidID, deviceID, operator, model string) string {
+	return simplehash.MD5(fmt.Sprintf("%s%s%s%s", androidID, deviceID, operator, model))
 }

@@ -5,12 +5,11 @@ import (
 	"database/sql"
 	"encoding/gob"
 	"fmt"
-	"hash/crc64"
 	"io"
 
 	"clickyab.com/crane/demand/entity"
-	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/kv"
+	"github.com/clickyab/services/simplehash"
 )
 
 // Website type for website
@@ -199,10 +198,7 @@ func (w *Website) Decode(r io.Reader) error {
 
 // WebPublicIDGen generate public id from supplier name and domain
 func WebPublicIDGen(sup, domain string) int64 {
-	crc := crc64.New(crc64.MakeTable(crc64.ECMA))
-	_, err := crc.Write([]byte(sup + "/" + domain))
-	assert.Nil(err)
-	res := int64(crc.Sum64())
+	res := simplehash.CRC64(sup + "/" + domain)
 	if res > 0 {
 		res *= -1
 	}

@@ -137,7 +137,7 @@ func getMimes(requsted ...string) []string {
 
 // the first map is just an array of map, the key is the start value (from the seat) but the returning map is a bit
 // tricky, the key is the id, so we can identify each slot in response
-func getImps(r *http.Request, baseID string, s map[string]output.Seat, requestedMime ...string) ([]openrtb.Impression, map[string]output.Seat) {
+func getImps(r *http.Request, baseID string, s map[string]output.Seat, pubFloor int64, requestedMime ...string) ([]openrtb.Impression, map[string]output.Seat) {
 	var (
 		res   []openrtb.Impression
 		times = make(map[string]output.Seat)
@@ -166,6 +166,7 @@ func getImps(r *http.Request, baseID string, s map[string]output.Seat, requested
 				Protocols:   []int{3}, // Only supporting version 3
 				Protocol:    3,
 			},
+			BidFloor: float64(pubFloor),
 		}
 
 		res = append(res, imp)

@@ -5,16 +5,14 @@ import (
 	"database/sql"
 	"io"
 
-	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/kv"
 
 	"encoding/gob"
 
 	"fmt"
 
-	"crypto/md5"
-
 	"clickyab.com/crane/demand/entity"
+	"github.com/clickyab/services/simplehash"
 )
 
 // App entity
@@ -201,8 +199,5 @@ func (app *App) totalImp() (res int64) {
 
 // AppPublicIDGen generate app token from supplier name and package
 func AppPublicIDGen(sup, appPackage string) string {
-	a := md5.New()
-	_, err := a.Write([]byte(sup + "/" + appPackage))
-	assert.Nil(err)
-	return fmt.Sprintf("%x", a.Sum(nil))
+	return simplehash.MD5(sup + "/" + appPackage)
 }

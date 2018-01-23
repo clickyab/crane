@@ -1,7 +1,6 @@
 package suppliers
 
 import (
-	"fmt"
 	"time"
 
 	"context"
@@ -30,7 +29,7 @@ func (p tokenPattern) Value() kv.Serializable {
 }
 
 func (p tokenPattern) Key() string {
-	return fmt.Sprint(p.Token)
+	return p.Token
 }
 
 type namePattern struct {
@@ -43,7 +42,7 @@ func (p namePattern) Value() kv.Serializable {
 }
 
 func (p namePattern) Key() string {
-	return fmt.Sprint(p.Data.FName)
+	return p.Data.FName
 }
 
 type loader struct {
