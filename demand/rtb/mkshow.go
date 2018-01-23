@@ -48,7 +48,7 @@ type adAndBid struct {
 // WARNING : DO NOT ADD PARAMETER TO THIS FUNCTION
 func internalSelect(
 	ctx entity.Context,
-	ads map[int][]entity.Advertise,
+	ads []entity.Advertise,
 ) {
 	var noVideo bool                 // once set, never unset it again
 	selected := make(map[int64]bool) // all ad selected in this session, to make sure they are not repeated
@@ -66,23 +66,23 @@ func internalSelect(
 			soft = minCPM
 		}
 
-		for _, adData := range ads[seat.Size()] {
-			if !seat.Acceptable(adData) {
+		for _, creative := range ads {
+			if !seat.Acceptable(creative) {
 				continue
 			}
-			if adData.Type() == entity.AdTypeVideo && noVideo {
+			if creative.Type() == entity.AdTypeVideo && noVideo {
 				continue
 			}
-			if selected[adData.ID()] {
+			if selected[creative.ID()] {
 				continue
 			}
 
-			if ctr, cpm, ok := doBid(adData, seat, minCPM); ok {
+			if ctr, cpm, ok := doBid(creative, seat, minCPM); ok {
 				// a pass!
 				exceedFloor = append(
 					exceedFloor,
 					adAndBid{
-						Advertise: adData,
+						Advertise: creative,
 						ctr:       ctr,
 						cpm:       cpm,
 						secBid:    cpm >= soft,
@@ -92,7 +92,7 @@ func internalSelect(
 				underFloor = append(
 					underFloor,
 					adAndBid{
-						Advertise: adData,
+						Advertise: creative,
 						ctr:       ctr,
 						cpm:       cpm,
 						secBid:    false,
@@ -163,7 +163,7 @@ func internalSelect(
 }
 
 // selectAds is the only function that one must call to get ads
-func selectAds(_ context.Context, ctx entity.Context, ads map[int][]entity.Advertise) {
+func selectAds(_ context.Context, ctx entity.Context, ads []entity.Advertise) {
 	ads = capping.ApplyCapping(ctx.Capping(), ctx.User().ID(), ads, ctx.EventPage(), ctx.Seats()...)
 	internalSelect(ctx, ads)
 }

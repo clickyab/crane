@@ -2,7 +2,6 @@ package capping
 
 import (
 	"fmt"
-	"sort"
 	"strconv"
 	"time"
 
@@ -32,29 +31,24 @@ func getCappingKey(mode entity.CappingMode, copID string) string {
 }
 
 // EmptyCapping is a hack to handle no capping situation
-func noCappingMode(ads map[int][]entity.Advertise) map[int][]entity.Advertise {
+func noCappingMode(ads []entity.Advertise) []entity.Advertise {
 	c := newContext()
 	for i := range ads {
-		for j := range ads[i] {
-			capp := NewCapping(
-				c,
-				ads[i][j].Campaign().ID(),
-				0,
-				ads[i][j].Campaign().Frequency(),
-			)
-			ads[i][j].SetCapping(capp)
+		capp := NewCapping(
+			c,
+			ads[i].Campaign().ID(),
+			0,
+			ads[i].Campaign().Frequency(),
+		)
+		ads[i].SetCapping(capp)
 
-		}
-		sortCap := sortByCap(ads[i])
-		sort.Sort(sortCap)
-		ads[i] = []entity.Advertise(sortCap)
 	}
 
 	return ads
 }
 
 // ApplyCapping is an entry for set capping in ads
-func ApplyCapping(mode entity.CappingMode, copID string, ads map[int][]entity.Advertise, ep string, slots ...entity.Seat) map[int][]entity.Advertise {
+func ApplyCapping(mode entity.CappingMode, copID string, ads []entity.Advertise, ep string, slots ...entity.Seat) []entity.Advertise {
 	switch mode {
 	case entity.CappingNone:
 		return noCappingMode(ads)
@@ -66,7 +60,7 @@ func ApplyCapping(mode entity.CappingMode, copID string, ads map[int][]entity.Ad
 	panic("invalid capping mode")
 }
 
-func strictCappingMode(copID string, ads map[int][]entity.Advertise, ep string, slots ...entity.Seat) map[int][]entity.Advertise {
+func strictCappingMode(copID string, ads []entity.Advertise, ep string, slots ...entity.Seat) []entity.Advertise {
 	var selected = make(map[int64]bool)
 
 	// evenet page is an old hack to handle ads in same page in multiple request. maybe we should retire it
@@ -83,41 +77,36 @@ func strictCappingMode(copID string, ads map[int][]entity.Advertise, ep string, 
 	c := newContext()
 	ck := kv.NewAEAVStore(getCappingKey(entity.CappingStrict, copID), dailyCapExpire.Duration())
 	results := ck.AllKeys()
-	doneSized := make(map[int]bool)
-	resp := make(map[int][]entity.Advertise)
-	for i := range slots {
-		size := slots[i].Size()
-		if doneSized[size] {
-			continue
-		}
-		doneSized[size] = true
-		for ad := range ads[size] {
-			key := fmt.Sprintf(
-				"%s_%d",
-				adKey,
-				ads[size][ad].ID(),
+
+	resp := make([]entity.Advertise, 0, len(ads))
+	for i := range ads {
+		key := fmt.Sprintf(
+			"%s_%d",
+			adKey,
+			ads[i].ID(),
+		)
+
+		view := results[key]
+		n := float64(view) / float64(ads[i].Campaign().Frequency())
+		if n <= 1 && !selected[ads[i].ID()] {
+			passed := ads[i]
+			capp := NewCapping(
+				c,
+				ads[i].Campaign().ID(),
+				0,
+				ads[i].Campaign().Frequency(),
 			)
-			view := results[key]
-			n := float64(view) / float64(ads[size][ad].Campaign().Frequency())
-			if n <= 1 && !selected[ads[size][ad].ID()] {
-				passed := ads[size][ad]
-				capp := NewCapping(
-					c,
-					ads[size][ad].Campaign().ID(),
-					0,
-					ads[size][ad].Campaign().Frequency(),
-				)
-				capp.IncView(passed.ID(), int(view), false)
-				passed.SetCapping(capp)
-				resp[size] = append(resp[size], passed)
-			}
+			capp.IncView(passed.ID(), int(view), false)
+			passed.SetCapping(capp)
+			resp = append(resp, passed)
 		}
 	}
+
 	return resp
 }
 
 // GetCapping try to get capping for current ad
-func resetCappingMode(copID string, ads map[int][]entity.Advertise, ep string, slots ...entity.Seat) map[int][]entity.Advertise {
+func resetCappingMode(copID string, ads []entity.Advertise, ep string, slots ...entity.Seat) []entity.Advertise {
 	var selected = make(map[int64]bool)
 	// evenet page is an old hack to handle ads in same page in multiple request. maybe we should retire it
 	// TODO : remove event page after 31 March 2018 if there is no need for it
@@ -133,54 +122,82 @@ func resetCappingMode(copID string, ads map[int][]entity.Advertise, ep string, s
 	c := newContext()
 	ck := kv.NewAEAVStore(getCappingKey(entity.CappingReset, copID), dailyCapExpire.Duration())
 	results := ck.AllKeys()
-	doneSized := make(map[int]bool)
-	for i := range slots {
-		size := slots[i].Size()
-		if doneSized[size] {
-			continue
+	has := make(map[int]int)
+	done := make(map[int][]struct {
+		Key  string
+		View int64
+		entity.Advertise
+	})
+	resp := make([]entity.Advertise, 0, len(ads))
+	for i := range ads {
+		size := ads[i].Size()
+		if _, ok := has[size]; ok {
+			has[size] = 0
 		}
-		doneSized[size] = true
-		found := false
-		var sizeCap []string
-		for ad := range ads[size] {
-			key := fmt.Sprintf(
-				"%s_%d",
-				adKey,
-				ads[size][ad].ID(),
-			)
-			view := results[key]
-			sizeCap = append(sizeCap, key)
-			n := float64(view) / float64(ads[size][ad].Campaign().Frequency())
-			if n < 1 {
-				found = true
-				break // there is still one campaign
-			}
-		}
-		// if not found then reset all capping
-		if !found {
-			logrus.Debugf("Removing key for size %d", size)
-			_ = ck.Drop(sizeCap...)
-			for i := range sizeCap {
-				results[sizeCap[i]] = 0
-			}
-		}
-		for ad := range ads[size] {
-			var view int64
-			if found {
-				view = results[fmt.Sprintf(
-					"%s_%d",
-					adKey,
-					ads[size][ad].ID(),
-				)]
-			}
+
+		key := fmt.Sprintf(
+			"%s_%d",
+			adKey,
+			ads[i].ID(),
+		)
+		view := results[key]
+		n := float64(view) / float64(ads[i].Campaign().Frequency())
+		if n <= 1 && !selected[ads[i].ID()] {
 			capp := NewCapping(
 				c,
-				ads[size][ad].Campaign().ID(),
+				ads[i].Campaign().ID(),
 				0,
-				ads[size][ad].Campaign().Frequency(),
+				ads[i].Campaign().Frequency(),
 			)
-			capp.IncView(ads[size][ad].ID(), int(view), selected[ads[size][ad].ID()])
-			ads[size][ad].SetCapping(capp)
+			capp.IncView(ads[i].ID(), int(view), false)
+			ads[i].SetCapping(capp)
+			resp = append(resp, ads[i])
+			has[size] += 1
+		} else if n > 1 {
+			// capping is passed
+			done[size] = append(done[size], struct {
+				Key  string
+				View int64
+				entity.Advertise
+			}{
+				Key:       key,
+				View:      view,
+				Advertise: ads[i],
+			})
+		}
+	}
+
+	for size := range has {
+		if has[size] > 0 {
+			// we have one campaign with lesser capping, no need to reset, but since we are in relaxed capping mode(aka reset)
+			// add over capped to pool again
+			for i := range done[size] {
+				capp := NewCapping(
+					c,
+					done[size][i].Campaign().ID(),
+					0,
+					done[size][i].Campaign().Frequency(),
+				)
+				capp.IncView(done[size][i].ID(), int(done[size][i].View), false)
+				done[size][i].SetCapping(capp)
+				resp = append(resp, done[size][i].Advertise)
+			}
+		} else {
+			// reset this size
+			var sizedCap = make([]string, len(done[size]))
+			for i := range done[size] {
+				capp := NewCapping(
+					c,
+					done[size][i].Campaign().ID(),
+					0,
+					done[size][i].Campaign().Frequency(),
+				)
+				sizedCap[i] = done[size][i].Key
+				done[size][i].SetCapping(capp)
+				resp = append(resp, done[size][i].Advertise)
+			}
+			logrus.Debugf("remove key for size %d", size)
+			ck.Drop(sizedCap...)
 		}
 	}
 	return ads
