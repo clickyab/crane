@@ -24,6 +24,10 @@ type Creative interface {
 	Campaign() Campaign
 	// AdCTR the ad ctr from database (its not calculated from )
 	AdCTR() float64
+	//// MaxBID get the campaign max bid
+	MaxBID() int64
+	//// Target return the target of this campaign
+	Target() Target
 	// Size returns ads size
 	Size() int
 	// Width return the width
@@ -39,7 +43,7 @@ type Creative interface {
 	// Media return image of ad
 	Media() string
 	// Target return ad target of the target
-	Target() string
+	TargetURL() string
 	// TODO: remove this later
 	// CampaignAdID return campaign_ad primary
 	CampaignAdID() int64

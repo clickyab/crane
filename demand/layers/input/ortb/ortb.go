@@ -29,9 +29,6 @@ const demandPath = "/ortb/:token"
 
 var (
 	ortbWebSelector = reducer.Mix(
-		&filter.WebSize{},
-		&filter.WebNetwork{},
-		&filter.WebMobile{},
 		&filter.Desktop{},
 		&filter.OS{},
 		&filter.WhiteList{},
@@ -42,10 +39,7 @@ var (
 	)
 
 	ortbAppSelector = reducer.Mix(
-		&filter.AppSize{},
-		&filter.AppNetwork{},
 		&filter.AppBrand{},
-		&filter.AppNetwork{},
 		&filter.AppCarrier{},
 		&filter.WhiteList{},
 		&filter.BlackList{},
@@ -56,9 +50,6 @@ var (
 	)
 
 	ortbVastSelector = reducer.Mix(
-		&filter.VideoSize{},
-		&filter.VastNetwork{},
-		&filter.WebMobile{},
 		&filter.Desktop{},
 		&filter.OS{},
 		&filter.WhiteList{},

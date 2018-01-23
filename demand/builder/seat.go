@@ -3,7 +3,6 @@ package builder
 import (
 	"fmt"
 	"math"
-	"math/rand"
 	"net/url"
 	"time"
 
@@ -60,7 +59,6 @@ type seat struct {
 	publisher entity.Publisher
 	ctr       float64
 
-	showT     int
 	fatFinger bool
 	minBid    float64
 
@@ -91,18 +89,6 @@ func (s *seat) CPM() float64 {
 // rate.
 func (s *seat) MinBid() int64 {
 	return int64(math.Ceil(s.minBid*s.rate)/100) * s.minBidPercentage
-}
-
-func (s *seat) ShowT() bool {
-	if s.showT == 0 {
-		if s.mobile && s.iran && s.alexa && rand.Intn(chanceShowT.Int()) == 1 {
-			s.showT = 3
-		} else {
-			s.showT = 2
-		}
-	}
-
-	return s.showT == 3
 }
 
 func (s *seat) CTR() float64 {
@@ -258,9 +244,45 @@ func (s *seat) SubType() string {
 	return string(s.subType)
 }
 
-func (s *seat) Acceptable(advertise entity.Creative) bool {
+func (s seat) genericTests(advertise entity.Creative) bool {
+	// if the seat has mime setting, make sure we honor it.
 	if len(s.mimes) > 0 {
-		return array.StringInArray(advertise.MimeType(), s.mimes...)
+		if !array.StringInArray(advertise.MimeType(), s.mimes...) {
+			return false
+		}
 	}
+
 	return true
+}
+
+// Acceptable play a crucial role here.
+func (s *seat) Acceptable(advertise entity.Creative) bool {
+	// this function, handle banner only
+	if !s.genericTests(advertise) {
+		return false
+	}
+
+	if s.size != advertise.Size() {
+		return false
+	}
+
+	switch s.publisher.Type() {
+	case entity.PublisherTypeApp:
+		if advertise.Type() == entity.AdTypeVideo || advertise.Type() == entity.AdTypeDynamic {
+			return false
+		}
+		if advertise.Target() != entity.TargetApp {
+			return false
+		}
+	case entity.PublisherTypeWeb:
+		if advertise.Target() != entity.TargetWeb {
+			return advertise.Campaign().Web() || advertise.Campaign().WebMobile()
+		}
+
+	default:
+		panic("invalid type")
+	}
+
+	return true
+
 }

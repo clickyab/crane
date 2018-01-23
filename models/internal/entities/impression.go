@@ -84,7 +84,7 @@ func AddImpression(p entity.Publisher, m models.Impression, s models.Seat) error
 		wID, 0, appID,
 		s.AdID, m.CopID, ca.CampaignAdID(),
 		m.IP.String(), refer, parent,
-		ca.Target(), s.WinnerBID, m.Suspicious,
+		ca.TargetURL(), s.WinnerBID, m.Suspicious,
 		0, alx, 0,
 		m.Timestamp.Unix(), m.Timestamp.Format("20060102"), said,
 		sID, p.Supplier().Name(), sDiffCPM,

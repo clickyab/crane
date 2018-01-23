@@ -20,12 +20,8 @@ type Campaign interface {
 	ID() int64
 	// Name is the campaign name
 	Name() string
-	// MaxBID get the campaign max bid
-	MaxBID() int64
 	// Make sure the result is >= 1
 	Frequency() int
-	// Target return the target of this campaign
-	Target() Target
 	//BlackListPublisher shows publishers in blacklist
 	BlackListPublisher() []string
 	//BlackListPublisher shows publishers in blacklist
@@ -45,10 +41,13 @@ type Campaign interface {
 	// Category return the category of this campaign
 	Category() []Category
 	// WebMobile campaign web mobile on or off
+	// @deprecated in favor of attributes TODO : remove this
 	WebMobile() bool
 	// Web campaign web on or off
+	// @deprecated in favor of attributes TODO : remove this
 	Web() bool
 	// Hoods neighborhood
+	// @deprecated do not use!!
 	Hoods() []string
 	// ISP list of campaign isp(s)
 	ISP() []string

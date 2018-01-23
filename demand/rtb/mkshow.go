@@ -19,9 +19,9 @@ func getSecondCPM(floorCPM int64, exceedFloor []adAndBid) float64 {
 	return secondCPM
 }
 
-func doBid(adData entity.Creative, slot entity.Seat, floorCPM int64) (float64, int64, bool) {
-	ctr := (adData.AdCTR()*float64(adCTREffect.Int()) + slot.CTR()*float64(slotCTREffect.Int())) / float64(100)
-	cpm := int64(float64(adData.Campaign().MaxBID()) * ctr * 10.0)
+func doBid(ad entity.Creative, slot entity.Seat, floorCPM int64) (float64, int64, bool) {
+	ctr := (ad.AdCTR()*float64(adCTREffect.Int()) + slot.CTR()*float64(slotCTREffect.Int())) / float64(100)
+	cpm := int64(float64(ad.MaxBID()) * ctr * 10.0)
 	return ctr, cpm, cpm >= floorCPM
 }
 
@@ -67,13 +67,13 @@ func internalSelect(
 		}
 
 		for _, creative := range ads {
-			if !seat.Acceptable(creative) {
-				continue
-			}
 			if creative.Type() == entity.AdTypeVideo && noVideo {
 				continue
 			}
 			if selected[creative.ID()] {
+				continue
+			}
+			if !seat.Acceptable(creative) {
 				continue
 			}
 
@@ -128,17 +128,17 @@ func internalSelect(
 
 		theAd := sorted[0]
 		// Do not do second biding pricing on this ads, they can not pass CPMFloor
-		targetCPM := float64(theAd.Campaign().MaxBID()) * 10 * theAd.ctr
+		targetCPM := float64(theAd.MaxBID()) * 10 * theAd.ctr
 		if theAd.secBid {
 			targetCPM = getSecondCPM(ctx.SoftFloorCPM(), sorted)
 		}
 
 		// bid is in CPC world, so must compare it with the max bid
 		bid := winnerBid(targetCPM, theAd.ctr)
-		if bid > float64(theAd.Campaign().MaxBID()) {
+		if bid > float64(theAd.MaxBID()) {
 			// TODO : must not happen, but it happen some how. check it later
 			// since we change the winner bid, do not inc the cap
-			bid = float64(theAd.Campaign().MaxBID())
+			bid = float64(theAd.MaxBID())
 			// also fix target cpm
 			targetCPM = theAd.ctr * 10 * bid
 		}

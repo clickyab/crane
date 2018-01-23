@@ -37,8 +37,6 @@ type Seat interface {
 	Type() string
 	// SubType of seat
 	SubType() string
-	// ShowT the fucking iframe injection
-	ShowT() bool
 	// MinBid is the minimum CPC requested for this requests
 	MinBid() int64
 	// ImpressionTime is the time of impression (if this is impression seat, on show, its current time,
