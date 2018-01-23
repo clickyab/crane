@@ -67,3 +67,8 @@ func AdClick(p entity.Publisher, m models.Impression, s models.Seat,
 	}
 	return entities.InsertClick(click)
 }
+
+// AddNotice get impression from job abd insert it into notice table
+func AddNotice(p entity.Publisher, m models.Impression, s models.Seat) error {
+	return entities.AddNotice(p, m, s)
+}
