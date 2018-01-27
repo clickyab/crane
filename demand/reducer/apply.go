@@ -39,7 +39,7 @@ func Apply(_ context.Context, imp entity.Context, ads []entity.Creative, ff Filt
 	var m = make([]entity.Creative, 0, len(ads))
 	for i := range ads {
 		if ff.Check(imp, ads[i]) {
-			m = append(m)
+			m = append(m, ads[i])
 		}
 	}
 	return m
