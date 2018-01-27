@@ -11,16 +11,17 @@ const (
 	osAndroid       = 6
 )
 
+// accepted platforms, lowercase only
 var platforms = map[string]int64{
 	"windows":   osWindows,
 	"macintosh": osMac,
 	"x11":       osLinux,
 	"android":   osAndroid,
 	"tablet":    osAndroid,
-	"iPhone":    osIOS,
-	"like Mac":  osIOS,
-	"iPod":      osIOS,
-	"iPad":      osIOS,
+	"iphone":    osIOS,
+	"like mac":  osIOS,
+	"ipod":      osIOS,
+	"ipad":      osIOS,
 	"linux":     osAndroid,
 	"mobile":    osAndroid,
 }
