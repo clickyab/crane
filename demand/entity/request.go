@@ -37,8 +37,6 @@ type Request interface {
 	IsMobile() bool
 	// EventPage is a string, generated only from multiple request (not one request to select multiple ad)
 	EventPage() string
-	// Is this request contain alexa?
-	Alexa() bool
 	// Referrer of the page
 	Referrer() string
 	// Parent is the page contain the ad

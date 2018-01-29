@@ -18,7 +18,6 @@ func SetFullSeats(pubID string, size int, hash string, ad entity.Creative, bid f
 			tid:       o.tid,
 			host:      o.host,
 			iran:      ir,
-			alexa:     o.alexa,
 			mobile:    o.os.Mobile,
 			size:      size,
 			publicID:  pubID,

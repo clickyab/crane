@@ -71,7 +71,6 @@ func SetDemandSeats(sd ...DemandSeatData) ShowOptionSetter {
 				tid:              o.tid,
 				host:             o.host,
 				iran:             ir,
-				alexa:            o.alexa,
 				mobile:           o.os.Mobile,
 				size:             size,
 				publicID:         sd[i].PubID,

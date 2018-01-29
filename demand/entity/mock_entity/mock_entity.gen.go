@@ -36,18 +36,6 @@ func (m *MockContext) EXPECT() *MockContextMockRecorder {
 	return m.recorder
 }
 
-// Alexa mocks base method
-func (m *MockContext) Alexa() bool {
-	ret := m.ctrl.Call(m, "Alexa")
-	ret0, _ := ret[0].(bool)
-	return ret0
-}
-
-// Alexa indicates an expected call of Alexa
-func (mr *MockContextMockRecorder) Alexa() *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Alexa", reflect.TypeOf((*MockContext)(nil).Alexa))
-}
-
 // BIDType mocks base method
 func (m *MockContext) BIDType() entity.BIDType {
 	ret := m.ctrl.Call(m, "BIDType")
@@ -539,6 +527,18 @@ func (mr *MockCreativeMockRecorder) ID() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ID", reflect.TypeOf((*MockCreative)(nil).ID))
 }
 
+// MaxBID mocks base method
+func (m *MockCreative) MaxBID() int64 {
+	ret := m.ctrl.Call(m, "MaxBID")
+	ret0, _ := ret[0].(int64)
+	return ret0
+}
+
+// MaxBID indicates an expected call of MaxBID
+func (mr *MockCreativeMockRecorder) MaxBID() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MaxBID", reflect.TypeOf((*MockCreative)(nil).MaxBID))
+}
+
 // Media mocks base method
 func (m *MockCreative) Media() string {
 	ret := m.ctrl.Call(m, "Media")
@@ -586,15 +586,27 @@ func (mr *MockCreativeMockRecorder) Size() *gomock.Call {
 }
 
 // Target mocks base method
-func (m *MockCreative) Target() string {
+func (m *MockCreative) Target() entity.Target {
 	ret := m.ctrl.Call(m, "Target")
-	ret0, _ := ret[0].(string)
+	ret0, _ := ret[0].(entity.Target)
 	return ret0
 }
 
 // Target indicates an expected call of Target
 func (mr *MockCreativeMockRecorder) Target() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Target", reflect.TypeOf((*MockCreative)(nil).Target))
+}
+
+// TargetURL mocks base method
+func (m *MockCreative) TargetURL() string {
+	ret := m.ctrl.Call(m, "TargetURL")
+	ret0, _ := ret[0].(string)
+	return ret0
+}
+
+// TargetURL indicates an expected call of TargetURL
+func (mr *MockCreativeMockRecorder) TargetURL() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TargetURL", reflect.TypeOf((*MockCreative)(nil).TargetURL))
 }
 
 // Type mocks base method
@@ -779,18 +791,6 @@ func (mr *MockCampaignMockRecorder) LatLon() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LatLon", reflect.TypeOf((*MockCampaign)(nil).LatLon))
 }
 
-// MaxBID mocks base method
-func (m *MockCampaign) MaxBID() int64 {
-	ret := m.ctrl.Call(m, "MaxBID")
-	ret0, _ := ret[0].(int64)
-	return ret0
-}
-
-// MaxBID indicates an expected call of MaxBID
-func (mr *MockCampaignMockRecorder) MaxBID() *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MaxBID", reflect.TypeOf((*MockCampaign)(nil).MaxBID))
-}
-
 // Name mocks base method
 func (m *MockCampaign) Name() string {
 	ret := m.ctrl.Call(m, "Name")
@@ -825,18 +825,6 @@ func (m *MockCampaign) Province() []string {
 // Province indicates an expected call of Province
 func (mr *MockCampaignMockRecorder) Province() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Province", reflect.TypeOf((*MockCampaign)(nil).Province))
-}
-
-// Target mocks base method
-func (m *MockCampaign) Target() entity.Target {
-	ret := m.ctrl.Call(m, "Target")
-	ret0, _ := ret[0].(entity.Target)
-	return ret0
-}
-
-// Target indicates an expected call of Target
-func (mr *MockCampaignMockRecorder) Target() *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Target", reflect.TypeOf((*MockCampaign)(nil).Target))
 }
 
 // Web mocks base method
@@ -1266,18 +1254,6 @@ func (mr *MockSeatMockRecorder) SetWinnerAdvertise(arg0, arg1, arg2 interface{})
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetWinnerAdvertise", reflect.TypeOf((*MockSeat)(nil).SetWinnerAdvertise), arg0, arg1, arg2)
 }
 
-// ShowT mocks base method
-func (m *MockSeat) ShowT() bool {
-	ret := m.ctrl.Call(m, "ShowT")
-	ret0, _ := ret[0].(bool)
-	return ret0
-}
-
-// ShowT indicates an expected call of ShowT
-func (mr *MockSeatMockRecorder) ShowT() *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ShowT", reflect.TypeOf((*MockSeat)(nil).ShowT))
-}
-
 // Size mocks base method
 func (m *MockSeat) Size() int {
 	ret := m.ctrl.Call(m, "Size")
@@ -1338,16 +1314,16 @@ func (mr *MockSeatMockRecorder) Width() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Width", reflect.TypeOf((*MockSeat)(nil).Width))
 }
 
-// WinRequest mocks base method
-func (m *MockSeat) WinRequest() *url.URL {
-	ret := m.ctrl.Call(m, "WinRequest")
+// WinNoticeRequest mocks base method
+func (m *MockSeat) WinNoticeRequest() *url.URL {
+	ret := m.ctrl.Call(m, "WinNoticeRequest")
 	ret0, _ := ret[0].(*url.URL)
 	return ret0
 }
 
-// WinRequest indicates an expected call of WinRequest
-func (mr *MockSeatMockRecorder) WinRequest() *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WinRequest", reflect.TypeOf((*MockSeat)(nil).WinRequest))
+// WinNoticeRequest indicates an expected call of WinNoticeRequest
+func (mr *MockSeatMockRecorder) WinNoticeRequest() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WinNoticeRequest", reflect.TypeOf((*MockSeat)(nil).WinNoticeRequest))
 }
 
 // WinnerAdvertise mocks base method
@@ -1598,18 +1574,6 @@ func NewMockRequest(ctrl *gomock.Controller) *MockRequest {
 // EXPECT returns an object that allows the caller to indicate expected use
 func (m *MockRequest) EXPECT() *MockRequestMockRecorder {
 	return m.recorder
-}
-
-// Alexa mocks base method
-func (m *MockRequest) Alexa() bool {
-	ret := m.ctrl.Call(m, "Alexa")
-	ret0, _ := ret[0].(bool)
-	return ret0
-}
-
-// Alexa indicates an expected call of Alexa
-func (mr *MockRequestMockRecorder) Alexa() *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Alexa", reflect.TypeOf((*MockRequest)(nil).Alexa))
 }
 
 // EventPage mocks base method
