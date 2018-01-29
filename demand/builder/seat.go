@@ -35,7 +35,6 @@ type seat struct {
 	imp   *url.URL
 	win   *url.URL
 
-	alexa    bool
 	mobile   bool
 	iran     bool
 	ftype    entity.RequestType

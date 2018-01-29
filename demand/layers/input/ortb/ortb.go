@@ -152,7 +152,6 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetOSUserAgent(ua),
 		builder.SetIPLocation(ip),
 		builder.SetPublisher(publisher),
-		builder.SetAlexa(ua, http.Header{}),
 		builder.SetProtocol(proto),
 		builder.SetTID(us, ip, ua),
 		builder.SetNoTiny(sup.TinyMark()),

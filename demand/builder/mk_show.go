@@ -182,18 +182,6 @@ func SetTID(id string, ip, ua string, extra ...string) ShowOptionSetter {
 	}
 }
 
-// SetAlexa try to set Alexa flag if available
-func SetAlexa(ua string, headers http.Header) ShowOptionSetter {
-	return func(o *Context) (*Context, error) {
-		// In go headers are not case sensitive and ok with _ and -
-		if strings.Contains(ua, "Alexa") || headers.Get("ALEXATOOLBAR-ALX_NS_PH") != "" {
-			o.alexa = true
-		}
-
-		return o, nil
-	}
-}
-
 // SetParent is same as SetQueryParameters just for setting parent for demands
 func SetParent(page, ref string) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {

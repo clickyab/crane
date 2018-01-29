@@ -36,7 +36,6 @@ func showBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetOSUserAgent(pl.UserAgent),
 		builder.SetTargetHost(r.Host),
 		builder.SetIPLocation(pl.IP),
-		builder.SetAlexa(pl.UserAgent, http.Header{}),
 		builder.SetProtocolByRequest(r),
 		builder.SetParent(pl.Parent, pl.Ref),
 		builder.SetTID(pl.TID, pl.IP, pl.UserAgent),

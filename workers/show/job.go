@@ -87,7 +87,6 @@ func NewImpressionJob(ctx entity.Context, s ...entity.Seat) broker.Job {
 			Supplier:   ctx.Publisher().Supplier().Name(),
 			Type:       ctx.Type(),
 			Timestamp:  ctx.Timestamp(),
-			Alexa:      ctx.Alexa(),
 		},
 	}
 	for i := range s {
