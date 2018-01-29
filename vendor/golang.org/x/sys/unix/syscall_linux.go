@@ -931,13 +931,8 @@ func Recvmsg(fd int, p, oob []byte, flags int) (n, oobn int, recvflags int, from
 	}
 	var dummy byte
 	if len(oob) > 0 {
-		var sockType int
-		sockType, err = GetsockoptInt(fd, SOL_SOCKET, SO_TYPE)
-		if err != nil {
-			return
-		}
 		// receive at least one normal byte
-		if sockType != SOCK_DGRAM && len(p) == 0 {
+		if len(p) == 0 {
 			iov.Base = &dummy
 			iov.SetLen(1)
 		}
@@ -983,13 +978,8 @@ func SendmsgN(fd int, p, oob []byte, to Sockaddr, flags int) (n int, err error) 
 	}
 	var dummy byte
 	if len(oob) > 0 {
-		var sockType int
-		sockType, err = GetsockoptInt(fd, SOL_SOCKET, SO_TYPE)
-		if err != nil {
-			return 0, err
-		}
 		// send at least one normal byte
-		if sockType != SOCK_DGRAM && len(p) == 0 {
+		if len(p) == 0 {
 			iov.Base = &dummy
 			iov.SetLen(1)
 		}
@@ -1324,9 +1314,9 @@ func Munmap(b []byte) (err error) {
 //sys	Madvise(b []byte, advice int) (err error)
 //sys	Mprotect(b []byte, prot int) (err error)
 //sys	Mlock(b []byte) (err error)
+//sys	Munlock(b []byte) (err error)
 //sys	Mlockall(flags int) (err error)
 //sys	Msync(b []byte, flags int) (err error)
-//sys	Munlock(b []byte) (err error)
 //sys	Munlockall() (err error)
 
 // Vmsplice splices user pages from a slice of Iovecs into a pipe specified by fd,
@@ -1394,6 +1384,7 @@ func Vmsplice(fd int, iovs []Iovec, flags int) (int, error) {
 // ModifyLdt
 // Mount
 // MovePages
+// Mprotect
 // MqGetsetattr
 // MqNotify
 // MqOpen

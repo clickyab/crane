@@ -610,6 +610,9 @@ func Futimes(fd int, tv []Timeval) error {
 // TODO: wrap
 //	Acct(name nil-string) (err error)
 //	Gethostuuid(uuid *byte, timeout *Timespec) (err error)
+//	Madvise(addr *byte, len int, behav int) (err error)
+//	Mprotect(addr *byte, len int, prot int) (err error)
+//	Msync(addr *byte, len int, flags int) (err error)
 //	Ptrace(req int, pid int, addr uintptr, data int) (ret uintptr, err error)
 
 var mapper = &mmapper{
@@ -625,11 +628,3 @@ func Mmap(fd int, offset int64, length int, prot int, flags int) (data []byte, e
 func Munmap(b []byte) (err error) {
 	return mapper.Munmap(b)
 }
-
-//sys	Madvise(b []byte, behav int) (err error)
-//sys	Mlock(b []byte) (err error)
-//sys	Mlockall(flags int) (err error)
-//sys	Mprotect(b []byte, prot int) (err error)
-//sys	Msync(b []byte, flags int) (err error)
-//sys	Munlock(b []byte) (err error)
-//sys	Munlockall() (err error)

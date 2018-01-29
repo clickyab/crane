@@ -11,6 +11,8 @@ import (
 	"github.com/clickyab/services/array"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/framework"
+	"github.com/clickyab/services/gettext/t9e"
+	"github.com/clickyab/services/gettext/t9s"
 	"github.com/clickyab/services/trans"
 )
 
@@ -77,11 +79,11 @@ func PayloadUnMarshallerGenerator(pattern interface{}) framework.Middleware {
 			decoder := json.NewDecoder(r.Body)
 			err := decoder.Decode(cp)
 			if err != nil {
-				w.Header().Set("error", trans.T("invalid request body").String())
+				w.Header().Set("error", t9s.G("invalid request body").String())
 				e := struct {
 					Error error `json:"error"`
 				}{
-					Error: trans.E("invalid request body"),
+					Error: t9e.G("invalid request body"),
 				}
 
 				framework.JSON(w, http.StatusBadRequest, e)
@@ -91,7 +93,7 @@ func PayloadUnMarshallerGenerator(pattern interface{}) framework.Middleware {
 				if errs := valid.Validate(c, w, r); errs == nil {
 					c = context.WithValue(c, ContextBody, cp)
 				} else {
-					w.Header().Set("error", trans.T("invalid request body").String())
+					w.Header().Set("error", t9s.G("invalid request body").String())
 					framework.JSON(w, http.StatusBadRequest, translate(errs))
 					return
 				}
