@@ -11,10 +11,10 @@ import (
 	"net/url"
 
 	"clickyab.com/crane/demand/entity"
-	"clickyab.com/gad/src/version"
 	"github.com/bsm/openrtb"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/random"
+	"github.com/clickyab/services/version"
 	"github.com/rs/vast"
 )
 

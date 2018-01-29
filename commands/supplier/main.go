@@ -5,6 +5,7 @@ import (
 
 	"clickyab.com/crane/commands"
 	_ "clickyab.com/crane/supplier/layer/app"
+	_ "clickyab.com/crane/supplier/layer/native"
 	_ "clickyab.com/crane/supplier/layer/video"
 	_ "clickyab.com/crane/supplier/layer/web"
 	// CORS is required for supplier
