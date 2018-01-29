@@ -53,17 +53,13 @@ func AddImpression(p entity.Publisher, m models.Impression, s models.Seat) error
 	if err != nil {
 		return err
 	}
-	var alx int
-	if m.Alexa {
-		alx = 1
-	}
 	q := fmt.Sprintf(`INSERT INTO impressions%s (
 							cp_id,reserved_hash,ad_size,
 							w_id,wp_id,app_id,
 							ad_id,cop_id,ca_id,
 							imp_ipaddress,imp_referaddress,imp_parenturl,
 							imp_url,imp_winnerbid,imp_status,
-							imp_cookie,imp_alexa,imp_flash,
+							imp_cookie,imp_flash,
 							imp_time,imp_date,sla_id,
 							slot_id, s_name, s_diff_cpm,
 							imp_cpm
@@ -85,7 +81,7 @@ func AddImpression(p entity.Publisher, m models.Impression, s models.Seat) error
 		s.AdID, m.CopID, ca.CampaignAdID(),
 		m.IP.String(), refer, parent,
 		ca.TargetURL(), s.WinnerBID, m.Suspicious,
-		0, alx, 0,
+		0, 0,
 		m.Timestamp.Unix(), m.Timestamp.Format("20060102"), said,
 		sID, p.Supplier().Name(), sDiffCPM,
 		impCPM)
