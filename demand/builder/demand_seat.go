@@ -3,7 +3,6 @@ package builder
 import (
 	"fmt"
 
-	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/demand/internal/cyslot"
 	"github.com/bsm/openrtb"
 	"github.com/clickyab/services/config"
@@ -47,7 +46,6 @@ func coalesce(v ...int) int {
 // SetDemandSeats try to add demand seat
 func SetDemandSeats(sd ...DemandSeatData) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
-		ir := o.location.Country().Valid && o.location.Country().ISO == "IR"
 		for i := range sd {
 			var (
 				size int
@@ -66,29 +64,14 @@ func SetDemandSeats(sd ...DemandSeatData) ShowOptionSetter {
 			}
 
 			seat := seat{
-				ua:               o.ua,
-				parent:           o.parent,
-				tid:              o.tid,
-				host:             o.host,
-				iran:             ir,
-				alexa:            o.alexa,
-				mobile:           o.os.Mobile,
-				size:             size,
-				publicID:         sd[i].PubID,
-				minBid:           sd[i].MinBid,
-				protocol:         o.protocol,
-				ip:               o.ip,
-				ref:              o.referrer,
-				publisher:        o.publisher,
-				ftype:            o.typ,
-				subType:          o.subTyp,
-				ctr:              o.publisher.CTR(size),
-				rate:             o.rate,
-				minBidPercentage: o.MinBIDPercentage(),
-				fatFinger:        o.fatFinger,
+				context:  o,
+				size:     size,
+				publicID: sd[i].PubID,
+				minBid:   sd[i].MinBid,
+				ctr:      o.publisher.CTR(size),
+				rate:     o.rate,
 			}
 			if sd[i].Type == SeatTypeVideo {
-				seat.subType = entity.RequestTypeVast
 				seat.mimes = sd[i].Video.Mimes
 				o.seats = append(o.seats, &vastSeat{
 					seat:      seat,

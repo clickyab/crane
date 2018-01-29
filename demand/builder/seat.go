@@ -6,8 +6,6 @@ import (
 	"net/url"
 	"time"
 
-	"net"
-
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/demand/internal/cyslot"
 	"clickyab.com/crane/demand/internal/hash"
@@ -25,6 +23,7 @@ var (
 
 // seat is the seat for input request
 type seat struct {
+	context     *Context
 	winnerAd    entity.Creative
 	reserveHash string
 	bid         float64
@@ -35,32 +34,14 @@ type seat struct {
 	imp   *url.URL
 	win   *url.URL
 
-	alexa    bool
-	mobile   bool
-	iran     bool
-	ftype    entity.RequestType
-	subType  entity.RequestType
 	size     int
 	publicID string
-	ua       string
-	ip       net.IP
-	tid      string
-	ref      string
-	parent   string
-	susp     int
-	protocol entity.Protocol
-	// Host return the target host which is different form request.Host and will be used for routing in click, show, etc
-	// for example if current request.Host is a.clickyab.com and we want to click url hit b.clickyab.com then Host
-	// return b.clickyab.com
-	host             string
-	minBidPercentage int64
-	rate             float64
 
-	publisher entity.Publisher
-	ctr       float64
+	rate float64
 
-	fatFinger bool
-	minBid    float64
+	ctr float64
+
+	minBid float64
 
 	impTime time.Time
 	scpm    float64
@@ -70,7 +51,7 @@ type seat struct {
 }
 
 func (s *seat) FatFinger() bool {
-	return s.fatFinger
+	return s.context.FatFinger()
 }
 
 func (s *seat) SupplierCPM() float64 {
@@ -88,7 +69,7 @@ func (s *seat) CPM() float64 {
 // MinBid return the current minimum bid, apply the min bid percentage and
 // rate.
 func (s *seat) MinBid() int64 {
-	return int64(math.Ceil(s.minBid*s.rate)/100) * s.minBidPercentage
+	return int64(math.Ceil(s.minBid*s.rate)/100) * s.context.MinBIDPercentage()
 }
 
 func (s *seat) CTR() float64 {
@@ -196,22 +177,22 @@ func (s *seat) makeURL(route string, params map[string]string, cpm float64, expi
 		panic("no winner")
 	}
 	mode := 0
-	if s.publisher.Type() == entity.PublisherTypeApp {
+	if s.context.Publisher().Type() == entity.PublisherTypeApp {
 		mode = 1
 	}
-	data := hash.Sign(mode, s.ReservedHash(), fmt.Sprint(s.size), s.Type(), s.ua, s.ip.String())
+	data := hash.Sign(mode, s.ReservedHash(), fmt.Sprint(s.size), s.context.Type().String(), s.context.UserAgent(), s.context.IP().String())
 	ff := "F"
 	if s.FatFinger() {
 		ff = "T"
 	}
 	j := jwt.NewJWT().Encode(map[string]string{
 		"aid":  fmt.Sprint(s.winnerAd.ID()),
-		"dom":  s.publisher.Name(),
-		"sup":  s.publisher.Supplier().Name(),
+		"dom":  s.context.Publisher().Name(),
+		"sup":  s.context.Publisher().Supplier().Name(),
 		"bid":  fmt.Sprint(s.bid),
 		"uaip": string(data),
 		"pid":  s.publicID,
-		"susp": fmt.Sprint(s.susp),
+		"susp": fmt.Sprint(s.context.Suspicious()),
 		"now":  fmt.Sprint(time.Now().Unix()),
 		"cpm":  fmt.Sprint(cpm),
 		"ff":   ff,
@@ -223,25 +204,25 @@ func (s *seat) makeURL(route string, params map[string]string, cpm float64, expi
 		params,
 	)
 	u := &url.URL{
-		Host:   s.host,
-		Scheme: s.protocol.String(),
+		Host:   s.context.host,
+		Scheme: s.context.Protocol().String(),
 		Path:   res,
 	}
 
 	v := url.Values{}
-	v.Set("tid", s.tid)
-	v.Set("ref", s.ref)
-	v.Set("parent", s.parent)
+	v.Set("tid", s.context.tid)
+	v.Set("ref", s.context.referrer)
+	v.Set("parent", s.context.parent)
 	u.RawQuery = v.Encode()
 	return u
 }
 
 func (s *seat) Type() string {
-	return string(s.ftype)
+	return s.context.Type().String()
 }
 
 func (s *seat) SubType() string {
-	return string(s.subType)
+	return s.context.SubType().String()
 }
 
 func (s seat) genericTests(advertise entity.Creative) bool {
@@ -266,7 +247,7 @@ func (s *seat) Acceptable(advertise entity.Creative) bool {
 		return false
 	}
 
-	switch s.publisher.Type() {
+	switch s.context.Publisher().Type() {
 	case entity.PublisherTypeApp:
 		if advertise.Type() == entity.AdTypeVideo || advertise.Type() == entity.AdTypeDynamic {
 			return false
