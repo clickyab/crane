@@ -16,6 +16,10 @@ const (
 	RequestTypeDemand RequestType = "demand"
 )
 
+func (r RequestType) String() string {
+	return string(r)
+}
+
 // CappingMode decide how to handle capping
 type CappingMode int
 
