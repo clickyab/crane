@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/config"
 	"github.com/rs/xhandler"
 	"github.com/rs/xmux"
@@ -110,4 +111,53 @@ func GetPageAndCount(r *http.Request, offset bool) (int, int) {
 	}
 
 	return p, c
+}
+
+type httpError struct {
+	Err        string `json:"error"`
+	statusCode int    `json:"-"`
+}
+
+func (f *httpError) Error() string {
+	return f.Err
+}
+
+func (f *httpError) Status() int {
+	return f.statusCode
+}
+
+// NewForbiddenError create new error
+func NewForbiddenError(err string) error {
+	return &httpError{
+		Err:        err,
+		statusCode: http.StatusForbidden,
+	}
+}
+
+// Write data in output based on interfaces
+func Write(w http.ResponseWriter, in interface{}, status int) {
+	if h, ok := in.(HeaderSet); ok {
+		headers := h.Headers()
+		for i := range headers {
+			w.Header().Add(i, headers.Get(i))
+		}
+	}
+
+	if s, ok := in.(Status); ok {
+		status = s.Status()
+	}
+	w.Header().Set(headerContentType, jsonMIME)
+	w.WriteHeader(status)
+	dec := json.NewEncoder(w)
+	assert.Nil(dec.Encode(in))
+}
+
+// Status is a simple interface to handle status
+type Status interface {
+	Status() int
+}
+
+// HeaderSet is a simple interface to handle header set
+type HeaderSet interface {
+	Headers() http.Header
 }

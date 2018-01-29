@@ -29,9 +29,6 @@ type PubSub struct {
 	closed   bool
 
 	cmd *Cmd
-
-	chOnce sync.Once
-	ch     chan *Message
 }
 
 func (c *PubSub) conn() (*pool.Conn, error) {
@@ -349,27 +346,24 @@ func (c *PubSub) receiveMessage(timeout time.Duration) (*Message, error) {
 	}
 }
 
-// Channel returns a Go channel for concurrently receiving messages.
-// The channel is closed with PubSub. Receive or ReceiveMessage APIs
-// can not be used after channel is created.
+// Channel returns a channel for concurrently receiving messages.
+// The channel is closed with PubSub.
 func (c *PubSub) Channel() <-chan *Message {
-	c.chOnce.Do(func() {
-		c.ch = make(chan *Message, 100)
-		go func() {
-			for {
-				msg, err := c.ReceiveMessage()
-				if err != nil {
-					if err == pool.ErrClosed {
-						break
-					}
-					continue
+	ch := make(chan *Message, 100)
+	go func() {
+		for {
+			msg, err := c.ReceiveMessage()
+			if err != nil {
+				if err == pool.ErrClosed {
+					break
 				}
-				c.ch <- msg
+				continue
 			}
-			close(c.ch)
-		}()
-	})
-	return c.ch
+			ch <- msg
+		}
+		close(ch)
+	}()
+	return ch
 }
 
 func appendIfNotExists(ss []string, es ...string) []string {
