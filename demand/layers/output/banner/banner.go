@@ -37,10 +37,12 @@ const bannerTemplateText = `<!DOCTYPE html>
 	.butl {background: #4474CB;color: #FFF;padding: 10px;text-decoration: none;border: 2px solid #FFFFFF;font-family: tahoma;font-size: 13px;}
 	img.adhere {max-width:100%;height:auto;}
 	video {background: #232323 none repeat scroll 0 0;}
+	.notice {position:absolute; left:-9999px;top:-9999px}
 	</style>
 
 </head>
 <body>
+	{{ if .Notice neq "" }}<img src="{{ .Notice }}" class="notice" />{{ end }}
     {{ if .Tiny }}<a class="tiny" href="{{.TinyURL}}" target="_blank"></a>{{ end }}
     <a id="click_banner_id" href="{{ .Link }}" target="_blank"><img src="{{ .Src }}" border="0" height="{{ .Height }}" width="{{ .Width }}" style="width:100vw;height:100vh;"/></a>
     <br style="clear: both;"/>
@@ -74,6 +76,7 @@ type bannerData struct {
 	TinyURL        string
 	ShowT          bool
 	PreventDefault bool
+	Notice         string
 }
 
 func renderWebBanner(w io.Writer, ctx entity.Context, seat entity.Seat) error {
@@ -92,6 +95,7 @@ func renderWebBanner(w io.Writer, ctx entity.Context, seat entity.Seat) error {
 		TinyURL:        ctx.Publisher().Supplier().TinyURL(),
 		ShowT:          false,
 		PreventDefault: ctx.PreventDefault(),
+		Notice:         seat.WinNoticeRequest().String(),
 	}
 
 	return bannerTemplate.Execute(w, sa)
