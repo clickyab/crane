@@ -175,6 +175,7 @@ func getImps(r *http.Request, baseID string, s map[string]output.Seat, pubFloor 
 	return res, times
 }
 
+// secure check openrtb protocol (http/https)
 func secure(r *http.Request) openrtb.NumberOrString {
 	if framework.Scheme(r) == "https" {
 		return openrtb.NumberOrString(1)

@@ -165,14 +165,15 @@ func allData(r *http.Request, o *openrtb.BidRequest) {
 
 }
 
+// appUserIDGenerator create cop id for app
+func appUserIDGenerator(androidID, deviceID, operator, model string) string {
+	return simplehash.MD5(fmt.Sprintf("%s%s%s%s", androidID, deviceID, operator, model))
+}
+
+// secure check openrtb protocol (http/https)
 func secure(r *http.Request) openrtb.NumberOrString {
 	if framework.Scheme(r) == "https" {
 		return openrtb.NumberOrString(1)
 	}
 	return openrtb.NumberOrString(0)
-}
-
-// appUserIDGenerator create cop id for app
-func appUserIDGenerator(androidID, deviceID, operator, model string) string {
-	return simplehash.MD5(fmt.Sprintf("%s%s%s%s", androidID, deviceID, operator, model))
 }

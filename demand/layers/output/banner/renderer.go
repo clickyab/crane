@@ -8,8 +8,8 @@ import (
 	"fmt"
 
 	"clickyab.com/crane/demand/entity"
-	"clickyab.com/gad/src/version"
 	"github.com/clickyab/services/assert"
+	"github.com/clickyab/services/version"
 	"github.com/clickyab/services/xlog"
 )
 

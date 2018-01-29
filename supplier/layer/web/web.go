@@ -198,14 +198,15 @@ func exSlot(ctx context.Context, s string, l int, r *http.Request, pubFloor int6
 	return res, nil
 }
 
+// webUserIDGenerator create userID for web request
+func webUserIDGenerator(tid, ua, ip string) string {
+	return simplehash.MD5(fmt.Sprintf("%s%s%s", tid, ua, ip))
+}
+
+// secure check openrtb protocol (http/https)
 func secure(r *http.Request) openrtb.NumberOrString {
 	if framework.Scheme(r) == "https" {
 		return openrtb.NumberOrString(1)
 	}
 	return openrtb.NumberOrString(0)
-}
-
-// webUserIDGenerator create userID for web request
-func webUserIDGenerator(tid, ua, ip string) string {
-	return simplehash.MD5(fmt.Sprintf("%s%s%s", tid, ua, ip))
 }
