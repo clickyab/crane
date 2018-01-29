@@ -1,6 +1,8 @@
 package ortb
 
-import "strconv"
+import (
+	"strconv"
+)
 
 type simpleMap map[string]interface{}
 

@@ -23,10 +23,6 @@ func (s *supplier) Token() string {
 	panic("implement me")
 }
 
-func (s *supplier) DefaultFloorCPM() int64 {
-	panic("implement me")
-}
-
 func (s *supplier) DefaultSoftFloorCPM() int64 {
 	panic("implement me")
 }

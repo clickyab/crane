@@ -19,7 +19,6 @@ type Supplier struct {
 	FName            string        `db:"name"`
 	FToken           string        `db:"token"`
 	FUserID          sql.NullInt64 `db:"user_id"`
-	DefaultFloor     int64         `db:"default_floor"`
 	DefaultSoftFloor int64         `db:"default_soft_floor"`
 	DefaultMinBID    int64         `db:"default_min_bid"`
 	FBIDType         string        `db:"bid_type"`
@@ -90,11 +89,6 @@ func (s *Supplier) Token() string {
 	return s.FToken
 }
 
-// DefaultFloorCPM is the default floor for new sites
-func (s *Supplier) DefaultFloorCPM() int64 {
-	return s.DefaultFloor
-}
-
 // DefaultSoftFloorCPM is the default floor for new sites
 func (s *Supplier) DefaultSoftFloorCPM() int64 {
 	return s.DefaultSoftFloor
@@ -132,7 +126,7 @@ func (s *Supplier) Share() int {
 }
 
 var (
-	supQuery = `SELECT name,token,user_id,default_floor,default_soft_floor,default_min_bid,bid_type,default_ctr,tiny_mark,
+	supQuery = `SELECT name,token,user_id,default_soft_floor,default_min_bid,bid_type,default_ctr,tiny_mark,
 show_domain,created_at,updated_at,rate,tiny_logo,tiny_url,under_floor,share FROM suppliers`
 )
 

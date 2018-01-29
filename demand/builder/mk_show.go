@@ -214,17 +214,6 @@ func SetFloorPercentage(i int64) ShowOptionSetter {
 	}
 }
 
-// SetFloorCPM try to set hard floor on this request (Rial only!)
-func SetFloorCPM(i int64) ShowOptionSetter {
-	return func(o *Context) (*Context, error) {
-		if i <= 0 {
-			return nil, fmt.Errorf("invalid floor value")
-		}
-		o.floorCPM = i
-		return o, nil
-	}
-}
-
 // SetMinBidPercentage set the minimum bid percentage
 func SetMinBidPercentage(i int64) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
