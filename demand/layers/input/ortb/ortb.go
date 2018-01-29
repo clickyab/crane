@@ -86,6 +86,7 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	fatFinger := ext.Bool("fat_finger")
 	prevent := ext.Bool("prevent_default")
 	capping := ext.String("capping_mode")
+
 	// Currently not supporting no cap (this is intentional)
 	if capping == "reset" {
 		cappingMode = entity.CappingReset
@@ -157,9 +158,7 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetTID(us, ip, ua),
 		builder.SetNoTiny(sup.TinyMark()),
 		builder.SetFatFinger(fatFinger),
-		// Website of demand has no floor cpm and soft floor cpm associated with them
-		// TODO : decide about this specific values
-		builder.SetFloorCPM(sup.DefaultFloorCPM()),
+
 		builder.SetSoftFloorCPM(sup.DefaultSoftFloorCPM()),
 		builder.SetRate(float64(sup.Rate())),
 		builder.SetPreventDefault(prevent),

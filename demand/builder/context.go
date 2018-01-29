@@ -40,7 +40,6 @@ type Context struct {
 	noTiny           bool
 	multiVideo       bool
 	floorPercentage  int64
-	floorCPM         int64
 	softFloorCPM     int64
 	bidType          entity.BIDType
 	minBidPercentage int64
@@ -88,12 +87,6 @@ func (c *Context) Brand() string {
 // Rate return the rate of this request
 func (c *Context) Rate() float64 {
 	return c.rate
-}
-
-// FloorCPM is the minimum CPM for this request, default is MinBid * DefaultCTR
-// Currency is always Rial
-func (c *Context) FloorCPM() int64 {
-	return int64(float64(c.floorCPM)/100) * c.FloorPercentage()
 }
 
 // SoftFloorCPM is the minimum CPM for this request, default is FloorCPM

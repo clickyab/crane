@@ -6,8 +6,6 @@ type Supplier interface {
 	Name() string
 	// Token of this for web request
 	Token() string
-	// CPMFloor is the floor for this network. the publisher must be greeter equal to this
-	DefaultFloorCPM() int64
 	// DefaultSoftFloorCPM is the default, when the site/app is not available
 	DefaultSoftFloorCPM() int64
 	// DefaultMinBid return the default min bid for this supplier
