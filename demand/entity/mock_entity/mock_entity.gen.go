@@ -36,18 +36,6 @@ func (m *MockContext) EXPECT() *MockContextMockRecorder {
 	return m.recorder
 }
 
-// Alexa mocks base method
-func (m *MockContext) Alexa() bool {
-	ret := m.ctrl.Call(m, "Alexa")
-	ret0, _ := ret[0].(bool)
-	return ret0
-}
-
-// Alexa indicates an expected call of Alexa
-func (mr *MockContextMockRecorder) Alexa() *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Alexa", reflect.TypeOf((*MockContext)(nil).Alexa))
-}
-
 // BIDType mocks base method
 func (m *MockContext) BIDType() entity.BIDType {
 	ret := m.ctrl.Call(m, "BIDType")
@@ -1562,18 +1550,6 @@ func NewMockRequest(ctrl *gomock.Controller) *MockRequest {
 // EXPECT returns an object that allows the caller to indicate expected use
 func (m *MockRequest) EXPECT() *MockRequestMockRecorder {
 	return m.recorder
-}
-
-// Alexa mocks base method
-func (m *MockRequest) Alexa() bool {
-	ret := m.ctrl.Call(m, "Alexa")
-	ret0, _ := ret[0].(bool)
-	return ret0
-}
-
-// Alexa indicates an expected call of Alexa
-func (mr *MockRequestMockRecorder) Alexa() *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Alexa", reflect.TypeOf((*MockRequest)(nil).Alexa))
 }
 
 // EventPage mocks base method

@@ -90,7 +90,6 @@ func NewClickJob(ctx entity.Context) broker.Job {
 			Supplier:   ctx.Publisher().Supplier().Name(),
 			Type:       ctx.Type(),
 			Timestamp:  ctx.Timestamp(),
-			Alexa:      ctx.Alexa(),
 		},
 		Seat: worker.Seat{
 			AdID:         s.WinnerAdvertise().ID(),

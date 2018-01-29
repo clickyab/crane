@@ -29,6 +29,5 @@ type Impression struct {
 	Publisher  string             `json:"pub"`
 	Supplier   string             `json:"sub"`
 	Type       entity.RequestType `json:"t"`
-	Alexa      bool               `json:"a"`
 	Timestamp  time.Time          `json:"ts"`
 }
