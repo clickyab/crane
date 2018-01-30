@@ -39,7 +39,7 @@ func (s *vastSeat) ImpressionURL() *url.URL {
 
 	s.imp = s.makeURL(
 		"pixel",
-		map[string]string{"rh": s.ReservedHash(), "size": fmt.Sprint(s.size), "type": s.Type(), "subtype": s.SubType()},
+		map[string]string{"rh": s.ReservedHash(), "size": fmt.Sprint(s.size), "type": s.Type().String(), "subtype": s.SubType().String()},
 		s.cpm,
 		showExpire.Duration(),
 	)

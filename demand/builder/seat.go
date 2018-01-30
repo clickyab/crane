@@ -24,6 +24,7 @@ var (
 // seat is the seat for input request
 type seat struct {
 	context     *Context
+	subType     entity.RequestType
 	winnerAd    entity.Creative
 	reserveHash string
 	bid         float64
@@ -127,7 +128,7 @@ func (s *seat) ImpressionURL() *url.URL {
 
 	s.imp = s.makeURL(
 		"banner",
-		map[string]string{"rh": s.ReservedHash(), "size": fmt.Sprint(s.size), "type": s.Type(), "subtype": s.SubType()},
+		map[string]string{"rh": s.ReservedHash(), "size": fmt.Sprint(s.size), "type": s.Type().String(), "subtype": s.SubType().String()},
 		s.cpm,
 		showExpire.Duration(),
 	)
@@ -148,7 +149,7 @@ func (s *seat) ClickURL() *url.URL {
 
 	s.click = s.makeURL(
 		"click",
-		map[string]string{"rh": s.ReservedHash(), "size": fmt.Sprint(s.Size()), "type": s.Type(), "subtype": s.SubType()},
+		map[string]string{"rh": s.ReservedHash(), "size": fmt.Sprint(s.Size()), "type": s.Type().String(), "subtype": s.SubType().String()},
 		cpm,
 		clickExpire.Duration(),
 	)
@@ -165,7 +166,7 @@ func (s *seat) WinNoticeRequest() *url.URL {
 
 	s.win = s.makeURL(
 		"notice",
-		map[string]string{"rh": s.ReservedHash(), "size": fmt.Sprint(s.Size()), "type": s.Type(), "subtype": s.SubType()},
+		map[string]string{"rh": s.ReservedHash(), "size": fmt.Sprint(s.Size()), "type": s.Type().String(), "subtype": s.SubType().String()},
 		s.cpm,
 		time.Hour, // TODO : fix me when there is actually a code to handle it
 	)
@@ -217,12 +218,12 @@ func (s *seat) makeURL(route string, params map[string]string, cpm float64, expi
 	return u
 }
 
-func (s *seat) Type() string {
-	return s.context.Type().String()
+func (s *seat) Type() entity.RequestType {
+	return s.context.Type()
 }
 
-func (s *seat) SubType() string {
-	return s.context.SubType().String()
+func (s *seat) SubType() entity.RequestType {
+	return s.subType
 }
 
 func (s seat) genericTests(advertise entity.Creative) bool {

@@ -3,6 +3,7 @@ package builder
 import (
 	"fmt"
 
+	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/demand/internal/cyslot"
 	"github.com/bsm/openrtb"
 	"github.com/clickyab/services/config"
@@ -65,6 +66,7 @@ func SetDemandSeats(sd ...DemandSeatData) ShowOptionSetter {
 
 			seat := seat{
 				context:  o,
+				subType:  o.subTyp,
 				size:     size,
 				publicID: sd[i].PubID,
 				minBid:   sd[i].MinBid,
@@ -72,6 +74,7 @@ func SetDemandSeats(sd ...DemandSeatData) ShowOptionSetter {
 				rate:     o.rate,
 			}
 			if sd[i].Type == SeatTypeVideo {
+				seat.subType = entity.RequestTypeVast
 				seat.mimes = sd[i].Video.Mimes
 				o.seats = append(o.seats, &vastSeat{
 					seat:      seat,

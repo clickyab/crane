@@ -34,9 +34,9 @@ type Seat interface {
 	// CTR return current ctr for this size in publisher
 	CTR() float64
 	// Type of seat
-	Type() string
+	Type() RequestType
 	// SubType of seat
-	SubType() string
+	SubType() RequestType
 	// MinBid is the minimum CPC requested for this requests
 	MinBid() int64
 	// ImpressionTime is the time of impression (if this is impression seat, on show, its current time,
