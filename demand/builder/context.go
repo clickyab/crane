@@ -47,6 +47,7 @@ type Context struct {
 
 	suspicious int
 	rate       float64
+	strategy   entity.Strategy
 
 	networkName,
 	brandName,
@@ -169,6 +170,11 @@ func (c *Context) FloorPercentage() int64 {
 	}
 
 	return c.floorPercentage
+}
+
+// Strategy for this request (cpm, cpc)
+func (c *Context) Strategy() entity.Strategy {
+	return c.strategy
 }
 
 // Tiny means we need to show the tiny mark in ad

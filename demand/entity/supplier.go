@@ -35,4 +35,6 @@ type Supplier interface {
 	// min bid reported with no change, if less than 100, means reported less than actual value (not correct normally!)
 	// greater than 100 means reported more than its actual value
 	Share() int
+	// Strategy return default strategy of supplier (cpm, cpc)
+	Strategy() Strategy
 }
