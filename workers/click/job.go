@@ -59,7 +59,7 @@ func (j *job) Report() func(error) {
 }
 
 func (j *job) process() error {
-	pub, err := ads.FindPublisher(j.Supplier, j.Publisher, 0, j.Type)
+	pub, err := ads.FindPublisher(j.Supplier, j.Publisher, 0)
 	if err != nil {
 		return err
 	}

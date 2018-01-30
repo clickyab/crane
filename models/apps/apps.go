@@ -31,17 +31,17 @@ func GetApp(sup entity.Supplier, appPackage string) (entity.Publisher, error) {
 }
 
 // GetAppID try to get app. do not use it in initializer
-func GetAppID(sup entity.Supplier, appPackage string, token string) (entity.Publisher, error) {
+func GetAppID(sup entity.Supplier, appPackage string, token string) (int64, error) {
 	d := &entities.App{}
 	res, err := app.Get(fmt.Sprintf("%s/%s", sup.Name(), appPackage), d)
 	if err == nil {
 		d = res.(*entities.App)
 		d.Supp = sup
-		return d, nil
+		return d.AppID, nil
 	}
 	app, err := entities.FindOrAddApp(sup, appPackage, token)
 	if err != nil {
-		return nil, err
+		return 0, err
 	}
-	return app, nil
+	return app.ID(), nil
 }

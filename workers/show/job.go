@@ -58,7 +58,7 @@ func (j *job) process(ctx context.Context) error {
 		tasks: len(j.Seats),
 	}
 
-	pub, err := ads.FindPublisher(j.Supplier, j.Publisher, 0, j.Type)
+	pub, err := ads.FindPublisher(j.Supplier, j.Publisher, 0)
 	if err != nil {
 		return err
 	}
