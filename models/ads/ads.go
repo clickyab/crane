@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"clickyab.com/crane/demand/entity"
+	"clickyab.com/crane/models/apps"
 	"clickyab.com/crane/models/internal/entities"
 	"clickyab.com/crane/models/suppliers"
 	"clickyab.com/crane/models/website"
@@ -40,12 +41,17 @@ func GetAd(adID int64) (entity.Advertise, error) {
 }
 
 // FindPublisher return publisher id for given supplier,domain
-func FindPublisher(sup, domain string, pid int64) (entity.Publisher, error) {
+func FindPublisher(sup, domain string, pid int64, t entity.RequestType) (entity.Publisher, error) {
 	osup, err := suppliers.GetSupplierByName(sup)
 	if err != nil {
 		return nil, err
 	}
-	p, err := website.GetWebSiteID(osup, domain, pid)
+	var p entity.Publisher
+	if t == entity.RequestTypeWeb {
+		p, err = website.GetWebSiteID(osup, domain, pid)
+	} else if t == entity.RequestTypeApp {
+		p, err = apps.GetAppID(osup, domain, fmt.Sprint(pid))
+	}
 	if err != nil {
 		return nil, err
 	}
