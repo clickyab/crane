@@ -80,4 +80,6 @@ type Context interface {
 	FatFinger() bool
 	// PreventDefault is a way to handle old sdk version
 	PreventDefault() bool
+	// Strategy of biding (cpm, cpc)
+	Strategy() Strategy
 }

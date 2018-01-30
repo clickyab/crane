@@ -1,6 +1,8 @@
 package entities
 
 import (
+	"strings"
+
 	"clickyab.com/crane/demand/entity"
 	"github.com/clickyab/services/config"
 )
@@ -8,6 +10,24 @@ import (
 // Campaign implement entity advertise interface
 type Campaign struct {
 	ad
+	strategy entity.Strategy
+}
+
+// Strategy of campaign. can be cpm, cpc
+func (c *Campaign) Strategy() entity.Strategy {
+	if c.strategy > 0 {
+		return c.strategy
+	}
+	if !c.CampaignBillingType.Valid {
+		return 0
+	}
+	switch strings.ToLower(c.CampaignBillingType.String) {
+	case "cpm":
+		c.strategy = entity.StrategyCPM
+	case "cpc":
+		c.strategy = entity.StrategyCPC
+	}
+	return c.strategy
 }
 
 // AppBrands return accepted app brands id
