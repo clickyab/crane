@@ -5,6 +5,10 @@ import "clickyab.com/crane/demand/entity"
 type supplier struct {
 }
 
+func (*supplier) Strategy() entity.Strategy {
+	panic("implement me")
+}
+
 func (*supplier) Name() string {
 	return "clickyab"
 }

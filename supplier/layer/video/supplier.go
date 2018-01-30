@@ -7,6 +7,10 @@ import (
 type supplier struct {
 }
 
+func (s *supplier) Strategy() entity.Strategy {
+	panic("implement me")
+}
+
 func (s *supplier) Share() int {
 	panic("implement me")
 }
