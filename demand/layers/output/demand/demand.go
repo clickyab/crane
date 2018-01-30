@@ -119,6 +119,7 @@ func bannerMarkup(ctx entity.Context, s entity.Seat) *openrtb.Bid {
 			s.Height(),
 		),
 		AdID:       fmt.Sprint(s.WinnerAdvertise().ID()),
+		CreativeID: fmt.Sprint(s.WinnerAdvertise().ID()),
 		H:          s.Height(),
 		W:          s.Width(),
 		Price:      s.CPM() / ctx.Rate(),
