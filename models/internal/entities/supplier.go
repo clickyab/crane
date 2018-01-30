@@ -34,6 +34,11 @@ type Supplier struct {
 	FShare           int           `db:"share"`
 }
 
+// Strategy of supplier can be cpm, cpc or both
+func (s Supplier) Strategy() entity.Strategy {
+	panic("implement me")
+}
+
 // TinyLogo will be the url to the logo (ex: //clickyab.com/tiny.png)
 func (s Supplier) TinyLogo() string {
 	return s.FTinyLogo

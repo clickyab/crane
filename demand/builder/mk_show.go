@@ -1,6 +1,7 @@
 package builder
 
 import (
+	"errors"
 	"fmt"
 	"net"
 
@@ -248,6 +249,22 @@ func SetNoTiny(noTiny bool) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
 		o.noTiny = noTiny
 		return o, nil
+	}
+}
+
+// SetStrategy is the option to set strategy for request
+func SetStrategy(s []string, sup entity.Supplier) ShowOptionSetter {
+	return func(o *Context) (*Context, error) {
+		if len(s) == 0 {
+			o.strategy = sup.Strategy()
+			return o, nil
+		}
+		st := entity.GetStrategy(s)
+		if st.Valid() && st.IsSubsetOf(sup.Strategy()) {
+			o.strategy = st
+			return o, nil
+		}
+		return o, errors.New("not valid strategy")
 	}
 }
 
