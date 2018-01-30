@@ -79,6 +79,7 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	fatFinger := ext.Bool("fat_finger")
 	prevent := ext.Bool("prevent_default")
 	capping := ext.String("capping_mode")
+	strategy := strings.Split(ext.String("strategy"), ",")
 
 	// Currently not supporting no cap (this is intentional)
 	if capping == "reset" {
@@ -157,7 +158,7 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetTID(us, ip, ua),
 		builder.SetNoTiny(sup.TinyMark()),
 		builder.SetFatFinger(fatFinger),
-
+		builder.SetStrategy(strategy, sup),
 		builder.SetSoftFloorCPM(sup.DefaultSoftFloorCPM()),
 		builder.SetRate(float64(sup.Rate())),
 		builder.SetPreventDefault(prevent),
