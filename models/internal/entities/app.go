@@ -81,11 +81,6 @@ func (app *App) Name() string {
 	return app.AppPackage
 }
 
-// BIDType return bid type cpc,cpm
-func (app *App) BIDType() entity.BIDType {
-	return entity.BIDTypeCPC
-}
-
 // MinBid return min bid
 func (app *App) MinBid() int64 {
 	return app.AppMinBid

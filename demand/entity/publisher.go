@@ -10,16 +10,6 @@ const (
 	PublisherTypeWeb PublisherType = 2
 )
 
-// BIDType is the bid type for this imp cpc or cpm
-type BIDType string
-
-const (
-	// BIDTypeCPC is the cost per click type
-	BIDTypeCPC BIDType = "CPC"
-	//BIDTypeCPM is the cost per view type
-	BIDTypeCPM BIDType = "CPM"
-)
-
 // PublisherAttributes is the key for publisher attributes
 type PublisherAttributes int
 
@@ -40,8 +30,6 @@ type Publisher interface {
 	SoftFloorCPM() int64
 	// Name of publisher
 	Name() string
-	// BIDType return this publisher bid type
-	BIDType() BIDType
 	// MinBid is the minimum CPC requested for this requests
 	MinBid() int64
 	// Supplier return the exchange object for this publisher

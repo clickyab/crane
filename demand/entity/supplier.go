@@ -10,8 +10,6 @@ type Supplier interface {
 	DefaultSoftFloorCPM() int64
 	// DefaultMinBid return the default min bid for this supplier
 	DefaultMinBid() int64
-	// This publisher bid type
-	BidType() BIDType
 	// DefaultCTR for this supplier
 	DefaultCTR() float64
 	// AllowCreate indicated if this supplier can create publisher on demand
