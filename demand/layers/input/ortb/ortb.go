@@ -10,6 +10,8 @@ import (
 
 	"strings"
 
+	"net/url"
+
 	"clickyab.com/crane/demand/builder"
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/demand/filter"
@@ -104,7 +106,14 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		selector  reducer.Filter
 	)
 	if payload.Site != nil {
-		publisher, err = website.GetWebSite(sup, payload.Site.Domain)
+		var u *url.URL
+		u, err = url.Parse(payload.Site.Domain)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			xlog.GetWithError(ctx, err).Error("invalid domain")
+			return
+		}
+		publisher, err = website.GetWebSite(sup, u.Host)
 		subType = entity.RequestTypeWeb
 		prevent = false // do not accept prevent default on web request
 		selector = ortbWebSelector
