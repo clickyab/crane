@@ -109,6 +109,10 @@
 			"Rev": "e6857250403afd5e35732eb751cd0fa573e5cc5a"
 		},
 		{
+			"ImportPath": "github.com/clickyab/services/kv/mock",
+			"Rev": "e6857250403afd5e35732eb751cd0fa573e5cc5a"
+		},
+		{
 			"ImportPath": "github.com/clickyab/services/kv/redis",
 			"Rev": "e6857250403afd5e35732eb751cd0fa573e5cc5a"
 		},
@@ -225,6 +229,15 @@
 			"Rev": "13f360950a79f5864a972c786a10a50e44b69541"
 		},
 		{
+			"ImportPath": "github.com/gopherjs/gopherjs/js",
+			"Rev": "415225646bb92c4449bb484646f2c95a98402f6f"
+		},
+		{
+			"ImportPath": "github.com/jtolds/gls",
+			"Comment": "v4.2.1",
+			"Rev": "77f18212c9c7edc9bd6a33d383a7b545ce62f064"
+		},
+		{
 			"ImportPath": "github.com/mitchellh/mapstructure",
 			"Rev": "06020f85339e21b2478f756a78e295255ffa4d6a"
 		},
@@ -263,6 +276,36 @@
 			"ImportPath": "github.com/sirupsen/logrus",
 			"Comment": "v1.0.3-11-g89742ae",
 			"Rev": "89742aefa4b206dcf400792f3bd35b542998eb3b"
+		},
+		{
+			"ImportPath": "github.com/smartystreets/assertions",
+			"Comment": "1.7.0",
+			"Rev": "9c0ea8acbc1d8ad689f9e6fe0c1fa5838e0cabc2"
+		},
+		{
+			"ImportPath": "github.com/smartystreets/assertions/internal/go-render/render",
+			"Comment": "1.7.0",
+			"Rev": "9c0ea8acbc1d8ad689f9e6fe0c1fa5838e0cabc2"
+		},
+		{
+			"ImportPath": "github.com/smartystreets/assertions/internal/oglematchers",
+			"Comment": "1.7.0",
+			"Rev": "9c0ea8acbc1d8ad689f9e6fe0c1fa5838e0cabc2"
+		},
+		{
+			"ImportPath": "github.com/smartystreets/goconvey/convey",
+			"Comment": "1.6.3-2-ge5b2b7c",
+			"Rev": "e5b2b7c9111590d019a696c7800593f666e1a7f4"
+		},
+		{
+			"ImportPath": "github.com/smartystreets/goconvey/convey/gotest",
+			"Comment": "1.6.3-2-ge5b2b7c",
+			"Rev": "e5b2b7c9111590d019a696c7800593f666e1a7f4"
+		},
+		{
+			"ImportPath": "github.com/smartystreets/goconvey/convey/reporting",
+			"Comment": "1.6.3-2-ge5b2b7c",
+			"Rev": "e5b2b7c9111590d019a696c7800593f666e1a7f4"
 		},
 		{
 			"ImportPath": "github.com/streadway/amqp",
