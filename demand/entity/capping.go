@@ -16,4 +16,6 @@ type Capping interface {
 	IncView(int64, int, bool)
 	// Selected return if this campaign is already selected in this batch
 	Selected() bool
+	// Store the capping
+	Store(int64)
 }

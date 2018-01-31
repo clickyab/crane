@@ -155,15 +155,12 @@ func internalSelect(
 			noVideo = noVideo || theAd.Type() == entity.AdTypeVideo
 		}
 		// TODO : The real problem is what if we are not going to win? this assume any select means show.
-		capping.StoreCapping(
-			ctx.Capping(),
-			ctx.User().ID(),
-			theAd.ID())
+		theAd.Capping().Store(theAd.ID())
 	}
 }
 
 // selectAds is the only function that one must call to get ads
 func selectAds(_ context.Context, ctx entity.Context, ads []entity.Creative) {
-	ads = capping.ApplyCapping(ctx.Capping(), ctx.User().ID(), ads, ctx.EventPage(), ctx.Seats()...)
+	ads = capping.ApplyCapping(ctx.Capping(), ctx.User().ID(), ads, ctx.EventPage())
 	internalSelect(ctx, ads)
 }

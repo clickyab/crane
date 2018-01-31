@@ -41,6 +41,8 @@ func noCappingMode(ads []entity.Creative) []entity.Creative {
 			ads[i].Campaign().ID(),
 			0,
 			ads[i].Campaign().Frequency(),
+			entity.CappingNone,
+			"",
 		)
 		ads[i].SetCapping(capp)
 
@@ -50,26 +52,25 @@ func noCappingMode(ads []entity.Creative) []entity.Creative {
 }
 
 // ApplyCapping is an entry for set capping in ads
-func ApplyCapping(mode entity.CappingMode, copID string, ads []entity.Creative, ep string, slots ...entity.Seat) []entity.Creative {
+func ApplyCapping(mode entity.CappingMode, copID string, ads []entity.Creative, ep string) []entity.Creative {
 	switch mode {
 	case entity.CappingNone:
 		return noCappingMode(ads)
 	case entity.CappingReset:
-		return resetCappingMode(copID, ads, ep, slots...)
+		return resetCappingMode(copID, ads, ep)
 	case entity.CappingStrict:
-		return strictCappingMode(copID, ads, ep, slots...)
+		return strictCappingMode(copID, ads, ep)
 	}
 	panic("invalid capping mode")
 }
 
-func strictCappingMode(copID string, ads []entity.Creative, ep string, slots ...entity.Seat) []entity.Creative {
+func strictCappingMode(copID string, ads []entity.Creative, ep string) []entity.Creative {
 	var selected = make(map[int64]bool)
 
 	// evenet page is an old hack to handle ads in same page in multiple request. maybe we should retire it
 	// TODO : remove event page after 31 March 2018 if there is no need for it
 	if ep != "" {
 		s := kv.NewDistributedSet(ep)
-
 		for _, v := range s.Members() {
 			vInt, _ := strconv.ParseInt(v, 10, 0)
 			selected[vInt] = true
@@ -95,21 +96,21 @@ func strictCappingMode(copID string, ads []entity.Creative, ep string, slots ...
 			capp := NewCapping(
 				c,
 				ads[i].Campaign().ID(),
-				0,
+				int(view),
 				ads[i].Campaign().Frequency(),
+				entity.CappingStrict,
+				copID,
 			)
-			capp.IncView(passed.ID(), int(view), false)
 			passed.SetCapping(capp)
 			resp = append(resp, passed)
 		}
 	}
-	s := sortByCap(resp)
-	sort.Sort(s)
-	return []entity.Creative(s)
+
+	return []entity.Creative(resp)
 }
 
 // GetCapping try to get capping for current ad
-func resetCappingMode(copID string, ads []entity.Creative, ep string, slots ...entity.Seat) []entity.Creative {
+func resetCappingMode(copID string, ads []entity.Creative, ep string) []entity.Creative {
 	var selected = make(map[int64]bool)
 	// evenet page is an old hack to handle ads in same page in multiple request. maybe we should retire it
 	// TODO : remove event page after 31 March 2018 if there is no need for it
@@ -143,19 +144,22 @@ func resetCappingMode(copID string, ads []entity.Creative, ep string, slots ...e
 			adKey,
 			ads[i].ID(),
 		)
+
 		view := results[key]
 		n := float64(view) / float64(ads[i].Campaign().Frequency())
 		if n <= 1 && !selected[ads[i].ID()] {
 			capp := NewCapping(
 				c,
 				ads[i].Campaign().ID(),
-				0,
+				int(view),
 				ads[i].Campaign().Frequency(),
+				entity.CappingReset,
+				copID,
 			)
-			capp.IncView(ads[i].ID(), int(view), false)
 			ads[i].SetCapping(capp)
 			resp = append(resp, ads[i])
 			has[size]++
+
 		} else if n > 1 {
 			// capping is passed
 			done[size] = append(done[size], struct {
@@ -178,10 +182,11 @@ func resetCappingMode(copID string, ads []entity.Creative, ep string, slots ...e
 				capp := NewCapping(
 					c,
 					done[size][i].Campaign().ID(),
-					0,
+					int(done[size][i].View),
 					done[size][i].Campaign().Frequency(),
+					entity.CappingReset,
+					copID,
 				)
-				capp.IncView(done[size][i].ID(), int(done[size][i].View), false)
 				done[size][i].SetCapping(capp)
 				resp = append(resp, done[size][i].Creative)
 			}
@@ -194,6 +199,8 @@ func resetCappingMode(copID string, ads []entity.Creative, ep string, slots ...e
 					done[size][i].Campaign().ID(),
 					0,
 					done[size][i].Campaign().Frequency(),
+					entity.CappingReset,
+					copID,
 				)
 				sizedCap[i] = done[size][i].Key
 				done[size][i].SetCapping(capp)
@@ -206,9 +213,4 @@ func resetCappingMode(copID string, ads []entity.Creative, ep string, slots ...e
 	s := sortByCap(resp)
 	sort.Sort(s)
 	return []entity.Creative(s)
-}
-
-// StoreCapping try to store a capping object
-func StoreCapping(mode entity.CappingMode, copID string, adID int64) int64 {
-	return kv.NewAEAVStore(getCappingKey(mode, copID), dailyCapExpire.Duration()).IncSubKey(fmt.Sprintf("%s_%d", adKey, adID), 1)
 }
