@@ -45,7 +45,7 @@ const (
 // handle supplier native route
 func getNative(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	domain := r.URL.Query().Get("d")
-	pub, err := website.GetWebSite(&supplier{}, domain)
+	pub, err := website.GetWebSiteOrFake(&supplier{}, domain)
 	if err != nil {
 		// TODO send proper message
 		w.WriteHeader(http.StatusBadRequest)

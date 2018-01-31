@@ -81,9 +81,9 @@ func extractor(ctx context.Context, r *http.Request) (*payloadData, error) {
 
 	// get the publisher, even its not created then its fine
 	if pl.SubType == entity.RequestTypeWeb {
-		pl.Publisher, err = website.GetWebSite(pl.Supplier, m["dom"])
+		pl.Publisher, err = website.GetWebSiteOrFake(pl.Supplier, m["dom"])
 	} else if pl.SubType == entity.RequestTypeApp {
-		pl.Publisher, err = apps.GetApp(pl.Supplier, m["dom"])
+		pl.Publisher, err = apps.GetAppOrFake(pl.Supplier, m["dom"])
 	} else {
 		err = errors.New("not supported subtype")
 	}
