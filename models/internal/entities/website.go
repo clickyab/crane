@@ -108,11 +108,6 @@ func (w *Website) Name() string {
 	return w.WDomain
 }
 
-// BIDType is the bid type for this website
-func (w *Website) BIDType() entity.BIDType {
-	return entity.BIDTypeCPC
-}
-
 // MinBid return the minimum bid accepted for this
 func (w *Website) MinBid() int64 {
 	return w.WMinBid

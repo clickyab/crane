@@ -66,8 +66,6 @@ type Context interface {
 	// SoftFloorCPM is the soft version of floor cpm. if the publisher ahs it, then the system
 	// try to use this as floor, but if this is not available, the FloorCPM is used
 	SoftFloorCPM() int64
-	// BIDType return this publisher bid type
-	BIDType() BIDType
 	// Rate return ratio currency conversion to IRR
 	Rate() float64
 	// Network return network for app
