@@ -36,18 +36,6 @@ func (m *MockContext) EXPECT() *MockContextMockRecorder {
 	return m.recorder
 }
 
-// BIDType mocks base method
-func (m *MockContext) BIDType() entity.BIDType {
-	ret := m.ctrl.Call(m, "BIDType")
-	ret0, _ := ret[0].(entity.BIDType)
-	return ret0
-}
-
-// BIDType indicates an expected call of BIDType
-func (mr *MockContextMockRecorder) BIDType() *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BIDType", reflect.TypeOf((*MockContext)(nil).BIDType))
-}
-
 // Brand mocks base method
 func (m *MockContext) Brand() string {
 	ret := m.ctrl.Call(m, "Brand")
@@ -927,18 +915,6 @@ func (mr *MockPublisherMockRecorder) Attributes() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Attributes", reflect.TypeOf((*MockPublisher)(nil).Attributes))
 }
 
-// BIDType mocks base method
-func (m *MockPublisher) BIDType() entity.BIDType {
-	ret := m.ctrl.Call(m, "BIDType")
-	ret0, _ := ret[0].(entity.BIDType)
-	return ret0
-}
-
-// BIDType indicates an expected call of BIDType
-func (mr *MockPublisherMockRecorder) BIDType() *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BIDType", reflect.TypeOf((*MockPublisher)(nil).BIDType))
-}
-
 // CTR mocks base method
 func (m *MockPublisher) CTR(arg0 int) float64 {
 	ret := m.ctrl.Call(m, "CTR", arg0)
@@ -1400,18 +1376,6 @@ func (m *MockSupplier) AllowCreate() bool {
 // AllowCreate indicates an expected call of AllowCreate
 func (mr *MockSupplierMockRecorder) AllowCreate() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AllowCreate", reflect.TypeOf((*MockSupplier)(nil).AllowCreate))
-}
-
-// BidType mocks base method
-func (m *MockSupplier) BidType() entity.BIDType {
-	ret := m.ctrl.Call(m, "BidType")
-	ret0, _ := ret[0].(entity.BIDType)
-	return ret0
-}
-
-// BidType indicates an expected call of BidType
-func (mr *MockSupplierMockRecorder) BidType() *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BidType", reflect.TypeOf((*MockSupplier)(nil).BidType))
 }
 
 // DefaultCTR mocks base method

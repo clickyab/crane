@@ -29,10 +29,6 @@ func (*supplier) DefaultMinBid() int64 {
 	panic("implement me")
 }
 
-func (*supplier) BidType() entity.BIDType {
-	panic("implement me")
-}
-
 func (*supplier) DefaultCTR() float64 {
 	panic("implement me")
 }

@@ -39,10 +39,6 @@ func (fp *fakepub) Name() string {
 	return fp.name
 }
 
-func (fp *fakepub) BIDType() entity.BIDType {
-	return fp.s.BidType()
-}
-
 func (fp *fakepub) MinBid() int64 {
 	return fp.s.DefaultMinBid()
 }
