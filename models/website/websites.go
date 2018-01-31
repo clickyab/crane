@@ -12,8 +12,8 @@ var (
 	websites pool.Interface
 )
 
-// GetWebSite try to get website. do not use it in initializer
-func GetWebSite(sup entity.Supplier, domain string) (entity.Publisher, error) {
+// GetWebSiteOrFake try to get website. do not use it in initializer
+func GetWebSiteOrFake(sup entity.Supplier, domain string) (entity.Publisher, error) {
 	d := &entities.Website{}
 	res, err := websites.Get(fmt.Sprintf("%s/%s", sup.Name(), domain), d)
 	if err != nil {
@@ -31,8 +31,8 @@ func GetWebSite(sup entity.Supplier, domain string) (entity.Publisher, error) {
 	return d, nil
 }
 
-// GetWebSiteID try to get website. do not use it in initializer
-func GetWebSiteID(sup entity.Supplier, domain string, pid int64) (entity.Publisher, error) {
+// GetWebSite try to get website. do not use it in initializer
+func GetWebSite(sup entity.Supplier, domain string, pid int64) (entity.Publisher, error) {
 	d := &entities.Website{}
 	res, err := websites.Get(fmt.Sprintf("%s/%s", sup.Name(), domain), d)
 	if err == nil {

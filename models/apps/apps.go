@@ -12,8 +12,8 @@ var (
 	app pool.Interface
 )
 
-// GetApp try to get app. do not use it in initializer
-func GetApp(sup entity.Supplier, appPackage string) (entity.Publisher, error) {
+// GetAppOrFake try to get app. do not use it in initializer
+func GetAppOrFake(sup entity.Supplier, appPackage string) (entity.Publisher, error) {
 	d := &entities.App{}
 	res, err := app.Get(fmt.Sprintf("%s/%s", sup.Name(), appPackage), d)
 	if err != nil {
@@ -30,18 +30,18 @@ func GetApp(sup entity.Supplier, appPackage string) (entity.Publisher, error) {
 	return d, nil
 }
 
-// GetAppID try to get app. do not use it in initializer
-func GetAppID(sup entity.Supplier, appPackage string, token string) (int64, error) {
+// GetApp try to get app. do not use it in initializer
+func GetApp(sup entity.Supplier, appPackage string, token string) (entity.Publisher, error) {
 	d := &entities.App{}
 	res, err := app.Get(fmt.Sprintf("%s/%s", sup.Name(), appPackage), d)
 	if err == nil {
 		d = res.(*entities.App)
 		d.Supp = sup
-		return d.AppID, nil
+		return d, nil
 	}
 	app, err := entities.FindOrAddApp(sup, appPackage, token)
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
-	return app.ID(), nil
+	return app, nil
 }

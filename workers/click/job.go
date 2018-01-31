@@ -59,7 +59,7 @@ func (j *job) Report() func(error) {
 }
 
 func (j *job) process() error {
-	pub, err := ads.FindPublisher(j.Supplier, j.Publisher, 0)
+	pub, err := ads.FindPublisher(j.Supplier, j.Publisher, 0, j.Type)
 	if err != nil {
 		return err
 	}
@@ -88,7 +88,7 @@ func NewClickJob(ctx entity.Context) broker.Job {
 			ParentURL:  ctx.Parent(),
 			Publisher:  ctx.Publisher().Name(),
 			Supplier:   ctx.Publisher().Supplier().Name(),
-			Type:       ctx.Type(),
+			Type:       ctx.SubType(),
 			Timestamp:  ctx.Timestamp(),
 		},
 		Seat: worker.Seat{

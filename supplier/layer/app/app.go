@@ -31,7 +31,7 @@ var (
 )
 
 func getApp(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-	pub, err := apps.GetApp(sup, r.URL.Query().Get("package"))
+	pub, err := apps.GetAppOrFake(sup, r.URL.Query().Get("package"))
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 	}

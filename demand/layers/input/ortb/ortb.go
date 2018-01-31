@@ -113,12 +113,12 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 			xlog.GetWithError(ctx, err).Error("invalid domain")
 			return
 		}
-		publisher, err = website.GetWebSite(sup, u.Host)
+		publisher, err = website.GetWebSiteOrFake(sup, u.Host)
 		subType = entity.RequestTypeWeb
 		prevent = false // do not accept prevent default on web request
 		selector = ortbWebSelector
 	} else if payload.App != nil {
-		publisher, err = apps.GetApp(sup, payload.App.Bundle)
+		publisher, err = apps.GetAppOrFake(sup, payload.App.Bundle)
 		subType = entity.RequestTypeApp
 		selector = ortbAppSelector
 	} else {

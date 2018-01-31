@@ -36,7 +36,7 @@ var sup = &supplier{}
 //  mimes   : comma separated accepted mime types
 func vast(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	d := r.URL.Query().Get("d")
-	pub, err := website.GetWebSite(sup, d)
+	pub, err := website.GetWebSiteOrFake(sup, d)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return

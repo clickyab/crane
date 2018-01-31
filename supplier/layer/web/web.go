@@ -66,7 +66,7 @@ var sup entity.Supplier = &supplier{}
 //	tid		: tracking id
 func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	d := r.URL.Query().Get("d")
-	pub, err := website.GetWebSite(sup, d)
+	pub, err := website.GetWebSiteOrFake(sup, d)
 
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)

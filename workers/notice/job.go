@@ -59,7 +59,7 @@ func (j *job) process(ctx context.Context) error {
 		tasks: len(j.Seats),
 	}
 
-	pub, err := ads.FindPublisher(j.Supplier, j.Publisher, 0)
+	pub, err := ads.FindPublisher(j.Supplier, j.Publisher, 0, j.Type)
 	if err != nil {
 		return err
 	}
@@ -80,7 +80,7 @@ func NewNoticeJob(ctx entity.Context, s ...entity.Seat) broker.Job {
 		Impression: m.Impression{
 			Publisher: ctx.Publisher().Name(),
 			Supplier:  ctx.Publisher().Supplier().Name(),
-			Type:      ctx.Type(),
+			Type:      ctx.SubType(),
 		},
 	}
 	for i := range s {
