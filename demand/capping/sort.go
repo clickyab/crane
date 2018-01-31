@@ -1,6 +1,8 @@
 package capping
 
-import "clickyab.com/crane/demand/entity"
+import (
+	"clickyab.com/crane/demand/entity"
+)
 
 // sortByCap is the sort entry based on selected/ad capping/campaign capping/cpm (order is matter)
 type sortByCap []entity.Creative

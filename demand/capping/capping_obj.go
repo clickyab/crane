@@ -3,7 +3,10 @@ package capping
 import (
 	"sync"
 
+	"fmt"
+
 	"clickyab.com/crane/demand/entity"
+	"github.com/clickyab/services/kv"
 )
 
 // Capping is the structure for capping
@@ -13,6 +16,8 @@ type capping struct {
 	ads       map[int64]int
 	frequency int
 	selected  bool
+	mode      entity.CappingMode
+	copID     string
 }
 
 // Context is for capping context
@@ -29,7 +34,7 @@ func newContext() *Context {
 }
 
 // NewCapping create new capping
-func NewCapping(ctx *Context, cpID int64, view, freq int) entity.Capping {
+func NewCapping(ctx *Context, cpID int64, view, freq int, mode entity.CappingMode, uid string) entity.Capping {
 	ctx.l.Lock()
 	defer ctx.l.Unlock()
 
@@ -38,6 +43,8 @@ func NewCapping(ctx *Context, cpID int64, view, freq int) entity.Capping {
 			view:      view,
 			frequency: freq,
 			ads:       make(map[int64]int),
+			mode:      mode,
+			copID:     uid,
 		}
 	}
 
@@ -65,6 +72,13 @@ func (c *capping) Frequency() int {
 
 func (c *capping) Capping() int {
 	return c.view / c.frequency
+}
+
+func (c *capping) Store(ad int64) {
+	if c.mode == entity.CappingNone {
+		return
+	}
+	kv.NewAEAVStore(getCappingKey(c.mode, c.copID), dailyCapExpire.Duration()).IncSubKey(fmt.Sprintf("%s_%d", adKey, ad), 1)
 }
 
 func (c *capping) AdCapping(ad int64) int {
