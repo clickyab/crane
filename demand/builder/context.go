@@ -40,7 +40,6 @@ type Context struct {
 	multiVideo       bool
 	floorPercentage  int64
 	softFloorCPM     int64
-	bidType          entity.BIDType
 	minBidPercentage int64
 
 	noShowT bool // Default is showT frame. but for exchange may be we don't want that
@@ -93,12 +92,6 @@ func (c *Context) Rate() float64 {
 // Currency is always Rial
 func (c *Context) SoftFloorCPM() int64 {
 	return int64(float64(c.softFloorCPM)/100) * c.FloorPercentage()
-}
-
-// BIDType is the Bid Type for this request, no matter what, the system use
-// cpc , but this is helpful for better data in logs/impression/click
-func (c *Context) BIDType() entity.BIDType {
-	return c.bidType
 }
 
 // MinBIDPercentage return the percentage for min bid
