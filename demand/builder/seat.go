@@ -70,7 +70,7 @@ func (s *seat) CPM() float64 {
 // MinBid return the current minimum bid, apply the min bid percentage and
 // rate.
 func (s *seat) MinBid() int64 {
-	return int64(math.Ceil(s.minBid*s.rate)/100) * s.context.MinBIDPercentage()
+	return int64(math.Ceil((s.minBid * s.rate / 100) * float64(s.context.MinBIDPercentage())))
 }
 
 func (s *seat) CTR() float64 {
