@@ -54,6 +54,8 @@ type Context struct {
 	// Just in application, for older sdk, we need to add prevent default on clicks
 	preventDefault bool
 	cappingMode    entity.CappingMode
+
+	underfloor bool
 }
 
 // PreventDefault is a boolean value to handle old sdk wrong way of click
@@ -221,4 +223,10 @@ func (c *Context) Seats() []entity.Seat {
 // Category return the request categories
 func (c *Context) Category() []entity.Category {
 	return c.cat
+}
+
+// UnderFloor means that this supplier allow to pass underfloor value.
+// normally used only for clickyab
+func (c *Context) UnderFloor() bool {
+	return c.underfloor
 }

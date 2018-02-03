@@ -84,4 +84,7 @@ type Context interface {
 	PreventDefault() bool
 	// Strategy of biding (cpm, cpc)
 	Strategy() Strategy
+	// UnderFloor means that this supplier allow to pass underfloor value.
+	// normally used only for clickyab
+	UnderFloor() bool
 }
