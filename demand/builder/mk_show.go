@@ -50,6 +50,14 @@ func SetCurrency(c string) ShowOptionSetter {
 	}
 }
 
+// SetUnderfloor is the type setter for context
+func SetUnderfloor(c bool) ShowOptionSetter {
+	return func(o *Context) (*Context, error) {
+		o.underfloor = c
+		return o, nil
+	}
+}
+
 // SetIPLocation is the IP and location setter for context, also it extract the IP information
 func SetIPLocation(ip string) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {

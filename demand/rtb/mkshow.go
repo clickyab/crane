@@ -113,7 +113,7 @@ func internalSelect(
 				Ads:   exceedFloor,
 				Video: ctx.MultiVideo(),
 			}
-		} else if ctx.Publisher().Supplier().UnderFloor() && len(underFloor) > 0 {
+		} else if ctx.UnderFloor() && len(underFloor) > 0 {
 			// under floor means we want to fill the seat at any cost. normally our own seat
 			ef = byMulti{
 				Ads:   underFloor,
