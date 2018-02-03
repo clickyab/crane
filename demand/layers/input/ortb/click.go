@@ -28,7 +28,7 @@ var (
 	dailyClickLimit = config.RegisterInt64("crane.context.seat.click_limit", 3, "determine limit click for ip per day")
 )
 
-// clickBanner is handler for click ad request
+// clickBanner is handler for click ad requestType
 func clickBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	pl, err := extractor(ctx, r)
 	if err != nil {
@@ -56,11 +56,10 @@ func clickBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetIPLocation(pl.IP),
 		builder.SetProtocolByRequest(r),
 		builder.SetTID(pl.TID, pl.IP, pl.UserAgent),
-		builder.SetType(pl.Type, pl.SubType),
 		builder.SetPublisher(pl.Publisher),
 		builder.SetSuspicious(pl.Suspicious),
 		builder.SetFatFinger(pl.FatFinger),
-		builder.SetFullSeats(pl.PublicID, pl.Size, pl.ReserveHash, pl.Ad, pl.Bid, pl.PreviousTime, pl.CPM, pl.SCPM),
+		builder.SetFullSeats(pl.PublicID, pl.Size, pl.ReserveHash, pl.Ad, pl.Bid, pl.PreviousTime, pl.CPM, pl.SCPM, pl.requestType),
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)

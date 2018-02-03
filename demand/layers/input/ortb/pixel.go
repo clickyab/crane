@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"clickyab.com/crane/demand/builder"
-	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/demand/layers/output/pixel"
 	"clickyab.com/crane/workers/show"
 	"github.com/clickyab/services/assert"
@@ -38,15 +37,11 @@ func showPixel(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetProtocolByRequest(r),
 		builder.SetParent(pl.Parent, pl.Ref),
 		builder.SetTID(pl.TID, pl.IP, pl.UserAgent),
-		builder.SetType(pl.Type, pl.SubType),
 		builder.SetPublisher(pl.Publisher),
 		builder.SetSuspicious(pl.Suspicious),
 		builder.SetFatFinger(pl.FatFinger),
 	}
-	if pl.Type == entity.RequestTypeDemand {
-		b = append(b, builder.DoNotShowTFrame())
-	}
-	b = append(b, builder.SetFullSeats(pl.PublicID, pl.Size, pl.ReserveHash, pl.Ad, pl.Bid, time.Now().Unix(), pl.CPM, pl.SCPM))
+	b = append(b, builder.SetFullSeats(pl.PublicID, pl.Size, pl.ReserveHash, pl.Ad, pl.Bid, time.Now().Unix(), pl.CPM, pl.SCPM, pl.requestType))
 	// Build context
 	c, err := builder.NewContext(b...)
 	if err != nil {

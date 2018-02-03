@@ -10,9 +10,7 @@ import (
 
 // Context is the app Context
 type Context struct {
-	ts     time.Time
-	typ    entity.RequestType
-	subTyp entity.RequestType
+	ts time.Time
 
 	ip             net.IP
 	ua             string
@@ -117,13 +115,8 @@ func (c *Context) Timestamp() time.Time {
 }
 
 // Type return the request type
-func (c *Context) Type() entity.RequestType {
-	return c.typ
-}
-
-// SubType return the request type
-func (c *Context) SubType() entity.RequestType {
-	return c.subTyp
+func (c *Context) Type() entity.InputType {
+	return entity.InputTypeDemand
 }
 
 // Referrer is the request referrer
