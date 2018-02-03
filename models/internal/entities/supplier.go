@@ -32,7 +32,6 @@ type Supplier struct {
 	FRate            int             `db:"rate"`
 	FTinyLogo        string          `db:"tiny_logo"`
 	FTinyURL         string          `db:"tiny_url"`
-	FUnderFloor      int             `db:"under_floor"`
 	FShare           int             `db:"share"`
 	strategy         entity.Strategy `db:"-"`
 }
@@ -116,12 +115,6 @@ func (s *Supplier) DefaultCTR() float64 {
 	return s.FDefaultCTR
 }
 
-// UnderFloor means that this supplier allow to pass underfloor value.
-// normally used only for clickyab
-func (s *Supplier) UnderFloor() bool {
-	return s.FUnderFloor != 0
-}
-
 // Share of this supplier
 func (s *Supplier) Share() int {
 	return s.FShare
@@ -129,7 +122,7 @@ func (s *Supplier) Share() int {
 
 var (
 	supQuery = `SELECT name,token,user_id,default_soft_floor,default_min_bid,bid_type,default_ctr,tiny_mark,
-show_domain,created_at,updated_at,rate,tiny_logo,tiny_url,under_floor,share FROM suppliers`
+show_domain,created_at,updated_at,rate,tiny_logo,tiny_url,share FROM suppliers`
 )
 
 // SupplierLoader load all confirmed website
