@@ -392,7 +392,7 @@ func (a *Advertise) MimeType() string {
 	return a.FMimeType.String
 }
 
-// Asset return the asset for this advertise
+// Assets return the asset for this advertise
 func (a *Advertise) Assets(assetType entity.AssetType, sub int, filter ...entity.AssetFilter) []entity.Asset {
 	var res []entity.Asset
 
