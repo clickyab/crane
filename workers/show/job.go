@@ -57,7 +57,7 @@ func (j *job) process(ctx context.Context) error {
 	errs := errorProcess{
 		tasks: len(j.Seats),
 	}
-	pub, err := ads.FindPublisher(j.Supplier, j.Publisher, 0, j.Type)
+	pub, err := ads.FindPublisher(j.Supplier, j.Publisher, 0, j.PublisherType)
 	if err != nil {
 		return err
 	}
@@ -76,16 +76,16 @@ func NewImpressionJob(ctx entity.Context, s ...entity.Seat) broker.Job {
 	assert.True(len(s) > 0)
 	j := &job{
 		Impression: m.Impression{
-			IP:         ctx.IP(),
-			CopID:      ctx.User().ID(),
-			UserAgent:  ctx.UserAgent(),
-			Suspicious: ctx.Suspicious(),
-			Referrer:   ctx.Referrer(),
-			ParentURL:  ctx.Parent(),
-			Publisher:  ctx.Publisher().Name(),
-			Supplier:   ctx.Publisher().Supplier().Name(),
-			Type:       ctx.SubType(),
-			Timestamp:  ctx.Timestamp(),
+			IP:            ctx.IP(),
+			CopID:         ctx.User().ID(),
+			UserAgent:     ctx.UserAgent(),
+			Suspicious:    ctx.Suspicious(),
+			Referrer:      ctx.Referrer(),
+			ParentURL:     ctx.Parent(),
+			Publisher:     ctx.Publisher().Name(),
+			Supplier:      ctx.Publisher().Supplier().Name(),
+			Timestamp:     ctx.Timestamp(),
+			PublisherType: ctx.Publisher().Type(),
 		},
 	}
 	for i := range s {
@@ -97,6 +97,7 @@ func NewImpressionJob(ctx entity.Context, s ...entity.Seat) broker.Job {
 			ReserveHash:  s[i].ReservedHash(),
 			CPM:          s[i].CPM(),
 			SCPM:         s[i].SupplierCPM(),
+			Type:         s[i].RequestType(),
 		})
 	}
 
