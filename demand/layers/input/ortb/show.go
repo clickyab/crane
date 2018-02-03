@@ -18,7 +18,7 @@ import (
 
 const showPath = "/banner/:rh/:size/:type/:subtype/:jt"
 
-// show is handler for show ad request
+// show is handler for show ad requestType
 func showBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	pl, err := extractor(ctx, r)
 	if err != nil {
@@ -39,15 +39,14 @@ func showBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetProtocolByRequest(r),
 		builder.SetParent(pl.Parent, pl.Ref),
 		builder.SetTID(pl.TID, pl.IP, pl.UserAgent),
-		builder.SetType(pl.Type, pl.SubType),
 		builder.SetPublisher(pl.Publisher),
 		builder.SetSuspicious(pl.Suspicious),
 		builder.SetFatFinger(pl.FatFinger),
 	}
-	if pl.Type == entity.RequestTypeDemand {
+	if pl.Type == entity.InputTypeDemand {
 		b = append(b, builder.DoNotShowTFrame())
 	}
-	b = append(b, builder.SetFullSeats(pl.PublicID, pl.Size, pl.ReserveHash, pl.Ad, pl.Bid, time.Now().Unix(), pl.CPM, pl.SCPM))
+	b = append(b, builder.SetFullSeats(pl.PublicID, pl.Size, pl.ReserveHash, pl.Ad, pl.Bid, time.Now().Unix(), pl.CPM, pl.SCPM, pl.requestType))
 	// Build context
 	c, err := builder.NewContext(b...)
 	if err != nil {

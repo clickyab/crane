@@ -24,7 +24,6 @@ var (
 // seat is the seat for input request
 type seat struct {
 	context     *Context
-	subType     entity.RequestType
 	winnerAd    entity.Creative
 	reserveHash string
 	bid         float64
@@ -48,7 +47,12 @@ type seat struct {
 	scpm    float64
 
 	// Video related stuff
-	mimes []string
+	mimes       []string
+	requestType entity.RequestType
+}
+
+func (s *seat) RequestType() entity.RequestType {
+	return s.requestType
 }
 
 func (s *seat) FatFinger() bool {
@@ -128,7 +132,7 @@ func (s *seat) ImpressionURL() *url.URL {
 
 	s.imp = s.makeURL(
 		"banner",
-		map[string]string{"rh": s.ReservedHash(), "size": fmt.Sprint(s.size), "type": s.Type().String(), "subtype": s.SubType().String()},
+		map[string]string{"rh": s.ReservedHash(), "size": fmt.Sprint(s.size), "type": s.Type().String(), "subtype": s.RequestType().String(), "pt": s.context.publisher.Type().String()},
 		s.cpm,
 		showExpire.Duration(),
 	)
@@ -149,7 +153,7 @@ func (s *seat) ClickURL() *url.URL {
 
 	s.click = s.makeURL(
 		"click",
-		map[string]string{"rh": s.ReservedHash(), "size": fmt.Sprint(s.Size()), "type": s.Type().String(), "subtype": s.SubType().String()},
+		map[string]string{"rh": s.ReservedHash(), "size": fmt.Sprint(s.Size()), "type": s.Type().String(), "subtype": s.RequestType().String(), "pt": s.context.publisher.Type().String()},
 		cpm,
 		clickExpire.Duration(),
 	)
@@ -166,7 +170,7 @@ func (s *seat) WinNoticeRequest() *url.URL {
 
 	s.win = s.makeURL(
 		"notice",
-		map[string]string{"rh": s.ReservedHash(), "size": fmt.Sprint(s.Size()), "type": s.Type().String(), "subtype": s.SubType().String()},
+		map[string]string{"rh": s.ReservedHash(), "size": fmt.Sprint(s.Size()), "type": s.Type().String(), "subtype": s.RequestType().String(), "pt": s.context.publisher.Type().String()},
 		s.cpm,
 		time.Hour, // TODO : fix me when there is actually a code to handle it
 	)
@@ -197,6 +201,7 @@ func (s *seat) makeURL(route string, params map[string]string, cpm float64, expi
 		"now":  fmt.Sprint(time.Now().Unix()),
 		"cpm":  fmt.Sprint(cpm),
 		"ff":   ff,
+		"pt":   s.context.Publisher().Type().String(),
 	}, expire)
 	s.winnerAd.ID()
 	params["jt"] = j
@@ -218,12 +223,8 @@ func (s *seat) makeURL(route string, params map[string]string, cpm float64, expi
 	return u
 }
 
-func (s *seat) Type() entity.RequestType {
+func (s *seat) Type() entity.InputType {
 	return s.context.Type()
-}
-
-func (s *seat) SubType() entity.RequestType {
-	return s.subType
 }
 
 func (s seat) genericTests(advertise entity.Creative) bool {

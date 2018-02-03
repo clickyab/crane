@@ -7,6 +7,10 @@ import (
 type supplier struct {
 }
 
+func (s *supplier) Strategy() entity.Strategy {
+	panic("implement me")
+}
+
 func (s *supplier) Share() int {
 	panic("implement me")
 }
@@ -30,11 +34,6 @@ func (s *supplier) DefaultSoftFloorCPM() int64 {
 func (s *supplier) DefaultMinBid() int64 {
 	panic("implement me")
 }
-
-func (s *supplier) BidType() entity.BIDType {
-	panic("implement me")
-}
-
 func (s *supplier) DefaultCTR() float64 {
 	panic("implement me")
 }

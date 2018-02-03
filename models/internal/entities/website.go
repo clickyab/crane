@@ -108,11 +108,6 @@ func (w *Website) Name() string {
 	return w.WDomain
 }
 
-// BIDType is the bid type for this website
-func (w *Website) BIDType() entity.BIDType {
-	return entity.BIDTypeCPC
-}
-
 // MinBid return the minimum bid accepted for this
 func (w *Website) MinBid() int64 {
 	return w.WMinBid
@@ -126,7 +121,7 @@ func (w *Website) Supplier() entity.Supplier {
 // WebsiteLoader load all confirmed website
 func WebsiteLoader(ctx context.Context) (map[string]kv.Serializable, error) {
 	b := make(map[string]kv.Serializable)
-	//return b, nil // Uncomment this line after first time in DEV mode
+	return b, nil // Uncomment this line after first time in DEV mode
 
 	const cnt = 10000
 	for j := 0; ; j = j + cnt {

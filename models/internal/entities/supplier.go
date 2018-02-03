@@ -10,28 +10,39 @@ import (
 
 	"database/sql"
 
+	"strings"
+
 	"clickyab.com/crane/demand/entity"
 	"github.com/clickyab/services/kv"
 )
 
 // Supplier is the supplier structure
 type Supplier struct {
-	FName            string        `db:"name"`
-	FToken           string        `db:"token"`
-	FUserID          sql.NullInt64 `db:"user_id"`
-	DefaultSoftFloor int64         `db:"default_soft_floor"`
-	DefaultMinBID    int64         `db:"default_min_bid"`
-	FBIDType         string        `db:"bid_type"`
-	FDefaultCTR      float64       `db:"default_ctr"`
-	Tiny             int           `db:"tiny_mark"`
-	FShowDomain      string        `db:"show_domain"`
-	CreatedAt        time.Time     `db:"created_at"`
-	UpdatedAt        time.Time     `db:"updated_at"`
-	FRate            int           `db:"rate"`
-	FTinyLogo        string        `db:"tiny_logo"`
-	FTinyURL         string        `db:"tiny_url"`
-	FUnderFloor      int           `db:"under_floor"`
-	FShare           int           `db:"share"`
+	FName            string          `db:"name"`
+	FToken           string          `db:"token"`
+	FUserID          sql.NullInt64   `db:"user_id"`
+	DefaultSoftFloor int64           `db:"default_soft_floor"`
+	DefaultMinBID    int64           `db:"default_min_bid"`
+	FBIDType         string          `db:"bid_type"`
+	FDefaultCTR      float64         `db:"default_ctr"`
+	Tiny             int             `db:"tiny_mark"`
+	FShowDomain      string          `db:"show_domain"`
+	CreatedAt        time.Time       `db:"created_at"`
+	UpdatedAt        time.Time       `db:"updated_at"`
+	FRate            int             `db:"rate"`
+	FTinyLogo        string          `db:"tiny_logo"`
+	FTinyURL         string          `db:"tiny_url"`
+	FShare           int             `db:"share"`
+	strategy         entity.Strategy `db:"-"`
+}
+
+// Strategy of supplier can be cpm, cpc or both
+func (s Supplier) Strategy() entity.Strategy {
+	if s.strategy != 0 {
+		return s.strategy
+	}
+	s.strategy = entity.GetStrategy(strings.Split(s.FBIDType, ","))
+	return s.strategy
 }
 
 // TinyLogo will be the url to the logo (ex: //clickyab.com/tiny.png)
@@ -99,25 +110,9 @@ func (s *Supplier) DefaultMinBid() int64 {
 	return s.DefaultMinBID
 }
 
-// BidType return this supplier bid type
-func (s *Supplier) BidType() entity.BIDType {
-	switch s.FBIDType {
-	case "cpm":
-		return entity.BIDTypeCPM
-	default:
-		return entity.BIDTypeCPC
-	}
-}
-
 // DefaultCTR used for this website no data ctr calculation
 func (s *Supplier) DefaultCTR() float64 {
 	return s.FDefaultCTR
-}
-
-// UnderFloor means that this supplier allow to pass underfloor value.
-// normally used only for clickyab
-func (s *Supplier) UnderFloor() bool {
-	return s.FUnderFloor != 0
 }
 
 // Share of this supplier
@@ -127,7 +122,7 @@ func (s *Supplier) Share() int {
 
 var (
 	supQuery = `SELECT name,token,user_id,default_soft_floor,default_min_bid,bid_type,default_ctr,tiny_mark,
-show_domain,created_at,updated_at,rate,tiny_logo,tiny_url,under_floor,share FROM suppliers`
+show_domain,created_at,updated_at,rate,tiny_logo,tiny_url,share FROM suppliers`
 )
 
 // SupplierLoader load all confirmed website

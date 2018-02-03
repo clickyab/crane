@@ -14,6 +14,68 @@ const (
 	TargetNative
 )
 
+// Strategy of campaign
+type Strategy uint64
+
+var strategyString = map[Strategy]string{
+	StrategyCPM: "cpm",
+	StrategyCPC: "cpc",
+}
+var stringStrategy = map[string]Strategy{
+	"cpm": StrategyCPM,
+	"cpc": StrategyCPC,
+}
+
+const (
+	// StrategyCPM for campaign
+	StrategyCPM Strategy = 1 << iota
+	// StrategyCPC for campaign
+	StrategyCPC
+)
+
+// GetStrategy return strategy from string name (cpc, cpm)
+func GetStrategy(s []string) Strategy {
+	var res Strategy
+	for _, value := range s {
+		if v, ok := stringStrategy[value]; ok {
+			res |= v
+		}
+	}
+	return res
+}
+
+// IsSubsetOf return true if target contain all strategy
+func (s Strategy) IsSubsetOf(t Strategy) bool {
+	return t|s == t
+}
+
+// Has return true if target has one or more
+func (s Strategy) Has(t Strategy) bool {
+	return s&t > 0
+}
+
+// Is return true if strategy is the same as target
+func (s Strategy) Is(t Strategy) bool {
+	return s == t
+}
+
+// String return string value of strategy
+func (s Strategy) String() []string {
+	res := make([]string, 0)
+	for i := range strategyString {
+		if s|i == s {
+			res = append(res, strategyString[i])
+
+		}
+	}
+	return res
+}
+
+// Valid return true if strategy is valid
+func (s Strategy) Valid() bool {
+	return (StrategyCPM|StrategyCPC)&s != 0
+}
+
 // Campaign is the single campaign in system
 type Campaign interface {
 	// ID return the campaign id
@@ -53,6 +115,8 @@ type Campaign interface {
 	ISP() []string
 	// NetProvider net providers for certain campaign
 	NetProvider() []string
+	// Strategy can be cpm, cpc
+	Strategy() Strategy
 }
 
 // IsSizeAllowed return if the size is allowed in target type or not

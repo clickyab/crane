@@ -30,7 +30,7 @@ type Click struct {
 	date         string
 	supplier     string
 	adSize       int
-	typ          entity.RequestType
+	typ          entity.InputType
 }
 
 // FillClickData try to fill Click structure
@@ -87,7 +87,7 @@ func FillClickData(p entity.Publisher, m models.Impression, s models.Seat, os en
 		time:         m.Timestamp.Unix(),
 		date:         m.Timestamp.Format("20060102"),
 		fast:         fast, //TODO fix after rebase,
-		typ:          entity.RequestTypeDemand,
+		typ:          entity.InputTypeDemand,
 		adID:         ad.ID(),
 		supplier:     p.Supplier().Name(),
 	}, nil

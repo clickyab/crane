@@ -59,7 +59,7 @@ func (loader) Initialize() {
 
 	nameLoader := entities.SupplierLoaderByName
 	if extraSup.String() != "" {
-		nameLoader = pool.DebugLoaderGenerator(tokenLoader, extraSup.String(), namePattern{})
+		nameLoader = pool.DebugLoaderGenerator(nameLoader, extraSup.String(), namePattern{})
 	}
 	suppliersByName = pool.NewPool(nameLoader, memorypool.NewMemoryPool(), supplierExp.Duration(), 10*time.Second, 3)
 	suppliersByName.Start(ctx)

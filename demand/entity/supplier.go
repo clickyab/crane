@@ -10,8 +10,6 @@ type Supplier interface {
 	DefaultSoftFloorCPM() int64
 	// DefaultMinBid return the default min bid for this supplier
 	DefaultMinBid() int64
-	// This publisher bid type
-	BidType() BIDType
 	// DefaultCTR for this supplier
 	DefaultCTR() float64
 	// AllowCreate indicated if this supplier can create publisher on demand
@@ -28,11 +26,10 @@ type Supplier interface {
 	UserID() int64
 	// Rate return ratio currency conversion to IRR
 	Rate() int
-	// UnderFloor means that this supplier allow to pass underfloor value.
-	// normally used only for clickyab
-	UnderFloor() bool
 	// Share is a percentage of the minbid reported to the rtb module. if share is 100 means the
 	// min bid reported with no change, if less than 100, means reported less than actual value (not correct normally!)
 	// greater than 100 means reported more than its actual value
 	Share() int
+	// Strategy return default strategy of supplier (cpm, cpc)
+	Strategy() Strategy
 }

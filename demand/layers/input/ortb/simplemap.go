@@ -1,6 +1,7 @@
 package ortb
 
 import (
+	"encoding/json"
 	"strconv"
 )
 
@@ -36,5 +37,23 @@ func (s simpleMap) String(k string) string {
 		return string(t)
 	default:
 		return ""
+	}
+}
+
+func (s simpleMap) Strings(k string) []string {
+	var res []string
+	d, ok := s[k]
+	if !ok {
+		return res
+	}
+	switch t := d.(type) {
+	case string:
+		_ = json.Unmarshal([]byte(t), &res)
+		return res
+	case []byte:
+		_ = json.Unmarshal([]byte(t), &res)
+		return res
+	default:
+		return res
 	}
 }
