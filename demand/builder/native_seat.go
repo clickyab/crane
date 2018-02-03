@@ -88,7 +88,7 @@ func (s *nativeSeat) ImpressionURL() *url.URL {
 
 	s.imp = s.makeURL(
 		"pixel",
-		map[string]string{"rh": s.ReservedHash(), "size": "20", "type": s.Type().String(), "subtype": s.SubType().String()},
+		map[string]string{"rh": s.ReservedHash(), "size": "20", "type": s.Type().String(), "subtype": s.RequestType().String()},
 		s.cpm,
 		showExpire.Duration(),
 	)

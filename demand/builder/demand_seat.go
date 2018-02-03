@@ -73,8 +73,8 @@ func SetDemandSeats(sd ...DemandSeatData) ShowOptionSetter {
 					duration:  vastLinearDefaultLen.Int(),
 					skipAfter: coalesce(sd[i].Video.SkipMin, vastLinearDefaultSkip.Int()),
 				})
-			} else if sd[i].Type == SeatTypeNative {
-				seat.subType = entity.RequestTypeNative
+			} else if sd[i].Type == entity.RequestTypeNative {
+				seat.requestType = entity.RequestTypeNative
 				o.seats = append(o.seats, &nativeSeat{
 					seat:    seat,
 					filters: assetToFilterFunc(sd[i].Assets),

@@ -17,10 +17,6 @@ const (
 // Strategy of campaign
 type Strategy uint64
 
-var strategyString = map[Strategy]string{
-	StrategyCPM: "cpm",
-	StrategyCPC: "cpc",
-}
 var stringStrategy = map[string]Strategy{
 	"cpm": StrategyCPM,
 	"cpc": StrategyCPC,

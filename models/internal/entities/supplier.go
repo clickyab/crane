@@ -2,38 +2,36 @@ package entities
 
 import (
 	"context"
-	"time"
-
-	"io"
-
-	"encoding/gob"
-
 	"database/sql"
-
+	"encoding/gob"
+	"fmt"
+	"io"
 	"strings"
+	"time"
 
 	"clickyab.com/crane/demand/entity"
 	"github.com/clickyab/services/kv"
+	"github.com/clickyab/services/mysql"
 )
 
 // Supplier is the supplier structure
 type Supplier struct {
-	FName            string          `db:"name"`
-	FToken           string          `db:"token"`
-	FUserID          sql.NullInt64   `db:"user_id"`
-	DefaultSoftFloor int64           `db:"default_soft_floor"`
-	DefaultMinBID    int64           `db:"default_min_bid"`
-	FBIDType         string          `db:"bid_type"`
-	FDefaultCTR      float64         `db:"default_ctr"`
-	Tiny             int             `db:"tiny_mark"`
-	FShowDomain      string          `db:"show_domain"`
-	CreatedAt        time.Time       `db:"created_at"`
-	UpdatedAt        time.Time       `db:"updated_at"`
-	FRate            int             `db:"rate"`
-	FTinyLogo        string          `db:"tiny_logo"`
-	FTinyURL         string          `db:"tiny_url"`
-	FShare           int             `db:"share"`
-	strategy         entity.Strategy `db:"-"`
+	FName         string                 `db:"name"`
+	FToken        string                 `db:"token"`
+	FUserID       sql.NullInt64          `db:"user_id"`
+	FSoftFloorCPM mysql.GenericJSONField `db:"soft_floor_cpm"`
+	DefaultMinBID int64                  `db:"default_min_bid"`
+	FBIDType      string                 `db:"bid_type"`
+	FDefaultCTR   mysql.GenericJSONField `db:"ctr"`
+	Tiny          int                    `db:"tiny_mark"`
+	FShowDomain   string                 `db:"show_domain"`
+	CreatedAt     time.Time              `db:"created_at"`
+	UpdatedAt     time.Time              `db:"updated_at"`
+	FRate         int                    `db:"rate"`
+	FTinyLogo     string                 `db:"tiny_logo"`
+	FTinyURL      string                 `db:"tiny_url"`
+	FShare        int                    `db:"share"`
+	strategy      entity.Strategy        `db:"-"`
 }
 
 // Strategy of supplier can be cpm, cpc or both
@@ -43,6 +41,28 @@ func (s Supplier) Strategy() entity.Strategy {
 	}
 	s.strategy = entity.GetStrategy(strings.Split(s.FBIDType, ","))
 	return s.strategy
+}
+
+// SoftFloorCPM based on pub type and request type
+func (s Supplier) SoftFloorCPM(adType string, pubType string) int64 {
+	key := fmt.Sprintf("%s_%s", pubType, adType)
+	if val, ok := s.FSoftFloorCPM[key]; ok {
+		if x, ok := val.(float64); ok {
+			return int64(x)
+		}
+	}
+	panic("[BUG]supplier not support proper floor cpm")
+}
+
+// DefaultCTR get ctr by ad type and publisher type
+func (s Supplier) DefaultCTR(adType string, pubType string) float64 {
+	key := fmt.Sprintf("%s_%s", pubType, adType)
+	if val, ok := s.FDefaultCTR[key]; ok {
+		if x, ok := val.(float64); ok {
+			return x
+		}
+	}
+	panic("[BUG]supplier not support proper default ctr")
 }
 
 // TinyLogo will be the url to the logo (ex: //clickyab.com/tiny.png)
@@ -100,19 +120,9 @@ func (s *Supplier) Token() string {
 	return s.FToken
 }
 
-// DefaultSoftFloorCPM is the default floor for new sites
-func (s *Supplier) DefaultSoftFloorCPM() int64 {
-	return s.DefaultSoftFloor
-}
-
 // DefaultMinBid is the default min bid
 func (s *Supplier) DefaultMinBid() int64 {
 	return s.DefaultMinBID
-}
-
-// DefaultCTR used for this website no data ctr calculation
-func (s *Supplier) DefaultCTR() float64 {
-	return s.FDefaultCTR
 }
 
 // Share of this supplier
@@ -121,7 +131,7 @@ func (s *Supplier) Share() int {
 }
 
 var (
-	supQuery = `SELECT name,token,user_id,default_soft_floor,default_min_bid,bid_type,default_ctr,tiny_mark,
+	supQuery = `SELECT name,token,user_id,soft_floor_cpm,default_min_bid,bid_type,ctr,tiny_mark,
 show_domain,created_at,updated_at,rate,tiny_logo,tiny_url,share FROM suppliers`
 )
 
@@ -129,7 +139,7 @@ show_domain,created_at,updated_at,rate,tiny_logo,tiny_url,share FROM suppliers`
 func SupplierLoader(ctx context.Context) (map[string]kv.Serializable, error) {
 
 	var res []Supplier
-	if _, err := NewManager().GetRDbMap().Select(&res, supQuery); err != nil {
+	if _, err := NewManager().GetWDbMap().Select(&res, supQuery); err != nil {
 		return nil, err
 	}
 
@@ -144,7 +154,7 @@ func SupplierLoader(ctx context.Context) (map[string]kv.Serializable, error) {
 func SupplierLoaderByName(ctx context.Context) (map[string]kv.Serializable, error) {
 
 	var res []Supplier
-	if _, err := NewManager().GetRDbMap().Select(&res, supQuery); err != nil {
+	if _, err := NewManager().GetWDbMap().Select(&res, supQuery); err != nil {
 		return nil, err
 	}
 
