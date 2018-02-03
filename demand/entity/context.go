@@ -67,9 +67,6 @@ type Context interface {
 	// for example for native its 50%, in new design make sure every
 	// type has its own minbid and drop this hack
 	MinBIDPercentage() int64
-	// SoftFloorCPM is the soft version of floor cpm. if the publisher ahs it, then the system
-	// try to use this as floor, but if this is not available, the FloorCPM is used
-	SoftFloorCPM() int64
 	// Rate return ratio currency conversion to IRR
 	Rate() float64
 	// Network return network for app

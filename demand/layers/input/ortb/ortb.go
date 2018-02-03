@@ -147,7 +147,6 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetNoTiny(sup.TinyMark()),
 		builder.SetFatFinger(fatFinger),
 		builder.SetStrategy(strategy, sup),
-		builder.SetSoftFloorCPM(sup.DefaultSoftFloorCPM()),
 		builder.SetRate(float64(sup.Rate())),
 		builder.SetPreventDefault(prevent),
 		builder.SetCappingMode(cappingMode),

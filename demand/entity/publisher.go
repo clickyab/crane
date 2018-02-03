@@ -29,9 +29,6 @@ type Publisher interface {
 	ID() int64
 	// FloorCPM is the floor cpm for publisher
 	FloorCPM() int64
-	// SoftFloorCPM is the soft version of floor cpm. if the publisher ahs it, then the system
-	// try to use this as floor, but if this is not available, the FloorCPM is used
-	SoftFloorCPM() int64
 	// Name of publisher
 	Name() string
 	// MinBid is the minimum CPC requested for this requests

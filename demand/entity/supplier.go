@@ -6,12 +6,14 @@ type Supplier interface {
 	Name() string
 	// Token of this for web request
 	Token() string
-	// DefaultSoftFloorCPM is the default, when the site/app is not available
-	DefaultSoftFloorCPM() int64
+	// SoftFloorCPM for this supplier by request sub type and publisher type
+	// example : web banner,web vast, app native , ...
+	SoftFloorCPM(string, string) int64
 	// DefaultMinBid return the default min bid for this supplier
 	DefaultMinBid() int64
-	// DefaultCTR for this supplier
-	DefaultCTR() float64
+	// DefaultCTR for this supplier by request sub type and publisher type
+	// example : web banner,web vast, app native , ...
+	DefaultCTR(string, string) float64
 	// AllowCreate indicated if this supplier can create publisher on demand
 	AllowCreate() bool
 	// TinyMark means we can add our mark to it

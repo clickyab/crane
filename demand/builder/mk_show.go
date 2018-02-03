@@ -200,17 +200,6 @@ func SetMinBidPercentage(i int64) ShowOptionSetter {
 	}
 }
 
-// SetSoftFloorCPM try to set soft floor on this request
-func SetSoftFloorCPM(i int64) ShowOptionSetter {
-	return func(o *Context) (*Context, error) {
-		if i <= 0 {
-			return nil, fmt.Errorf("invalid floor value")
-		}
-		o.softFloorCPM = i
-		return o, nil
-	}
-}
-
 // SetPublisher set publisher in context
 func SetPublisher(pub entity.Publisher) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {

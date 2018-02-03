@@ -4,6 +4,8 @@ import (
 	"context"
 	"sort"
 
+	"fmt"
+
 	"clickyab.com/crane/demand/capping"
 	"clickyab.com/crane/demand/entity"
 )
@@ -19,8 +21,22 @@ func getSecondCPM(floorCPM int64, exceedFloor []adAndBid) float64 {
 	return secondCPM
 }
 
-func doBid(ad entity.Creative, slot entity.Seat, floorCPM int64) (float64, int64, bool) {
-	ctr := (ad.AdCTR()*float64(adCTREffect.Int()) + slot.CTR()*float64(slotCTREffect.Int())) / float64(100)
+func calcCtrTypeBased(seatType entity.RequestType, pub entity.PublisherType, sup entity.Supplier) float64 {
+	return sup.DefaultCTR(fmt.Sprint(seatType), fmt.Sprint(pub))
+}
+
+func doBid(ad entity.Creative, slot entity.Seat, floorCPM int64, pub entity.Publisher) (float64, int64, bool) {
+	slotCtr := slot.CTR()
+	if slot.CTR() < 0 {
+		//get ctr based on the creative and seat type native app / native web / vast web ...
+		slotCtr = calcCtrTypeBased(slot.RequestType(), pub.Type(), pub.Supplier())
+	}
+	adCtr := ad.AdCTR()
+	if adCtr < 0 {
+		//get ctr based on the creative and seat type native app / native web / vast web ...
+		adCtr = calcCtrTypeBased(slot.RequestType(), pub.Type(), pub.Supplier())
+	}
+	ctr := (adCtr*float64(adCTREffect.Int()) + slotCtr*float64(slotCTREffect.Int())) / float64(100)
 	cpm := int64(float64(ad.MaxBID()) * ctr * 10.0)
 	return ctr, cpm, cpm >= floorCPM
 }
@@ -55,12 +71,11 @@ func internalSelect(
 
 	for _, seat := range ctx.Seats() {
 		var (
-			exceedFloor []adAndBid                                            // above  hard floor (the minimum cpm ), legit ads
-			underFloor  []adAndBid                                            // not passed from floor, only used if the supplier accept less than minCPM bids, normally only us, as clickyab
-			soft        = ctx.Publisher().SoftFloorCPM()                      // soft floor , determine the sec bidding pricing
-			minCPM      = incShare(ctx.Publisher().Supplier(), seat.MinBid()) // minimum cpm of this seat, aka hard floor, after adding our share to it
+			exceedFloor []adAndBid                                                                                                    // above  hard floor (the minimum cpm ), legit ads
+			underFloor  []adAndBid                                                                                                    // not passed from floor, only used if the supplier accept less than minCPM bids, normally only us, as clickyab
+			soft        = ctx.Publisher().Supplier().SoftFloorCPM(fmt.Sprint(seat.RequestType()), fmt.Sprint(ctx.Publisher().Type())) // soft floor , determine the sec bidding pricing
+			minCPM      = incShare(ctx.Publisher().Supplier(), seat.MinBid())                                                         // minimum cpm of this seat, aka hard floor, after adding our share to it
 		)
-
 		// soft floor is smaller than hard floor, so we do not have sec biding
 		if soft < minCPM {
 			soft = minCPM
@@ -77,7 +92,7 @@ func internalSelect(
 				continue
 			}
 
-			if ctr, cpm, ok := doBid(creative, seat, minCPM); ok {
+			if ctr, cpm, ok := doBid(creative, seat, minCPM, ctx.Publisher()); ok {
 				// a pass!
 				exceedFloor = append(
 					exceedFloor,
@@ -130,7 +145,7 @@ func internalSelect(
 		// Do not do second biding pricing on this ads, they can not pass CPMFloor
 		targetCPM := float64(theAd.MaxBID()) * 10 * theAd.ctr
 		if theAd.secBid {
-			targetCPM = getSecondCPM(ctx.SoftFloorCPM(), sorted)
+			targetCPM = getSecondCPM(soft, sorted)
 		}
 
 		// bid is in CPC world, so must compare it with the max bid
