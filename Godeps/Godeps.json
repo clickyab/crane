@@ -8,23 +8,23 @@
 	"Deps": [
 		{
 			"ImportPath": "github.com/SermoDigital/jose",
-			"Comment": "1.1-4-g803625b",
-			"Rev": "803625baeddc3526d01d321b5066029f53eafc81"
+			"Comment": "1.1-1-g2bd9b81",
+			"Rev": "2bd9b81ac51d6d6134fcd4fd846bd2e7347a15f9"
 		},
 		{
 			"ImportPath": "github.com/SermoDigital/jose/crypto",
-			"Comment": "1.1-4-g803625b",
-			"Rev": "803625baeddc3526d01d321b5066029f53eafc81"
+			"Comment": "1.1-1-g2bd9b81",
+			"Rev": "2bd9b81ac51d6d6134fcd4fd846bd2e7347a15f9"
 		},
 		{
 			"ImportPath": "github.com/SermoDigital/jose/jws",
-			"Comment": "1.1-4-g803625b",
-			"Rev": "803625baeddc3526d01d321b5066029f53eafc81"
+			"Comment": "1.1-1-g2bd9b81",
+			"Rev": "2bd9b81ac51d6d6134fcd4fd846bd2e7347a15f9"
 		},
 		{
 			"ImportPath": "github.com/SermoDigital/jose/jwt",
-			"Comment": "1.1-4-g803625b",
-			"Rev": "803625baeddc3526d01d321b5066029f53eafc81"
+			"Comment": "1.1-1-g2bd9b81",
+			"Rev": "2bd9b81ac51d6d6134fcd4fd846bd2e7347a15f9"
 		},
 		{
 			"ImportPath": "github.com/bsm/openrtb",
@@ -33,6 +33,11 @@
 		},
 		{
 			"ImportPath": "github.com/bsm/openrtb/native/request",
+			"Comment": "v2.1.1-10-g1979186",
+			"Rev": "197918635afa32b6e0d971921926f61671cfc092"
+		},
+		{
+			"ImportPath": "github.com/bsm/openrtb/native/response",
 			"Comment": "v2.1.1-10-g1979186",
 			"Rev": "197918635afa32b6e0d971921926f61671cfc092"
 		},
@@ -190,33 +195,33 @@
 		},
 		{
 			"ImportPath": "github.com/go-redis/redis",
-			"Comment": "v6.7.1-2-g9c20773",
-			"Rev": "9c20773cb24624a4ad05cddb60583b61f4ffa701"
+			"Comment": "v6.7.3",
+			"Rev": "d0f86971b5d61de9cebd2616b932acb7ba14d957"
 		},
 		{
 			"ImportPath": "github.com/go-redis/redis/internal",
-			"Comment": "v6.7.1-2-g9c20773",
-			"Rev": "9c20773cb24624a4ad05cddb60583b61f4ffa701"
+			"Comment": "v6.7.3",
+			"Rev": "d0f86971b5d61de9cebd2616b932acb7ba14d957"
 		},
 		{
 			"ImportPath": "github.com/go-redis/redis/internal/consistenthash",
-			"Comment": "v6.7.1-2-g9c20773",
-			"Rev": "9c20773cb24624a4ad05cddb60583b61f4ffa701"
+			"Comment": "v6.7.3",
+			"Rev": "d0f86971b5d61de9cebd2616b932acb7ba14d957"
 		},
 		{
 			"ImportPath": "github.com/go-redis/redis/internal/hashtag",
-			"Comment": "v6.7.1-2-g9c20773",
-			"Rev": "9c20773cb24624a4ad05cddb60583b61f4ffa701"
+			"Comment": "v6.7.3",
+			"Rev": "d0f86971b5d61de9cebd2616b932acb7ba14d957"
 		},
 		{
 			"ImportPath": "github.com/go-redis/redis/internal/pool",
-			"Comment": "v6.7.1-2-g9c20773",
-			"Rev": "9c20773cb24624a4ad05cddb60583b61f4ffa701"
+			"Comment": "v6.7.3",
+			"Rev": "d0f86971b5d61de9cebd2616b932acb7ba14d957"
 		},
 		{
 			"ImportPath": "github.com/go-redis/redis/internal/proto",
-			"Comment": "v6.7.1-2-g9c20773",
-			"Rev": "9c20773cb24624a4ad05cddb60583b61f4ffa701"
+			"Comment": "v6.7.3",
+			"Rev": "d0f86971b5d61de9cebd2616b932acb7ba14d957"
 		},
 		{
 			"ImportPath": "github.com/go-sql-driver/mysql",
@@ -230,11 +235,11 @@
 		},
 		{
 			"ImportPath": "github.com/gopherjs/gopherjs/js",
-			"Rev": "415225646bb92c4449bb484646f2c95a98402f6f"
+			"Rev": "6997325cc76f13635f68ad9e1c38544966eb7de2"
 		},
 		{
 			"ImportPath": "github.com/jtolds/gls",
-			"Comment": "v4.2.1",
+			"Comment": "v4.2.0-2-g77f1821",
 			"Rev": "77f18212c9c7edc9bd6a33d383a7b545ce62f064"
 		},
 		{
@@ -253,7 +258,7 @@
 		},
 		{
 			"ImportPath": "github.com/rs/vast",
-			"Rev": "749ae1f3dc670c549b600f0b6999fe6c7b262fde"
+			"Rev": "c6489585200f1a2f365623cb318f6cd40ee68dd0"
 		},
 		{
 			"ImportPath": "github.com/rs/vmap",
@@ -270,7 +275,7 @@
 		},
 		{
 			"ImportPath": "github.com/rubenv/sql-migrate/sqlparse",
-			"Rev": "72a5478faa469f9023cc1802367cddfc5270acbb"
+			"Rev": "79fe99e24311fa42469fb2ca23eb3f8f065e6155"
 		},
 		{
 			"ImportPath": "github.com/sirupsen/logrus",
@@ -279,49 +284,49 @@
 		},
 		{
 			"ImportPath": "github.com/smartystreets/assertions",
-			"Comment": "1.7.0",
-			"Rev": "9c0ea8acbc1d8ad689f9e6fe0c1fa5838e0cabc2"
+			"Comment": "1.6.0-24-gf8459f9",
+			"Rev": "f8459f92181409546d2762c9e9c4bedc23c92d76"
 		},
 		{
 			"ImportPath": "github.com/smartystreets/assertions/internal/go-render/render",
-			"Comment": "1.7.0",
-			"Rev": "9c0ea8acbc1d8ad689f9e6fe0c1fa5838e0cabc2"
+			"Comment": "1.6.0-24-gf8459f9",
+			"Rev": "f8459f92181409546d2762c9e9c4bedc23c92d76"
 		},
 		{
 			"ImportPath": "github.com/smartystreets/assertions/internal/oglematchers",
-			"Comment": "1.7.0",
-			"Rev": "9c0ea8acbc1d8ad689f9e6fe0c1fa5838e0cabc2"
+			"Comment": "1.6.0-24-gf8459f9",
+			"Rev": "f8459f92181409546d2762c9e9c4bedc23c92d76"
 		},
 		{
 			"ImportPath": "github.com/smartystreets/goconvey/convey",
-			"Comment": "1.6.3-2-ge5b2b7c",
-			"Rev": "e5b2b7c9111590d019a696c7800593f666e1a7f4"
+			"Comment": "1.6.2-19-gaf8e7d5",
+			"Rev": "af8e7d560364b90f732a1d119d17b5506e50447d"
 		},
 		{
 			"ImportPath": "github.com/smartystreets/goconvey/convey/gotest",
-			"Comment": "1.6.3-2-ge5b2b7c",
-			"Rev": "e5b2b7c9111590d019a696c7800593f666e1a7f4"
+			"Comment": "1.6.2-19-gaf8e7d5",
+			"Rev": "af8e7d560364b90f732a1d119d17b5506e50447d"
 		},
 		{
 			"ImportPath": "github.com/smartystreets/goconvey/convey/reporting",
-			"Comment": "1.6.3-2-ge5b2b7c",
-			"Rev": "e5b2b7c9111590d019a696c7800593f666e1a7f4"
+			"Comment": "1.6.2-19-gaf8e7d5",
+			"Rev": "af8e7d560364b90f732a1d119d17b5506e50447d"
 		},
 		{
 			"ImportPath": "github.com/streadway/amqp",
-			"Rev": "2cbfe40c9341ad63ba23e53013b3ddc7989d801c"
+			"Rev": "dfe15e36048539f4cda41f240b27a5ca25b9cd46"
 		},
 		{
 			"ImportPath": "golang.org/x/crypto/ssh/terminal",
-			"Rev": "eb71ad9bd329b5ac0fd0148dd99bd62e8be8e035"
+			"Rev": "81e90905daefcd6fd217b62423c0908922eadb30"
 		},
 		{
 			"ImportPath": "golang.org/x/sys/unix",
-			"Rev": "9f7170bcd8e9f4d3691c06401119c46a769a1e03"
+			"Rev": "9aade4d3a3b7e6d876cd3823ad20ec45fc035402"
 		},
 		{
 			"ImportPath": "golang.org/x/sys/windows",
-			"Rev": "9f7170bcd8e9f4d3691c06401119c46a769a1e03"
+			"Rev": "9aade4d3a3b7e6d876cd3823ad20ec45fc035402"
 		},
 		{
 			"ImportPath": "gopkg.in/fzerorubigd/onion.v3",
