@@ -209,8 +209,8 @@ func Render(_ context.Context, w http.ResponseWriter, ctx entity.Context) error 
 			continue
 		}
 		var bid *openrtb.Bid
-		switch v.SubType() {
-		case entity.RequestTypeWeb, entity.RequestTypeApp:
+		switch v.RequestType() {
+		case entity.RequestTypeBanner:
 			bid = bannerMarkup(ctx, v)
 		case entity.RequestTypeVast:
 			bid = vastMarkup(ctx, v.(entity.VastSeat))

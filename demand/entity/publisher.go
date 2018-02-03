@@ -1,14 +1,18 @@
 package entity
 
 // PublisherType is the type of publisher
-type PublisherType int
+type PublisherType string
 
 const (
 	// PublisherTypeApp is the app
-	PublisherTypeApp PublisherType = 1
+	PublisherTypeApp PublisherType = "app"
 	// PublisherTypeWeb is the web
-	PublisherTypeWeb PublisherType = 2
+	PublisherTypeWeb PublisherType = "web"
 )
+
+func (s PublisherType) String() string {
+	return string(s)
+}
 
 // PublisherAttributes is the key for publisher attributes
 type PublisherAttributes int
