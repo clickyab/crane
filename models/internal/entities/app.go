@@ -94,11 +94,7 @@ func (app *App) Supplier() entity.Supplier {
 // CTR return ctr of app per size
 func (app *App) CTR(size int) float64 {
 	if app.FCTR[size] == 0 {
-		if app.Supp != nil {
-			app.FCTR[size] = app.Supp.DefaultCTR()
-		} else {
-			app.FCTR[size] = defaultCTR.Float64()
-		}
+		app.FCTR[size] = -1
 	}
 	return app.FCTR[size]
 }

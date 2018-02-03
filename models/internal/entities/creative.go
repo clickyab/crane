@@ -246,7 +246,7 @@ func AdLoader(ctx context.Context) (map[string]kv.Serializable, error) {
 		if res[i].FCaCTR.Valid {
 			res[i].FCTR = res[i].FCaCTR.Float64
 		} else {
-			res[i].FCTR = defaultCTR.Float64()
+			res[i].FCTR = -1
 		}
 		res[i].assets = extractAssets(res[i])
 		ads[fmt.Sprint(res[i].FID)] = &Advertise{ad: res[i]}
@@ -288,7 +288,7 @@ func GetAd(adID int64) (entity.Creative, error) {
 	if res.FCaCTR.Valid {
 		res.FCTR = res.FCaCTR.Float64
 	} else {
-		res.FCTR = defaultCTR.Float64()
+		res.FCTR = -1
 	}
 
 	return &res, nil

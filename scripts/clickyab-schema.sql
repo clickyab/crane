@@ -2203,6 +2203,8 @@ CREATE TABLE IF NOT EXISTS `suppliers` (
   `tiny_url` varchar(200) DEFAULT NULL,
   `under_floor` int(11) NOT NULL DEFAULT '0',
   `share` int(11) NOT NULL DEFAULT '100' COMMENT 'The share, 100 means no inc and dec, 100+ inc the min bid and dec the share',
+  `soft_floor_cpm` TEXT,
+  `ctr` TEXT,
   PRIMARY KEY (`name`),
   UNIQUE KEY `token` (`token`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

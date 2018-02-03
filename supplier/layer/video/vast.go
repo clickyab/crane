@@ -21,7 +21,7 @@ import (
 
 var (
 	// XXX : currently, there is no need to change the endpoints per type, but if you need it, do it :) its not a rule or something.
-	server = config.RegisterString("crane.supplier.banner.url", "", "route for banner")
+	server = config.RegisterString("crane.supplier.banner.url", "127.0.0.1:2000/ortb/f7033f7f55e99da475097798aa611e0b390a8f79", "route for banner")
 	method = config.RegisterString("crane.supplier.banner.method", "POST", "method for banner request")
 )
 
