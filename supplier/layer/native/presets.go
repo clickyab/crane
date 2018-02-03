@@ -38,12 +38,14 @@ func getImps(r *http.Request, count int, pubID, pubFloor int64) []openrtb.Impres
 		}
 		bReq, err := json.Marshal(req)
 		assert.Nil(err)
+		cReq, err := json.Marshal(string(bReq))
+		assert.Nil(err)
 		imp := openrtb.Impression{
 			ID:       fmt.Sprintf("%d%s%d", pubID, "470", i),
 			BidFloor: float64(pubFloor),
 			Secure:   sec,
 			Native: &openrtb.Native{
-				Request: bReq,
+				Request: cReq,
 			},
 		}
 		res = append(res, imp)
