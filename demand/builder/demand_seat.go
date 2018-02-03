@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"clickyab.com/crane/demand/entity"
-	"clickyab.com/crane/demand/internal/cyslot"
+	"clickyab.com/crane/internal/cyslot"
 	"github.com/bsm/openrtb"
 	"github.com/clickyab/services/config"
 )

@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"clickyab.com/crane/demand/entity"
+	"clickyab.com/crane/internal/cyslot"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/kv"
 	"github.com/clickyab/services/mysql"
@@ -114,6 +115,75 @@ type ad struct {
 	CampaignHourStart        int                    `db:"cp_hour_start"`
 	CampaignHourEnd          int                    `db:"cp_hour_end"`
 	FMimeType                sql.NullString         `db:"ad_mime"`
+
+	assets []entity.Asset `db:"-"`
+}
+
+func extractAssets(in ad) []entity.Asset {
+	if entity.AdType(in.FType) == entity.AdTypeBanner {
+		w, h := cyslot.GetSizeByNum(in.FAdSize)
+		return []entity.Asset{
+			{
+				MimeType: in.FMimeType.String,
+				Type:     entity.AssetTypeImage,
+				SubType:  entity.AssetTypeImageSubTypeBanner,
+				Width:    w,
+				Height:   h,
+				Data:     in.FAdImg.String,
+			},
+		}
+	}
+
+	if entity.AdType(in.FType) == entity.AdTypeVideo {
+		w, h := cyslot.GetSizeByNum(in.FAdSize)
+		return []entity.Asset{
+			{
+				MimeType: in.FMimeType.String,
+				Type:     entity.AssetTypeVideo,
+				SubType:  entity.AssetTypeVideoSubTypeMain,
+				Width:    w,
+				Height:   h,
+				Data:     in.FAdImg.String,
+			},
+		}
+	}
+
+	// TODO : before commit, make sure the dynamic support is added
+	//if entity.AdType(in.FType) == entity.AdTypeDynamic {
+	//	w, h := cyslot.GetSizeByNum(in.FAdSize)
+	//	return []entity.Asset{
+	//		{
+	//			MimeType: in.FMimeType.String,
+	//			Type:     entity.AssetTypeImage,
+	//			SubType:  entity.AssetTypeImageSubTypeIcon,
+	//			Width:    w,
+	//			Height:   h,
+	//			Data:     in.FAdImg.String,
+	//		},
+	//	}
+	//}
+
+	if entity.AdType(in.FType) == entity.AdTypeNative {
+		txt := in.FAdAttribute["banner_description_text_type"].(string)
+		return []entity.Asset{
+			{
+				MimeType: in.FMimeType.String,
+				Type:     entity.AssetTypeImage,
+				SubType:  entity.AssetTypeVideoSubTypeMain,
+				Width:    500, // TODO : from attributes
+				Height:   315, // TODO : from attributes
+				Data:     in.FAdImg.String,
+			},
+			{
+				MimeType: "text/html",
+				Type:     entity.AssetTypeText,
+				SubType:  entity.AssetTypeTextSubTypeTitle,
+				Len:      len(txt),
+				Data:     txt,
+			},
+		}
+	}
+	return nil
 }
 
 // AdLoader is the loader of ads
@@ -167,6 +237,7 @@ func AdLoader(ctx context.Context) (map[string]kv.Serializable, error) {
 		} else {
 			res[i].FCTR = defaultCTR.Float64()
 		}
+		res[i].assets = extractAssets(res[i])
 		ads[fmt.Sprint(res[i].FID)] = &Advertise{ad: res[i]}
 	}
 	return ads, nil
@@ -319,4 +390,23 @@ func (a *Advertise) TargetURL() string {
 // MimeType return the media mime type
 func (a *Advertise) MimeType() string {
 	return a.FMimeType.String
+}
+
+// Asset return the asset for this advertise
+func (a *Advertise) Asset(assetType entity.AssetType, sub int, filter ...entity.AssetFilter) []entity.Asset {
+	var res []entity.Asset
+
+bigLoop:
+	for i := range a.assets {
+		if a.assets[i].Type != assetType || a.assets[i].SubType != sub {
+			continue
+		}
+		for j := range filter {
+			if !filter[j](&a.assets[i]) {
+				continue bigLoop
+			}
+		}
+		res = append(res, a.assets[i])
+	}
+	return res
 }
