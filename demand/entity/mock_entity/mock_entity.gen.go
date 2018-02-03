@@ -443,6 +443,23 @@ func (mr *MockCreativeMockRecorder) AdCTR() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AdCTR", reflect.TypeOf((*MockCreative)(nil).AdCTR))
 }
 
+// Assets mocks base method
+func (m *MockCreative) Assets(arg0 entity.AssetType, arg1 int, arg2 ...entity.AssetFilter) []entity.Asset {
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "Assets", varargs...)
+	ret0, _ := ret[0].([]entity.Asset)
+	return ret0
+}
+
+// Assets indicates an expected call of Assets
+func (mr *MockCreativeMockRecorder) Assets(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Assets", reflect.TypeOf((*MockCreative)(nil).Assets), varargs...)
+}
+
 // Attributes mocks base method
 func (m *MockCreative) Attributes() map[string]interface{} {
 	ret := m.ctrl.Call(m, "Attributes")

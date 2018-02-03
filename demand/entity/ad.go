@@ -12,7 +12,7 @@ const (
 	AdTypeDynamic AdType = 2
 	// AdTypeVideo is the video type
 	AdTypeVideo AdType = 3
-	// AdTypeVideo is the native type
+	// AdTypeNative is the native type
 	AdTypeNative AdType = 4
 )
 
