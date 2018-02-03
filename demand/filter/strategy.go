@@ -10,5 +10,5 @@ type Strategy struct {
 
 // Check check if creative can be use for this impression
 func (*Strategy) Check(impression entity.Context, ad entity.Creative) bool {
-	return impression.Strategy().Has(ad.Campaign().Strategy())
+	return impression.Strategy().IsSubsetOf(ad.Campaign().Strategy())
 }
