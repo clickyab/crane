@@ -12,8 +12,6 @@ const (
 	AssetTypeVideo
 	// AssetTypeText is all text type (from data normally)
 	AssetTypeText
-	// AssetTypeNumber is all number from data field
-	AssetTypeNumber
 )
 
 const (
@@ -24,7 +22,7 @@ const (
 	// AssetTypeImageSubTypeMain main image
 	AssetTypeImageSubTypeMain
 	// AssetTypeImageSubTypeBanner is a hack to handle banners
-	AssetTypeImageSubTypeBanner int = 500
+	AssetTypeImageSubTypeBanner int = 501
 )
 
 const (
@@ -39,16 +37,16 @@ const (
 	AssetTypeTextSubTypeSponsored
 	// AssetTypeTextSubTypeDesc main desceiption
 	AssetTypeTextSubTypeDesc
-	// AssetTypeNumberSubTypeRating rating
-	AssetTypeNumberSubTypeRating
-	// AssetTypeNumberSubTypeLikes likes
-	AssetTypeNumberSubTypeLikes
-	// AssetTypeNumberSubTypeDownloads downloads
-	AssetTypeNumberSubTypeDownloads
-	// AssetTypeNumberSubTypePrice price
-	AssetTypeNumberSubTypePrice
-	// AssetTypeNumberSubTypeSalePrice sale price
-	AssetTypeNumberSubTypeSalePrice
+	// AssetTypeTextSubTypeRating rating
+	AssetTypeTextSubTypeRating
+	// AssetTypeTextSubTypeLikes likes
+	AssetTypeTextSubTypeLikes
+	// AssetTypeTextSubTypeDownloads downloads
+	AssetTypeTextSubTypeDownloads
+	// AssetTypeTextSubTypePrice price
+	AssetTypeTextSubTypePrice
+	// AssetTypeTextSubTypeSalePrice sale price
+	AssetTypeTextSubTypeSalePrice
 	// AssetTypeTextSubTypePhone phone
 	AssetTypeTextSubTypePhone
 	// AssetTypeTextSubTypeAddress address
@@ -72,6 +70,8 @@ type Asset struct {
 	Len int `json:"l,omitempty"`
 	// MimeType is the mime-type checker
 	MimeType string `json:"mt"`
+	// Duration is only for videos
+	Duration int `json:"d,omitempty"`
 	// Data is the actual data inside this asset
 	Data string `json:"data"`
 }
@@ -79,64 +79,10 @@ type Asset struct {
 // AssetFilter is a callback function to filter asset
 type AssetFilter func(*Asset) bool
 
-// MinWidth return a minimum width checker
-func MinWidth(m int) AssetFilter {
-	return func(a *Asset) bool {
-		if a.Type != AssetTypeImage {
-			return false
-		}
-		return a.Width >= m
-	}
-}
-
-// MinHeight return a minimum height checker
-func MinHeight(m int) AssetFilter {
-	return func(a *Asset) bool {
-		if a.Type != AssetTypeImage {
-			return false
-		}
-		return a.Height >= m
-	}
-}
-
-// ExactWidth return an exact width checker
-func ExactWidth(m int) AssetFilter {
-	return func(a *Asset) bool {
-		if a.Type != AssetTypeImage {
-			return false
-		}
-		return a.Width == m
-	}
-}
-
-// ExactHeight return an exact height checker
-func ExactHeight(m int) AssetFilter {
-	return func(a *Asset) bool {
-		if a.Type != AssetTypeImage {
-			return false
-		}
-		return a.Height == m
-	}
-}
-
-// MaxLen return a max length checker (string)
-func MaxLen(m int) AssetFilter {
-	return func(a *Asset) bool {
-		if a.Type != AssetTypeText {
-			return false
-		}
-		return a.Len <= m
-	}
-}
-
-// ContainMimeType check for mime type in creative
-func ContainMimeType(t ...string) AssetFilter {
-	return func(a *Asset) bool {
-		for i := range t {
-			if a.MimeType == t[i] {
-				return true
-			}
-		}
-		return false
-	}
+// Filter is a full filter of one asset
+type Filter struct {
+	Type     AssetType
+	SubType  int
+	Required bool
+	Extra    []AssetFilter
 }
