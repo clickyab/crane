@@ -61,3 +61,10 @@ type VastSeat interface {
 	// SkipAfter duration in vast
 	SkipAfter() time.Duration
 }
+
+// NativeSeat is the seat for native
+type NativeSeat interface {
+	Seat
+	// Filters return array of slots (only required ones, not all of them)
+	Filters() []Filter
+}

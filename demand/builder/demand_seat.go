@@ -6,6 +6,7 @@ import (
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/internal/cyslot"
 	"github.com/bsm/openrtb"
+	"github.com/bsm/openrtb/native/request"
 	"github.com/clickyab/services/config"
 )
 
@@ -23,6 +24,8 @@ const (
 	SeatTypeBanner SeatType = iota
 	// SeatTypeVideo means this seat is video
 	SeatTypeVideo
+	// SeatTypeNative means this is a native request
+	SeatTypeNative
 )
 
 // DemandSeatData is a struct needed for create a demand seat
@@ -33,6 +36,7 @@ type DemandSeatData struct {
 	Type   SeatType
 	Video  *openrtb.Video
 	Banner *openrtb.Banner
+	Assets []request.Asset
 }
 
 func coalesce(v ...int) int {
@@ -82,6 +86,13 @@ func SetDemandSeats(sd ...DemandSeatData) ShowOptionSetter {
 					duration:  vastLinearDefaultLen.Int(),
 					skipAfter: coalesce(sd[i].Video.SkipMin, vastLinearDefaultSkip.Int()),
 				})
+			} else if sd[i].Type == SeatTypeNative {
+				seat.subType = entity.RequestTypeNative
+				o.seats = append(o.seats, &nativeSeat{
+					seat:    seat,
+					filters: assetToFilterFunc(sd[i].Assets),
+				})
+
 			} else {
 				o.seats = append(o.seats, &seat)
 			}
