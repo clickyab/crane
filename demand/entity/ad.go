@@ -53,5 +53,5 @@ type Creative interface {
 	// MimeType of media
 	MimeType() string
 	// Asset return the asset that pass all filters and type is exactly matched the value
-	Asset(AssetType, int, ...AssetFilter) []Asset
+	Assets(AssetType, int, ...AssetFilter) []Asset
 }

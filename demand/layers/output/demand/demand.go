@@ -12,6 +12,7 @@ import (
 
 	"clickyab.com/crane/demand/entity"
 	"github.com/bsm/openrtb"
+	"github.com/bsm/openrtb/native/response"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/random"
 	"github.com/clickyab/services/version"
@@ -23,6 +24,64 @@ var vs = version.GetVersion()
 func cdata(in string) vast.CDATAString {
 	return vast.CDATAString{
 		CDATA: in,
+	}
+}
+
+func nativeMarkup(ctx entity.Context, s entity.NativeSeat) *openrtb.Bid {
+	v := response.Response{
+		Link: response.Link{
+			URL: s.ClickURL().String(),
+		},
+		ImpTrackers: []string{s.ImpressionURL().String()},
+		Ver:         "1.1",
+	}
+	for _, f := range s.Filters() {
+		// TODO : Decide for duplicate assets per type :/
+		a := s.WinnerAdvertise().Assets(f.Type, f.SubType, f.Extra...)
+		if len(a) > 0 {
+			req := 0
+			if f.Required {
+				req = 1
+			}
+			as := response.Asset{
+				ID:       f.ID,
+				Required: req,
+			}
+			if f.Type == entity.AssetTypeImage {
+				as.Image = &response.Image{
+					URL:    a[0].Data,
+					Height: a[0].Height,
+					Width:  a[0].Width,
+				}
+			} else if f.Type == entity.AssetTypeVideo {
+				// TODO : support for video VASTTAG
+				as.Video = &response.Video{}
+			} else if f.Type == entity.AssetTypeText && f.SubType == entity.AssetTypeTextSubTypeTitle {
+				as.Title = &response.Title{
+					Text: a[0].Data,
+				}
+			} else if f.Type == entity.AssetTypeText {
+				as.Data = &response.Data{
+					Value: a[0].Data,
+				}
+			}
+
+			v.Assets = append(v.Assets, as)
+		}
+	}
+
+	res, err := json.Marshal(v)
+	assert.Nil(err)
+	return &openrtb.Bid{
+		ID:         s.ReservedHash(),
+		ImpID:      s.PublicID(),
+		AdMarkup:   string(res),
+		AdID:       fmt.Sprint(s.WinnerAdvertise().ID()),
+		H:          s.Height(),
+		W:          s.Width(),
+		Price:      s.CPM() / ctx.Rate(),
+		CampaignID: openrtb.StringOrNumber(fmt.Sprint(s.WinnerAdvertise().Campaign().ID())),
+		NURL:       s.WinNoticeRequest().String(),
 	}
 }
 
@@ -143,6 +202,8 @@ func Render(_ context.Context, w http.ResponseWriter, ctx entity.Context) error 
 			bid = bannerMarkup(ctx, v)
 		case entity.RequestTypeVast:
 			bid = vastMarkup(ctx, v.(entity.VastSeat))
+		case entity.RequestTypeNative:
+			bid = nativeMarkup(ctx, v.(entity.NativeSeat))
 		}
 
 		if bid != nil {

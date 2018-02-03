@@ -393,7 +393,7 @@ func (a *Advertise) MimeType() string {
 }
 
 // Asset return the asset for this advertise
-func (a *Advertise) Asset(assetType entity.AssetType, sub int, filter ...entity.AssetFilter) []entity.Asset {
+func (a *Advertise) Assets(assetType entity.AssetType, sub int, filter ...entity.AssetFilter) []entity.Asset {
 	var res []entity.Asset
 
 bigLoop:
