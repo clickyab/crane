@@ -25,8 +25,9 @@ type controller struct {
 type payloadData struct {
 	ReserveHash  string
 	Size         int
-	Type         entity.RequestType
-	SubType      entity.RequestType
+	Type         entity.InputType
+	requestType  entity.RequestType
+	PubType      entity.PublisherType
 	TID          string
 	Ref          string
 	Parent       string
@@ -53,12 +54,12 @@ func extractor(ctx context.Context, r *http.Request) (*payloadData, error) {
 	}
 	pl := payloadData{}
 	pl.ReserveHash = xmux.Param(ctx, "rh")
-	pl.Type = entity.RequestType(xmux.Param(ctx, "type"))
-	pl.SubType = entity.RequestType(xmux.Param(ctx, "subtype"))
+	pl.Type = entity.InputType(xmux.Param(ctx, "type"))
+	pl.requestType = entity.RequestType(xmux.Param(ctx, "subtype"))
 	pl.TID = r.URL.Query().Get("tid")
 	pl.Ref = r.URL.Query().Get("ref")
 	pl.Parent = r.URL.Query().Get("parent")
-	expired, m, err := jwt.NewJWT().Decode([]byte(jt), "aid", "sup", "dom", "bid", "uaip", "susp", "pid", "now", "cpm", "ff")
+	expired, m, err := jwt.NewJWT().Decode([]byte(jt), "pt", "aid", "sup", "dom", "bid", "uaip", "susp", "pid", "now", "cpm", "ff")
 	if err != nil {
 		return nil, err
 	}
@@ -78,11 +79,11 @@ func extractor(ctx context.Context, r *http.Request) (*payloadData, error) {
 	pl.FatFinger = m["ff"] == "T"
 	pl.SCPM, _ = strconv.ParseFloat(r.URL.Query().Get("scpm"), 64)
 	pl.SCPM = pl.SCPM * float64(pl.Supplier.Rate())
-
+	pl.PubType = entity.PublisherType(m["pt"])
 	// get the publisher, even its not created then its fine
-	if pl.SubType == entity.RequestTypeWeb {
+	if pl.PubType == entity.PublisherTypeWeb {
 		pl.Publisher, err = website.GetWebSiteOrFake(pl.Supplier, m["dom"])
-	} else if pl.SubType == entity.RequestTypeApp {
+	} else if pl.PubType == entity.PublisherTypeApp {
 		pl.Publisher, err = apps.GetAppOrFake(pl.Supplier, m["dom"])
 	} else {
 		err = errors.New("not supported subtype")

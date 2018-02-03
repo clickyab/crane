@@ -41,15 +41,15 @@ func GetAd(adID int64) (entity.Creative, error) {
 }
 
 // FindPublisher return publisher id for given supplier,domain
-func FindPublisher(sup, domain string, pid int64, r entity.RequestType) (entity.Publisher, error) {
+func FindPublisher(sup, domain string, pid int64, t entity.PublisherType) (entity.Publisher, error) {
 	osup, err := suppliers.GetSupplierByName(sup)
 	if err != nil {
 		return nil, err
 	}
 	var p entity.Publisher
-	if r == entity.RequestTypeWeb {
+	if t == entity.PublisherTypeWeb {
 		p, err = website.GetWebSite(osup, domain, pid)
-	} else if r == entity.RequestTypeApp {
+	} else if t == entity.PublisherTypeApp {
 		p, err = apps.GetApp(osup, domain, "")
 	} else {
 		panic("[BUG] invalid request type")

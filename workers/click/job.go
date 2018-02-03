@@ -59,7 +59,7 @@ func (j *job) Report() func(error) {
 }
 
 func (j *job) process() error {
-	pub, err := ads.FindPublisher(j.Supplier, j.Publisher, 0, j.Type)
+	pub, err := ads.FindPublisher(j.Supplier, j.Publisher, 0, j.PublisherType)
 	if err != nil {
 		return err
 	}
@@ -80,16 +80,16 @@ func NewClickJob(ctx entity.Context) broker.Job {
 	}
 	j := &job{
 		Impression: worker.Impression{
-			IP:         ctx.IP(),
-			CopID:      ctx.User().ID(),
-			UserAgent:  ctx.UserAgent(),
-			Suspicious: susp,
-			Referrer:   ctx.Referrer(),
-			ParentURL:  ctx.Parent(),
-			Publisher:  ctx.Publisher().Name(),
-			Supplier:   ctx.Publisher().Supplier().Name(),
-			Type:       ctx.SubType(),
-			Timestamp:  ctx.Timestamp(),
+			IP:            ctx.IP(),
+			CopID:         ctx.User().ID(),
+			UserAgent:     ctx.UserAgent(),
+			Suspicious:    susp,
+			Referrer:      ctx.Referrer(),
+			ParentURL:     ctx.Parent(),
+			Publisher:     ctx.Publisher().Name(),
+			Supplier:      ctx.Publisher().Supplier().Name(),
+			Timestamp:     ctx.Timestamp(),
+			PublisherType: ctx.Publisher().Type(),
 		},
 		Seat: worker.Seat{
 			AdID:         s.WinnerAdvertise().ID(),
@@ -97,6 +97,7 @@ func NewClickJob(ctx entity.Context) broker.Job {
 			SlotPublicID: s.PublicID(),
 			WinnerBID:    s.Bid(),
 			ReserveHash:  s.ReservedHash(),
+			Type:         s.RequestType(),
 		},
 		OS:   ctx.OS(),
 		Fast: fast,

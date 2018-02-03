@@ -15,22 +15,12 @@ var (
 	//vastNonLinearDefaultLen = config.RegisterInt("crane.vast.non_linear_len", 10, "default len of non linear ad in sec, if not presented in request")
 )
 
-// SeatType means the seat is banner or video
-type SeatType int
-
-const (
-	// SeatTypeBanner means this is a banner
-	SeatTypeBanner SeatType = iota
-	// SeatTypeVideo means this seat is video
-	SeatTypeVideo
-)
-
 // DemandSeatData is a struct needed for create a demand seat
 type DemandSeatData struct {
 	PubID  string
 	Size   string
 	MinBid float64
-	Type   SeatType
+	Type   entity.RequestType
 	Video  *openrtb.Video
 	Banner *openrtb.Banner
 }
@@ -53,7 +43,7 @@ func SetDemandSeats(sd ...DemandSeatData) ShowOptionSetter {
 				err  error
 			)
 			linear := false
-			if sd[i].Type == SeatTypeVideo && sd[i].Video.Linearity == 1 {
+			if sd[i].Type == entity.RequestTypeVast && sd[i].Video.Linearity == 1 {
 				linear = true
 			}
 			size, err = cyslot.GetSize(sd[i].Size)
@@ -65,16 +55,15 @@ func SetDemandSeats(sd ...DemandSeatData) ShowOptionSetter {
 			}
 
 			seat := seat{
-				context:  o,
-				subType:  o.subTyp,
-				size:     size,
-				publicID: sd[i].PubID,
-				minBid:   sd[i].MinBid,
-				ctr:      o.publisher.CTR(size),
-				rate:     o.rate,
+				context:     o,
+				size:        size,
+				publicID:    sd[i].PubID,
+				minBid:      sd[i].MinBid,
+				ctr:         o.publisher.CTR(size),
+				rate:        o.rate,
+				requestType: sd[i].Type,
 			}
-			if sd[i].Type == SeatTypeVideo {
-				seat.subType = entity.RequestTypeVast
+			if sd[i].Type == entity.RequestTypeVast {
 				seat.mimes = sd[i].Video.Mimes
 				o.seats = append(o.seats, &vastSeat{
 					seat:      seat,
