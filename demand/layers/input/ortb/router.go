@@ -8,7 +8,7 @@ import (
 	"strconv"
 
 	"clickyab.com/crane/demand/entity"
-	"clickyab.com/crane/demand/internal/hash"
+	"clickyab.com/crane/internal/hash"
 	"clickyab.com/crane/models/ads"
 	"clickyab.com/crane/models/apps"
 	"clickyab.com/crane/models/suppliers"

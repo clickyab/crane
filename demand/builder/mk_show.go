@@ -8,7 +8,7 @@ import (
 
 	"strings"
 
-	"clickyab.com/crane/demand/internal/cyos"
+	"clickyab.com/crane/internal/cyos"
 
 	"crypto/sha1"
 

@@ -12,6 +12,8 @@ const (
 	AdTypeDynamic AdType = 2
 	// AdTypeVideo is the video type
 	AdTypeVideo AdType = 3
+	// AdTypeVideo is the native type
+	AdTypeNative AdType = 4
 )
 
 // Creative is the single advertise interface
@@ -41,6 +43,7 @@ type Creative interface {
 	// Attributes return the ad specific attributes
 	Attributes() map[string]interface{}
 	// Media return image of ad
+	// Deprecated: use Asset function
 	Media() string
 	// Target return ad target of the target
 	TargetURL() string
@@ -49,4 +52,6 @@ type Creative interface {
 	CampaignAdID() int64
 	// MimeType of media
 	MimeType() string
+	// Asset return the asset that pass all filters and type is exactly matched the value
+	Asset(AssetType, int, ...AssetFilter) []Asset
 }

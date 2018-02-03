@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"clickyab.com/crane/demand/entity"
-	"clickyab.com/crane/demand/internal/cyslot"
-	"clickyab.com/crane/demand/internal/hash"
+	"clickyab.com/crane/internal/cyslot"
+	"clickyab.com/crane/internal/hash"
 	"github.com/clickyab/services/array"
 	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/framework/router"
