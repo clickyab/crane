@@ -85,6 +85,7 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	_ = json.Unmarshal(payload.Ext, &ext)
 	fatFinger := ext.Bool("fat_finger")
 	prevent := ext.Bool("prevent_default")
+	underfloor := ext.Bool("underfloor")
 	capping := ext.String("capping_mode")
 	strategy := strings.Split(ext.String("strategy"), ",")
 
@@ -159,6 +160,7 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetRate(float64(sup.Rate())),
 		builder.SetPreventDefault(prevent),
 		builder.SetCappingMode(cappingMode),
+		builder.SetUnderfloor(underfloor),
 	}
 	// TODO : if we need to implement native/app/vast then the next line must be activated and customized
 	//b = append(b, builder.SetFloorPercentage(100), builder.SetMinBidPercentage(100))
