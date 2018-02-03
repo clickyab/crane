@@ -22,6 +22,7 @@ import (
 	"clickyab.com/crane/models/suppliers"
 	"clickyab.com/crane/models/website"
 	"github.com/bsm/openrtb"
+	"github.com/bsm/openrtb/native/request"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/xlog"
 	"github.com/rs/xmux"
@@ -49,16 +50,6 @@ var (
 		&filter.Province{},
 		&filter.ISP{},
 		&filter.AreaInGlob{},
-	)
-
-	ortbVastSelector = reducer.Mix(
-		&filter.Desktop{},
-		&filter.OS{},
-		&filter.WhiteList{},
-		&filter.BlackList{},
-		&filter.Category{},
-		&filter.Province{},
-		&filter.ISP{},
 	)
 )
 
@@ -180,7 +171,6 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 	sd, vast := seatDetail(payload)
 	if vast {
-		selector = ortbVastSelector
 		b = append(b, builder.SetMultiVideo(true))
 	}
 	b = append(b, builder.SetDemandSeats(sd...))
@@ -207,10 +197,11 @@ func intInArray(v int, all ...int) bool {
 
 func seatDetail(req openrtb.BidRequest) ([]builder.DemandSeatData, bool) {
 	var (
-		imp   = req.Imp
-		seats = make([]builder.DemandSeatData, 0)
-		w, h  int
-		vast  bool
+		imp    = req.Imp
+		seats  = make([]builder.DemandSeatData, 0)
+		w, h   int
+		vast   bool
+		assets []request.Asset
 	)
 	for i := range imp {
 		var t builder.SeatType
@@ -225,6 +216,12 @@ func seatDetail(req openrtb.BidRequest) ([]builder.DemandSeatData, bool) {
 		} else if imp[i].Banner != nil {
 			w, h = imp[i].Banner.W, imp[i].Banner.H
 			t = builder.SeatTypeBanner
+		} else if imp[i].Native != nil {
+			t = builder.SeatTypeNative
+			req := request.Request{}
+			err := json.Unmarshal(imp[i].Native.Request, &req)
+			assert.Nil(err)
+			assets = req.Assets
 		}
 		seats = append(seats, builder.DemandSeatData{
 			MinBid: imp[i].BidFloor,
@@ -233,6 +230,7 @@ func seatDetail(req openrtb.BidRequest) ([]builder.DemandSeatData, bool) {
 			Type:   t,
 			Video:  imp[i].Video,
 			Banner: imp[i].Banner,
+			Assets: assets,
 		})
 	}
 	return seats, vast

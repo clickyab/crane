@@ -81,6 +81,7 @@ type AssetFilter func(*Asset) bool
 
 // Filter is a full filter of one asset
 type Filter struct {
+	ID       int
 	Type     AssetType
 	SubType  int
 	Required bool
