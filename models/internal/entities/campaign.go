@@ -10,6 +10,7 @@ import (
 // Campaign implement entity advertise interface
 type Campaign struct {
 	ad
+	category []entity.Category
 	strategy entity.Strategy
 }
 
@@ -119,11 +120,17 @@ func (c *Campaign) LatLon() (bool, float64, float64, float64) {
 
 // Category allowed category
 func (c *Campaign) Category() []entity.Category {
-	cat := make([]entity.Category, 0)
-	for _, v := range c.CampaignCat.Array() {
-		cat = append(cat, entity.Category(v))
+	if c.category != nil {
+		return c.category
 	}
-	return cat
+	c.category = make([]entity.Category, 0)
+	if !c.CampaignBillingType.Valid {
+		return c.category
+	}
+	for _, v := range c.CampaignCat.Array() {
+		c.category = append(c.category, entity.Category(v))
+	}
+	return c.category
 }
 
 // AllowedOS is the allowed os for this campaign
