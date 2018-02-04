@@ -34,13 +34,12 @@ func newContext() *Context {
 }
 
 // NewCapping create new capping
-func NewCapping(ctx *Context, cpID int64, view, freq int, mode entity.CappingMode, uid string) entity.Capping {
+func NewCapping(ctx *Context, cpID int64, freq int, mode entity.CappingMode, uid string) entity.Capping {
 	ctx.l.Lock()
 	defer ctx.l.Unlock()
 
 	if _, ok := ctx.m[cpID]; !ok {
 		ctx.m[cpID] = &capping{
-			view:      view,
 			frequency: freq,
 			ads:       make(map[int64]int),
 			mode:      mode,

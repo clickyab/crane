@@ -34,7 +34,7 @@ func (*supplier) DefaultCTR() float64 {
 }
 
 func (*supplier) AllowCreate() bool {
-	panic("implement me")
+	return false
 }
 
 func (*supplier) TinyMark() bool {

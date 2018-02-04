@@ -5,8 +5,6 @@ import (
 	"strconv"
 	"time"
 
-	"sort"
-
 	"clickyab.com/crane/demand/entity"
 	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/kv"
@@ -39,7 +37,6 @@ func noCappingMode(ads []entity.Creative) []entity.Creative {
 		capp := NewCapping(
 			c,
 			ads[i].Campaign().ID(),
-			0,
 			ads[i].Campaign().Frequency(),
 			entity.CappingNone,
 			"",
@@ -53,6 +50,7 @@ func noCappingMode(ads []entity.Creative) []entity.Creative {
 
 // ApplyCapping is an entry for set capping in ads
 func ApplyCapping(mode entity.CappingMode, copID string, ads []entity.Creative, ep string) []entity.Creative {
+	fmt.Println(mode)
 	switch mode {
 	case entity.CappingNone:
 		return noCappingMode(ads)
@@ -96,11 +94,11 @@ func strictCappingMode(copID string, ads []entity.Creative, ep string) []entity.
 			capp := NewCapping(
 				c,
 				ads[i].Campaign().ID(),
-				int(view),
 				ads[i].Campaign().Frequency(),
 				entity.CappingStrict,
 				copID,
 			)
+			capp.IncView(ads[i].ID(), int(view), false)
 			passed.SetCapping(capp)
 			resp = append(resp, passed)
 		}
@@ -151,11 +149,11 @@ func resetCappingMode(copID string, ads []entity.Creative, ep string) []entity.C
 			capp := NewCapping(
 				c,
 				ads[i].Campaign().ID(),
-				int(view),
 				ads[i].Campaign().Frequency(),
 				entity.CappingReset,
 				copID,
 			)
+			capp.IncView(ads[i].ID(), int(view), false)
 			ads[i].SetCapping(capp)
 			resp = append(resp, ads[i])
 			has[size]++
@@ -182,11 +180,11 @@ func resetCappingMode(copID string, ads []entity.Creative, ep string) []entity.C
 				capp := NewCapping(
 					c,
 					done[size][i].Campaign().ID(),
-					int(done[size][i].View),
 					done[size][i].Campaign().Frequency(),
 					entity.CappingReset,
 					copID,
 				)
+				capp.IncView(ads[i].ID(), int(done[size][i].View), false)
 				done[size][i].SetCapping(capp)
 				resp = append(resp, done[size][i].Creative)
 			}
@@ -197,7 +195,6 @@ func resetCappingMode(copID string, ads []entity.Creative, ep string) []entity.C
 				capp := NewCapping(
 					c,
 					done[size][i].Campaign().ID(),
-					0,
 					done[size][i].Campaign().Frequency(),
 					entity.CappingReset,
 					copID,
@@ -210,7 +207,5 @@ func resetCappingMode(copID string, ads []entity.Creative, ep string) []entity.C
 			_ = ck.Drop(sizedCap...)
 		}
 	}
-	s := sortByCap(resp)
-	sort.Sort(s)
-	return []entity.Creative(s)
+	return []entity.Creative(resp)
 }
