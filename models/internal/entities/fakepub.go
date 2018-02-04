@@ -31,16 +31,8 @@ func (fp *fakepub) FloorCPM() int64 {
 	return 0
 }
 
-func (fp *fakepub) SoftFloorCPM() int64 {
-	return fp.s.DefaultSoftFloorCPM()
-}
-
 func (fp *fakepub) Name() string {
 	return fp.name
-}
-
-func (fp *fakepub) BIDType() entity.BIDType {
-	return fp.s.BidType()
 }
 
 func (fp *fakepub) MinBid() int64 {
@@ -52,7 +44,7 @@ func (fp *fakepub) Supplier() entity.Supplier {
 }
 
 func (fp *fakepub) CTR(int) float64 {
-	return fp.s.DefaultCTR()
+	return -1
 }
 
 // NewFakePublisher return a publisher with fake data

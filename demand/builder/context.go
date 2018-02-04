@@ -10,9 +10,7 @@ import (
 
 // Context is the app Context
 type Context struct {
-	ts     time.Time
-	typ    entity.RequestType
-	subTyp entity.RequestType
+	ts time.Time
 
 	ip             net.IP
 	ua             string
@@ -40,13 +38,13 @@ type Context struct {
 	multiVideo       bool
 	floorPercentage  int64
 	softFloorCPM     int64
-	bidType          entity.BIDType
 	minBidPercentage int64
 
 	noShowT bool // Default is showT frame. but for exchange may be we don't want that
 
 	suspicious int
 	rate       float64
+	strategy   entity.Strategy
 
 	networkName,
 	brandName,
@@ -56,6 +54,8 @@ type Context struct {
 	// Just in application, for older sdk, we need to add prevent default on clicks
 	preventDefault bool
 	cappingMode    entity.CappingMode
+
+	underfloor bool
 }
 
 // PreventDefault is a boolean value to handle old sdk wrong way of click
@@ -94,12 +94,6 @@ func (c *Context) SoftFloorCPM() int64 {
 	return int64(float64(c.softFloorCPM)/100) * c.FloorPercentage()
 }
 
-// BIDType is the Bid Type for this request, no matter what, the system use
-// cpc , but this is helpful for better data in logs/impression/click
-func (c *Context) BIDType() entity.BIDType {
-	return c.bidType
-}
-
 // MinBIDPercentage return the percentage for min bid
 func (c *Context) MinBIDPercentage() int64 {
 	if c.minBidPercentage <= 0 {
@@ -123,13 +117,8 @@ func (c *Context) Timestamp() time.Time {
 }
 
 // Type return the request type
-func (c *Context) Type() entity.RequestType {
-	return c.typ
-}
-
-// SubType return the request type
-func (c *Context) SubType() entity.RequestType {
-	return c.subTyp
+func (c *Context) Type() entity.InputType {
+	return entity.InputTypeDemand
 }
 
 // Referrer is the request referrer
@@ -169,6 +158,11 @@ func (c *Context) FloorPercentage() int64 {
 	}
 
 	return c.floorPercentage
+}
+
+// Strategy for this request (cpm, cpc)
+func (c *Context) Strategy() entity.Strategy {
+	return c.strategy
 }
 
 // Tiny means we need to show the tiny mark in ad
@@ -229,4 +223,10 @@ func (c *Context) Seats() []entity.Seat {
 // Category return the request categories
 func (c *Context) Category() []entity.Category {
 	return c.cat
+}
+
+// UnderFloor means that this supplier allow to pass underfloor value.
+// normally used only for clickyab
+func (c *Context) UnderFloor() bool {
+	return c.underfloor
 }

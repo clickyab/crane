@@ -1,6 +1,7 @@
 package builder
 
 import (
+	"errors"
 	"fmt"
 	"net"
 
@@ -37,28 +38,6 @@ func SetTimestamp() ShowOptionSetter {
 		return options, nil
 	}
 }
-func validateType(typ entity.RequestType) bool {
-	if typ != entity.RequestTypeDemand && typ != entity.RequestTypeVast && typ != entity.RequestTypeApp && typ != entity.RequestTypeWeb && typ != entity.RequestTypeNative {
-		return false
-	}
-	return true
-}
-
-// SetType is the type setter for context
-func SetType(typ entity.RequestType, subType entity.RequestType) ShowOptionSetter {
-	return func(options *Context) (*Context, error) {
-		if !validateType(typ) {
-			return nil, fmt.Errorf("type is not supported %s", typ)
-		}
-		if !validateType(subType) {
-			return nil, fmt.Errorf("sub type is not supported %s", subType)
-		}
-
-		options.typ = typ
-		options.subTyp = subType
-		return options, nil
-	}
-}
 
 // SetCurrency is the type setter for context
 func SetCurrency(c string) ShowOptionSetter {
@@ -67,6 +46,14 @@ func SetCurrency(c string) ShowOptionSetter {
 			return o, fmt.Errorf("%s is not valid currency", c)
 		}
 		o.currency = c
+		return o, nil
+	}
+}
+
+// SetUnderfloor is the type setter for context
+func SetUnderfloor(c bool) ShowOptionSetter {
+	return func(o *Context) (*Context, error) {
+		o.underfloor = c
 		return o, nil
 	}
 }
@@ -213,17 +200,6 @@ func SetMinBidPercentage(i int64) ShowOptionSetter {
 	}
 }
 
-// SetSoftFloorCPM try to set soft floor on this request
-func SetSoftFloorCPM(i int64) ShowOptionSetter {
-	return func(o *Context) (*Context, error) {
-		if i <= 0 {
-			return nil, fmt.Errorf("invalid floor value")
-		}
-		o.softFloorCPM = i
-		return o, nil
-	}
-}
-
 // SetPublisher set publisher in context
 func SetPublisher(pub entity.Publisher) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
@@ -248,6 +224,22 @@ func SetNoTiny(noTiny bool) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
 		o.noTiny = noTiny
 		return o, nil
+	}
+}
+
+// SetStrategy is the option to set strategy for request
+func SetStrategy(s []string, sup entity.Supplier) ShowOptionSetter {
+	return func(o *Context) (*Context, error) {
+		if len(s) == 0 {
+			o.strategy = sup.Strategy()
+			return o, nil
+		}
+		st := entity.GetStrategy(s)
+		if st.Valid() && st.IsSubsetOf(sup.Strategy()) {
+			o.strategy = st
+			return o, nil
+		}
+		return o, errors.New("not valid strategy")
 	}
 }
 

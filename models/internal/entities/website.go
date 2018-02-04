@@ -53,11 +53,7 @@ func (w *Website) Type() entity.PublisherType {
 // CTR return the ctr based on size of this website
 func (w *Website) CTR(size int) float64 {
 	if w.FCTR[size] == 0 {
-		if w.Supp != nil {
-			w.FCTR[size] = w.Supp.DefaultCTR()
-		} else {
-			w.FCTR[size] = defaultCTR.Float64()
-		}
+		w.FCTR[size] = -1
 	}
 	return w.FCTR[size]
 }
@@ -106,11 +102,6 @@ func (w *Website) SoftFloorCPM() int64 {
 // Name of the website
 func (w *Website) Name() string {
 	return w.WDomain
-}
-
-// BIDType is the bid type for this website
-func (w *Website) BIDType() entity.BIDType {
-	return entity.BIDTypeCPC
 }
 
 // MinBid return the minimum bid accepted for this
