@@ -62,10 +62,14 @@ func SetDemandSeats(sd ...DemandSeatData) ShowOptionSetter {
 			}
 			size, err = cyslot.GetSize(sd[i].Size)
 			if err != nil {
-				if !linear {
+				switch sd[i].Type {
+				case SeatTypeNative:
+					size = 20
+				case SeatTypeVideo:
+					size = 9
+				default:
 					return nil, err
 				}
-				size = 9
 			}
 
 			seat := seat{
@@ -80,6 +84,7 @@ func SetDemandSeats(sd ...DemandSeatData) ShowOptionSetter {
 			if sd[i].Type == SeatTypeVideo {
 				seat.subType = entity.RequestTypeVast
 				seat.mimes = sd[i].Video.Mimes
+
 				o.seats = append(o.seats, &vastSeat{
 					seat:      seat,
 					linear:    linear,

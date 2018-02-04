@@ -72,6 +72,7 @@ func assetToFilterFunc(a []request.Asset) []entity.Filter {
 				f.Extra = append(f.Extra, filters.VastProtocol(a[i].Video.Protocols...))
 			}
 		}
+		res = append(res, f)
 	}
 
 	return res

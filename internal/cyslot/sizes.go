@@ -30,8 +30,10 @@ var (
 		17: {Width: 48, Height: 320},
 		18: {Width: 128, Height: 128},
 		19: {Width: 800, Height: 440}, // This last entry is here for vast.
+		20: {Width: 800, Height: 440}, // This last entry is here for native.
 	}
 )
+
 var sizes = map[string]int{
 	"120x600":  1,
 	"160x600":  2,
