@@ -65,7 +65,9 @@ func nativeMarkup(ctx entity.Context, s entity.NativeSeat) *openrtb.Bid {
 					Value: a[0].Data,
 				}
 			}
-
+			if f.Required {
+				assert.True(as.Data != nil || as.Video != nil || as.Image != nil || as.Title != nil)
+			}
 			v.Assets = append(v.Assets, as)
 		}
 	}

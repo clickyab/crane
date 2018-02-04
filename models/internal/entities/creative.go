@@ -164,14 +164,23 @@ func extractAssets(in ad) []entity.Asset {
 	//}
 
 	if entity.AdType(in.FType) == entity.AdTypeNative {
-		txt := in.FAdAttribute["banner_description_text_type"].(string)
+		txt := in.FAdAttribute["banner_title_text_type"].(string)
+		width, _ := strconv.ParseInt(in.FAdAttribute["w"].(string), 10, 64)
+		height, _ := strconv.ParseInt(in.FAdAttribute["h"].(string), 10, 64)
+		if width == 0 {
+			width = 500
+		}
+
+		if height == 0 {
+			height = 315
+		}
 		return []entity.Asset{
 			{
 				MimeType: in.FMimeType.String,
 				Type:     entity.AssetTypeImage,
-				SubType:  entity.AssetTypeVideoSubTypeMain,
-				Width:    500, // TODO : from attributes
-				Height:   315, // TODO : from attributes
+				SubType:  entity.AssetTypeImageSubTypeMain,
+				Width:    int(width),
+				Height:   int(height),
 				Data:     in.FAdImg.String,
 			},
 			{
@@ -395,7 +404,6 @@ func (a *Advertise) MimeType() string {
 // Assets return the asset for this advertise
 func (a *Advertise) Assets(assetType entity.AssetType, sub int, filter ...entity.AssetFilter) []entity.Asset {
 	var res []entity.Asset
-
 bigLoop:
 	for i := range a.assets {
 		if a.assets[i].Type != assetType || a.assets[i].SubType != sub {
