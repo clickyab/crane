@@ -165,8 +165,10 @@ func extractAssets(in ad) []entity.Asset {
 
 	if entity.AdType(in.FType) == entity.AdTypeNative {
 		txt := in.FAdAttribute["banner_title_text_type"].(string)
-		width, _ := strconv.ParseInt(in.FAdAttribute["w"].(string), 10, 64)
-		height, _ := strconv.ParseInt(in.FAdAttribute["h"].(string), 10, 64)
+		w, _ := in.FAdAttribute["w"].(string)
+		h, _ := in.FAdAttribute["h"].(string)
+		width, _ := strconv.ParseInt(w, 10, 64)
+		height, _ := strconv.ParseInt(h, 10, 64)
 		if width == 0 {
 			width = 500
 		}

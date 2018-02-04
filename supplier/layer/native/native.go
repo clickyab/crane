@@ -7,24 +7,23 @@ import (
 
 	"fmt"
 
-	"encoding/json"
-
 	"clickyab.com/crane/models/website"
 	"clickyab.com/crane/supplier/client"
+	"clickyab.com/crane/supplier/layer/output"
 	"github.com/bsm/openrtb"
 	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/framework"
 	"github.com/clickyab/services/random"
 	"github.com/clickyab/services/simplehash"
+	"github.com/clickyab/services/xlog"
 	"github.com/mssola/user_agent"
-	"github.com/sirupsen/logrus"
 )
 
 var (
 	nativeMaxCount    = config.RegisterInt("crane.supplier.native.max_count", 12, "")
 	nativeMaxTitleLen = config.RegisterInt("crane.supplier.native.title,len", 50, "")
-	server            = config.RegisterString("crane.supplier.native.url", "", "route for banner")
-	method            = config.RegisterString("crane.supplier.native.method", "POST", "method for banner request")
+	server            = config.RegisterString("crane.supplier.banner.url", "", "route for banner")
+	method            = config.RegisterString("crane.supplier.banner.method", "POST", "method for banner request")
 )
 
 // ImageType openrtb native image
@@ -47,7 +46,7 @@ func getNative(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	domain := r.URL.Query().Get("d")
 	pub, err := website.GetWebSiteOrFake(&supplier{}, domain)
 	if err != nil {
-		// TODO send proper message
+		xlog.GetWithError(ctx, err).Debug("no website")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -63,7 +62,7 @@ func getNative(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	count := r.URL.Query().Get("count")
 	intCount, err := strconv.Atoi(count)
 	if err != nil || intCount < 1 {
-		// TODO send proper message
+		xlog.GetWithError(ctx, err).Debug("wrong count")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -105,9 +104,6 @@ func getNative(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
-	jj, _ := json.Marshal(bq)
-	logrus.Debug(string(jj))
-
 	bq.Ext = []byte(`{"capping_mode": "reset"}`)
 	br, err := client.Call(ctx, method.String(), server.String(), bq)
 	if err != nil {
@@ -115,8 +111,10 @@ func getNative(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	logrus.Debug(br)
-
+	if output.RenderNative(ctx, w, br) != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 }
 
 // nativeUserIDGenerator create user id for native

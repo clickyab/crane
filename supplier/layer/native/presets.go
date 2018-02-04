@@ -21,14 +21,14 @@ func getImps(r *http.Request, count int, pubID, pubFloor int64) []openrtb.Impres
 		req := request.Request{
 			Assets: []request.Asset{
 				{
-					ID:       1,
+					ID:       1, // ID 1 is for text
 					Required: 1,
 					Title: &request.Title{
 						Length: nativeMaxTitleLen.Int(),
 					},
 				},
 				{
-					ID:       2,
+					ID:       2, // ID 2 is for image
 					Required: 1,
 					Image: &request.Image{
 						TypeID: request.ImageTypeMain,
