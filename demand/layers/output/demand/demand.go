@@ -10,6 +10,8 @@ import (
 
 	"net/url"
 
+	"strings"
+
 	"clickyab.com/crane/demand/entity"
 	"github.com/bsm/openrtb"
 	"github.com/bsm/openrtb/native/response"
@@ -48,8 +50,12 @@ func nativeMarkup(ctx entity.Context, s entity.NativeSeat) *openrtb.Bid {
 				Required: req,
 			}
 			if f.Type == entity.AssetTypeImage {
+				src := a[0].Data
+				if ctx.Protocol() == entity.HTTPS {
+					src = strings.Replace(src, "http://", "https://", -1)
+				}
 				as.Image = &response.Image{
-					URL:    a[0].Data,
+					URL:    src,
 					Height: a[0].Height,
 					Width:  a[0].Width,
 				}
@@ -98,6 +104,10 @@ func vastMarkup(ctx entity.Context, s entity.VastSeat) *openrtb.Bid {
 	*tracking = *click
 	q := tracking.Query()
 	q.Add("tv", "1")
+	src := s.WinnerAdvertise().Media()
+	if ctx.Protocol() == entity.HTTPS {
+		src = strings.Replace(src, "http://", "https://", -1)
+	}
 	tracking.RawQuery = q.Encode()
 	if s.Linear() {
 		skipAfter := vast.Duration(s.SkipAfter())
@@ -112,7 +122,7 @@ func vastMarkup(ctx entity.Context, s entity.VastSeat) *openrtb.Bid {
 					Height:   s.Height(),
 					Width:    s.Width(),
 					Type:     s.WinnerAdvertise().MimeType(),
-					URI:      s.WinnerAdvertise().Media(),
+					URI:      src,
 					Delivery: "streaming",
 				},
 			},
