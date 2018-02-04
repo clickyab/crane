@@ -40,7 +40,6 @@ const (
 // ref			:referrer
 // parent		:parent
 // count		:number of impression
-// m			:mobile or not
 // handle supplier native route
 func getNative(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	domain := r.URL.Query().Get("d")
@@ -54,7 +53,6 @@ func getNative(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	ref := r.URL.Query().Get("ref")
 	parent := r.URL.Query().Get("parent")
 	tid := r.URL.Query().Get("tid")
-	m := r.URL.Query().Get("m") != ""
 
 	ip := framework.RealIP(r)
 	useragent := r.UserAgent()
@@ -74,7 +72,7 @@ func getNative(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	ua := user_agent.New(useragent)
 
 	mi := 0
-	if m {
+	if ua.Mobile() {
 		mi = 1
 	}
 
