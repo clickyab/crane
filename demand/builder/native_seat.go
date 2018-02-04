@@ -65,7 +65,7 @@ func assetToFilterFunc(a []request.Asset) []entity.Filter {
 				f.Extra = append(f.Extra, filters.MinDuration(a[i].Video.MinDuration))
 			}
 			if a[i].Video.MaxDuration > 0 {
-				f.Extra = append(f.Extra, filters.MinDuration(a[i].Video.MaxDuration))
+				f.Extra = append(f.Extra, filters.MaxDuration(a[i].Video.MaxDuration))
 			}
 
 			if len(a[i].Video.Protocols) > 0 {

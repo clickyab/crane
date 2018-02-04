@@ -112,7 +112,7 @@ func RenderVMAP(ctx context.Context, w io.Writer, resp *openrtb.BidResponse, sea
 		v.AdBreaks = append(v.AdBreaks, ad)
 	}
 
-	b, err := xml.MarshalIndent(v, "", "  ")
+	b, err := xml.Marshal(v)
 	assert.Nil(err)
 	_, _ = w.Write(b)
 
