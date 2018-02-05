@@ -30,6 +30,7 @@ const demandPath = "/ortb/:token"
 
 var (
 	ortbWebSelector = reducer.Mix(
+		&filter.Strategy{},
 		&filter.Desktop{},
 		&filter.OS{},
 		&filter.WhiteList{},
@@ -40,6 +41,7 @@ var (
 	)
 
 	ortbAppSelector = reducer.Mix(
+		&filter.Strategy{},
 		&filter.AppBrand{},
 		&filter.AppCarrier{},
 		&filter.WhiteList{},
@@ -62,7 +64,7 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	payload := openrtb.BidRequest{}
 	dec := json.NewDecoder(r.Body)
 	if err := dec.Decode(&payload); err != nil {
-		xlog.GetWithError(ctx, err).Error("invalid requestType")
+		xlog.GetWithError(ctx, err).Error("invalid request")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -78,7 +80,10 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	prevent := ext.Bool("prevent_default")
 	underfloor := ext.Bool("underfloor")
 	capping := ext.String("capping_mode")
-	strategy := strings.Split(ext.String("strategy"), ",")
+	var strategy []string
+	if st := strings.Trim(ext.String("strategy"), "\t \n"); st != "" {
+		strategy = strings.Split(st, ",")
+	}
 
 	// Currently not supporting no cap (this is intentional)
 	if capping == "reset" {
@@ -167,7 +172,7 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	c, err := rtb.Select(ctx, selector, b...)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		xlog.GetWithError(ctx, err).Error("invalid requestType")
+		xlog.GetWithError(ctx, err).Error("invalid request")
 		return
 	}
 

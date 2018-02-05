@@ -18,13 +18,12 @@ func (c *Campaign) Strategy() entity.Strategy {
 	if c.strategy > 0 {
 		return c.strategy
 	}
-	if !c.CampaignBillingType.Valid {
-		return 0
-	}
 	switch strings.ToLower(c.CampaignBillingType.String) {
 	case "cpm":
 		c.strategy = entity.StrategyCPM
 	case "cpc":
+		c.strategy = entity.StrategyCPC
+	default:
 		c.strategy = entity.StrategyCPC
 	}
 	return c.strategy

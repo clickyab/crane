@@ -21,7 +21,7 @@ func getSecondCPM(floorCPM int64, exceedFloor []adAndBid) float64 {
 	return secondCPM
 }
 
-func calcCtrTypeBased(seatType entity.RequestType, pub entity.PublisherType, sup entity.Supplier) float64 {
+func defaultCTR(seatType entity.RequestType, pub entity.PublisherType, sup entity.Supplier) float64 {
 	return sup.DefaultCTR(fmt.Sprint(seatType), fmt.Sprint(pub))
 }
 
@@ -29,12 +29,12 @@ func doBid(ad entity.Creative, slot entity.Seat, floorCPM int64, pub entity.Publ
 	slotCtr := slot.CTR()
 	if slot.CTR() < 0 {
 		//get ctr based on the creative and seat type native app / native web / vast web ...
-		slotCtr = calcCtrTypeBased(slot.RequestType(), pub.Type(), pub.Supplier())
+		slotCtr = defaultCTR(slot.RequestType(), pub.Type(), pub.Supplier())
 	}
 	adCtr := ad.AdCTR()
 	if adCtr < 0 {
 		//get ctr based on the creative and seat type native app / native web / vast web ...
-		adCtr = calcCtrTypeBased(slot.RequestType(), pub.Type(), pub.Supplier())
+		adCtr = defaultCTR(slot.RequestType(), pub.Type(), pub.Supplier())
 	}
 	ctr := (adCtr*float64(adCTREffect.Int()) + slotCtr*float64(slotCTREffect.Int())) / float64(100)
 	cpm := int64(float64(ad.MaxBID()) * ctr * 10.0)

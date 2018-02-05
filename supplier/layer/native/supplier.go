@@ -17,14 +17,6 @@ func (*supplier) Token() string {
 	panic("implement me")
 }
 
-func (*supplier) DefaultFloorCPM() int64 {
-	panic("implement me")
-}
-
-func (*supplier) DefaultSoftFloorCPM() int64 {
-	panic("implement me")
-}
-
 func (*supplier) DefaultMinBid() int64 {
 	panic("implement me")
 }

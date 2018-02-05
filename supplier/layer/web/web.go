@@ -131,7 +131,7 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 
 	// better since the json is static :)
-	bq.Ext = []byte(`{"capping_mode": "reset"}`)
+	bq.Ext = []byte(`{"capping_mode": "reset","underfloor":true}`)
 	br, err := client.Call(ctx, method.String(), server.String(), bq)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)

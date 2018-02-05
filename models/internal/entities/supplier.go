@@ -40,6 +40,10 @@ func (s Supplier) Strategy() entity.Strategy {
 		return s.strategy
 	}
 	s.strategy = entity.GetStrategy(strings.Split(s.FBIDType, ","))
+	if s.strategy == 0 {
+		// fall back to default strategy in case of data error
+		s.strategy = entity.StrategyCPM
+	}
 	return s.strategy
 }
 
@@ -136,10 +140,10 @@ show_domain,created_at,updated_at,rate,tiny_logo,tiny_url,share FROM suppliers`
 )
 
 // SupplierLoader load all confirmed website
-func SupplierLoader(ctx context.Context) (map[string]kv.Serializable, error) {
+func SupplierLoader(_ context.Context) (map[string]kv.Serializable, error) {
 
 	var res []Supplier
-	if _, err := NewManager().GetWDbMap().Select(&res, supQuery); err != nil {
+	if _, err := NewManager().GetRDbMap().Select(&res, supQuery); err != nil {
 		return nil, err
 	}
 
@@ -151,10 +155,10 @@ func SupplierLoader(ctx context.Context) (map[string]kv.Serializable, error) {
 }
 
 // SupplierLoaderByName load all confirmed website
-func SupplierLoaderByName(ctx context.Context) (map[string]kv.Serializable, error) {
+func SupplierLoaderByName(_ context.Context) (map[string]kv.Serializable, error) {
 
 	var res []Supplier
-	if _, err := NewManager().GetWDbMap().Select(&res, supQuery); err != nil {
+	if _, err := NewManager().GetRDbMap().Select(&res, supQuery); err != nil {
 		return nil, err
 	}
 

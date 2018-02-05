@@ -1,21 +1,27 @@
 package entity
 
-// Supplier is the ad-network interface
-type Supplier interface {
+// MinimalSupplier is used in supplier side
+// TODO : use this supplier in supplier side
+type MinimalSupplier interface {
 	// Name of Supplier
 	Name() string
+	// AllowCreate indicated if this supplier can create publisher on demand
+	AllowCreate() bool
+	// DefaultMinBid return the default min bid for this supplier
+	DefaultMinBid() int64
+}
+
+// Supplier is the ad-network interface
+type Supplier interface {
+	MinimalSupplier
 	// Token of this for web request
 	Token() string
 	// SoftFloorCPM for this supplier by request sub type and publisher type
 	// example : web banner,web vast, app native , ...
 	SoftFloorCPM(string, string) int64
-	// DefaultMinBid return the default min bid for this supplier
-	DefaultMinBid() int64
 	// DefaultCTR for this supplier by request sub type and publisher type
 	// example : web banner,web vast, app native , ...
 	DefaultCTR(string, string) float64
-	// AllowCreate indicated if this supplier can create publisher on demand
-	AllowCreate() bool
 	// TinyMark means we can add our mark to it
 	TinyMark() bool
 	// TinyLogo will be the url to the logo (ex: //clickyab.com/tiny.png)
