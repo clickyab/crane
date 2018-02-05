@@ -34,6 +34,7 @@ func showBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	b := []builder.ShowOptionSetter{
 		builder.SetTimestamp(),
 		builder.SetOSUserAgent(pl.UserAgent),
+		builder.SetNoTiny(!pl.Supplier.TinyMark()),
 		builder.SetTargetHost(r.Host),
 		builder.SetIPLocation(pl.IP),
 		builder.SetProtocolByRequest(r),

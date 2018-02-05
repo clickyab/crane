@@ -149,7 +149,7 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetPublisher(publisher),
 		builder.SetProtocol(proto),
 		builder.SetTID(us, ip, ua),
-		builder.SetNoTiny(sup.TinyMark()),
+		builder.SetNoTiny(!sup.TinyMark()),
 		builder.SetFatFinger(fatFinger),
 		builder.SetStrategy(strategy, sup),
 		builder.SetRate(float64(sup.Rate())),
