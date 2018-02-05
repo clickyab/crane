@@ -71,7 +71,7 @@ var m = map[string]int64{
 }
 
 // GetProvinceISPByIP get province id by ip
-func GetProvinceISPByIP(ip net.IP) entity.Location {
+func GetProvinceISPByIP(ip net.IP, lat, lon float64) entity.Location {
 	var province int64
 	var uISP int64
 	rec := IP2Location(ip.String())
@@ -102,6 +102,11 @@ func GetProvinceISPByIP(ip net.IP) entity.Location {
 			Name:  rec.ISP,
 			Valid: rec.ISP != "",
 			ID:    uISP,
+		},
+		latlon: entity.LatLon{
+			Valid: lat != 0 && lon != 0,
+			Lon:   lon,
+			Lat:   lat,
 		},
 	}
 

@@ -53,7 +53,7 @@ func clickBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetTimestamp(),
 		builder.SetOSUserAgent(pl.UserAgent),
 		builder.SetTargetHost(r.Host),
-		builder.SetIPLocation(pl.IP),
+		builder.SetIPLocation(pl.IP, nil, nil),
 		builder.SetProtocolByRequest(r),
 		builder.SetTID(pl.TID, pl.IP, pl.UserAgent),
 		builder.SetPublisher(pl.Publisher),

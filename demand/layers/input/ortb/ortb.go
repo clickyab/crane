@@ -145,7 +145,7 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetTimestamp(),
 		builder.SetTargetHost(sup.ShowDomain()),
 		builder.SetOSUserAgent(ua),
-		builder.SetIPLocation(ip),
+		builder.SetIPLocation(ip, payload.User, payload.Device),
 		builder.SetPublisher(publisher),
 		builder.SetProtocol(proto),
 		builder.SetTID(us, ip, ua),
