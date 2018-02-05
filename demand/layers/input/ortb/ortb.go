@@ -10,8 +10,6 @@ import (
 
 	"strings"
 
-	"net/url"
-
 	"clickyab.com/crane/demand/builder"
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/demand/filter"
@@ -64,7 +62,7 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	payload := openrtb.BidRequest{}
 	dec := json.NewDecoder(r.Body)
 	if err := dec.Decode(&payload); err != nil {
-		xlog.GetWithError(ctx, err).Error("invalid request")
+		xlog.GetWithError(ctx, err).Error("invalid requestType")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -78,7 +76,9 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	_ = json.Unmarshal(payload.Ext, &ext)
 	fatFinger := ext.Bool("fat_finger")
 	prevent := ext.Bool("prevent_default")
+	underfloor := ext.Bool("underfloor")
 	capping := ext.String("capping_mode")
+	strategy := strings.Split(ext.String("strategy"), ",")
 
 	// Currently not supporting no cap (this is intentional)
 	if capping == "reset" {
@@ -93,24 +93,14 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 	var (
 		publisher entity.Publisher
-		subType   entity.RequestType
 		selector  reducer.Filter
 	)
 	if payload.Site != nil {
-		var u *url.URL
-		u, err = url.Parse(payload.Site.Domain)
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			xlog.GetWithError(ctx, err).Error("invalid domain")
-			return
-		}
-		publisher, err = website.GetWebSiteOrFake(sup, u.Host)
-		subType = entity.RequestTypeWeb
-		prevent = false // do not accept prevent default on web request
+		publisher, err = website.GetWebSiteOrFake(sup, payload.Site.Domain)
+		prevent = false // do not accept prevent default on web requestType
 		selector = ortbWebSelector
 	} else if payload.App != nil {
 		publisher, err = apps.GetAppOrFake(sup, payload.App.Bundle)
-		subType = entity.RequestTypeApp
 		selector = ortbAppSelector
 	} else {
 		err = errors.New("not supported")
@@ -148,7 +138,6 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 	b := []builder.ShowOptionSetter{
 		builder.SetTimestamp(),
-		builder.SetType(entity.RequestTypeDemand, subType),
 		builder.SetTargetHost(sup.ShowDomain()),
 		builder.SetOSUserAgent(ua),
 		builder.SetIPLocation(ip),
@@ -157,11 +146,11 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetTID(us, ip, ua),
 		builder.SetNoTiny(sup.TinyMark()),
 		builder.SetFatFinger(fatFinger),
-
-		builder.SetSoftFloorCPM(sup.DefaultSoftFloorCPM()),
+		builder.SetStrategy(strategy, sup),
 		builder.SetRate(float64(sup.Rate())),
 		builder.SetPreventDefault(prevent),
 		builder.SetCappingMode(cappingMode),
+		builder.SetUnderfloor(underfloor),
 	}
 	// TODO : if we need to implement native/app/vast then the next line must be activated and customized
 	//b = append(b, builder.SetFloorPercentage(100), builder.SetMinBidPercentage(100))
@@ -178,7 +167,7 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	c, err := rtb.Select(ctx, selector, b...)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		xlog.GetWithError(ctx, err).Error("invalid request")
+		xlog.GetWithError(ctx, err).Error("invalid requestType")
 		return
 	}
 
@@ -204,10 +193,10 @@ func seatDetail(req openrtb.BidRequest) ([]builder.DemandSeatData, bool) {
 		assets []request.Asset
 	)
 	for i := range imp {
-		var t builder.SeatType
+		var t entity.RequestType
 		if imp[i].Video != nil {
 			w, h = imp[i].Video.W, imp[i].Video.H
-			t = builder.SeatTypeVideo
+			t = entity.RequestTypeVast
 			// We just support version 3
 			if !intInArray(3, append(imp[i].Video.Protocols, imp[i].Video.Protocol)...) {
 				continue
@@ -215,9 +204,9 @@ func seatDetail(req openrtb.BidRequest) ([]builder.DemandSeatData, bool) {
 			vast = true
 		} else if imp[i].Banner != nil {
 			w, h = imp[i].Banner.W, imp[i].Banner.H
-			t = builder.SeatTypeBanner
+			t = entity.RequestTypeBanner
 		} else if imp[i].Native != nil {
-			t = builder.SeatTypeNative
+			t = entity.RequestTypeNative
 			req := request.Request{}
 			err := json.Unmarshal(imp[i].Native.Request, &req)
 			assert.Nil(err)

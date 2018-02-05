@@ -36,18 +36,6 @@ func (m *MockContext) EXPECT() *MockContextMockRecorder {
 	return m.recorder
 }
 
-// BIDType mocks base method
-func (m *MockContext) BIDType() entity.BIDType {
-	ret := m.ctrl.Call(m, "BIDType")
-	ret0, _ := ret[0].(entity.BIDType)
-	return ret0
-}
-
-// BIDType indicates an expected call of BIDType
-func (mr *MockContextMockRecorder) BIDType() *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BIDType", reflect.TypeOf((*MockContext)(nil).BIDType))
-}
-
 // Brand mocks base method
 func (m *MockContext) Brand() string {
 	ret := m.ctrl.Call(m, "Brand")
@@ -322,6 +310,18 @@ func (m *MockContext) SoftFloorCPM() int64 {
 // SoftFloorCPM indicates an expected call of SoftFloorCPM
 func (mr *MockContextMockRecorder) SoftFloorCPM() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SoftFloorCPM", reflect.TypeOf((*MockContext)(nil).SoftFloorCPM))
+}
+
+// Strategy mocks base method
+func (m *MockContext) Strategy() entity.Strategy {
+	ret := m.ctrl.Call(m, "Strategy")
+	ret0, _ := ret[0].(entity.Strategy)
+	return ret0
+}
+
+// Strategy indicates an expected call of Strategy
+func (mr *MockContextMockRecorder) Strategy() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Strategy", reflect.TypeOf((*MockContext)(nil).Strategy))
 }
 
 // SubType mocks base method
@@ -832,6 +832,18 @@ func (mr *MockCampaignMockRecorder) Province() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Province", reflect.TypeOf((*MockCampaign)(nil).Province))
 }
 
+// Strategy mocks base method
+func (m *MockCampaign) Strategy() entity.Strategy {
+	ret := m.ctrl.Call(m, "Strategy")
+	ret0, _ := ret[0].(entity.Strategy)
+	return ret0
+}
+
+// Strategy indicates an expected call of Strategy
+func (mr *MockCampaignMockRecorder) Strategy() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Strategy", reflect.TypeOf((*MockCampaign)(nil).Strategy))
+}
+
 // Web mocks base method
 func (m *MockCampaign) Web() bool {
 	ret := m.ctrl.Call(m, "Web")
@@ -901,18 +913,6 @@ func (m *MockPublisher) Attributes() map[entity.PublisherAttributes]interface{} 
 // Attributes indicates an expected call of Attributes
 func (mr *MockPublisherMockRecorder) Attributes() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Attributes", reflect.TypeOf((*MockPublisher)(nil).Attributes))
-}
-
-// BIDType mocks base method
-func (m *MockPublisher) BIDType() entity.BIDType {
-	ret := m.ctrl.Call(m, "BIDType")
-	ret0, _ := ret[0].(entity.BIDType)
-	return ret0
-}
-
-// BIDType indicates an expected call of BIDType
-func (mr *MockPublisherMockRecorder) BIDType() *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BIDType", reflect.TypeOf((*MockPublisher)(nil).BIDType))
 }
 
 // CTR mocks base method
@@ -1378,18 +1378,6 @@ func (mr *MockSupplierMockRecorder) AllowCreate() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AllowCreate", reflect.TypeOf((*MockSupplier)(nil).AllowCreate))
 }
 
-// BidType mocks base method
-func (m *MockSupplier) BidType() entity.BIDType {
-	ret := m.ctrl.Call(m, "BidType")
-	ret0, _ := ret[0].(entity.BIDType)
-	return ret0
-}
-
-// BidType indicates an expected call of BidType
-func (mr *MockSupplierMockRecorder) BidType() *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BidType", reflect.TypeOf((*MockSupplier)(nil).BidType))
-}
-
 // DefaultCTR mocks base method
 func (m *MockSupplier) DefaultCTR() float64 {
 	ret := m.ctrl.Call(m, "DefaultCTR")
@@ -1472,6 +1460,18 @@ func (m *MockSupplier) ShowDomain() string {
 // ShowDomain indicates an expected call of ShowDomain
 func (mr *MockSupplierMockRecorder) ShowDomain() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ShowDomain", reflect.TypeOf((*MockSupplier)(nil).ShowDomain))
+}
+
+// Strategy mocks base method
+func (m *MockSupplier) Strategy() entity.Strategy {
+	ret := m.ctrl.Call(m, "Strategy")
+	ret0, _ := ret[0].(entity.Strategy)
+	return ret0
+}
+
+// Strategy indicates an expected call of Strategy
+func (mr *MockSupplierMockRecorder) Strategy() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Strategy", reflect.TypeOf((*MockSupplier)(nil).Strategy))
 }
 
 // TinyLogo mocks base method

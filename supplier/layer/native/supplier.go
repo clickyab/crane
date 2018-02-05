@@ -5,6 +5,10 @@ import "clickyab.com/crane/demand/entity"
 type supplier struct {
 }
 
+func (*supplier) SoftFloorCPM(string, string) int64 {
+	panic("implement me")
+}
+
 func (*supplier) Name() string {
 	return "clickyab"
 }
@@ -25,11 +29,10 @@ func (*supplier) DefaultMinBid() int64 {
 	panic("implement me")
 }
 
-func (*supplier) BidType() entity.BIDType {
+func (*supplier) Strategy() entity.Strategy {
 	panic("implement me")
 }
-
-func (*supplier) DefaultCTR() float64 {
+func (*supplier) DefaultCTR(string, string) float64 {
 	panic("implement me")
 }
 

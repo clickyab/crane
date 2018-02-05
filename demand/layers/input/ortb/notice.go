@@ -15,7 +15,7 @@ import (
 
 const noticePath = "/notice/:rh/:size/:type/:subtype/:jt"
 
-// notice is handler for notice ad request
+// notice is handler for notice ad requestType
 func noticeHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	pl, err := extractor(ctx, r)
 	if err != nil {
@@ -24,9 +24,8 @@ func noticeHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) 
 	}
 	// Build context
 	c, err := builder.NewContext(
-		builder.SetType(pl.Type, pl.SubType),
 		builder.SetPublisher(pl.Publisher),
-		builder.SetFullSeats(pl.PublicID, pl.Size, pl.ReserveHash, pl.Ad, pl.Bid, pl.PreviousTime, pl.CPM, pl.SCPM),
+		builder.SetFullSeats(pl.PublicID, pl.Size, pl.ReserveHash, pl.Ad, pl.Bid, pl.PreviousTime, pl.CPM, pl.SCPM, pl.requestType),
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
