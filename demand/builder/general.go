@@ -18,6 +18,7 @@ import (
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/models/cell"
 	"clickyab.com/crane/models/ip2l"
+	"github.com/bsm/openrtb"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/config"
 	"github.com/mssola/user_agent"
@@ -59,14 +60,25 @@ func SetUnderfloor(c bool) ShowOptionSetter {
 }
 
 // SetIPLocation is the IP and location setter for context, also it extract the IP information
-func SetIPLocation(ip string) ShowOptionSetter {
+func SetIPLocation(ip string, user *openrtb.User, device *openrtb.Device) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
 		ipv4 := net.ParseIP(ip)
 		if ipv4 == nil {
 			return nil, fmt.Errorf("invalid IP %s", ip)
 		}
 		o.ip = ipv4
-		l := ip2l.GetProvinceISPByIP(ipv4)
+		var lat, lon float64
+		if device != nil && device.Geo != nil {
+			lat, lon = device.Geo.Lat, device.Geo.Lon
+
+		}
+		if lat == 0 && lon == 0 {
+			if user != nil && user.Geo != nil {
+				lat, lon = user.Geo.Lat, user.Geo.Lon
+			}
+		}
+
+		l := ip2l.GetProvinceISPByIP(ipv4, lat, lon)
 		o.location = l
 		return o, nil
 	}
