@@ -198,7 +198,7 @@ func extractAssets(in ad) []entity.Asset {
 }
 
 // AdLoader is the loader of ads
-func AdLoader(ctx context.Context) (map[string]kv.Serializable, error) {
+func AdLoader(_ context.Context) (map[string]kv.Serializable, error) {
 	var res []ad
 	t := time.Now()
 	u := t.Unix()                                                        //return date in unixtimestamp
@@ -290,7 +290,7 @@ func GetAd(adID int64) (entity.Creative, error) {
 	} else {
 		res.FCTR = -1
 	}
-
+	res.assets = extractAssets(res.ad)
 	return &res, nil
 }
 
@@ -406,6 +406,10 @@ func (a *Advertise) MimeType() string {
 // Assets return the asset for this advertise
 func (a *Advertise) Assets(assetType entity.AssetType, sub int, filter ...entity.AssetFilter) []entity.Asset {
 	var res []entity.Asset
+	// Ignore if the assets is empty
+	if len(a.assets) == 0 {
+		return res
+	}
 bigLoop:
 	for i := range a.assets {
 		if a.assets[i].Type != assetType || a.assets[i].SubType != sub {
