@@ -2,7 +2,7 @@ package output
 
 import (
 	"context"
-	"io"
+	"net/http"
 
 	"encoding/json"
 
@@ -13,7 +13,7 @@ import (
 )
 
 // RenderBanner try to render to suitable json
-func RenderBanner(ctx context.Context, w io.Writer, resp *openrtb.BidResponse, extra string) error {
+func RenderBanner(ctx context.Context, w http.ResponseWriter, resp *openrtb.BidResponse, extra string) error {
 	final := make(map[string]string)
 	for i := range resp.SeatBid {
 		if len(resp.SeatBid[i].Bid) == 0 {
@@ -21,7 +21,7 @@ func RenderBanner(ctx context.Context, w io.Writer, resp *openrtb.BidResponse, e
 		}
 		slotID := resp.SeatBid[i].Bid[0].ImpID
 		markup := resp.SeatBid[i].Bid[0].AdMarkup
-		price := resp.SeatBid[0].Bid[i].Price
+		price := resp.SeatBid[i].Bid[0].Price
 		if slotID == extra {
 			slotID = "m"
 		}
@@ -32,6 +32,7 @@ func RenderBanner(ctx context.Context, w io.Writer, resp *openrtb.BidResponse, e
 	if err != nil {
 		return err
 	}
+	w.Header().Set("content-type", "application/json")
 	_, err = w.Write(s)
 	return err
 }

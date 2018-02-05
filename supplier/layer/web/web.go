@@ -12,6 +12,12 @@ import (
 
 	"errors"
 
+	"math/rand"
+
+	"text/template"
+
+	"bytes"
+
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/models/website"
 	"clickyab.com/crane/supplier/client"
@@ -28,7 +34,14 @@ import (
 var (
 	server = config.RegisterString("crane.supplier.banner.url", "", "route for banner")
 	method = config.RegisterString("crane.supplier.banner.method", "POST", "method for banner request")
+	showT  = config.RegisterInt64("crane.supplier.showt", 2, "chance of showt")
+
+	templ *template.Template
 )
+
+func init() {
+	templ = template.Must(template.New("banner").Parse(`<div style="width:{{ .W }}px; height:{{ .H }}px; overflow:hidden; display:inline;" >{{ .Markup }}<iframe src="//t.clickyab.com/" width="1" height="1" frameborder="0"></iframe></div>`))
+}
 
 type size struct {
 	Width,
@@ -137,6 +150,19 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 
 		return
+	}
+
+	if len(br.SeatBid) > 0 && mi == 1 && rand.Int63n(100) <= showT.Int64() {
+		buf := &bytes.Buffer{}
+		_ = templ.Execute(buf, struct {
+			W, H   int
+			Markup string
+		}{
+			W:      br.SeatBid[0].Bid[0].W,
+			H:      br.SeatBid[0].Bid[0].H,
+			Markup: br.SeatBid[0].Bid[0].AdMarkup,
+		})
+		br.SeatBid[0].Bid[0].AdMarkup = buf.String()
 	}
 
 	if output.RenderBanner(ctx, w, br, extra) != nil {
