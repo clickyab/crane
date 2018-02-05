@@ -36,6 +36,10 @@ const (
 	MainImageType ImageType = 3
 )
 
+var (
+	sup = &supplier{}
+)
+
 // d			:domain
 // ref			:referrer
 // parent		:parent
@@ -43,7 +47,7 @@ const (
 // handle supplier native route
 func getNative(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	domain := r.URL.Query().Get("d")
-	pub, err := website.GetWebSiteOrFake(&supplier{}, domain)
+	pub, err := website.GetWebSiteOrFake(sup, domain)
 	if err != nil {
 		xlog.GetWithError(ctx, err).Debug("no website")
 		w.WriteHeader(http.StatusBadRequest)
@@ -102,7 +106,7 @@ func getNative(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
-	bq.Ext = []byte(`{"capping_mode": "reset"}`)
+	bq.Ext = []byte(`{"capping_mode": "reset", "underfloor": true}`)
 	br, err := client.Call(ctx, method.String(), server.String(), bq)
 	if err != nil {
 		// TODO send proper message

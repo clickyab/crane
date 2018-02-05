@@ -86,7 +86,7 @@ func FillClickData(p entity.Publisher, m models.Impression, s models.Seat, os en
 		adSize:       s.AdSize,
 		time:         m.Timestamp.Unix(),
 		date:         m.Timestamp.Format("20060102"),
-		fast:         fast, //TODO fix after rebase,
+		fast:         fast,
 		typ:          entity.InputTypeDemand,
 		adID:         ad.ID(),
 		supplier:     p.Supplier().Name(),

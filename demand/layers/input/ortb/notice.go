@@ -15,7 +15,7 @@ import (
 
 const noticePath = "/notice/:rh/:size/:type/:subtype/:jt"
 
-// notice is handler for notice ad requestType
+// notice is handler for notice ad request
 func noticeHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	pl, err := extractor(ctx, r)
 	if err != nil {

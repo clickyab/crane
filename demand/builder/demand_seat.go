@@ -51,9 +51,9 @@ func SetDemandSeats(sd ...DemandSeatData) ShowOptionSetter {
 			size, err = cyslot.GetSize(sd[i].Size)
 			if err != nil {
 				switch sd[i].Type {
-				case SeatTypeNative:
+				case entity.RequestTypeNative:
 					size = 20
-				case SeatTypeVideo:
+				case entity.RequestTypeVast:
 					size = 9
 				default:
 					return nil, err

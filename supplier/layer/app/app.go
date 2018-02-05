@@ -59,6 +59,7 @@ func getApp(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		"cid":          r.URL.Query().Get("cid"),
 		"lac":          r.URL.Query().Get("lac"),
 		"capping_mode": "reset",
+		"underfloor":   true,
 	}
 	if _, ok := pub.Attributes()[entity.PAFatFinger]; ok {
 		ext["fat_finger"] = true
