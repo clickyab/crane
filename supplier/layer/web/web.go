@@ -139,7 +139,7 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if output.RenderBanner(ctx, w, br, extra) != nil {
+	if output.RenderBanner(ctx, w, br, extra, mi) != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
