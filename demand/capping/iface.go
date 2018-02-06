@@ -51,7 +51,6 @@ func noCappingMode(ads []entity.SelectedCreative) []entity.SelectedCreative {
 
 // ApplyCapping is an entry for set capping in ads
 func ApplyCapping(mode entity.CappingMode, copID string, ads []entity.SelectedCreative, ep string) []entity.SelectedCreative {
-	fmt.Println(mode)
 	switch mode {
 	case entity.CappingNone:
 		return noCappingMode(ads)
