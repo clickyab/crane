@@ -55,3 +55,12 @@ type Creative interface {
 	// Asset return the asset that pass all filters and type is exactly matched the value
 	Assets(AssetType, int, ...AssetFilter) []Asset
 }
+
+// SelectedCreative is used during the rtb loop.
+// sometimes I hate the Go type system
+type SelectedCreative interface {
+	Creative
+	CalculatedCTR() float64
+	CalculatedCPM() int64
+	IsSecBid() bool
+}
