@@ -127,7 +127,7 @@ func (controller) Routes(m framework.Mux) {
 	m.GET("click", clickPath, clickBanner)
 	m.GET("pixel", pixelPath, showPixel)
 	m.POST("ortb", demandPath, openRTBInput)
-	m.POST("notice", noticePath, noticeHandler)
+	m.GET("notice", noticePath, noticeHandler)
 
 }
 
