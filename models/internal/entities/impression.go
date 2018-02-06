@@ -62,7 +62,7 @@ func AddImpression(p entity.Publisher, m models.Impression, s models.Seat) error
 							imp_cookie,imp_flash,
 							imp_time,imp_date,sla_id,
 							slot_id, s_name, s_diff_cpm,
-							imp_cpm
+							imp_cpm,final_imp_cpm
 							) VALUES (
 							?,?,?,
 							?,?,?,
@@ -72,7 +72,7 @@ func AddImpression(p entity.Publisher, m models.Impression, s models.Seat) error
 							?,?,?,
 							?,?,?,
 							?,?,?,
-							?
+							?,?
 							)`, time.Now().Format("20060102"))
 
 	_, err = NewManager().GetWDbMap().Exec(q,
@@ -84,6 +84,6 @@ func AddImpression(p entity.Publisher, m models.Impression, s models.Seat) error
 		0, 0,
 		m.Timestamp.Unix(), m.Timestamp.Format("20060102"), said,
 		sID, p.Supplier().Name(), sDiffCPM,
-		impCPM)
+		impCPM, impCPM*float64(p.Supplier().Share())/100)
 	return err
 }
