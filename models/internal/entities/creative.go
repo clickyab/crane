@@ -14,6 +14,7 @@ import (
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/kv"
 	"github.com/clickyab/services/mysql"
+	"github.com/sirupsen/logrus"
 )
 
 type ad struct {
@@ -251,6 +252,7 @@ func AdLoader(_ context.Context) (map[string]kv.Serializable, error) {
 		res[i].assets = extractAssets(res[i])
 		ads[fmt.Sprint(res[i].FID)] = &Advertise{ad: res[i]}
 	}
+	logrus.Debugf("Load %d ads", len(ads))
 	return ads, nil
 }
 

@@ -7,7 +7,7 @@ import (
 // byMulti sort by multi sort
 type byMulti struct {
 	Video bool
-	Ads   []adAndBid
+	Ads   []entity.SelectedCreative
 }
 
 func (a byMulti) Len() int {
@@ -31,5 +31,5 @@ func (a byMulti) Less(i, j int) bool {
 			return a.Ads[i].Type() == entity.AdTypeVideo
 		}
 	}
-	return a.Ads[i].cpm > a.Ads[j].cpm
+	return a.Ads[i].CalculatedCPM() > a.Ads[j].CalculatedCPM()
 }

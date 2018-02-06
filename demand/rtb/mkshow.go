@@ -10,12 +10,12 @@ import (
 	"clickyab.com/crane/demand/entity"
 )
 
-func getSecondCPM(floorCPM int64, exceedFloor []adAndBid) float64 {
+func getSecondCPM(floorCPM int64, exceedFloor []entity.SelectedCreative) float64 {
 	var secondCPM = float64(floorCPM)
 	if len(exceedFloor) > 1 && // if there is more than one
-		exceedFloor[1].secBid && // the next is also a second bid ad
+		exceedFloor[1].IsSecBid() && // the next is also a second bid ad
 		exceedFloor[0].Capping().Selected() == exceedFloor[1].Capping().Selected() { // and second is not selected already
-		secondCPM = float64(exceedFloor[1].cpm)
+		secondCPM = float64(exceedFloor[1].CalculatedCPM())
 	}
 
 	return secondCPM
@@ -61,6 +61,18 @@ type adAndBid struct {
 	secBid bool
 }
 
+func (aab adAndBid) CalculatedCTR() float64 {
+	return aab.ctr
+}
+
+func (aab adAndBid) CalculatedCPM() int64 {
+	return aab.cpm
+}
+
+func (aab adAndBid) IsSecBid() bool {
+	return aab.secBid
+}
+
 // WARNING : DO NOT ADD PARAMETER TO THIS FUNCTION
 func internalSelect(
 	ctx entity.Context,
@@ -71,8 +83,8 @@ func internalSelect(
 
 	for _, seat := range ctx.Seats() {
 		var (
-			exceedFloor []adAndBid                                                                                                    // above  hard floor (the minimum cpm ), legit ads
-			underFloor  []adAndBid                                                                                                    // not passed from floor, only used if the supplier accept less than minCPM bids, normally only us, as clickyab
+			exceedFloor []entity.SelectedCreative                                                                                     // above  hard floor (the minimum cpm ), legit ads
+			underFloor  []entity.SelectedCreative                                                                                     // not passed from floor, only used if the supplier accept less than minCPM bids, normally only us, as clickyab
 			soft        = ctx.Publisher().Supplier().SoftFloorCPM(fmt.Sprint(seat.RequestType()), fmt.Sprint(ctx.Publisher().Type())) // soft floor , determine the sec bidding pricing
 			minCPM      = incShare(ctx.Publisher().Supplier(), seat.MinBid())                                                         // minimum cpm of this seat, aka hard floor, after adding our share to it
 		)
@@ -117,7 +129,7 @@ func internalSelect(
 		}
 
 		var (
-			sorted []adAndBid
+			sorted []entity.SelectedCreative
 			ef     byMulti
 		)
 
@@ -138,24 +150,26 @@ func internalSelect(
 			continue
 		}
 
+		ef.Ads = capping.ApplyCapping(ctx.Capping(), ctx.User().ID(), ef.Ads, ctx.EventPage())
+
 		sort.Sort(ef)
 		sorted = ef.Ads
 
 		theAd := sorted[0]
 		// Do not do second biding pricing on this ads, they can not pass CPMFloor
-		targetCPM := float64(theAd.MaxBID()) * 10 * theAd.ctr
-		if theAd.secBid {
+		targetCPM := float64(theAd.MaxBID()) * 10 * theAd.CalculatedCTR()
+		if theAd.IsSecBid() {
 			targetCPM = getSecondCPM(soft, sorted)
 		}
 
 		// bid is in CPC world, so must compare it with the max bid
-		bid := winnerBid(targetCPM, theAd.ctr)
+		bid := winnerBid(targetCPM, theAd.CalculatedCTR())
 		if bid > float64(theAd.MaxBID()) {
 			// TODO : must not happen, but it happen some how. check it later
 			// since we change the winner bid, do not inc the cap
 			bid = float64(theAd.MaxBID())
 			// also fix target cpm
-			targetCPM = theAd.ctr * 10 * bid
+			targetCPM = theAd.CalculatedCTR() * 10 * bid
 		}
 
 		// minCPM is in CPM world. so must compare it with target CPM
@@ -164,7 +178,7 @@ func internalSelect(
 		}
 		selected[theAd.ID()] = true
 		// Only decrease share for CPM (which is reported to supplier) not bid (which is used by us)
-		seat.SetWinnerAdvertise(theAd.Creative, bid, decShare(ctx.Publisher().Supplier(), targetCPM))
+		seat.SetWinnerAdvertise(theAd, bid, decShare(ctx.Publisher().Supplier(), targetCPM))
 
 		if !ctx.MultiVideo() {
 			noVideo = noVideo || theAd.Type() == entity.AdTypeVideo
@@ -176,6 +190,5 @@ func internalSelect(
 
 // selectAds is the only function that one must call to get ads
 func selectAds(_ context.Context, ctx entity.Context, ads []entity.Creative) {
-	ads = capping.ApplyCapping(ctx.Capping(), ctx.User().ID(), ads, ctx.EventPage())
 	internalSelect(ctx, ads)
 }

@@ -14,7 +14,7 @@ import (
 )
 
 // sortByCap is the sort entry based on selected/ad capping/campaign capping/cpm (order is matter)
-type sortByCap []entity.Creative
+type sortByCap []entity.SelectedCreative
 
 // Len return the len of array
 func (a sortByCap) Len() int {
@@ -38,10 +38,10 @@ func (a sortByCap) Less(i, j int) bool {
 	return a[i].Capping().View() < a[j].Capping().View()
 }
 
-func creatives(ct *gomock.Controller) []entity.Creative {
-	res := make([]entity.Creative, 0)
+func creatives(ct *gomock.Controller) []entity.SelectedCreative {
+	res := make([]entity.SelectedCreative, 0)
 	for i := 0; i < 100; i++ {
-		cr := mock_entity.NewMockCreative(ct)
+		cr := mock_entity.NewMockSelectedCreative(ct)
 		cp := mock_entity.NewMockCampaign(ct)
 		cp.EXPECT().Frequency().Return(2).AnyTimes()
 		cp.EXPECT().ID().Return(int64(i)).AnyTimes()
