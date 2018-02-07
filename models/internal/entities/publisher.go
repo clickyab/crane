@@ -7,17 +7,16 @@ import (
 	"time"
 
 	"clickyab.com/crane/demand/entity"
+	"github.com/clickyab/services/assert"
 )
 
 // FindWebsiteByPublicID return publisher id for public id
 func FindWebsiteByPublicID(pid int64) (entity.Publisher, error) {
 	ws := make([]Website, 0)
 	_, err := NewManager().GetRDbMap().Select(&ws, `SELECT * from websites where w_pub_id=?`, pid)
-	if err != nil {
-		return nil, err
-	}
-	if len(ws) != 1 {
-		panic(fmt.Sprintf("there is more then one record with public id %d", pid))
+	assert.Nil(err)
+	if len(ws) == 0 {
+		return nil, errors.New("website not found")
 	}
 	return &ws[0], nil
 }
@@ -26,11 +25,9 @@ func FindWebsiteByPublicID(pid int64) (entity.Publisher, error) {
 func FindAppByAppToken(token string) (entity.Publisher, error) {
 	app := make([]App, 0)
 	_, err := NewManager().GetRDbMap().Select(&app, `SELECT app_id,app_token,app_name,app_supplier,app_package,app_floor_cpm,app_status,app_cat,app_fatfinger from apps where app_token=?`, token)
-	if err != nil {
-		return nil, err
-	}
-	if len(app) != 1 {
-		panic(fmt.Sprintf("there is more then one record with public id %s", token))
+	assert.Nil(err)
+	if len(app) == 0 {
+		return nil, errors.New("app not found")
 	}
 	return &app[0], nil
 }
