@@ -37,10 +37,43 @@ const bannerTemplateText = `<!DOCTYPE html>
 	.butl {background: #4474CB;color: #FFF;padding: 10px;text-decoration: none;border: 2px solid #FFFFFF;font-family: tahoma;font-size: 13px;}
 	img.adhere {max-width:100%;height:auto;}
 	video {background: #232323 none repeat scroll 0 0;}
+		{{ if .FatFinger }}
+        #fatfinger-overlay{
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.3);
+            opacity: 0;
+            cursor: pointer;
+        }
+        #fatfinger-link{
+            position: absolute;
+            top:50%;
+            transform: translateY(-50%);
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.3);
+            color: white;
+            text-align: center;
+            padding: 3%;
+            font-size: 16px;
+            cursor: pointer;
+        }
+		{{ end }}
+
+
 	</style>
 
 </head>
 <body>
+	{{ if .FatFinger }}
+	<div id="fatfinger-overlay">
+    	<div id="fatfinger-link">مشاهده آگهی</div>
+	</div>
+	{{ end }}
+
     {{ if .Tiny }}<a class="tiny" href="{{.TinyURL}}" target="_blank"></a>{{ end }}
     <a id="click_banner_id" href="{{ .Link }}" target="_blank"><img src="{{ .Src }}" border="0" height="{{ .Height }}" width="{{ .Width }}" style="width:100vw;height:100vh;"/></a>
     <br style="clear: both;"/>
@@ -56,6 +89,22 @@ const bannerTemplateText = `<!DOCTYPE html>
         return false
         {{end}}
     }
+
+	{{ if .FatFinger }}
+    var overlay = document.getElementById("fatfinger-overlay");
+    var link = document.getElementById("fatfinger-link");
+    overlay.addEventListener("click", function(e){
+        e.stopPropagation();
+        console.log(link);
+        this.style.opacity = "1";
+		link.addEventListener("click", function(e){
+      	elem.click();
+    	});
+    });
+
+	{{ end }}
+
+
 	</script>
 </body>
 </html>`
@@ -72,6 +121,7 @@ type bannerData struct {
 	TinyLogo       string
 	TinyURL        string
 	PreventDefault bool
+	FatFinger      bool
 }
 
 func renderWebBanner(w io.Writer, ctx entity.Context, seat entity.Seat) error {
@@ -89,6 +139,7 @@ func renderWebBanner(w io.Writer, ctx entity.Context, seat entity.Seat) error {
 		TinyLogo:       ctx.Publisher().Supplier().TinyLogo(),
 		TinyURL:        ctx.Publisher().Supplier().TinyURL(),
 		PreventDefault: ctx.PreventDefault(),
+		FatFinger:      ctx.FatFinger(),
 	}
 
 	return bannerTemplate.Execute(w, sa)
