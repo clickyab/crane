@@ -62,7 +62,7 @@ func AddImpression(p entity.Publisher, m models.Impression, s models.Seat) error
 							imp_cookie,imp_flash,
 							imp_time,imp_date,sla_id,
 							slot_id, s_name, s_diff_cpm,
-							imp_cpm,final_imp_cpm
+							imp_cpm,imp_final_cpm
 							) VALUES (
 							?,?,?,
 							?,?,?,
