@@ -11,7 +11,7 @@ import (
 )
 
 // FindWebsiteByPublicID return publisher id for public id
-func FindWebsiteByPublicID(pid int64) (entity.Publisher, error) {
+func FindWebsiteByPublicID(pid int64, supplier entity.Supplier) (entity.Publisher, error) {
 	ws := make([]Website, 0)
 	_, err := NewManager().GetRDbMap().Select(&ws, `SELECT w_id,
 		w_domain,
@@ -27,17 +27,27 @@ func FindWebsiteByPublicID(pid int64) (entity.Publisher, error) {
 	if len(ws) == 0 {
 		return nil, errors.New("website not found")
 	}
+	if supplier.Name() != ws[0].WSupplier {
+		return nil, fmt.Errorf("mismatch supplier for domain %s with public id %d. suppliers %s and %s",
+			ws[0].WDomain, pid, ws[0].WSupplier, supplier.Name())
+	}
+	ws[0].Supp = supplier
 	return &ws[0], nil
 }
 
 // FindAppByAppToken return publisher id for app token
-func FindAppByAppToken(token string) (entity.Publisher, error) {
+func FindAppByAppToken(token string, supplier entity.Supplier) (entity.Publisher, error) {
 	app := make([]App, 0)
 	_, err := NewManager().GetRDbMap().Select(&app, `SELECT app_id,app_token,app_name,app_supplier,app_package,app_floor_cpm,app_status,app_cat,app_fatfinger from apps where app_token=?`, token)
 	assert.Nil(err)
 	if len(app) == 0 {
 		return nil, errors.New("app not found")
 	}
+	if app[0].AppSupplier != supplier.Name() {
+		return nil, fmt.Errorf("mismatch supplier for package %s with app token  %d. suppliers %s and %s",
+			app[0].AppPackage, token, app[0].AppSupplier, supplier.Name())
+	}
+	app[0].Supp = supplier
 	return &app[0], nil
 }
 
@@ -51,12 +61,8 @@ func FindOrAddWebsite(sup entity.Supplier, domain string, pid int64) (entity.Pub
 		pid = WebPublicIDGen(sup.Name(), domain)
 	}
 
-	w, err := FindWebsiteByPublicID(pid)
+	w, err := FindWebsiteByPublicID(pid, sup)
 	if err == nil {
-		if w.Supplier().Name() != sup.Name() {
-			return nil, fmt.Errorf("mismatch supplier for domain %s with public id %d. suppliers %s and %s",
-				domain, pid, sup.Name(), w.Supplier().Name())
-		}
 		return w, nil
 	}
 
@@ -131,12 +137,8 @@ func FindOrAddApp(sup entity.Supplier, appPackage string, appToken string) (enti
 		appToken = AppPublicIDGen(sup.Name(), appPackage)
 	}
 
-	app, err := FindAppByAppToken(appToken)
+	app, err := FindAppByAppToken(appToken, sup)
 	if err == nil {
-		if app.Supplier().Name() != sup.Name() {
-			return nil, fmt.Errorf("mismatch supplier for package %s with app token  %d. suppliers %s and %s",
-				appPackage, appToken, sup.Name(), app.Supplier().Name())
-		}
 		return app, nil
 	}
 
