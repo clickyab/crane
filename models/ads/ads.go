@@ -10,6 +10,7 @@ import (
 	"clickyab.com/crane/models/website"
 	"clickyab.com/crane/workers/models"
 	"github.com/clickyab/services/pool"
+	"github.com/sirupsen/logrus"
 )
 
 var ads pool.Interface
@@ -52,7 +53,8 @@ func FindPublisher(sup, domain string, pid int64, t entity.PublisherType) (entit
 	} else if t == entity.PublisherTypeApp {
 		p, err = apps.GetApp(osup, domain, "")
 	} else {
-		panic("[BUG] invalid request type")
+		logrus.Errorf("[BUG] invalid request type the type is %s", t.String())
+		return nil, fmt.Errorf("[BUG] invalid request type the type is %s", t.String())
 	}
 	if err != nil {
 		return nil, err
