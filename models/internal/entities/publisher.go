@@ -52,10 +52,20 @@ func FindOrAddWebsite(sup entity.Supplier, domain string, pid int64) (entity.Pub
 	}
 
 	ws := make([]Website, 0)
-	_, err = NewManager().GetRDbMap().Select(&ws, `SELECT * from websites where w_supplier=? and w_domain=?`,
+	_, err = NewManager().GetRDbMap().Select(&ws, `SELECT w_id,
+		w_domain,
+		w_supplier,
+		w_name,
+		w_categories,
+		w_minbid,
+		w_floor_cpm,
+		w_fatfinger,
+		w_status,
+		w_mobad from websites where w_supplier=? and w_domain=?`,
 		sup.Name(), domain)
+	assert.Nil(err)
 
-	if err == nil && len(ws) != 0 {
+	if len(ws) != 0 {
 		var tw = ws[0]
 
 		for i := range ws {
@@ -63,6 +73,7 @@ func FindOrAddWebsite(sup entity.Supplier, domain string, pid int64) (entity.Pub
 				tw = ws[i]
 			}
 		}
+		tw.Supp = sup
 		return &tw, nil
 	}
 
@@ -121,10 +132,20 @@ func FindOrAddApp(sup entity.Supplier, appPackage string, appToken string) (enti
 	}
 
 	apps := make([]App, 0)
-	_, err = NewManager().GetRDbMap().Select(&apps, `SELECT * from apps where app_supplier=? and app_package=?`,
+	_, err = NewManager().GetRDbMap().Select(&apps, `SELECT app_id,
+		app_name,
+		app_supplier,
+		app_package,
+		app_minbid,
+		app_status,
+		app_floor_cpm,
+		app_fatfinger,
+		app_cat,
+app_token from apps where app_supplier=? and app_package=?`,
 		sup.Name(), appPackage)
+	assert.Nil(err)
 
-	if err == nil && len(apps) != 0 {
+	if len(apps) != 0 {
 		var tw = apps[0]
 
 		for i := range apps {
@@ -132,6 +153,7 @@ func FindOrAddApp(sup entity.Supplier, appPackage string, appToken string) (enti
 				tw = apps[i]
 			}
 		}
+		tw.Supp = sup
 		return &tw, nil
 	}
 
