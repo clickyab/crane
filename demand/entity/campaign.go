@@ -1,5 +1,7 @@
 package entity
 
+import "strings"
+
 // Target is the target of this campaign
 type Target int
 
@@ -33,7 +35,7 @@ const (
 func GetStrategy(s []string) Strategy {
 	var res Strategy
 	for _, value := range s {
-		if v, ok := stringStrategy[value]; ok {
+		if v, ok := stringStrategy[strings.ToLower(value)]; ok {
 			res |= v
 		}
 	}
