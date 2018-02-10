@@ -13,7 +13,16 @@ import (
 // FindWebsiteByPublicID return publisher id for public id
 func FindWebsiteByPublicID(pid int64) (entity.Publisher, error) {
 	ws := make([]Website, 0)
-	_, err := NewManager().GetRDbMap().Select(&ws, `SELECT * from websites where w_pub_id=?`, pid)
+	_, err := NewManager().GetRDbMap().Select(&ws, `SELECT w_id,
+		w_domain,
+		w_supplier,
+		w_name,
+		w_categories,
+		w_minbid,
+		w_floor_cpm,
+		w_fatfinger,
+		w_status,
+		w_mobad from websites where w_pub_id=?`, pid)
 	assert.Nil(err)
 	if len(ws) == 0 {
 		return nil, errors.New("website not found")
