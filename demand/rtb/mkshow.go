@@ -151,7 +151,9 @@ func internalSelect(
 		}
 
 		ef.Ads = capping.ApplyCapping(ctx.Capping(), ctx.User().ID(), ef.Ads, ctx.EventPage())
-
+		if len(ef.Ads) == 0 {
+			continue
+		}
 		sort.Sort(ef)
 		sorted = ef.Ads
 
