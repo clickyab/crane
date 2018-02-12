@@ -11,21 +11,22 @@ import (
 )
 
 func getSecondCPM(floorCPM int64, exceedFloor []entity.SelectedCreative) float64 {
-	var secondCPM = float64(floorCPM)
-	if len(exceedFloor) > 1 && // if there is more than one
-		exceedFloor[1].IsSecBid() && // the next is also a second bid ad
-		exceedFloor[0].Capping().Selected() == exceedFloor[1].Capping().Selected() { // and second is not selected already
-		secondCPM = float64(exceedFloor[1].CalculatedCPM())
+	if !exceedFloor[0].IsSecBid() {
+		return float64(exceedFloor[0].CalculatedCPM())
 	}
 
-	return secondCPM
+	if len(exceedFloor) > 1 && exceedFloor[1].IsSecBid() && !exceedFloor[1].Capping().Selected() {
+		return float64(exceedFloor[1].CalculatedCPM())
+	}
+
+	return float64(floorCPM)
 }
 
 func defaultCTR(seatType entity.RequestType, pub entity.PublisherType, sup entity.Supplier) float64 {
 	return sup.DefaultCTR(fmt.Sprint(seatType), fmt.Sprint(pub))
 }
 
-func doBid(ad entity.Creative, slot entity.Seat, floorCPM int64, pub entity.Publisher) (float64, int64, bool) {
+func doBid(ad entity.Creative, slot entity.Seat, floorCPM int64, pub entity.Publisher) (float64, int64, int64, bool) {
 	slotCtr := slot.CTR()
 	if slot.CTR() < 0 {
 		//get ctr based on the creative and seat type native app / native web / vast web ...
@@ -37,13 +38,16 @@ func doBid(ad entity.Creative, slot entity.Seat, floorCPM int64, pub entity.Publ
 		adCtr = defaultCTR(slot.RequestType(), pub.Type(), pub.Supplier())
 	}
 	ctr := (adCtr*float64(adCTREffect.Int()) + slotCtr*float64(slotCTREffect.Int())) / float64(100)
-	cpm := int64(float64(ad.MaxBID()) * ctr * 10.0)
-	return ctr, cpm, cpm >= floorCPM
-}
+	var cpc, cpm int64
+	if ad.Campaign().Strategy() == entity.StrategyCPC {
+		cpm = int64(float64(ad.MaxBID()) * ctr * 10.0)
+		cpc = ad.MaxBID()
+	} else {
+		cpm = ad.MaxBID()
+		cpc = int64(float64(ad.MaxBID()) / (ctr * 10.0))
+	}
 
-// winnerBid calculate winner bid
-func winnerBid(cpm float64, ctr float64) float64 {
-	return cpm / (ctr * 10)
+	return ctr, cpm, cpc, cpm >= floorCPM
 }
 
 func incShare(sup entity.Supplier, price int64) int64 {
@@ -58,7 +62,12 @@ type adAndBid struct {
 	entity.Creative
 	ctr    float64
 	cpm    int64
+	cpc    int64
 	secBid bool
+}
+
+func (aab adAndBid) CalculatedCPC() int64 {
+	return aab.cpc
 }
 
 func (aab adAndBid) CalculatedCTR() float64 {
@@ -104,7 +113,7 @@ func internalSelect(
 				continue
 			}
 
-			if ctr, cpm, ok := doBid(creative, seat, minCPM, ctx.Publisher()); ok {
+			if ctr, cpm, cpc, ok := doBid(creative, seat, minCPM, ctx.Publisher()); ok {
 				// a pass!
 				exceedFloor = append(
 					exceedFloor,
@@ -113,6 +122,7 @@ func internalSelect(
 						ctr:      ctr,
 						cpm:      cpm,
 						secBid:   cpm >= soft,
+						cpc:      cpc,
 					},
 				)
 			} else {
@@ -122,6 +132,7 @@ func internalSelect(
 						Creative: creative,
 						ctr:      ctr,
 						cpm:      cpm,
+						cpc:      cpc,
 						secBid:   false,
 					},
 				)
@@ -159,28 +170,12 @@ func internalSelect(
 
 		theAd := sorted[0]
 		// Do not do second biding pricing on this ads, they can not pass CPMFloor
-		targetCPM := float64(theAd.MaxBID()) * 10 * theAd.CalculatedCTR()
-		if theAd.IsSecBid() {
-			targetCPM = getSecondCPM(soft, sorted)
-		}
+		targetCPM := getSecondCPM(soft, sorted)
+		targetCPC := targetCPM / (theAd.CalculatedCTR() * 10.0)
 
-		// bid is in CPC world, so must compare it with the max bid
-		bid := winnerBid(targetCPM, theAd.CalculatedCTR())
-		if bid > float64(theAd.MaxBID()) {
-			// TODO : must not happen, but it happen some how. check it later
-			// since we change the winner bid, do not inc the cap
-			bid = float64(theAd.MaxBID())
-			// also fix target cpm
-			targetCPM = theAd.CalculatedCTR() * 10 * bid
-		}
-
-		// minCPM is in CPM world. so must compare it with target CPM
-		if targetCPM < float64(minCPM) {
-			targetCPM = float64(minCPM)
-		}
 		selected[theAd.ID()] = true
 		// Only decrease share for CPM (which is reported to supplier) not bid (which is used by us)
-		seat.SetWinnerAdvertise(theAd, bid, decShare(ctx.Publisher().Supplier(), targetCPM))
+		seat.SetWinnerAdvertise(theAd, targetCPC, decShare(ctx.Publisher().Supplier(), targetCPM))
 
 		if !ctx.MultiVideo() {
 			noVideo = noVideo || theAd.Type() == entity.AdTypeVideo
