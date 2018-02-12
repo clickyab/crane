@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"time"
 
+	"strconv"
+
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/workers/models"
 )
@@ -53,6 +55,11 @@ func AddImpression(p entity.Publisher, m models.Impression, s models.Seat) error
 	if err != nil {
 		return err
 	}
+	copString := m.CopID
+	if len(m.CopID) > 10 {
+		copString = copString[:10]
+	}
+	copID, _ := strconv.ParseInt(copString, 16, 64)
 	q := fmt.Sprintf(`INSERT INTO impressions%s (
 							cp_id,reserved_hash,ad_size,
 							w_id,wp_id,app_id,
@@ -78,7 +85,7 @@ func AddImpression(p entity.Publisher, m models.Impression, s models.Seat) error
 	_, err = NewManager().GetWDbMap().Exec(q,
 		ca.Campaign().ID(), s.ReserveHash, s.AdSize,
 		wID, 0, appID,
-		s.AdID, m.CopID, ca.CampaignAdID(),
+		s.AdID, copID, ca.CampaignAdID(),
 		m.IP.String(), refer, parent,
 		ca.TargetURL(), s.WinnerBID, m.Suspicious,
 		0, 0,
