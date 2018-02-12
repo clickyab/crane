@@ -3,6 +3,8 @@ package entities
 import (
 	"database/sql"
 
+	"strconv"
+
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/workers/models"
 )
@@ -115,13 +117,18 @@ func InsertClick(c *Click) error {
 	c_os,
 	c_time,
 	c_date,ad_size,c_supplier) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
+	copString := c.copID
+	if len(c.copID) > 10 {
+		copString = copString[:10]
+	}
+	copID, _ := strconv.ParseInt(copString, 16, 64)
 
 	referrer := sql.NullString{Valid: c.referrer != "", String: c.referrer}
 	parent := sql.NullString{Valid: c.parent != "", String: c.parent}
 
 	_, err := NewManager().GetWDbMap().Exec(q,
 		c.reservedHash, c.winnerBid, c.webSiteID, c.appID, 0, c.campaignID,
-		c.campaignAdID, c.slotID, c.slotAdID, c.adID, c.copID, 0, c.status,
+		c.campaignAdID, c.slotID, c.slotAdID, c.adID, copID, 0, c.status,
 		c.ip, referrer, parent, c.fast, c.os, c.time, c.date, c.adSize, c.supplier)
 
 	return err
