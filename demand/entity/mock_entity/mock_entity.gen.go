@@ -1051,6 +1051,18 @@ func (mr *MockSelectedCreativeMockRecorder) Attributes() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Attributes", reflect.TypeOf((*MockSelectedCreative)(nil).Attributes))
 }
 
+// CalculatedCPC mocks base method
+func (m *MockSelectedCreative) CalculatedCPC() int64 {
+	ret := m.ctrl.Call(m, "CalculatedCPC")
+	ret0, _ := ret[0].(int64)
+	return ret0
+}
+
+// CalculatedCPC indicates an expected call of CalculatedCPC
+func (mr *MockSelectedCreativeMockRecorder) CalculatedCPC() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CalculatedCPC", reflect.TypeOf((*MockSelectedCreative)(nil).CalculatedCPC))
+}
+
 // CalculatedCPM mocks base method
 func (m *MockSelectedCreative) CalculatedCPM() int64 {
 	ret := m.ctrl.Call(m, "CalculatedCPM")
