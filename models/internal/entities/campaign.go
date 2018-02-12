@@ -88,7 +88,7 @@ func (c *Campaign) Frequency() int {
 
 // BlackListPublisher campaign black list publishers
 func (c *Campaign) BlackListPublisher() []string {
-	if c.CampaignType == 1 {
+	if entity.Target(c.CampaignNetwork) == entity.TargetApp {
 		return c.CampaignAppFilter.Array()
 	}
 	return c.CampaignWebsiteFilter.Array()
@@ -96,10 +96,10 @@ func (c *Campaign) BlackListPublisher() []string {
 
 // WhiteListPublisher return the campaign white list publishers
 func (c *Campaign) WhiteListPublisher() []string {
-	if c.CampaignType == 1 {
-		return c.CampaignPlacement.Array()
+	if entity.Target(c.CampaignNetwork) == entity.TargetApp {
+		return c.CampaignApp.Array()
 	}
-	return c.CampaignApp.Array()
+	return c.CampaignPlacement.Array()
 }
 
 // Country allowed countries
