@@ -221,7 +221,6 @@ func contextMaker(minbid int64, winner entity.Creative, underfloor bool, strateg
 	seat.EXPECT().Acceptable(gomock.Any()).Return(true).AnyTimes()
 	seat.EXPECT().CTR().Return(.1).AnyTimes()
 	if winner == nil {
-
 		seat.EXPECT().WinnerAdvertise().Return(nil).AnyTimes()
 	}
 
@@ -237,9 +236,15 @@ func contextMaker(minbid int64, winner entity.Creative, underfloor bool, strateg
 	sup := mock_entity.NewMockSupplier(c)
 	sup.EXPECT().Share().Return(100).AnyTimes()
 	sup.EXPECT().Strategy().Return(strategy).AnyTimes()
-	soft := sup.EXPECT().SoftFloorCPM(gomock.Any(), gomock.Any())
-	soft.Do(func(a, b string) {
-		soft.Return(default_floor_cpm[fmt.Sprintf("%s_%s", a, b)]).AnyTimes()
+
+	softCPC := sup.EXPECT().SoftFloorCPC(gomock.Any(), gomock.Any())
+	softCPC.Do(func(a, b string) {
+		softCPC.Return(default_floor_cpm[fmt.Sprintf("%s_%s", a, b)]).AnyTimes()
+	}).AnyTimes()
+
+	softCPM := sup.EXPECT().SoftFloorCPM(gomock.Any(), gomock.Any())
+	softCPM.Do(func(a, b string) {
+		softCPM.Return(default_floor_cpm[fmt.Sprintf("%s_%s", a, b)]).AnyTimes()
 	}).AnyTimes()
 
 	pub := mock_entity.NewMockPublisher(c)
