@@ -161,7 +161,7 @@ func AssetNames() []string {
 
 // _bindata is a table, holding each asset generator, mapped to its name.
 var _bindata = map[string]func() (*asset, error){
-	"show.js":    showJs,
+	"show.js": showJs,
 	"show.v2.js": showV2Js,
 }
 
@@ -204,9 +204,8 @@ type bintree struct {
 	Func     func() (*asset, error)
 	Children map[string]*bintree
 }
-
 var _bintree = &bintree{nil, map[string]*bintree{
-	"show.js":    &bintree{showJs, map[string]*bintree{}},
+	"show.js": &bintree{showJs, map[string]*bintree{}},
 	"show.v2.js": &bintree{showV2Js, map[string]*bintree{}},
 }}
 
@@ -256,3 +255,4 @@ func _filePath(dir, name string) string {
 	cannonicalName := strings.Replace(name, "\\", "/", -1)
 	return filepath.Join(append([]string{dir}, strings.Split(cannonicalName, "/")...)...)
 }
+
