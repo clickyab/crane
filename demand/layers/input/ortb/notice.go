@@ -34,7 +34,7 @@ func noticeHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) 
 	exp, _ := context.WithTimeout(ctx, 10*time.Second)
 
 	safe.GoRoutine(exp, func() {
-		job := notice.NewNoticeJob(c)
+		job := notice.NewNoticeJob(c, c.Seats()...)
 		broker.Publish(job)
 	})
 
