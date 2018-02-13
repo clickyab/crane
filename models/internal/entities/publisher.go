@@ -172,9 +172,9 @@ app_token from apps where app_supplier=? and app_package=?`,
 		return nil, ErrorNotAllowCreate
 	}
 
-	q := `INSERT INTO apps (u_id, app_package,app_supplier,app_status,created_at,updated_at,app_date, app_token)
-VALUES (?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE
-  u_id=VALUES(u_id),app_package=VALUES(app_package),app_supplier=VALUES(app_supplier),app_status=VALUES(app_status),
+	q := `INSERT INTO apps (u_id, app_package,app_supplier,app_name,app_status,created_at,updated_at,app_date, app_token)
+VALUES (?,?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE
+  u_id=VALUES(u_id),app_package=VALUES(app_package),app_supplier=VALUES(app_supplier),app_name=VALUES(app_name),app_status=VALUES(app_status),
   created_at=VALUES(created_at),updated_at=VALUES(updated_at),app_date=VALUES(app_date), app_id=LAST_INSERT_ID(app_id)`
 
 	t := time.Now()
@@ -191,9 +191,14 @@ VALUES (?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE
 		CTRStat:     CTRStat{},
 	}
 
-	res, err := NewManager().GetWDbMap().Exec(q, sup.UserID(),
+	res, err := NewManager().GetWDbMap().Exec(q,
+		sup.UserID(),
 		sql.NullString{Valid: true, String: appPackage},
-		sup.Name(), 1, sql.NullString{Valid: true, String: t.String()}, sql.NullString{Valid: true, String: t.String()},
+		sup.Name(),
+		sql.NullString{Valid: true, String: appPackage},
+		1,
+		sql.NullString{Valid: true, String: t.String()},
+		sql.NullString{Valid: true, String: t.String()},
 		int(t.Unix()), AppPublicIDGen(sup.Name(), appPackage),
 	)
 
