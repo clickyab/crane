@@ -5,6 +5,10 @@ import "clickyab.com/crane/demand/entity"
 type supplier struct {
 }
 
+func (*supplier) SoftFloorCPC(string, string) int64 {
+	panic("implement me")
+}
+
 func (*supplier) SoftFloorCPM(string, string) int64 {
 	panic("implement me")
 }

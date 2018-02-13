@@ -92,14 +92,16 @@ func internalSelect(
 
 	for _, seat := range ctx.Seats() {
 		var (
-			exceedFloor []entity.SelectedCreative                                                                                     // above  hard floor (the minimum cpm ), legit ads
-			underFloor  []entity.SelectedCreative                                                                                     // not passed from floor, only used if the supplier accept less than minCPM bids, normally only us, as clickyab
-			soft        = ctx.Publisher().Supplier().SoftFloorCPM(fmt.Sprint(seat.RequestType()), fmt.Sprint(ctx.Publisher().Type())) // soft floor , determine the sec bidding pricing
-			minCPM      = incShare(ctx.Publisher().Supplier(), seat.MinBid())                                                         // minimum cpm of this seat, aka hard floor, after adding our share to it
+			exceedFloor []entity.SelectedCreative                                                                                              // above  hard floor (the minimum cpm ), legit ads
+			underFloor  []entity.SelectedCreative                                                                                              // not passed from floor, only used if the supplier accept less than minCPM bids, normally only us, as clickyab
+			softCPM     = ctx.Publisher().Supplier().SoftFloorCPM(fmt.Sprint(seat.RequestType()), fmt.Sprint(ctx.Publisher().Type()))          // softCPM floor , determine the sec bidding pricing
+			minCPM      = incShare(ctx.Publisher().Supplier(), seat.MinBid())                                                                  // minimum cpm of this seat, aka hard floor, after adding our share to it
+			minCPC      = float64(ctx.Publisher().Supplier().SoftFloorCPC(fmt.Sprint(seat.RequestType()), fmt.Sprint(ctx.Publisher().Type()))) // minimum cpc of this seat, aka hard floor, after adding our share to it
 		)
-		// soft floor is smaller than hard floor, so we do not have sec biding
-		if soft < minCPM {
-			soft = minCPM
+
+		// softCPM floor is smaller than hard floor, so we do not have sec biding
+		if softCPM < minCPM {
+			softCPM = minCPM
 		}
 
 		for _, creative := range ads {
@@ -121,7 +123,7 @@ func internalSelect(
 						Creative: creative,
 						ctr:      ctr,
 						cpm:      cpm,
-						secBid:   cpm >= soft,
+						secBid:   cpm >= softCPM,
 						cpc:      cpc,
 					},
 				)
@@ -170,8 +172,12 @@ func internalSelect(
 
 		theAd := sorted[0]
 		// Do not do second biding pricing on this ads, they can not pass CPMFloor
-		targetCPM := getSecondCPM(soft, sorted)
+		targetCPM := getSecondCPM(softCPM, sorted)
 		targetCPC := targetCPM / (theAd.CalculatedCTR() * 10.0)
+
+		if theAd.Campaign().Strategy() == entity.StrategyCPC && targetCPC < minCPC {
+			targetCPC = minCPC
+		}
 
 		selected[theAd.ID()] = true
 		// Only decrease share for CPM (which is reported to supplier) not bid (which is used by us)

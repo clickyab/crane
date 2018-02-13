@@ -7,6 +7,10 @@ import (
 type supplier struct {
 }
 
+func (s *supplier) SoftFloorCPC(string, string) int64 {
+	panic("implement me")
+}
+
 func (s *supplier) SoftFloorCPM(string, string) int64 {
 	panic("implement me")
 }

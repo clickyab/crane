@@ -20,6 +20,7 @@ type Supplier struct {
 	FToken        string                 `db:"token"`
 	FUserID       sql.NullInt64          `db:"user_id"`
 	FSoftFloorCPM mysql.GenericJSONField `db:"soft_floor_cpm"`
+	FSoftFloorCPC mysql.GenericJSONField `db:"soft_floor_cpc"`
 	DefaultMinBID int64                  `db:"default_min_bid"`
 	FBIDType      string                 `db:"bid_type"`
 	FDefaultCTR   mysql.GenericJSONField `db:"ctr"`
@@ -32,6 +33,17 @@ type Supplier struct {
 	FTinyURL      string                 `db:"tiny_url"`
 	FShare        int                    `db:"share"`
 	strategy      entity.Strategy        `db:"-"`
+}
+
+// SoftFloorCPC based on pub type and request type
+func (s Supplier) SoftFloorCPC(adType, pubType string) int64 {
+	key := fmt.Sprintf("%s_%s", pubType, adType)
+	if val, ok := s.FSoftFloorCPC[key]; ok {
+		if x, ok := val.(float64); ok {
+			return int64(x)
+		}
+	}
+	panic("[BUG]supplier not support proper floor cpm")
 }
 
 // Strategy of supplier can be cpm, cpc or both
@@ -135,7 +147,7 @@ func (s *Supplier) Share() int {
 }
 
 var (
-	supQuery = `SELECT name,token,user_id,soft_floor_cpm,default_min_bid,bid_type,ctr,tiny_mark,
+	supQuery = `SELECT name,token,user_id,soft_floor_cpm, soft_floor_cpc, default_min_bid,bid_type,ctr,tiny_mark,
 show_domain,created_at,updated_at,rate,tiny_logo,tiny_url,share FROM suppliers`
 )
 
