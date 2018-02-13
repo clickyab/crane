@@ -19,6 +19,9 @@ type Supplier interface {
 	// SoftFloorCPM for this supplier by request sub type and publisher type
 	// example : web banner,web vast, app native , ...
 	SoftFloorCPM(string, string) int64
+	// SoftFloorCPC for this supplier by request sub type and publisher type
+	// example : web banner,web vast, app native , ...
+	SoftFloorCPC(string, string) int64
 	// DefaultCTR for this supplier by request sub type and publisher type
 	// example : web banner,web vast, app native , ...
 	DefaultCTR(string, string) float64

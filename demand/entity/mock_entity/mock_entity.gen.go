@@ -1704,6 +1704,18 @@ func (mr *MockSupplierMockRecorder) ShowDomain() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ShowDomain", reflect.TypeOf((*MockSupplier)(nil).ShowDomain))
 }
 
+// SoftFloorCPC mocks base method
+func (m *MockSupplier) SoftFloorCPC(arg0, arg1 string) int64 {
+	ret := m.ctrl.Call(m, "SoftFloorCPC", arg0, arg1)
+	ret0, _ := ret[0].(int64)
+	return ret0
+}
+
+// SoftFloorCPC indicates an expected call of SoftFloorCPC
+func (mr *MockSupplierMockRecorder) SoftFloorCPC(arg0, arg1 interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SoftFloorCPC", reflect.TypeOf((*MockSupplier)(nil).SoftFloorCPC), arg0, arg1)
+}
+
 // SoftFloorCPM mocks base method
 func (m *MockSupplier) SoftFloorCPM(arg0, arg1 string) int64 {
 	ret := m.ctrl.Call(m, "SoftFloorCPM", arg0, arg1)
