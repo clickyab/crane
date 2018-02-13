@@ -61,7 +61,7 @@ func (kr *atomicKiwiRedis) IncSubKey(key string, value int64) int64 {
 		return r
 	}
 	kr.v[key] = r
-	aredis.Client.Expire(key, kr.duration)
+	aredis.Client.Expire(kr.key, kr.duration)
 	return r
 }
 
@@ -76,7 +76,7 @@ func (kr *atomicKiwiRedis) SubKey(key string) int64 {
 	defer kr.Unlock()
 
 	if v, ok := kr.v[key]; ok {
-		aredis.Client.Expire(key, kr.duration)
+		aredis.Client.Expire(kr.key, kr.duration)
 		return v
 	}
 	res := aredis.Client.HIncrBy(kr.key, key, 0)
