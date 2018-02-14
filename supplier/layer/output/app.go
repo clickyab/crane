@@ -13,7 +13,7 @@ import (
 	"github.com/clickyab/services/config"
 )
 
-const inappTemplateText = `
+const inappTemplateText string = `
 <!doctype html>
 <html>
 <head>
@@ -107,7 +107,9 @@ a.largeclose{ width: 32px; height: 32px; line-height: 32px; font-size: 24px; }
 
 	function onMessage(event) {
 		var data = event.data;
-		onClickyabClicked(event.data.url,null,null)
+		if (data.url !== undefined) { 
+			onClickyabClicked(data.url,null,null)
+		}
 	}
 	{{ end }}
     function showHitted() {
@@ -169,6 +171,10 @@ a.largeclose{ width: 32px; height: 32px; line-height: 32px; font-size: 24px; }
     }
 
     document.addEventListener('DOMContentLoaded', function() {
+        if (clickyab === undefined) {
+    		return;
+		}
+
         AndroidSetImpId(impId);
         {{ if .NoAd }}
             {{ if eq .SdkVersion 3 }}
