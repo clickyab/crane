@@ -2,7 +2,6 @@ package output
 
 import (
 	"context"
-	"io"
 
 	"encoding/xml"
 
@@ -10,6 +9,8 @@ import (
 	"strings"
 
 	"time"
+
+	"net/http"
 
 	"github.com/bsm/openrtb"
 	"github.com/clickyab/services/assert"
@@ -60,7 +61,7 @@ func stringToOffset(s string) (vmap.Offset, error) {
 }
 
 // RenderVMAP is a function to handling VMAP render
-func RenderVMAP(ctx context.Context, w io.Writer, resp *openrtb.BidResponse, seats map[string]Seat) error {
+func RenderVMAP(ctx context.Context, w http.ResponseWriter, resp *openrtb.BidResponse, seats map[string]Seat) error {
 	v := vmap.VMAP{
 		Version: "1.0",
 	}
@@ -112,6 +113,7 @@ func RenderVMAP(ctx context.Context, w io.Writer, resp *openrtb.BidResponse, sea
 		v.AdBreaks = append(v.AdBreaks, ad)
 	}
 
+	w.Header().Set("content-type", "application/xml")
 	b, err := xml.Marshal(v)
 	assert.Nil(err)
 	_, _ = w.Write(b)
