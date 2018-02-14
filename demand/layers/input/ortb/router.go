@@ -44,6 +44,7 @@ type payloadData struct {
 	CPM          float64
 	SCPM         float64
 	FatFinger    bool
+	Tiny         bool
 }
 
 func extractor(ctx context.Context, r *http.Request) (*payloadData, error) {
@@ -59,7 +60,7 @@ func extractor(ctx context.Context, r *http.Request) (*payloadData, error) {
 	pl.TID = r.URL.Query().Get("tid")
 	pl.Ref = r.URL.Query().Get("ref")
 	pl.Parent = r.URL.Query().Get("parent")
-	expired, m, err := jwt.NewJWT().Decode([]byte(jt), "pt", "aid", "sup", "dom", "bid", "uaip", "susp", "pid", "now", "cpm", "ff")
+	expired, m, err := jwt.NewJWT().Decode([]byte(jt), "pt", "aid", "sup", "dom", "bid", "uaip", "susp", "pid", "now", "cpm", "ff", "t")
 	if err != nil {
 		return nil, err
 	}
@@ -77,6 +78,7 @@ func extractor(ctx context.Context, r *http.Request) (*payloadData, error) {
 	}
 
 	pl.FatFinger = m["ff"] == "T"
+	pl.Tiny = m["t"] == "T"
 	pl.SCPM, _ = strconv.ParseFloat(r.URL.Query().Get("scpm"), 64)
 	pl.SCPM = pl.SCPM * float64(pl.Supplier.Rate())
 	pl.PubType = entity.PublisherType(m["pt"])

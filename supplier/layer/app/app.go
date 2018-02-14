@@ -60,6 +60,7 @@ func getApp(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		"lac":          r.URL.Query().Get("lac"),
 		"capping_mode": "reset",
 		"underfloor":   true,
+		"tiny_mark":    false,
 	}
 	if _, ok := pub.Attributes()[entity.PAFatFinger]; ok {
 		ext["fat_finger"] = true
