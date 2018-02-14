@@ -76,13 +76,18 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	)
 	// If this is not a valid json, just pass by.
 	_ = json.Unmarshal(payload.Ext, &ext)
-	fatFinger := ext.Bool("fat_finger")
-	prevent := ext.Bool("prevent_default")
-	underfloor := ext.Bool("underfloor")
-	capping := ext.String("capping_mode")
+	fatFinger, _ := ext.Bool("fat_finger")
+	prevent, _ := ext.Bool("prevent_default")
+	underfloor, _ := ext.Bool("underfloor")
+	capping, _ := ext.String("capping_mode")
 	var strategy []string
-	if st := strings.Trim(ext.String("strategy"), "\t \n"); st != "" {
+	sts, _ := ext.String("strategy")
+	if st := strings.Trim(sts, "\t \n"); st != "" {
 		strategy = strings.Split(st, ",")
+	}
+	tiny, ok := ext.Bool("tiny_mark")
+	if !ok {
+		tiny = sup.TinyMark()
 	}
 
 	// Currently not supporting no cap (this is intentional)
@@ -149,7 +154,7 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetPublisher(publisher),
 		builder.SetProtocol(proto),
 		builder.SetTID(us, ip, ua),
-		builder.SetNoTiny(!sup.TinyMark()),
+		builder.SetNoTiny(!tiny),
 		builder.SetFatFinger(fatFinger),
 		builder.SetStrategy(strategy, sup),
 		builder.SetRate(float64(sup.Rate())),

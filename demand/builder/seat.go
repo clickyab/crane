@@ -132,7 +132,13 @@ func (s *seat) ImpressionURL() *url.URL {
 
 	s.imp = s.makeURL(
 		"banner",
-		map[string]string{"rh": s.ReservedHash(), "size": fmt.Sprint(s.size), "type": s.Type().String(), "subtype": s.RequestType().String(), "pt": s.context.publisher.Type().String()},
+		map[string]string{
+			"rh":      s.ReservedHash(),
+			"size":    fmt.Sprint(s.size),
+			"type":    s.Type().String(),
+			"subtype": s.RequestType().String(),
+			"pt":      s.context.publisher.Type().String(),
+		},
 		s.cpm,
 		showExpire.Duration(),
 	)
@@ -153,7 +159,13 @@ func (s *seat) ClickURL() *url.URL {
 
 	s.click = s.makeURL(
 		"click",
-		map[string]string{"rh": s.ReservedHash(), "size": fmt.Sprint(s.Size()), "type": s.Type().String(), "subtype": s.RequestType().String(), "pt": s.context.publisher.Type().String()},
+		map[string]string{
+			"rh":      s.ReservedHash(),
+			"size":    fmt.Sprint(s.Size()),
+			"type":    s.Type().String(),
+			"subtype": s.RequestType().String(),
+			"pt":      s.context.publisher.Type().String(),
+		},
 		cpm,
 		clickExpire.Duration(),
 	)
@@ -170,7 +182,13 @@ func (s *seat) WinNoticeRequest() *url.URL {
 
 	s.win = s.makeURL(
 		"notice",
-		map[string]string{"rh": s.ReservedHash(), "size": fmt.Sprint(s.Size()), "type": s.Type().String(), "subtype": s.RequestType().String(), "pt": s.context.publisher.Type().String()},
+		map[string]string{
+			"rh":      s.ReservedHash(),
+			"size":    fmt.Sprint(s.Size()),
+			"type":    s.Type().String(),
+			"subtype": s.RequestType().String(),
+			"pt":      s.context.publisher.Type().String(),
+		},
 		s.cpm,
 		time.Hour, // TODO : fix me when there is actually a code to handle it
 	)
@@ -190,6 +208,10 @@ func (s *seat) makeURL(route string, params map[string]string, cpm float64, expi
 	if s.FatFinger() {
 		ff = "T"
 	}
+	tiny := "F"
+	if s.context.Tiny() {
+		tiny = "T"
+	}
 	j := jwt.NewJWT().Encode(map[string]string{
 		"aid":  fmt.Sprint(s.winnerAd.ID()),
 		"dom":  s.context.Publisher().Name(),
@@ -202,6 +224,7 @@ func (s *seat) makeURL(route string, params map[string]string, cpm float64, expi
 		"cpm":  fmt.Sprint(cpm),
 		"ff":   ff,
 		"pt":   s.context.Publisher().Type().String(),
+		"t":    tiny,
 	}, expire)
 	s.winnerAd.ID()
 	params["jt"] = j

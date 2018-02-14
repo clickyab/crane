@@ -6,35 +6,35 @@ import (
 
 type simpleMap map[string]interface{}
 
-func (s simpleMap) Bool(k string) bool {
+func (s simpleMap) Bool(k string) (bool, bool) {
 	d, ok := s[k]
 	if !ok {
-		return false
+		return false, false
 	}
 	switch t := d.(type) {
 	case float64:
-		return t != 0
+		return t != 0, true
 	case string:
 		b, _ := strconv.ParseBool(t)
-		return b
+		return b, true
 	case bool:
-		return t
+		return t, true
 	default:
-		return false
+		return false, true
 	}
 }
 
-func (s simpleMap) String(k string) string {
+func (s simpleMap) String(k string) (string, bool) {
 	d, ok := s[k]
 	if !ok {
-		return ""
+		return "", false
 	}
 	switch t := d.(type) {
 	case string:
-		return t
+		return t, true
 	case []byte:
-		return string(t)
+		return string(t), true
 	default:
-		return ""
+		return "", true
 	}
 }
