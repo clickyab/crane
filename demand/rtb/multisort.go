@@ -33,7 +33,10 @@ func (a byMulti) Less(i, j int) bool {
 			return a.Ads[i].Type() == entity.AdTypeVideo
 		}
 	}
-	return a.Ads[i].CalculatedCPM() > a.Ads[j].CalculatedCPM()
+	if a.Ads[i].CalculatedCPM() != a.Ads[j].CalculatedCPM() {
+		return a.Ads[i].CalculatedCPM() > a.Ads[j].CalculatedCPM()
+	}
+	return a.Ads[i].CalculatedCPC() > a.Ads[j].CalculatedCPC()
 }
 
 // String is a helper method for debugging
