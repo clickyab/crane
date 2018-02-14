@@ -1,6 +1,8 @@
 package rtb
 
 import (
+	"fmt"
+
 	"clickyab.com/crane/demand/entity"
 )
 
@@ -32,4 +34,21 @@ func (a byMulti) Less(i, j int) bool {
 		}
 	}
 	return a.Ads[i].CalculatedCPM() > a.Ads[j].CalculatedCPM()
+}
+
+// String is a helper method for debugging
+func (a byMulti) String() string {
+	res := "---\n"
+	for i := range a.Ads {
+		res += fmt.Sprintf("CP:%d AD:%d CPM:%v CPC:%v ADC:%v SEL:%v\n",
+			a.Ads[i].Campaign().ID(),
+			a.Ads[i].ID(),
+			a.Ads[i].CalculatedCPM(),
+			a.Ads[i].CalculatedCPC(),
+			a.Ads[i].Capping().AdCapping(a.Ads[i].ID()),
+			a.Ads[i].Capping().Selected(),
+		)
+	}
+	res += "===\n"
+	return res
 }
