@@ -56,7 +56,7 @@ func (s *vastSeat) Acceptable(advertise entity.Creative) bool {
 	//return in.Campaign().Target() == entity.TargetVast
 	if advertise.Target() != entity.TargetVast {
 		// TODO : remove it when the new console is awaken!
-		if advertise.Size() != 9 && advertise.Target() != entity.TargetWeb { // there is a fucking decision to show web size 9 in vast network.
+		if advertise.Size() != 9 || advertise.Target() != entity.TargetWeb { // there is a fucking decision to show web size 9 in vast network.
 			return false
 		}
 	}
