@@ -15,7 +15,10 @@ func getSecondCPM(floorCPM int64, exceedFloor []entity.SelectedCreative) float64
 		return float64(exceedFloor[0].CalculatedCPM())
 	}
 
-	if len(exceedFloor) > 1 && exceedFloor[1].IsSecBid() && !exceedFloor[1].Capping().Selected() {
+	if len(exceedFloor) > 1 &&
+		exceedFloor[1].IsSecBid() &&
+		!exceedFloor[1].Capping().Selected() &&
+		exceedFloor[1].CalculatedCPM() <= exceedFloor[0].CalculatedCPM() {
 		return float64(exceedFloor[1].CalculatedCPM())
 	}
 
