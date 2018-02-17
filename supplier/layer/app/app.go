@@ -12,7 +12,7 @@ import (
 	"errors"
 
 	"clickyab.com/crane/demand/entity"
-	"clickyab.com/crane/models/apps"
+	"clickyab.com/crane/models/clickyabapps"
 	"clickyab.com/crane/supplier/client"
 	"clickyab.com/crane/supplier/layer/output"
 	"github.com/bsm/openrtb"
@@ -31,9 +31,10 @@ var (
 )
 
 func getApp(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-	pub, err := apps.GetAppOrFake(sup, r.URL.Query().Get("package"))
+	pub, err := clickyabapps.GetAppOrFake(sup, r.URL.Query().Get("token"))
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
+		return
 	}
 	bs, width, height, full, err := size(r.URL.Query().Get("adsMedia"))
 	if err != nil {
