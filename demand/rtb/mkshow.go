@@ -106,7 +106,6 @@ func internalSelect(
 		if softCPM < minCPM {
 			softCPM = minCPM
 		}
-
 		for _, creative := range ads {
 			if creative.Type() == entity.AdTypeVideo && noVideo {
 				continue
@@ -189,8 +188,6 @@ func internalSelect(
 		if !ctx.MultiVideo() {
 			noVideo = noVideo || theAd.Type() == entity.AdTypeVideo
 		}
-		// TODO : The real problem is what if we are not going to win? this assume any select means show.
-		theAd.Capping().Store(theAd.ID())
 	}
 }
 

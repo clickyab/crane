@@ -73,13 +73,6 @@ func (c *capping) Capping() int {
 	return c.view / c.frequency
 }
 
-func (c *capping) Store(ad int64) {
-	if c.mode == entity.CappingNone {
-		return
-	}
-	kv.NewAEAVStore(getCappingKey(c.mode, c.copID), dailyCapExpire.Duration()).IncSubKey(fmt.Sprintf("%s_%d", adKey, ad), 1)
-}
-
 func (c *capping) AdCapping(ad int64) int {
 	return c.AdView(ad) / c.frequency
 }
@@ -97,4 +90,9 @@ func (c *capping) IncView(ad int64, a int, sel bool) {
 
 func (c *capping) Selected() bool {
 	return c.selected
+}
+
+// StoreCapping try to store a capping object
+func StoreCapping(mode entity.CappingMode, copID string, adID int64) int64 {
+	return kv.NewAEAVStore(getCappingKey(mode, copID), dailyCapExpire.Duration()).IncSubKey(fmt.Sprintf("%s_%d", adKey, adID), 1)
 }
