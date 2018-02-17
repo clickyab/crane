@@ -13,6 +13,7 @@ import (
 	"clickyab.com/crane/models/apps"
 	"clickyab.com/crane/models/suppliers"
 	"clickyab.com/crane/models/website"
+	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/framework"
 	"github.com/clickyab/services/framework/router"
 	"github.com/clickyab/services/store/jwt"
@@ -46,6 +47,8 @@ type payloadData struct {
 	SCPM         float64
 	FatFinger    bool
 	Tiny         bool
+	CapDomain    string
+	CMode        int //capping mode (none,strict,reset)
 }
 
 func extractor(ctx context.Context, r *http.Request) (*payloadData, error) {
@@ -61,7 +64,7 @@ func extractor(ctx context.Context, r *http.Request) (*payloadData, error) {
 	pl.TID = r.URL.Query().Get("tid")
 	pl.Ref = r.URL.Query().Get("ref")
 	pl.Parent = r.URL.Query().Get("parent")
-	expired, m, err := jwt.NewJWT().Decode([]byte(jt), "pt", "aid", "sup", "dom", "bid", "uaip", "susp", "pid", "now", "cpm", "ff", "t")
+	expired, m, err := jwt.NewJWT().Decode([]byte(jt), "pt", "aid", "sup", "dom", "bid", "uaip", "susp", "pid", "now", "cpm", "ff", "t", "cmode")
 	if err != nil {
 		return nil, err
 	}
@@ -122,6 +125,11 @@ func extractor(ctx context.Context, r *http.Request) (*payloadData, error) {
 	if expired {
 		pl.Suspicious = 99
 	}
+
+	pl.CapDomain = r.URL.Query().Get("c")
+	cMode, err := strconv.Atoi(m["cmode"])
+	assert.Nil(err)
+	pl.CMode = cMode
 
 	return &pl, nil
 }

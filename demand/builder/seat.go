@@ -216,18 +216,19 @@ func (s *seat) makeURL(route string, params map[string]string, cpm float64, expi
 		tiny = "T"
 	}
 	j := jwt.NewJWT().Encode(map[string]string{
-		"aid":  fmt.Sprint(s.winnerAd.ID()),
-		"dom":  s.context.Publisher().Name(),
-		"sup":  s.context.Publisher().Supplier().Name(),
-		"bid":  fmt.Sprint(s.bid),
-		"uaip": string(data),
-		"pid":  s.publicID,
-		"susp": fmt.Sprint(s.context.Suspicious()),
-		"now":  fmt.Sprint(time.Now().Unix()),
-		"cpm":  fmt.Sprint(cpm),
-		"ff":   ff,
-		"pt":   s.context.Publisher().Type().String(),
-		"t":    tiny,
+		"aid":   fmt.Sprint(s.winnerAd.ID()),
+		"dom":   s.context.Publisher().Name(),
+		"sup":   s.context.Publisher().Supplier().Name(),
+		"bid":   fmt.Sprint(s.bid),
+		"uaip":  string(data),
+		"pid":   s.publicID,
+		"susp":  fmt.Sprint(s.context.Suspicious()),
+		"now":   fmt.Sprint(time.Now().Unix()),
+		"cpm":   fmt.Sprint(cpm),
+		"ff":    ff,
+		"pt":    s.context.Publisher().Type().String(),
+		"t":     tiny,
+		"cmode": fmt.Sprint(s.context.Capping()),
 	}, expire)
 	s.winnerAd.ID()
 	params["jt"] = j
