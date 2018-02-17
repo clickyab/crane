@@ -73,15 +73,15 @@ func TestApplyCapping(t *testing.T) {
 			res := ApplyCapping(entity.CappingNone, "none", crs, "eventPage")
 			So(len(res), ShouldEqual, len(crs))
 			for i := range res {
-				res[i].Capping().Store(res[i].ID())
+				StoreCapping(entity.CappingNone, "none", res[i].ID())
 			}
 
 			for i := 0; i < 24; i++ {
-				res[i].Capping().Store(res[i].ID())
+				StoreCapping(entity.CappingNone, "none", res[i].ID())
 			}
 
 			for i := 0; i < 56; i++ {
-				res[i].Capping().Store(res[i].ID())
+				StoreCapping(entity.CappingNone, "none", res[i].ID())
 			}
 
 			crs = creatives(ct)
@@ -97,15 +97,15 @@ func TestApplyCapping(t *testing.T) {
 			res := ApplyCapping(entity.CappingStrict, "strict", crs, "eventPage")
 			So(len(res), ShouldEqual, len(crs))
 			for i := range res {
-				res[i].Capping().Store(res[i].ID())
+				StoreCapping(entity.CappingStrict, "strict", res[i].ID())
 			}
 
 			for i := 0; i < 24; i++ {
-				res[i].Capping().Store(res[i].ID())
+				StoreCapping(entity.CappingStrict, "strict", res[i].ID())
 			}
 
 			for i := 0; i < 56; i++ {
-				res[i].Capping().Store(res[i].ID())
+				StoreCapping(entity.CappingStrict, "strict", res[i].ID())
 			}
 
 			crs = creatives(ct)
@@ -131,15 +131,15 @@ func TestApplyCapping(t *testing.T) {
 			res := ApplyCapping(entity.CappingReset, "reset", crs, "eventPage")
 			So(len(res), ShouldEqual, len(crs))
 			for i := range res {
-				res[i].Capping().Store(res[i].ID())
+				StoreCapping(entity.CappingReset, "reset", res[i].ID())
 			}
 
 			for i := 0; i < 24; i++ {
-				res[i].Capping().Store(res[i].ID())
+				StoreCapping(entity.CappingReset, "reset", res[i].ID())
 			}
 
 			for i := 0; i < 56; i++ {
-				res[i].Capping().Store(res[i].ID())
+				StoreCapping(entity.CappingReset, "reset", res[i].ID())
 			}
 
 			crs = creatives(ct)
