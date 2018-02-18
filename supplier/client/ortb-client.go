@@ -8,6 +8,8 @@ import (
 
 	"fmt"
 
+	"io/ioutil"
+
 	"github.com/bsm/openrtb"
 	"github.com/clickyab/services/xlog"
 )
@@ -31,9 +33,13 @@ func Call(ctx context.Context, method, url string, pl *openrtb.BidRequest) (*ope
 		xlog.GetWithError(ctx, err).Debug("request do failed")
 		return nil, err
 	}
-
+	// in any case, on error and non-error situation we use the body, so defer close here is a good idea :)
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 	if resp.StatusCode != http.StatusOK {
-		err = fmt.Errorf("invalid status %d", resp.StatusCode)
+		data, _ := ioutil.ReadAll(resp.Body)
+		err = fmt.Errorf("invalid status %d, message was %s", resp.StatusCode, string(data))
 		xlog.GetWithError(ctx, err).Debug("request do status failed")
 		return nil, err
 	}
@@ -44,8 +50,5 @@ func Call(ctx context.Context, method, url string, pl *openrtb.BidRequest) (*ope
 		xlog.GetWithError(ctx, err).Debug("decode failed")
 		return nil, err
 	}
-	defer func() {
-		_ = resp.Body.Close()
-	}()
 	return &bid, nil
 }
