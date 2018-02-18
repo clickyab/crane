@@ -31,7 +31,7 @@ var (
 )
 
 func getApp(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-	pub, err := clickyabapps.GetAppOrFake(sup, r.URL.Query().Get("token"))
+	pub, err := clickyabapps.GetApp(sup, r.URL.Query().Get("token"))
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -43,6 +43,9 @@ func getApp(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 	q := &openrtb.BidRequest{
 		ID: <-random.ID,
+		App: &openrtb.App{
+			Bundle: pub.Name(),
+		},
 		Imp: []openrtb.Impression{
 			{
 				ID:     <-random.ID,
@@ -131,10 +134,6 @@ func allData(r *http.Request, o *openrtb.BidRequest) {
 	if len(gps) == 2 {
 		lat, _ = strconv.ParseFloat(gps[0], 64)
 		lon, _ = strconv.ParseFloat(gps[1], 64)
-	}
-
-	o.App = &openrtb.App{
-		Bundle: r.URL.Query().Get("package"),
 	}
 
 	o.Device = &openrtb.Device{
