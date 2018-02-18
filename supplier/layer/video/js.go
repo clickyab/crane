@@ -1,4 +1,4 @@
-package web
+package video
 
 import (
 	"context"
@@ -11,37 +11,33 @@ import (
 )
 
 var (
-	showV2 = js.MustAsset("show.v2.js")
-	showV1 = jsV1(js.MustAsset("show.js"))
+	videojs  = js.MustAsset("videojs.js")
+	jwplayer = js.MustAsset("jwplayer.js")
 )
 
-// Serve jsV2
-func jsV2(_ context.Context, w http.ResponseWriter, r *http.Request) {
+func getVideojs(_ context.Context, w http.ResponseWriter, r *http.Request) {
 	//proto := framework.Scheme(r)
 	u := url.URL{
 		Host: r.Host,
 		//	Scheme: proto,
-		Path: router.MustPath("multi-ad", map[string]string{}),
+		Path: router.MustPath("vast", map[string]string{}),
 	}
 	// Exactly once!
-	str := strings.Replace(string(showV2), "{{.URL}}", u.String(), 1)
+	str := strings.Replace(string(videojs), "{{.URL}}", u.String(), 1)
 	w.Header().Set("Content-Type", "application/javascript")
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte(str))
 }
 
-type jsV1 []byte
-
-// Serve jsV2
-func (data jsV1) ServeHTTPC(_ context.Context, w http.ResponseWriter, r *http.Request) {
+func getJwplayer(_ context.Context, w http.ResponseWriter, r *http.Request) {
 	//proto := framework.Scheme(r)
 	u := url.URL{
 		Host: r.Host,
-		//Scheme: proto,
-		Path: router.MustPath("multi-js", map[string]string{}),
+		//	Scheme: proto,
+		Path: router.MustPath("vast", map[string]string{}),
 	}
 	// Exactly once!
-	str := strings.Replace(string(data), "{{.URL}}", u.String(), 1)
+	str := strings.Replace(string(jwplayer), "{{.URL}}", u.String(), 1)
 	w.Header().Set("Content-Type", "application/javascript")
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte(str))
