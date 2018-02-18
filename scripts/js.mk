@@ -10,4 +10,4 @@ build-js: npm-install
 	cp $(ROOT)/js/vmap/node_modules/vmap-kit/dist/videojs/vmap.js $(ROOT)/js/dist/videojs.js
 
 js: build-js go-bindata
-	cd $(ROOT)/js/dist && $(BIN)/go-bindata -nometadata -o $(ROOT)/supplier/layer/web/show-js.gen.go -nomemcopy=true -pkg=web ./
+	cd $(ROOT)/js/dist && $(BIN)/go-bindata -nometadata -o $(ROOT)/supplier/layer/internal/js/js.gen.go -nomemcopy=true -pkg=js ./

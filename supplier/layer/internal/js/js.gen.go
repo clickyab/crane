@@ -6,7 +6,7 @@
 // videojs.js
 // DO NOT EDIT!
 
-package web
+package js
 
 import (
 	"bytes"
