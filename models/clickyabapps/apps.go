@@ -12,8 +12,8 @@ var (
 	app pool.Interface
 )
 
-// GetAppOrFake try to get app. do not use it in initializer
-func GetAppOrFake(sup entity.Supplier, appToken string) (entity.Publisher, error) {
+// GetApp try to get app. do not use it in initializer
+func GetApp(sup entity.Supplier, appToken string) (entity.Publisher, error) {
 	d := &entities.App{}
 	res, err := app.Get(appToken, d)
 	if err != nil {
