@@ -21,6 +21,7 @@ import (
 	"github.com/clickyab/services/framework"
 	"github.com/clickyab/services/random"
 	"github.com/clickyab/services/simplehash"
+	"github.com/clickyab/services/xlog"
 	"github.com/mssola/user_agent"
 )
 
@@ -33,11 +34,13 @@ var (
 func getApp(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	pub, err := clickyabapps.GetApp(sup, r.URL.Query().Get("token"))
 	if err != nil {
+		xlog.GetWithError(ctx, err).Debugf("token invalid")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	bs, width, height, full, err := size(r.URL.Query().Get("adsMedia"))
 	if err != nil {
+		xlog.GetWithError(ctx, err).Debugf("adsMedia invalid")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -84,11 +87,13 @@ func getApp(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 	res, err := client.Call(ctx, method.String(), server.String(), q)
 	if err != nil {
+		xlog.GetWithError(ctx, err).Debugf("call failed")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
 	if output.RenderApp(ctx, w, res, full, sdkVers, bs) != nil {
+		xlog.GetWithError(ctx, err).Debugf("render failed")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
