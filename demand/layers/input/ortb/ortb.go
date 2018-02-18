@@ -53,19 +53,27 @@ var (
 	)
 )
 
+func writesErrorStatus(w http.ResponseWriter, status int, detail string) {
+	assert.False(status == http.StatusOK)
+	w.WriteHeader(status)
+	fmt.Fprint(w, detail)
+}
+
 // openRTBInput is the route for rtb input layer
 func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	token := xmux.Param(ctx, "token")
 	sup, err := suppliers.GetSupplierByToken(token)
 	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
+		e := fmt.Sprintf("supplier with token %s not found", token)
+		xlog.GetWithError(ctx, err).Debug(e)
+		writesErrorStatus(w, http.StatusNotFound, e)
 		return
 	}
 	payload := openrtb.BidRequest{}
 	dec := json.NewDecoder(r.Body)
 	if err := dec.Decode(&payload); err != nil {
 		xlog.GetWithError(ctx, err).Error("invalid request")
-		w.WriteHeader(http.StatusBadRequest)
+		writesErrorStatus(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -96,29 +104,34 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := payload.Validate(); err != nil {
-		w.WriteHeader(http.StatusBadRequest)
 		xlog.GetWithError(ctx, err).Error("invalid data")
+		writesErrorStatus(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	var (
 		publisher entity.Publisher
 		selector  reducer.Filter
+		ps        string
 	)
 	if payload.Site != nil {
+		ps = payload.Site.Domain
 		publisher, err = website.GetWebSiteOrFake(sup, payload.Site.Domain)
 		prevent = false // do not accept prevent default on web requestType
 		selector = ortbWebSelector
 	} else if payload.App != nil {
+		ps = payload.App.Bundle
 		publisher, err = apps.GetAppOrFake(sup, payload.App.Bundle)
 		selector = ortbAppSelector
 	} else {
+		ps = "None"
 		err = errors.New("not supported")
 	}
 
 	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
-		xlog.GetWithError(ctx, err).Error("no publisher")
+		e := fmt.Sprintf("publisher not supported : %s", ps)
+		writesErrorStatus(w, http.StatusBadRequest, e)
+		xlog.GetWithError(ctx, err).Debug(e)
 		return
 	}
 	proto := entity.HTTP
@@ -141,8 +154,9 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 
 	if ua == "" || ip == "" {
-		w.WriteHeader(http.StatusNotFound)
-		xlog.GetWithError(ctx, err).Error("no ip/no ua")
+		err := fmt.Errorf("no ip/no ua")
+		xlog.GetWithError(ctx, err).Debug("invalid request")
+		writesErrorStatus(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -177,8 +191,8 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 	c, err := rtb.Select(ctx, selector, b...)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
 		xlog.GetWithError(ctx, err).Error("invalid request")
+		writesErrorStatus(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
