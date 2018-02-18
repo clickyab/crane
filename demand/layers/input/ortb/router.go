@@ -47,8 +47,8 @@ type payloadData struct {
 	SCPM         float64
 	FatFinger    bool
 	Tiny         bool
-	CapDomain    string
-	CMode        int //capping mode (none,strict,reset)
+	CappRegion   string
+	CMode        entity.CappingMode //capping mode (none,strict,reset)
 }
 
 func extractor(ctx context.Context, r *http.Request) (*payloadData, error) {
@@ -126,10 +126,10 @@ func extractor(ctx context.Context, r *http.Request) (*payloadData, error) {
 		pl.Suspicious = 99
 	}
 
-	pl.CapDomain = r.URL.Query().Get("c")
+	pl.CappRegion = r.URL.Query().Get("reg")
 	cMode, err := strconv.Atoi(m["cmode"])
 	assert.Nil(err)
-	pl.CMode = cMode
+	pl.CMode = entity.CappingMode(cMode)
 
 	return &pl, nil
 }
@@ -146,6 +146,7 @@ func (controller) Routes(m framework.Mux) {
 	// New routes
 	m.GET("conversion", conversionPath, conversionHandler)
 	m.GET("conversion-js", conversionTrackerJS, trackerJS)
+	m.GET("capping", cappingURL, applyCapp)
 }
 
 func init() {
