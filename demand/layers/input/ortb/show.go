@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"clickyab.com/crane/demand/builder"
+	"clickyab.com/crane/demand/capping"
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/demand/layers/output/banner"
 	"clickyab.com/crane/workers/show"
@@ -35,6 +36,7 @@ func showBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetTimestamp(),
 		builder.SetOSUserAgent(pl.UserAgent),
 		builder.SetNoTiny(!pl.Tiny),
+		builder.SetCappingMode(entity.CappingMode(pl.CMode)),
 		builder.SetTargetHost(r.Host),
 		builder.SetIPLocation(pl.IP, nil, nil),
 		builder.SetProtocolByRequest(r),
@@ -60,6 +62,15 @@ func showBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		job := show.NewImpressionJob(c, c.Seats()...)
 		broker.Publish(job)
 	})
+
+	if pl.CapDomain != "" {
+		// TODO :hit the route for update capping
+	} else {
+		// update capping here
+		if c.Capping() != entity.CappingNone {
+			capping.StoreCapping(c.Capping(), c.User().ID(), pl.Ad.ID())
+		}
+	}
 
 	assert.Nil(banner.Render(ctx, w, c))
 }
