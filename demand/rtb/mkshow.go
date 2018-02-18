@@ -139,8 +139,6 @@ func internalSelect(
 		if !ctx.MultiVideo() {
 			noVideo = noVideo || theAd.Type() == entity.AdTypeVideo
 		}
-		// TODO : The real problem is what if we are not going to win? this assume any select means show.
-		theAd.Capping().Store(theAd.ID())
 	}
 }
 

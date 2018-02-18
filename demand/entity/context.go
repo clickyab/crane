@@ -34,6 +34,11 @@ func (r RequestType) String() string {
 // CappingMode decide how to handle capping
 type CappingMode int
 
+// Validate capping modes
+func (c CappingMode) Validate() bool {
+	return c == CappingStrict || c == CappingReset || c == CappingNone
+}
+
 const (
 	// CappingStrict means we have capping and the capping is strictly used
 	CappingStrict CappingMode = iota
