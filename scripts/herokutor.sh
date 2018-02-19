@@ -76,9 +76,9 @@ MOUNT {{ .Build }}:/crane
 ENV TZ=Asia/Tehran
 
 # I don't need to set GOPATH since the Makefile takes care of that
-RUN apk add --no-cache --virtual .build-deps git go libc-dev make tzdata \
+RUN apk add --no-cache --virtual .build-deps git go libc-dev make \
+    && apk add --no-cache ca-certificates bash wget tzdata && update-ca-certificates \
     && cp /usr/share/zoneinfo/\$TZ /etc/localtime && echo \$TZ > /etc/timezone \
-    && apk add --no-cache ca-certificates bash wget && update-ca-certificates \
     && mkdir -p /gopath/src/clickyab.com/ && cp -r /crane /gopath/src/clickyab.com/ \
     && cd /gopath/src/clickyab.com/crane && make \
     && apk del .build-deps \
