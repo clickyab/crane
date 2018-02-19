@@ -8,7 +8,7 @@ import (
 
 	"strings"
 
-	"clickyab.com/crane/models/website"
+	website "clickyab.com/crane/models/clickyabwebsite"
 	"clickyab.com/crane/supplier/client"
 	"clickyab.com/crane/supplier/layer/output"
 	"github.com/bsm/openrtb"
@@ -35,18 +35,21 @@ var sup = &supplier{}
 //	tid		: tracking id
 //  mimes   : comma separated accepted mime types
 func vast(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-	d := r.URL.Query().Get("d")
-	pub, err := website.GetWebSiteOrFake(sup, d)
+	pubID := r.URL.Query().Get("a")
+	pub, err := website.GetWebSite(sup, pubID)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	l := r.URL.Query().Get("l")
+	l := r.URL.Query().Get("p")
+	if l == "" {
+		l = r.Referer()
+	}
 	ref := r.URL.Query().Get("r")
 	dnt, _ := strconv.Atoi(r.Header.Get("DNT"))
 	m := r.URL.Query().Get("m") != ""
 	tid := r.URL.Query().Get("tid")
-	ln := r.URL.Query().Get("ln")
+	ln := r.URL.Query().Get("l")
 	var mimes []string
 	if mim := strings.Trim(r.URL.Query().Get("mimes"), "\n\t "); mim != "" {
 		mimes = strings.Split(mim, ",")
@@ -75,7 +78,7 @@ func vast(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 			Ref:    ref,
 			Inventory: openrtb.Inventory{
 				Publisher: &openrtb.Publisher{
-					Domain: d,
+					Domain: pub.Name(),
 					Name:   pub.Name(),
 					ID:     fmt.Sprint(pub.ID()),
 				},

@@ -23,7 +23,7 @@ type loader struct {
 func (loader) Initialize() {
 	ctx := context.Background()
 
-	websites = pool.NewPool(entities.WebsiteLoader, cachepool.NewCachePool("WS_"), websiteExp.Duration(), 10*time.Second, 3)
+	websites = pool.NewPool(entities.WebsiteLoaderGen(true), cachepool.NewCachePool("WS_"), websiteExp.Duration(), 10*time.Second, 3)
 	websites.Start(ctx)
 
 	// Wait for the first time load

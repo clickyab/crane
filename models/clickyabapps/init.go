@@ -22,7 +22,7 @@ type loader struct {
 
 func (loader) Initialize() {
 	ctx := context.Background()
-	app = pool.NewPool(entities.AppLoaderClickyab, cachepool.NewCachePool("APP_"), appExp.Duration(), 10*time.Second, 3)
+	app = pool.NewPool(entities.AppLoaderGen(false), cachepool.NewCachePool("C_APP_"), appExp.Duration(), 10*time.Second, 3)
 	app.Start(ctx)
 
 	// Wait for the first time load
