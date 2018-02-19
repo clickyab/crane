@@ -9,6 +9,7 @@ import (
 
 	website "clickyab.com/crane/models/clickyabwebsite"
 	"clickyab.com/crane/supplier/client"
+	"clickyab.com/crane/supplier/layer/internal/supplier"
 	"clickyab.com/crane/supplier/layer/output"
 	"github.com/bsm/openrtb"
 	"github.com/clickyab/services/config"
@@ -37,7 +38,7 @@ const (
 )
 
 var (
-	sup = &supplier{}
+	sup = supplier.NewClickyab()
 )
 
 // d			:domain
