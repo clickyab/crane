@@ -19,7 +19,7 @@ import (
 	"bytes"
 
 	"clickyab.com/crane/demand/entity"
-	"clickyab.com/crane/models/website"
+	website "clickyab.com/crane/models/clickyabwebsite"
 	"clickyab.com/crane/supplier/client"
 	"clickyab.com/crane/supplier/layer/output"
 	"github.com/bsm/openrtb"
@@ -78,8 +78,8 @@ var sup entity.Supplier = &supplier{}
 //	m		: mobile
 //	tid		: tracking id
 func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-	d := r.URL.Query().Get("d")
-	pub, err := website.GetWebSiteOrFake(sup, d)
+	pubID := r.URL.Query().Get("a")
+	pub, err := website.GetWebSite(sup, pubID)
 
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -99,7 +99,7 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	_, ok := pub.Attributes()[entity.PAMobileAd]
 	extra := ""
 	if ok && m {
-		extra = simplehash.CRC32(d)
+		extra = simplehash.CRC32(pub.Name())
 	}
 	imps, err := exSlot(ctx, s, c, r, pub.FloorCPM(), extra)
 	if err != nil {
@@ -129,7 +129,7 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 			Ref:    ref,
 			Inventory: openrtb.Inventory{
 				Publisher: &openrtb.Publisher{
-					Domain: d,
+					Domain: pub.Name(),
 					Name:   pub.Name(),
 					ID:     fmt.Sprint(pub.ID()),
 				},

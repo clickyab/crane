@@ -7,7 +7,7 @@ import (
 
 	"fmt"
 
-	"clickyab.com/crane/models/website"
+	website "clickyab.com/crane/models/clickyabwebsite"
 	"clickyab.com/crane/supplier/client"
 	"clickyab.com/crane/supplier/layer/output"
 	"github.com/bsm/openrtb"
@@ -46,8 +46,8 @@ var (
 // count		:number of impression
 // handle supplier native route
 func getNative(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-	domain := r.URL.Query().Get("d")
-	pub, err := website.GetWebSiteOrFake(sup, domain)
+	pubID := r.URL.Query().Get("a")
+	pub, err := website.GetWebSite(sup, pubID)
 	if err != nil {
 		xlog.GetWithError(ctx, err).Debug("no website")
 		w.WriteHeader(http.StatusBadRequest)
@@ -92,7 +92,7 @@ func getNative(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 			Mobile: mi,
 			Inventory: openrtb.Inventory{
 				Publisher: &openrtb.Publisher{
-					Domain: domain,
+					Domain: pub.Name(),
 					Name:   pub.Name(),
 					ID:     fmt.Sprint(pub.ID()),
 				},

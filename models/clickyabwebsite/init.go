@@ -1,4 +1,4 @@
-package apps
+package clickyabwebsite
 
 import (
 	"time"
@@ -14,7 +14,7 @@ import (
 )
 
 var (
-	appExp = config.RegisterDuration("crane.models.expire.app", time.Hour, "expire time of app")
+	websiteExp = config.RegisterDuration("crane.models.expire.website", time.Hour, "expire time of websites")
 )
 
 type loader struct {
@@ -22,11 +22,12 @@ type loader struct {
 
 func (loader) Initialize() {
 	ctx := context.Background()
-	app = pool.NewPool(entities.AppLoaderGen(true), cachepool.NewCachePool("APP_"), appExp.Duration(), 10*time.Second, 3)
-	app.Start(ctx)
+
+	websites = pool.NewPool(entities.WebsiteLoaderGen(false), cachepool.NewCachePool("C_WS_"), websiteExp.Duration(), 10*time.Second, 3)
+	websites.Start(ctx)
 
 	// Wait for the first time load
-	<-app.Notify()
+	<-websites.Notify()
 
 	logrus.Debug("Pool initialized and ready")
 }
