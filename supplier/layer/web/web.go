@@ -21,6 +21,7 @@ import (
 	"clickyab.com/crane/demand/entity"
 	website "clickyab.com/crane/models/clickyabwebsite"
 	"clickyab.com/crane/supplier/client"
+	"clickyab.com/crane/supplier/layer/internal/supplier"
 	"clickyab.com/crane/supplier/layer/output"
 	"github.com/bsm/openrtb"
 	"github.com/clickyab/services/config"
@@ -68,7 +69,7 @@ var sizesModel = map[int]*size{
 	17: {Width: 48, Height: 320},
 	18: {Width: 128, Height: 128},
 }
-var sup entity.Supplier = &supplier{}
+var sup = supplier.NewClickyab()
 
 //	d		: domain
 //	l		: location

@@ -14,6 +14,7 @@ import (
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/models/clickyabapps"
 	"clickyab.com/crane/supplier/client"
+	"clickyab.com/crane/supplier/layer/internal/supplier"
 	"clickyab.com/crane/supplier/layer/output"
 	"github.com/bsm/openrtb"
 	"github.com/clickyab/services/assert"
@@ -26,9 +27,9 @@ import (
 )
 
 var (
-	sup    entity.Supplier = &supplier{}
-	server                 = config.RegisterString("crane.supplier.banner.url", "", "route for app")
-	method                 = config.RegisterString("crane.supplier.app.method", "POST", "method for app request")
+	sup    = supplier.NewClickyab()
+	server = config.RegisterString("crane.supplier.banner.url", "", "route for app")
+	method = config.RegisterString("crane.supplier.app.method", "POST", "method for app request")
 )
 
 func getApp(ctx context.Context, w http.ResponseWriter, r *http.Request) {

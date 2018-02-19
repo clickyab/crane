@@ -10,12 +10,15 @@ import (
 
 	website "clickyab.com/crane/models/clickyabwebsite"
 	"clickyab.com/crane/supplier/client"
+	"clickyab.com/crane/supplier/layer/internal/supplier"
 	"clickyab.com/crane/supplier/layer/output"
 	"github.com/bsm/openrtb"
+	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/framework"
 	"github.com/clickyab/services/random"
 	"github.com/clickyab/services/simplehash"
+	"github.com/clickyab/services/xlog"
 	"github.com/mssola/user_agent"
 )
 
@@ -25,13 +28,19 @@ var (
 	method = config.RegisterString("crane.supplier.banner.method", "POST", "method for banner request")
 )
 
-var sup = &supplier{}
+func writesErrorStatus(w http.ResponseWriter, status int, detail string) {
+	assert.False(status == http.StatusOK)
+	w.WriteHeader(status)
+	fmt.Fprint(w, detail)
+}
+
+var sup = supplier.NewClickyab()
 
 //	d		: domain
-//	l		: location
+//  a 		: public id
+//	p		: current page
 //	r		: ref
-//	ln		: length
-//	m		: mobile
+//	l		: length
 //	tid		: tracking id
 //  mimes   : comma separated accepted mime types
 func vast(ctx context.Context, w http.ResponseWriter, r *http.Request) {
@@ -47,7 +56,6 @@ func vast(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 	ref := r.URL.Query().Get("r")
 	dnt, _ := strconv.Atoi(r.Header.Get("DNT"))
-	m := r.URL.Query().Get("m") != ""
 	tid := r.URL.Query().Get("tid")
 	ln := r.URL.Query().Get("l")
 	var mimes []string
@@ -59,7 +67,7 @@ func vast(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 	ua := user_agent.New(r.UserAgent())
 	mi := 0
-	if m {
+	if ua.Mobile() {
 		mi = 1
 	}
 
@@ -96,13 +104,16 @@ func vast(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	bq.Ext = []byte(`{"capping_mode": "reset","underfloor":true}`)
 	br, err := client.Call(ctx, method.String(), server.String(), bq)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-
+		e := "demand error"
+		writesErrorStatus(w, http.StatusInternalServerError, e)
+		xlog.GetWithError(ctx, err).Debugf(e)
 		return
 	}
 
-	if output.RenderVMAP(ctx, w, br, seats) != nil {
-		w.WriteHeader(http.StatusBadRequest)
+	if err := output.RenderVMAP(ctx, w, br, seats); err != nil {
+		e := "render failed"
+		writesErrorStatus(w, http.StatusInternalServerError, e)
+		xlog.GetWithError(ctx, err).Debugf(e)
 		return
 	}
 }
