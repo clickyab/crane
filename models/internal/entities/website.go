@@ -119,7 +119,7 @@ func (w *Website) Supplier() entity.Supplier {
 func WebsiteLoaderGen(name bool) func(ctx context.Context) (map[string]kv.Serializable, error) {
 	return func(ctx context.Context) (map[string]kv.Serializable, error) {
 		b := make(map[string]kv.Serializable)
-		return b, nil // Uncomment this line after first time in DEV mode
+		//return b, nil // Uncomment this line after first time in DEV mode
 
 		where := ""
 		if !name {
