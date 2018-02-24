@@ -35,6 +35,26 @@ type Click struct {
 	typ          entity.InputType
 }
 
+// FindImpFromClickByImpID return impression by impression id
+func FindImpFromClickByImpID(imp int64) (*Impression, error) {
+	q := `SELECT w_id,app_id,wp_id,ca_id,ad_id,cop_id,cp_id,slot_id,imp_id, reserved_hash
+				FROM  clicks WHERE imp_id = ?`
+	var x = &Impression{}
+	err := NewManager().GetRDbMap().SelectOne(x, q, imp)
+
+	return x, err
+}
+
+// FindImpFromClickByRH return impression by reserved hash
+func FindImpFromClickByRH(rh string) (*Impression, error) {
+	q := `SELECT w_id,app_id,wp_id,ca_id,ad_id,cop_id,cp_id,slot_id,imp_id, reserved_hash
+				FROM  clicks WHERE reserved_hash = ?`
+	var x = &Impression{}
+	err := NewManager().GetRDbMap().SelectOne(x, q, rh)
+
+	return x, err
+}
+
 // FillClickData try to fill Click structure
 func FillClickData(p entity.Publisher, m models.Impression, s models.Seat, os entity.OS, fast int64) (*Click, error) {
 
