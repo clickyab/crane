@@ -124,12 +124,14 @@ func extractor(ctx context.Context, r *http.Request) (*payloadData, error) {
 
 	return &pl, nil
 }
+
 func (controller) Routes(m framework.Mux) {
 	m.GET("banner", showPath, showBanner)
 	m.GET("click", clickPath, clickBanner)
 	m.GET("pixel", pixelPath, showPixel)
 	m.POST("ortb", demandPath, openRTBInput)
 	m.GET("notice", noticePath, noticeHandler)
+	m.GET("conversion", conversionPath, conversionHandler)
 
 }
 

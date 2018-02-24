@@ -3,13 +3,51 @@ package entities
 import (
 	"database/sql"
 	"fmt"
-	"time"
-
 	"strconv"
+	"time"
 
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/workers/models"
+	"github.com/clickyab/services/mysql"
 )
+
+// Impression model for database
+type Impression struct {
+	WID          mysql.NullInt64  `db:"w_id"`
+	AppID        mysql.NullInt64  `db:"app_id"`
+	WpID         mysql.NullInt64  `db:"wp_id"`
+	CaID         mysql.NullInt64  `db:"ca_id"`
+	AdID         mysql.NullInt64  `db:"ad_id"`
+	CopID        mysql.NullInt64  `db:"cop_id"`
+	CpID         mysql.NullInt64  `db:"cp_id"`
+	SlotID       mysql.NullInt64  `db:"slot_id"`
+	ImpID        mysql.NullInt64  `db:"imp_id"`
+	ReservedHash mysql.NullString `db:"reserved_hash"`
+}
+
+func impTableName(t time.Time) string {
+	return fmt.Sprintf("impressions%s", t.Format("20060102"))
+}
+
+// FindImpressionByID return impression by impression id
+func FindImpressionByID(impid int64, t time.Time) (*Impression, error) {
+
+	q := fmt.Sprintf(`SELECT w_id,app_id,wp_id,ca_id,ad_id,cop_id,cp_id,slot_id,imp_id, reserved_hash
+				FROM  %s WHERE imp_id = ?`, impTableName(t))
+	var x = &Impression{}
+	err := NewManager().GetRDbMap().SelectOne(x, q, impid)
+	return x, err
+}
+
+// FindImpressionByRH return impression by reserved hash
+func FindImpressionByRH(rh string, t time.Time) (*Impression, error) {
+	q := fmt.Sprintf(`SELECT w_id,app_id,wp_id,ca_id,ad_id,cop_id,cp_id,slot_id,imp_id, reserved_hash
+				FROM  %s WHERE reserved_hash = ?`, impTableName(t))
+	var x = &Impression{}
+	err := NewManager().GetRDbMap().SelectOne(x, q, rh)
+
+	return x, err
+}
 
 // AddImpression insert new impression to daily table
 // TODO : multiple insert per one query
