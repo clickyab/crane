@@ -28,11 +28,6 @@ func GetCarrierByName(name string) (string, error) {
 	return name, nil
 }
 
-// GetNetworkByName is a function to get the network by its name
-func GetNetworkByName(name string) (string, error) {
-	return name, nil
-}
-
 // GetBrandByName is a function to get the brand by its name
 func GetBrandByName(name string) (string, error) {
 	return name, nil

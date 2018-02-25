@@ -7,11 +7,28 @@ import (
 	"github.com/clickyab/services/config"
 )
 
+var clickyabNetwork = map[string]networkConn{
+	"2g":   cellular2G,
+	"edge": cellular2G,
+	"gprs": cellular2G,
+	"3g":   cellular3G,
+	"4g":   cellular4G,
+}
+
+type networkConn int
+
+const (
+	cellular2G = 4
+	cellular3G = 5
+	cellular4G = 6
+)
+
 // Campaign implement entity advertise interface
 type Campaign struct {
 	ad
-	category []entity.Category
-	strategy entity.Strategy
+	category       []entity.Category
+	strategy       entity.Strategy
+	connectionType []int
 }
 
 // Strategy of campaign. can be cpm, cpc
@@ -61,9 +78,18 @@ func (c *Campaign) ISP() []string {
 	return c.CampaignISP.Array()
 }
 
-// NetProvider return accepted net providers id
-func (c *Campaign) NetProvider() []string {
-	return c.CampaignNetProviderName.Array()
+// ConnectionType return accepted net providers id
+func (c *Campaign) ConnectionType() []int {
+	if c.connectionType == nil {
+		c.connectionType = make([]int, 0)
+		for i := range c.CampaignNetProviderName.Array() {
+			val, ok := clickyabNetwork[strings.ToLower(c.CampaignNetProviderName.Array()[i])]
+			if ok {
+				c.connectionType = append(c.connectionType, int(val))
+			}
+		}
+	}
+	return c.connectionType
 }
 
 // ID campaign id

@@ -281,22 +281,10 @@ func SetMultiVideo(v bool) ShowOptionSetter {
 	}
 }
 
-// SetNetwork is set network id from name
-func SetNetwork(v string) ShowOptionSetter {
-	return func(o *Context) (*Context, error) {
-		n, err := cell.GetNetworkByName(v)
-		if err != nil {
-			return o, err
-		}
-		o.networkName = n
-		return o, nil
-	}
-}
-
 // SetBrand is set brand id from name
 func SetBrand(v string) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
-		n, err := cell.GetBrandByName(v)
+		n, err := cell.GetBrandByName(strings.ToLower(v))
 		if err != nil {
 			return o, err
 		}
@@ -313,6 +301,14 @@ func SetCarrier(v string) ShowOptionSetter {
 			return o, err
 		}
 		o.carrierName = n
+		return o, nil
+	}
+}
+
+// SetConnType is set network  2g,3g,...
+func SetConnType(v int) ShowOptionSetter {
+	return func(o *Context) (*Context, error) {
+		o.connectionType = v
 		return o, nil
 	}
 }

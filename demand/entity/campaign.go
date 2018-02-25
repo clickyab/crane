@@ -89,8 +89,8 @@ type Campaign interface {
 	Hoods() []string
 	// ISP list of campaign isp(s)
 	ISP() []string
-	// NetProvider net providers for certain campaign
-	NetProvider() []string
+	// ConnectionType get campaign provider net 2g,3g,4g,...
+	ConnectionType() []int
 	// Strategy can be cpm, cpc
 	Strategy() Strategy
 }

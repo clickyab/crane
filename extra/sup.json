@@ -13,6 +13,7 @@
     "FBIDType": "cpm,cpc",
     "FDefaultCTR": {"web_vast":0.1,"web_banner":0.1,"web_native":0.1,"app_vast":0.1,"app_native":0.1,"app_banner":0.1},
     "FSoftFloorCPM":{"web_vast":2000,"web_banner":2000,"web_native":2000,"app_vast":2000,"app_native":2000,"app_banner":2000},
+    "FSoftFloorCPC":{"web_vast":2000,"web_banner":2000,"web_native":2000,"app_vast":2000,"app_native":2000,"app_banner":2000},
     "Tiny": 1,
     "FShowDomain": "127.0.0.1:8080",
     "CreatedAt": "2017-12-26T14:28:13Z",

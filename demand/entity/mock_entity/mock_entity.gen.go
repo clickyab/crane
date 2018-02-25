@@ -84,6 +84,18 @@ func (mr *MockContextMockRecorder) Category() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Category", reflect.TypeOf((*MockContext)(nil).Category))
 }
 
+// ConnectionType mocks base method
+func (m *MockContext) ConnectionType() int {
+	ret := m.ctrl.Call(m, "ConnectionType")
+	ret0, _ := ret[0].(int)
+	return ret0
+}
+
+// ConnectionType indicates an expected call of ConnectionType
+func (mr *MockContextMockRecorder) ConnectionType() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConnectionType", reflect.TypeOf((*MockContext)(nil).ConnectionType))
+}
+
 // Currency mocks base method
 func (m *MockContext) Currency() string {
 	ret := m.ctrl.Call(m, "Currency")
@@ -190,18 +202,6 @@ func (m *MockContext) MultiVideo() bool {
 // MultiVideo indicates an expected call of MultiVideo
 func (mr *MockContextMockRecorder) MultiVideo() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MultiVideo", reflect.TypeOf((*MockContext)(nil).MultiVideo))
-}
-
-// Network mocks base method
-func (m *MockContext) Network() string {
-	ret := m.ctrl.Call(m, "Network")
-	ret0, _ := ret[0].(string)
-	return ret0
-}
-
-// Network indicates an expected call of Network
-func (mr *MockContextMockRecorder) Network() *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Network", reflect.TypeOf((*MockContext)(nil).Network))
 }
 
 // OS mocks base method
@@ -709,6 +709,18 @@ func (mr *MockCampaignMockRecorder) Category() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Category", reflect.TypeOf((*MockCampaign)(nil).Category))
 }
 
+// ConnectionType mocks base method
+func (m *MockCampaign) ConnectionType() []int {
+	ret := m.ctrl.Call(m, "ConnectionType")
+	ret0, _ := ret[0].([]int)
+	return ret0
+}
+
+// ConnectionType indicates an expected call of ConnectionType
+func (mr *MockCampaignMockRecorder) ConnectionType() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConnectionType", reflect.TypeOf((*MockCampaign)(nil).ConnectionType))
+}
+
 // Country mocks base method
 func (m *MockCampaign) Country() []string {
 	ret := m.ctrl.Call(m, "Country")
@@ -794,18 +806,6 @@ func (m *MockCampaign) Name() string {
 // Name indicates an expected call of Name
 func (mr *MockCampaignMockRecorder) Name() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Name", reflect.TypeOf((*MockCampaign)(nil).Name))
-}
-
-// NetProvider mocks base method
-func (m *MockCampaign) NetProvider() []string {
-	ret := m.ctrl.Call(m, "NetProvider")
-	ret0, _ := ret[0].([]string)
-	return ret0
-}
-
-// NetProvider indicates an expected call of NetProvider
-func (mr *MockCampaignMockRecorder) NetProvider() *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "NetProvider", reflect.TypeOf((*MockCampaign)(nil).NetProvider))
 }
 
 // Province mocks base method
