@@ -46,9 +46,9 @@ type Context struct {
 	rate       float64
 	strategy   entity.Strategy
 
-	networkName,
 	brandName,
 	carrierName string
+	connectionType int // 2g 3g ,...
 
 	fatFinger bool
 	// Just in application, for older sdk, we need to add prevent default on clicks
@@ -56,6 +56,11 @@ type Context struct {
 	cappingMode    entity.CappingMode
 
 	underfloor bool
+}
+
+// ConnectionType return connection type 2g,3g,4g,...
+func (c *Context) ConnectionType() int {
+	return c.connectionType
 }
 
 // PreventDefault is a boolean value to handle old sdk wrong way of click
@@ -66,11 +71,6 @@ func (c *Context) PreventDefault() bool {
 // FatFinger is for web-mobile and in app
 func (c *Context) FatFinger() bool {
 	return c.fatFinger
-}
-
-// Network return network name
-func (c *Context) Network() string {
-	return c.networkName
 }
 
 // Carrier return carrier name

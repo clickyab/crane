@@ -27,9 +27,26 @@ import (
 )
 
 var (
-	sup    = supplier.NewClickyab()
-	server = config.RegisterString("crane.supplier.banner.url", "", "route for app")
-	method = config.RegisterString("crane.supplier.app.method", "POST", "method for app request")
+	sup             = supplier.NewClickyab()
+	server          = config.RegisterString("crane.supplier.banner.url", "", "route for app")
+	method          = config.RegisterString("crane.supplier.app.method", "POST", "method for app request")
+	clickyabNetwork = map[string]networkConn{
+		"2G":   cellular2G,
+		"EDGE": cellular2G,
+		"GPRS": cellular2G,
+		"3G":   cellular3G,
+		"4G":   cellular4G,
+	}
+)
+
+type networkConn int
+
+const (
+	unknownNetwork = 0
+
+	cellular2G = 4
+	cellular3G = 5
+	cellular4G = 6
 )
 
 func getApp(ctx context.Context, w http.ResponseWriter, r *http.Request) {
@@ -124,7 +141,7 @@ func allData(r *http.Request, o *openrtb.BidRequest) {
 
 	ua := user_agent.New(r.UserAgent())
 	dnt, _ := strconv.Atoi(r.Header.Get("DNT"))
-	data, _ := strconv.Atoi(r.URL.Query().Get("data"))
+	network := r.URL.Query().Get("network") //2g,3g,4g,...
 	h, _ := strconv.Atoi(r.URL.Query().Get("screenHeight"))
 	w, _ := strconv.Atoi(r.URL.Query().Get("screenWidth"))
 	ppi, _ := strconv.Atoi(r.URL.Query().Get("screenDensity"))
@@ -135,7 +152,7 @@ func allData(r *http.Request, o *openrtb.BidRequest) {
 	androidID := r.URL.Query().Get("androidid")
 	deviceID := r.URL.Query().Get("deviceid")
 	operator := r.URL.Query().Get("operator")
-	model := r.URL.Query().Get("model")
+	model := r.URL.Query().Get("model") // samsung,huawei,...
 
 	if len(gps) == 2 {
 		lat, _ = strconv.ParseFloat(gps[0], 64)
@@ -156,7 +173,7 @@ func allData(r *http.Request, o *openrtb.BidRequest) {
 		HwVer:    r.URL.Query().Get("model"),
 		OSVer:    r.URL.Query().Get("androidVersion"),
 		UA:       r.UserAgent(),
-		ConnType: data,
+		ConnType: int(getConnType(network)),
 		Geo: &openrtb.Geo{
 			Lat: lat,
 			Lon: lon,
@@ -171,6 +188,15 @@ func allData(r *http.Request, o *openrtb.BidRequest) {
 		},
 	}
 
+}
+
+// getConnType convert clickyab network to openrtb
+func getConnType(network string) networkConn {
+	val, ok := clickyabNetwork[network]
+	if ok {
+		return val
+	}
+	return unknownNetwork
 }
 
 // appUserIDGenerator create cop id for app

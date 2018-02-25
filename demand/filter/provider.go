@@ -4,11 +4,11 @@ import (
 	"clickyab.com/crane/demand/entity"
 )
 
-// AppProvider check app network
-type AppProvider struct {
+// ConnectionType check app network
+type ConnectionType struct {
 }
 
 // Check test if campaign accept provider
-func (*AppProvider) Check(c entity.Context, in entity.Creative) bool {
-	return hasString(true, in.Campaign().NetProvider(), c.Network())
+func (*ConnectionType) Check(c entity.Context, in entity.Creative) bool {
+	return hasInt(true, in.Campaign().ConnectionType(), c.ConnectionType())
 }

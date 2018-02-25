@@ -69,8 +69,8 @@ type Context interface {
 	MinBIDPercentage() int64
 	// Rate return ratio currency conversion to IRR
 	Rate() float64
-	// Network return network for app
-	Network() string
+	// ConnectionType return network for app 2g,3g,4g,...
+	ConnectionType() int
 	// Carrier return carrier for app
 	Carrier() string
 	// Brand return brand for app

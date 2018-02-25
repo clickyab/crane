@@ -3,11 +3,9 @@ package ortb
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
-
-	"errors"
-
 	"strings"
 
 	"clickyab.com/crane/demand/builder"
@@ -16,7 +14,7 @@ import (
 	"clickyab.com/crane/demand/layers/output/demand"
 	"clickyab.com/crane/demand/reducer"
 	"clickyab.com/crane/demand/rtb"
-	apps "clickyab.com/crane/models/apps"
+	"clickyab.com/crane/models/apps"
 	"clickyab.com/crane/models/suppliers"
 	"clickyab.com/crane/models/website"
 	"github.com/bsm/openrtb"
@@ -43,6 +41,7 @@ var (
 	ortbAppSelector = reducer.Mix(
 		&filter.Strategy{},
 		&filter.AppBrand{},
+		&filter.ConnectionType{},
 		&filter.AppCarrier{},
 		&filter.WhiteList{},
 		&filter.BlackList{},
@@ -180,9 +179,7 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	// TODO : if we need to implement native/app/vast then the next line must be activated and customized
 	//b = append(b, builder.SetFloorPercentage(100), builder.SetMinBidPercentage(100))
 
-	if payload.Site != nil {
-		b = append(b, builder.SetParent(payload.Site.Page, payload.Site.Ref))
-	}
+	b = setPublisherCustomContext(payload, b)
 	sd, vast := seatDetail(payload)
 	if vast {
 		b = append(b, builder.SetMultiVideo(true))
@@ -197,6 +194,18 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 
 	assert.Nil(demand.Render(ctx, w, c))
+}
+
+func setPublisherCustomContext(payload openrtb.BidRequest, b []builder.ShowOptionSetter) []builder.ShowOptionSetter {
+	if payload.Site != nil {
+		b = append(b, builder.SetParent(payload.Site.Page, payload.Site.Ref))
+	}
+	if payload.App != nil {
+		b = append(b, builder.SetConnType(payload.Device.ConnType))
+		b = append(b, builder.SetCarrier(payload.Device.Carrier))
+		b = append(b, builder.SetBrand(payload.Device.Model))
+	}
+	return b
 }
 
 func intInArray(v int, all ...int) bool {
