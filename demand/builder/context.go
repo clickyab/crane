@@ -40,8 +40,6 @@ type Context struct {
 	softFloorCPM     int64
 	minBidPercentage int64
 
-	noShowT bool // Default is showT frame. but for exchange may be we don't want that
-
 	suspicious int
 	rate       float64
 	strategy   entity.Strategy

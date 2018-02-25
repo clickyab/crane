@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"clickyab.com/crane/demand/builder"
-	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/demand/layers/output/banner"
 	"clickyab.com/crane/workers/show"
 	"github.com/clickyab/services/assert"
@@ -44,9 +43,7 @@ func showBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetSuspicious(pl.Suspicious),
 		builder.SetFatFinger(pl.FatFinger),
 	}
-	if pl.Type == entity.InputTypeDemand {
-		b = append(b, builder.DoNotShowTFrame())
-	}
+
 	b = append(b, builder.SetFullSeats(pl.PublicID, pl.Size, pl.ReserveHash, pl.Ad, pl.Bid, time.Now().Unix(), pl.CPM, pl.SCPM, pl.requestType))
 	// Build context
 	c, err := builder.NewContext(b...)

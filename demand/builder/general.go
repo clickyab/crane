@@ -146,7 +146,7 @@ func SetEventPage(ep string) ShowOptionSetter {
 // SetCategory set the capping mode
 func SetCategory(b openrtb.BidRequest) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
-		category := make([]entity.Category, 0)
+		var category []entity.Category
 		if b.Site != nil {
 			for _, v := range b.Site.Cat {
 				category = append(category, entity.Category(v[3:]))
@@ -309,14 +309,6 @@ func SetCarrier(v string) ShowOptionSetter {
 func SetConnType(v int) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
 		o.connectionType = v
-		return o, nil
-	}
-}
-
-// DoNotShowTFrame is the function to disable show t frame (just for demand for now)
-func DoNotShowTFrame() ShowOptionSetter {
-	return func(o *Context) (*Context, error) {
-		o.noShowT = true
 		return o, nil
 	}
 }
