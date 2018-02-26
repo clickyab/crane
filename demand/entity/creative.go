@@ -36,6 +36,10 @@ type Creative interface {
 	Width() int
 	// Height return the height of banner
 	Height() int
+	// Duration of the ad if it have meaning. normally usable for vast, in second
+	// TODO : duration could be removed from here and moved to attributes, if there is no other
+	// need to duration, then its safe to move it to attributes
+	Duration() int
 	// Capping return the current capping object
 	Capping() Capping
 	// SetCapping set the current capping

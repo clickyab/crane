@@ -11,7 +11,6 @@ import (
 )
 
 var (
-	vastLinearDefaultLen  = config.RegisterInt("crane.vast.linear_len", 30, "default len of linear ad in sec, if not presented in request")
 	vastLinearDefaultSkip = config.RegisterInt("crane.vast.linear_skip", 10, "default len of linear ad in sec, if not presented in request")
 	//vastNonLinearDefaultLen = config.RegisterInt("crane.vast.non_linear_len", 10, "default len of non linear ad in sec, if not presented in request")
 )
@@ -72,10 +71,10 @@ func SetDemandSeats(sd ...DemandSeatData) ShowOptionSetter {
 			if sd[i].Type == entity.RequestTypeVast {
 				seat.mimes = sd[i].Video.Mimes
 
+				// duration is field in set winner advertise
 				o.seats = append(o.seats, &vastSeat{
 					seat:      seat,
 					linear:    linear,
-					duration:  vastLinearDefaultLen.Int(),
 					skipAfter: coalesce(sd[i].Video.SkipMin, vastLinearDefaultSkip.Int()),
 				})
 			} else if sd[i].Type == entity.RequestTypeNative {

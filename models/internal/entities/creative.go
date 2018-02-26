@@ -12,9 +12,14 @@ import (
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/internal/cyslot"
 	"github.com/clickyab/services/assert"
+	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/kv"
 	"github.com/clickyab/services/mysql"
 	"github.com/sirupsen/logrus"
+)
+
+var (
+	defaultDuration = config.RegisterInt("crane.demand.creative.default_duration", 7, "default duration for creaive in second")
 )
 
 type ad struct {
@@ -425,4 +430,31 @@ bigLoop:
 		res = append(res, a.assets[i])
 	}
 	return res
+}
+
+// Duration is the duration of this creative, if had a meaning. for example it has measning in vast
+func (a *Advertise) Duration() int {
+	duration := defaultDuration.Int()
+	if a.FAdAttribute == nil {
+		return duration
+	}
+	d := a.FAdAttribute["duration"]
+
+	var di int
+	switch t := d.(type) {
+	case int:
+		di = t
+	case int64:
+		di = int(t)
+	case float64:
+		di = int(t)
+	default:
+		di = 0
+	}
+
+	if di > 0 {
+		return di
+	}
+
+	return duration
 }
