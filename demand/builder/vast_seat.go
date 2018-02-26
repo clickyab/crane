@@ -68,3 +68,10 @@ func (s *vastSeat) Acceptable(advertise entity.Creative) bool {
 	}
 	return true
 }
+
+// @override
+func (s *vastSeat) SetWinnerAdvertise(wa entity.Creative, bid float64, cpm float64) {
+	// call parent
+	s.seat.SetWinnerAdvertise(wa, bid, cpm)
+	s.duration = wa.Duration()
+}

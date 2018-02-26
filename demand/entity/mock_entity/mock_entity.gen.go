@@ -496,6 +496,18 @@ func (mr *MockCreativeMockRecorder) Capping() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Capping", reflect.TypeOf((*MockCreative)(nil).Capping))
 }
 
+// Duration mocks base method
+func (m *MockCreative) Duration() int {
+	ret := m.ctrl.Call(m, "Duration")
+	ret0, _ := ret[0].(int)
+	return ret0
+}
+
+// Duration indicates an expected call of Duration
+func (mr *MockCreativeMockRecorder) Duration() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Duration", reflect.TypeOf((*MockCreative)(nil).Duration))
+}
+
 // Height mocks base method
 func (m *MockCreative) Height() int {
 	ret := m.ctrl.Call(m, "Height")
@@ -1121,6 +1133,18 @@ func (m *MockSelectedCreative) Capping() entity.Capping {
 // Capping indicates an expected call of Capping
 func (mr *MockSelectedCreativeMockRecorder) Capping() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Capping", reflect.TypeOf((*MockSelectedCreative)(nil).Capping))
+}
+
+// Duration mocks base method
+func (m *MockSelectedCreative) Duration() int {
+	ret := m.ctrl.Call(m, "Duration")
+	ret0, _ := ret[0].(int)
+	return ret0
+}
+
+// Duration indicates an expected call of Duration
+func (mr *MockSelectedCreativeMockRecorder) Duration() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Duration", reflect.TypeOf((*MockSelectedCreative)(nil).Duration))
 }
 
 // Height mocks base method
