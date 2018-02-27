@@ -1,5 +1,7 @@
 npm-install:
 	cd $(ROOT)/js/banner && $(NPM) install
+	rm -rf $(ROOT)/js/vmap/nodu_modules
+	rm -rf $(ROOT)/js/vmap/package-lock.json
 	cd $(ROOT)/js/vmap && $(NPM) install
 
 build-js: npm-install
