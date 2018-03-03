@@ -65,8 +65,9 @@ func clickBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	exp, _ := context.WithTimeout(ctx, 10*time.Second)
+	exp, cnl := context.WithTimeout(ctx, 10*time.Second)
 	safe.GoRoutine(exp, func() {
+		defer cnl()
 		job := click.NewClickJob(c)
 		broker.Publish(job)
 	})
