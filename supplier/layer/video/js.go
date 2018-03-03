@@ -8,6 +8,7 @@ import (
 
 	"clickyab.com/crane/supplier/layer/internal/js"
 	"github.com/clickyab/services/framework/router"
+	"github.com/rs/xmux"
 )
 
 var (
@@ -29,8 +30,9 @@ func getVideojs(_ context.Context, w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write([]byte(str))
 }
 
-func getJwplayer(_ context.Context, w http.ResponseWriter, r *http.Request) {
+func getJwplayer(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	//proto := framework.Scheme(r)
+	name := strings.TrimSuffix(xmux.Param(ctx, "name"), ".js")
 	u := url.URL{
 		Host: r.Host,
 		//	Scheme: proto,
@@ -38,6 +40,8 @@ func getJwplayer(_ context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 	// Exactly once!
 	str := strings.Replace(string(jwplayer), "{{.URL}}", u.String(), 1)
+	str = strings.Replace(str, "{{.PLUG}}", name, 1)
+
 	w.Header().Set("Content-Type", "application/javascript")
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte(str))
