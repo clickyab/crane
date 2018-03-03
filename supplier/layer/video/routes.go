@@ -10,7 +10,7 @@ type controller struct {
 
 func (controller) Routes(r framework.Mux) {
 	r.GET("vast", "/ads/vast", vast)
-	r.GET("jwplayer", "/api/vast.js", getJwplayer)
+	r.GET("jwplayer", "/api/jwplayer/:name", getJwplayer)
 	r.GET("videojs", "/api/videojs.js", getVideojs)
 }
 
