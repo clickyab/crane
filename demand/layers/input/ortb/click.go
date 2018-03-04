@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"clickyab.com/crane/demand/builder"
+	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/workers/click"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/broker"
@@ -48,8 +49,7 @@ func clickBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		pl.Suspicious = 96
 	}
 
-	// Build context
-	c, err := builder.NewContext(
+	b := []builder.ShowOptionSetter{
 		builder.SetTimestamp(),
 		builder.SetOSUserAgent(pl.UserAgent),
 		builder.SetTargetHost(r.Host),
@@ -60,7 +60,13 @@ func clickBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetSuspicious(pl.Suspicious),
 		builder.SetFatFinger(pl.FatFinger),
 		builder.SetFullSeats(pl.PublicID, pl.Size, pl.ReserveHash, pl.Ad, pl.Bid, pl.PreviousTime, pl.CPM, pl.SCPM, pl.requestType),
-	)
+	}
+
+	if pl.PubType == entity.PublisherTypeWeb {
+		b = append(b, builder.SetParent(pl.Parent, pl.Ref))
+	}
+	// Build context
+	c, err := builder.NewContext(b...)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
