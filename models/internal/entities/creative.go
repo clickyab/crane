@@ -20,6 +20,7 @@ import (
 
 var (
 	defaultDuration = config.RegisterInt("crane.demand.creative.default_duration", 7, "default duration for creaive in second")
+	minUserBalance  = config.RegisterInt("crane.demand.creative.min.balance", 300000, "min balance for user")
 )
 
 type ad struct {
@@ -238,7 +239,7 @@ func AdLoader(_ context.Context) (map[string]kv.Serializable, error) {
 				AND C.cp_daily_budget > C.cp_today_spend
 				AND C.cp_total_budget > C.cp_total_spend
 				AND U.u_balance > U.u_today_spend AND
-				U.u_balance > 5000`, u, u, h)
+				U.u_balance > %d`, u, u, h, minUserBalance.Int())
 
 	_, err = NewManager().GetRDbMap().Select(
 		&res,
