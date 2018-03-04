@@ -6,9 +6,22 @@ set -eo pipefail
 exit_message() {
     echo ${1:-'exiting...'}
     code=${2:-1}
+    if [[ "${code}" == "0" ]]; then
+        echo "${APP}:${BRANCH}.${COMMITCOUNT}" >> ${OUT_LOG}
+        echo "Build was OK, but its not the correct branch(${APP}:${BRANCH}.${COMMITCOUNT} By ${CHANGE_AUTHOR}). ignore this" >> ${OUT_LOG}
+        echo "green" > ${OUT_LOG_COLOR}
+    else
+        echo "${APP}:${BRANCH}.${COMMITCOUNT}" >> ${OUT_LOG}
+        echo "Build was NOT OK (${APP}:${BRANCH}.${COMMITCOUNT} By ${CHANGE_AUTHOR}). Verify with dev team." >> ${OUT_LOG}
+        echo "red" > ${OUT_LOG_COLOR}
+    fi;
     exit ${code}
 }
 
+OUT_LOG=${OUT_LOG:-/dev/null}
+OUT_LOG_COLOR=${OUT_LOG_COLOR:-/dev/null}
+echo "" > ${OUT_LOG}
+echo "red" > ${OUT_LOG_COLOR}
 APP=${APP:-}
 BRANCH=${BRANCH_NAME:-master}
 BRANCH=${CHANGE_TARGET:-${BRANCH}}
@@ -115,7 +128,13 @@ echo "${TEMPORARY}" >> /tmp/kill-me
 echo "${BUILD_DIR}" >> /tmp/kill-me
 echo "${BUILD_PACKS_DIR}" >> /tmp/kill-me
 
+echo "${APP}:${BRANCH}.${COMMITCOUNT}" >> ${OUT_LOG}
+echo "The branch ${BRANCH} build finished, author was ${CHANGE_AUTHOR}. try to deploy it" >> ${OUT_LOG}
+echo "If there is no report after this for successful deploy, it means the deply failed. report it please." >> ${OUT_LOG}
 for WRK_TYP in demand-server supplier-server impression-worker click-worker
 do
    kubectl -n ${NAMESPACE} set image deployment  ${APP}-${WRK_TYP} ${APP}-${BRANCH}=registry.clickyab.ae/clickyab/${APP}_${BRANCH}:${VERSION} --record
 done
+echo "..." >> ${OUT_LOG}
+echo "Deploy done successfully to image registry.clickyab.ae/clickyab/${APP}:${BRANCH}.${COMMITCOUND}" >> ${OUTPUT}
+echo "green" >> ${OUT_LOG_COLOR}
