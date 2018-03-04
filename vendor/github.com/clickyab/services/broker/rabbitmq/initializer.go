@@ -17,9 +17,9 @@ import (
 )
 
 var (
-	conn *amqp.Connection
-	once = sync.Once{}
-	kill context.Context
+	connRng *ring.Ring
+	once    = sync.Once{}
+	kill    context.Context
 )
 
 // Channel opens a unique, concurrent server channel to process the bulk of AMQP
@@ -159,16 +159,30 @@ func (in *initRabbit) Initialize(ctx context.Context) {
 	once.Do(func() {
 		// the size is here for channel to not block the caller. since we read this on the health check command
 		in.notifyCloser = make(chan *amqp.Error, 10)
-		kill, _ = context.WithCancel(ctx)
-		safe.Try(func() error {
-			var err error
-			conn, err = amqp.Dial(dsn.String())
-			return err
-		}, tryLimit.Duration())
+		var cnl context.CancelFunc
+		kill, cnl = context.WithCancel(ctx)
+		cnt := connection.Int()
+		if cnt < 1 {
+			cnt = 1
+		}
+		connRng = ring.New(cnt)
+		for i := 0; i < cnt; i++ {
+			safe.Try(func() error {
+				c, err := amqp.Dial(dsn.String())
+				if err == nil {
+					connRng.Value = c
+					connRng.Next()
+				}
+				return err
+			}, tryLimit.Duration())
+		}
 
+		conn := connRng.Next().Value.(*amqp.Connection)
 		chn, err := conn.Channel()
 		assert.Nil(err)
-		defer chn.Close()
+		defer func() {
+			assert.Nil(chn.Close())
+		}()
 
 		assert.Nil(
 			chn.ExchangeDeclare(
@@ -184,6 +198,7 @@ func (in *initRabbit) Initialize(ctx context.Context) {
 
 		rng = ring.New(publisher.Int())
 		for i := 0; i < publisher.Int(); i++ {
+			conn := connRng.Next().Value.(*amqp.Connection)
 			pchn, err := conn.Channel()
 			assert.Nil(err)
 			rtrn := make(chan amqp.Confirmation, confirmLen.Int())
@@ -208,6 +223,7 @@ func (in *initRabbit) Initialize(ctx context.Context) {
 			c := ctx.Done()
 			assert.NotNil(c, "[BUG] context has no mean to cancel/deadline/timeout")
 			<-c
+			cnl() // the parent context normally take care of the children. but for idiotic linter :)
 			finalize()
 		}()
 	})
