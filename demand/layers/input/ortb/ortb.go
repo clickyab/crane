@@ -108,24 +108,7 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var (
-		publisher entity.Publisher
-		selector  reducer.Filter
-		ps        string
-	)
-	if payload.Site != nil {
-		ps = payload.Site.Domain
-		publisher, err = website.GetWebSiteOrFake(sup, payload.Site.Domain)
-		prevent = false // do not accept prevent default on web requestType
-		selector = ortbWebSelector
-	} else if payload.App != nil {
-		ps = payload.App.Bundle
-		publisher, err = apps.GetAppOrFake(sup, payload.App.Bundle)
-		selector = ortbAppSelector
-	} else {
-		ps = "None"
-		err = errors.New("not supported")
-	}
+	publisher, selector, ps, prevent, err := handlePublisherSelector(payload, sup, prevent)
 
 	if err != nil {
 		e := fmt.Sprintf("publisher not supported : %s", ps)
@@ -257,4 +240,36 @@ func seatDetail(req openrtb.BidRequest) ([]builder.DemandSeatData, bool) {
 		})
 	}
 	return seats, vast
+}
+
+func handlePublisherSelector(payload openrtb.BidRequest, sup entity.Supplier, prevent bool) (entity.Publisher, reducer.Filter, string, bool, error) {
+	var (
+		publisher entity.Publisher
+		selector  reducer.Filter
+		ps        string
+		err       error
+	)
+	if payload.Site != nil {
+		if payload.Site.Domain == "" {
+			err = errors.New("website domain is empty")
+		} else {
+			ps = payload.Site.Domain
+			publisher, err = website.GetWebSiteOrFake(sup, payload.Site.Domain)
+			prevent = false // do not accept prevent default on web requestType
+			selector = ortbWebSelector
+		}
+	} else if payload.App != nil {
+		if payload.App.Bundle == "" {
+			err = errors.New("app bundle is empty")
+		} else {
+			ps = payload.App.Bundle
+			publisher, err = apps.GetAppOrFake(sup, payload.App.Bundle)
+			selector = ortbAppSelector
+		}
+
+	} else {
+		ps = "None"
+		err = errors.New("not supported")
+	}
+	return publisher, selector, ps, prevent, err
 }
