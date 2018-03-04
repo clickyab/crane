@@ -1,6 +1,6 @@
 {
 	"ImportPath": "clickyab.com/crane",
-	"GoVersion": "go1.9",
+	"GoVersion": "go1.10",
 	"GodepVersion": "v79",
 	"Packages": [
 		"./..."
@@ -43,147 +43,147 @@
 		},
 		{
 			"ImportPath": "github.com/clickyab/services/aredis",
-			"Rev": "e6857250403afd5e35732eb751cd0fa573e5cc5a"
+			"Rev": "80e39dca2c9e945107e3660e01db61951525d535"
 		},
 		{
 			"ImportPath": "github.com/clickyab/services/array",
-			"Rev": "e6857250403afd5e35732eb751cd0fa573e5cc5a"
+			"Rev": "80e39dca2c9e945107e3660e01db61951525d535"
 		},
 		{
 			"ImportPath": "github.com/clickyab/services/assert",
-			"Rev": "e6857250403afd5e35732eb751cd0fa573e5cc5a"
+			"Rev": "80e39dca2c9e945107e3660e01db61951525d535"
 		},
 		{
 			"ImportPath": "github.com/clickyab/services/broker",
-			"Rev": "e6857250403afd5e35732eb751cd0fa573e5cc5a"
+			"Rev": "80e39dca2c9e945107e3660e01db61951525d535"
 		},
 		{
 			"ImportPath": "github.com/clickyab/services/broker/mock",
-			"Rev": "e6857250403afd5e35732eb751cd0fa573e5cc5a"
+			"Rev": "80e39dca2c9e945107e3660e01db61951525d535"
 		},
 		{
 			"ImportPath": "github.com/clickyab/services/broker/rabbitmq",
-			"Rev": "e6857250403afd5e35732eb751cd0fa573e5cc5a"
+			"Rev": "80e39dca2c9e945107e3660e01db61951525d535"
 		},
 		{
 			"ImportPath": "github.com/clickyab/services/broker/selector",
-			"Rev": "e6857250403afd5e35732eb751cd0fa573e5cc5a"
+			"Rev": "80e39dca2c9e945107e3660e01db61951525d535"
 		},
 		{
 			"ImportPath": "github.com/clickyab/services/config",
-			"Rev": "e6857250403afd5e35732eb751cd0fa573e5cc5a"
+			"Rev": "80e39dca2c9e945107e3660e01db61951525d535"
 		},
 		{
 			"ImportPath": "github.com/clickyab/services/framework",
-			"Rev": "e6857250403afd5e35732eb751cd0fa573e5cc5a"
+			"Rev": "80e39dca2c9e945107e3660e01db61951525d535"
 		},
 		{
 			"ImportPath": "github.com/clickyab/services/framework/middleware",
-			"Rev": "e6857250403afd5e35732eb751cd0fa573e5cc5a"
+			"Rev": "80e39dca2c9e945107e3660e01db61951525d535"
 		},
 		{
 			"ImportPath": "github.com/clickyab/services/framework/router",
-			"Rev": "e6857250403afd5e35732eb751cd0fa573e5cc5a"
+			"Rev": "80e39dca2c9e945107e3660e01db61951525d535"
 		},
 		{
 			"ImportPath": "github.com/clickyab/services/gettext/internal/t9",
-			"Rev": "e6857250403afd5e35732eb751cd0fa573e5cc5a"
+			"Rev": "80e39dca2c9e945107e3660e01db61951525d535"
 		},
 		{
 			"ImportPath": "github.com/clickyab/services/gettext/t9e",
-			"Rev": "e6857250403afd5e35732eb751cd0fa573e5cc5a"
+			"Rev": "80e39dca2c9e945107e3660e01db61951525d535"
 		},
 		{
 			"ImportPath": "github.com/clickyab/services/gettext/t9s",
-			"Rev": "e6857250403afd5e35732eb751cd0fa573e5cc5a"
+			"Rev": "80e39dca2c9e945107e3660e01db61951525d535"
 		},
 		{
 			"ImportPath": "github.com/clickyab/services/healthz",
-			"Rev": "e6857250403afd5e35732eb751cd0fa573e5cc5a"
+			"Rev": "80e39dca2c9e945107e3660e01db61951525d535"
 		},
 		{
 			"ImportPath": "github.com/clickyab/services/initializer",
-			"Rev": "e6857250403afd5e35732eb751cd0fa573e5cc5a"
+			"Rev": "80e39dca2c9e945107e3660e01db61951525d535"
 		},
 		{
 			"ImportPath": "github.com/clickyab/services/ip2location",
-			"Rev": "e6857250403afd5e35732eb751cd0fa573e5cc5a"
+			"Rev": "80e39dca2c9e945107e3660e01db61951525d535"
 		},
 		{
 			"ImportPath": "github.com/clickyab/services/kv",
-			"Rev": "e6857250403afd5e35732eb751cd0fa573e5cc5a"
+			"Rev": "80e39dca2c9e945107e3660e01db61951525d535"
 		},
 		{
 			"ImportPath": "github.com/clickyab/services/kv/mock",
-			"Rev": "e6857250403afd5e35732eb751cd0fa573e5cc5a"
+			"Rev": "80e39dca2c9e945107e3660e01db61951525d535"
 		},
 		{
 			"ImportPath": "github.com/clickyab/services/kv/redis",
-			"Rev": "e6857250403afd5e35732eb751cd0fa573e5cc5a"
+			"Rev": "80e39dca2c9e945107e3660e01db61951525d535"
 		},
 		{
 			"ImportPath": "github.com/clickyab/services/migration",
-			"Rev": "e6857250403afd5e35732eb751cd0fa573e5cc5a"
+			"Rev": "80e39dca2c9e945107e3660e01db61951525d535"
 		},
 		{
 			"ImportPath": "github.com/clickyab/services/mysql",
-			"Rev": "e6857250403afd5e35732eb751cd0fa573e5cc5a"
+			"Rev": "80e39dca2c9e945107e3660e01db61951525d535"
 		},
 		{
 			"ImportPath": "github.com/clickyab/services/mysql/connection/mysql",
-			"Rev": "e6857250403afd5e35732eb751cd0fa573e5cc5a"
+			"Rev": "80e39dca2c9e945107e3660e01db61951525d535"
 		},
 		{
 			"ImportPath": "github.com/clickyab/services/pool",
-			"Rev": "e6857250403afd5e35732eb751cd0fa573e5cc5a"
+			"Rev": "80e39dca2c9e945107e3660e01db61951525d535"
 		},
 		{
 			"ImportPath": "github.com/clickyab/services/pool/drivers/cachepool",
-			"Rev": "e6857250403afd5e35732eb751cd0fa573e5cc5a"
+			"Rev": "80e39dca2c9e945107e3660e01db61951525d535"
 		},
 		{
 			"ImportPath": "github.com/clickyab/services/pool/drivers/memorypool",
-			"Rev": "e6857250403afd5e35732eb751cd0fa573e5cc5a"
+			"Rev": "80e39dca2c9e945107e3660e01db61951525d535"
 		},
 		{
 			"ImportPath": "github.com/clickyab/services/random",
-			"Rev": "e6857250403afd5e35732eb751cd0fa573e5cc5a"
+			"Rev": "80e39dca2c9e945107e3660e01db61951525d535"
 		},
 		{
 			"ImportPath": "github.com/clickyab/services/safe",
-			"Rev": "e6857250403afd5e35732eb751cd0fa573e5cc5a"
+			"Rev": "80e39dca2c9e945107e3660e01db61951525d535"
 		},
 		{
 			"ImportPath": "github.com/clickyab/services/shell",
-			"Rev": "e6857250403afd5e35732eb751cd0fa573e5cc5a"
+			"Rev": "80e39dca2c9e945107e3660e01db61951525d535"
 		},
 		{
 			"ImportPath": "github.com/clickyab/services/simplehash",
-			"Rev": "e6857250403afd5e35732eb751cd0fa573e5cc5a"
+			"Rev": "80e39dca2c9e945107e3660e01db61951525d535"
 		},
 		{
 			"ImportPath": "github.com/clickyab/services/slack",
-			"Rev": "e6857250403afd5e35732eb751cd0fa573e5cc5a"
+			"Rev": "80e39dca2c9e945107e3660e01db61951525d535"
 		},
 		{
 			"ImportPath": "github.com/clickyab/services/store",
-			"Rev": "e6857250403afd5e35732eb751cd0fa573e5cc5a"
+			"Rev": "80e39dca2c9e945107e3660e01db61951525d535"
 		},
 		{
 			"ImportPath": "github.com/clickyab/services/store/jwt",
-			"Rev": "e6857250403afd5e35732eb751cd0fa573e5cc5a"
+			"Rev": "80e39dca2c9e945107e3660e01db61951525d535"
 		},
 		{
 			"ImportPath": "github.com/clickyab/services/trans",
-			"Rev": "e6857250403afd5e35732eb751cd0fa573e5cc5a"
+			"Rev": "80e39dca2c9e945107e3660e01db61951525d535"
 		},
 		{
 			"ImportPath": "github.com/clickyab/services/version",
-			"Rev": "e6857250403afd5e35732eb751cd0fa573e5cc5a"
+			"Rev": "80e39dca2c9e945107e3660e01db61951525d535"
 		},
 		{
 			"ImportPath": "github.com/clickyab/services/xlog",
-			"Rev": "e6857250403afd5e35732eb751cd0fa573e5cc5a"
+			"Rev": "80e39dca2c9e945107e3660e01db61951525d535"
 		},
 		{
 			"ImportPath": "github.com/fzerorubigd/expand",
