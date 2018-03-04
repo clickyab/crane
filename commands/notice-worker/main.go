@@ -17,7 +17,7 @@ import (
 )
 
 func main() {
-	config.Initialize(commands.Organization, commands.AppName, commands.Prefix, commands.DefaultConfig())
+	config.Initialize(commands.Organization, commands.AppName, commands.Prefix, commands.DefaultWorkerConfig())
 	config.DumpConfig(os.Stdout)
 
 	defer initializer.Initialize()()
