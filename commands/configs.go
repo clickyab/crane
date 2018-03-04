@@ -25,3 +25,11 @@ func DefaultConfig() config.DescriptiveLayer {
 	d.Add("", "services.mysql.rdsn", "root:bita123@tcp(127.0.0.1:3306)/clickyab?charset=utf8&parseTime=true&charset=utf8")
 	return d
 }
+
+// DefaultWorkerConfig is a configuration layer for workers, reduce the number of channels and connections
+func DefaultWorkerConfig() config.DescriptiveLayer {
+	d := DefaultConfig()
+	d.Add("", "services.amqp.publisher", 3)
+	d.Add("", "services.amqp.connection.count", 1)
+	return d
+}
