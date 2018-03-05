@@ -20,7 +20,7 @@ func (middleware) Handler(next framework.Handler) framework.Handler {
 	c := cors.New(cors.Options{
 		AllowCredentials: true,
 		AllowedMethods:   []string{"GET", "POST", "OPTIONS", "PUT", "PATCH", "DELETE"},
-		AllowedHeaders:   []string{"token", "content-type"},
+		AllowedHeaders:   []string{"*"},
 		AllowOriginFunc: func(origin string) bool {
 			return true // TODO : write the real code here
 		},
