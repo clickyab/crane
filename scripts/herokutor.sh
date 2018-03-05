@@ -7,12 +7,12 @@ exit_message() {
     echo ${1:-'exiting...'}
     code=${2:-1}
     if [[ "${code}" == "0" ]]; then
-        echo "${APP}:${BRANCH}.${COMMITCOUNT}" >> ${OUT_LOG}
-        echo "Build was OK, but its not the correct branch(${APP}:${BRANCH}.${COMMITCOUNT} By ${CHANGE_AUTHOR}). ignore this" >> ${OUT_LOG}
+        echo "${APP}:${BRANCH}.${COMMIT_COUNT}" >> ${OUT_LOG}
+        echo "Build was OK, but its not the correct branch(${APP}:${BRANCH}.${COMMIT_COUNT} By ${CHANGE_AUTHOR}). ignore this" >> ${OUT_LOG}
         echo "green" > ${OUT_LOG_COLOR}
     else
-        echo "${APP}:${BRANCH}.${COMMITCOUNT}" >> ${OUT_LOG}
-        echo "Build was NOT OK (${APP}:${BRANCH}.${COMMITCOUNT} By ${CHANGE_AUTHOR}). Verify with dev team." >> ${OUT_LOG}
+        echo "${APP}:${BRANCH}.${COMMIT_COUNT}" >> ${OUT_LOG}
+        echo "Build was NOT OK (${APP}:${BRANCH}.${COMMIT_COUNT} By ${CHANGE_AUTHOR}). Verify with dev team." >> ${OUT_LOG}
         echo "red" > ${OUT_LOG_COLOR}
     fi;
     exit ${code}
@@ -26,12 +26,6 @@ APP=${APP:-}
 BRANCH=${BRANCH_NAME:-master}
 BRANCH=${CHANGE_TARGET:-${BRANCH}}
 CACHE_ROOT=${CACHE_ROOT:-/var/lib/jenkins/cache}
-
-[ -z ${APP} ] && exit_message "The APP is not defined." # WTF, the APP NAME is important
-[ -z ${CHANGE_AUTHOR} ] || exit_message "It's a PR, bail out" 0
-if [[ ( "${BRANCH}" != "master" ) && ( "${BRANCH}" != "dev" ) ]]; then
-    exit_message "Its not on correct branch, bail out" 0
-fi
 
 SCRIPT_DIR=$(readlink -f $(dirname ${BASH_SOURCE[0]}))
 
@@ -65,6 +59,12 @@ export IMP_DATE=$(date +%Y%m%d)
 export COMMIT_COUNT=$(git rev-list HEAD --count| cat)
 export BUILD_DATE=$(date "+%D/%H/%I/%S"| sed -e "s/\//-/g")
 popd
+
+[ -z ${APP} ] && exit_message "The APP is not defined." # WTF, the APP NAME is important
+[ -z ${CHANGE_AUTHOR} ] || exit_message "It's a PR, bail out" 0
+if [[ ( "${BRANCH}" != "master" ) && ( "${BRANCH}" != "dev" ) ]]; then
+    exit_message "Its not on correct branch, bail out" 0
+fi
 
 # Populate env for herokuish
 env -0 | while IFS='=' read -r -d '' n v; do
@@ -128,13 +128,13 @@ echo "${TEMPORARY}" >> /tmp/kill-me
 echo "${BUILD_DIR}" >> /tmp/kill-me
 echo "${BUILD_PACKS_DIR}" >> /tmp/kill-me
 
-echo "${APP}:${BRANCH}.${COMMITCOUNT}" >> ${OUT_LOG}
-echo "The branch ${BRANCH} build finished, author was ${CHANGE_AUTHOR}. try to deploy it" >> ${OUT_LOG}
+echo "${APP}:${BRANCH}.${COMMIT_COUNT}" >> ${OUT_LOG}
+echo "The branch ${BRANCH} build finished, try to deploy it" >> ${OUT_LOG}
 echo "If there is no report after this for successful deploy, it means the deply failed. report it please." >> ${OUT_LOG}
 for WRK_TYP in demand-server supplier-server impression-worker click-worker
 do
    kubectl -n ${NAMESPACE} set image deployment  ${APP}-${WRK_TYP} ${APP}-${BRANCH}=registry.clickyab.ae/clickyab/${APP}_${BRANCH}:${VERSION} --record
 done
 echo "..." >> ${OUT_LOG}
-echo "Deploy done successfully to image registry.clickyab.ae/clickyab/${APP}:${BRANCH}.${COMMITCOUND}" >> ${OUTPUT}
+echo "Deploy done successfully to image registry.clickyab.ae/clickyab/${APP}:${BRANCH}.${COMMIT_COUNT}" >> ${OUT_PUT}
 echo "green" >> ${OUT_LOG_COLOR}
