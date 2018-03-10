@@ -1,6 +1,8 @@
 package filter
 
 import (
+	"errors"
+
 	"clickyab.com/crane/demand/entity"
 )
 
@@ -9,6 +11,10 @@ type ConnectionType struct {
 }
 
 // Check test if campaign accept provider
-func (*ConnectionType) Check(c entity.Context, in entity.Creative) bool {
-	return hasInt(true, in.Campaign().ConnectionType(), c.ConnectionType())
+func (*ConnectionType) Check(c entity.Context, in entity.Creative) error {
+	if hasInt(true, in.Campaign().ConnectionType(), c.ConnectionType()) {
+		return nil
+	}
+	return errors.New("app provider filter not met")
+
 }

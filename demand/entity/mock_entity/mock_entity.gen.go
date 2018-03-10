@@ -5,12 +5,13 @@
 package mock_entity
 
 import (
-	entity "clickyab.com/crane/demand/entity"
-	gomock "github.com/golang/mock/gomock"
 	net "net"
 	url "net/url"
 	reflect "reflect"
 	time "time"
+
+	entity "clickyab.com/crane/demand/entity"
+	gomock "github.com/golang/mock/gomock"
 )
 
 // MockContext is a mock of Context interface
@@ -431,21 +432,21 @@ func (mr *MockCreativeMockRecorder) AdCTR() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AdCTR", reflect.TypeOf((*MockCreative)(nil).AdCTR))
 }
 
-// Assets mocks base method
+// Asset mocks base method
 func (m *MockCreative) Assets(arg0 entity.AssetType, arg1 int, arg2 ...entity.AssetFilter) []entity.Asset {
 	varargs := []interface{}{arg0, arg1}
 	for _, a := range arg2 {
 		varargs = append(varargs, a)
 	}
-	ret := m.ctrl.Call(m, "Assets", varargs...)
+	ret := m.ctrl.Call(m, "Asset", varargs...)
 	ret0, _ := ret[0].([]entity.Asset)
 	return ret0
 }
 
-// Assets indicates an expected call of Assets
+// Asset indicates an expected call of Asset
 func (mr *MockCreativeMockRecorder) Assets(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
 	varargs := append([]interface{}{arg0, arg1}, arg2...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Assets", reflect.TypeOf((*MockCreative)(nil).Assets), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Asset", reflect.TypeOf((*MockCreative)(nil).Assets), varargs...)
 }
 
 // Attributes mocks base method
@@ -1034,21 +1035,21 @@ func (mr *MockSelectedCreativeMockRecorder) AdCTR() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AdCTR", reflect.TypeOf((*MockSelectedCreative)(nil).AdCTR))
 }
 
-// Assets mocks base method
+// Asset mocks base method
 func (m *MockSelectedCreative) Assets(arg0 entity.AssetType, arg1 int, arg2 ...entity.AssetFilter) []entity.Asset {
 	varargs := []interface{}{arg0, arg1}
 	for _, a := range arg2 {
 		varargs = append(varargs, a)
 	}
-	ret := m.ctrl.Call(m, "Assets", varargs...)
+	ret := m.ctrl.Call(m, "Asset", varargs...)
 	ret0, _ := ret[0].([]entity.Asset)
 	return ret0
 }
 
-// Assets indicates an expected call of Assets
+// Asset indicates an expected call of Asset
 func (mr *MockSelectedCreativeMockRecorder) Assets(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
 	varargs := append([]interface{}{arg0, arg1}, arg2...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Assets", reflect.TypeOf((*MockSelectedCreative)(nil).Assets), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Asset", reflect.TypeOf((*MockSelectedCreative)(nil).Assets), varargs...)
 }
 
 // Attributes mocks base method

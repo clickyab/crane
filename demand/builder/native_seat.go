@@ -113,7 +113,7 @@ func (s *nativeSeat) Acceptable(advertise entity.Creative) bool {
 		}
 		// TODO : think about this. it is somehow complicated thing. what if the asset is selected for two (or more) filter
 		// TODO : its a good idea to cache result here, maybe with a key for each AssetFilter function
-		if len(advertise.Assets(s.filters[i].Type, s.filters[i].SubType, s.filters[i].Extra...)) > 0 {
+		if len(advertise.Asset(s.filters[i].Type, s.filters[i].SubType, s.filters[i].Extra...)) > 0 {
 			continue
 		}
 		return false

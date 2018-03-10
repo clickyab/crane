@@ -95,11 +95,9 @@ func internalSelect(
 
 	for _, seat := range ctx.Seats() {
 		var (
-			exceedFloor []entity.SelectedCreative                                                                                              // above  hard floor (the minimum cpm ), legit ads
-			underFloor  []entity.SelectedCreative                                                                                              // not passed from floor, only used if the supplier accept less than minCPM bids, normally only us, as clickyab
-			softCPM     = ctx.Publisher().Supplier().SoftFloorCPM(fmt.Sprint(seat.RequestType()), fmt.Sprint(ctx.Publisher().Type()))          // softCPM floor , determine the sec bidding pricing
-			minCPM      = incShare(ctx.Publisher().Supplier(), seat.MinBid())                                                                  // minimum cpm of this seat, aka hard floor, after adding our share to it
-			minCPC      = float64(ctx.Publisher().Supplier().SoftFloorCPC(fmt.Sprint(seat.RequestType()), fmt.Sprint(ctx.Publisher().Type()))) // minimum cpc of this seat, aka hard floor, after adding our share to it
+			softCPM = ctx.Publisher().Supplier().SoftFloorCPM(fmt.Sprint(seat.RequestType()), fmt.Sprint(ctx.Publisher().Type()))          // softCPM floor , determine the sec bidding pricing
+			minCPM  = incShare(ctx.Publisher().Supplier(), seat.MinBid())                                                                  // minimum cpm of this seat, aka hard floor, after adding our share to it
+			minCPC  = float64(ctx.Publisher().Supplier().SoftFloorCPC(fmt.Sprint(seat.RequestType()), fmt.Sprint(ctx.Publisher().Type()))) // minimum cpc of this seat, aka hard floor, after adding our share to it
 		)
 
 		// softCPM floor is smaller than hard floor, so we do not have sec biding
@@ -107,42 +105,7 @@ func internalSelect(
 			softCPM = minCPM
 		}
 
-		for _, creative := range ads {
-			if creative.Type() == entity.AdTypeVideo && noVideo {
-				continue
-			}
-			if selected[creative.ID()] {
-				continue
-			}
-			if !seat.Acceptable(creative) {
-				continue
-			}
-
-			if ctr, cpm, cpc, ok := doBid(creative, seat, minCPM, ctx.Publisher()); ok {
-				// a pass!
-				exceedFloor = append(
-					exceedFloor,
-					adAndBid{
-						Creative: creative,
-						ctr:      ctr,
-						cpm:      cpm,
-						secBid:   cpm >= softCPM,
-						cpc:      cpc,
-					},
-				)
-			} else {
-				underFloor = append(
-					underFloor,
-					adAndBid{
-						Creative: creative,
-						ctr:      ctr,
-						cpm:      cpm,
-						cpc:      cpc,
-						secBid:   false,
-					},
-				)
-			}
-		}
+		exceedFloor, underFloor := selector(ctx, ads, seat, noVideo, selected)
 
 		var (
 			sorted []entity.SelectedCreative
@@ -197,4 +160,56 @@ func internalSelect(
 // selectAds is the only function that one must call to get ads
 func selectAds(_ context.Context, ctx entity.Context, ads []entity.Creative) {
 	internalSelect(ctx, ads)
+}
+
+func selector(ctx entity.Context, ads []entity.Creative, seat entity.Seat, noVideo bool, selected map[int64]bool) ([]entity.SelectedCreative, []entity.SelectedCreative) {
+	var (
+		exceedFloor []entity.SelectedCreative // above  hard floor (the minimum cpm ), legit ads
+		underFloor  []entity.SelectedCreative
+		// not passed from floor, only used if the supplier accept less than minCPM bids, normally only us, as clickyab
+		softCPM = ctx.Publisher().Supplier().SoftFloorCPM(fmt.Sprint(seat.RequestType()), fmt.Sprint(ctx.Publisher().Type())) // softCPM floor , determine the sec bidding pricing
+		minCPM  = incShare(ctx.Publisher().Supplier(), seat.MinBid())                                                         // minimum cpm of this seat, aka hard floor, after adding our share to it
+	)
+
+	// softCPM floor is smaller than hard floor, so we do not have sec biding
+	if softCPM < minCPM {
+		softCPM = minCPM
+	}
+
+	for _, creative := range ads {
+		if creative.Type() == entity.AdTypeVideo && noVideo {
+			continue
+		}
+		if selected[creative.ID()] {
+			continue
+		}
+		if !seat.Acceptable(creative) {
+			continue
+		}
+		if ctr, cpm, cpc, ok := doBid(creative, seat, minCPM, ctx.Publisher()); ok {
+			// a pass!
+			exceedFloor = append(
+				exceedFloor,
+				adAndBid{
+					Creative: creative,
+					ctr:      ctr,
+					cpm:      cpm,
+					secBid:   cpm >= softCPM,
+					cpc:      cpc,
+				},
+			)
+		} else {
+			underFloor = append(
+				underFloor,
+				adAndBid{
+					Creative: creative,
+					ctr:      ctr,
+					cpm:      cpm,
+					cpc:      cpc,
+					secBid:   false,
+				},
+			)
+		}
+	}
+	return exceedFloor, underFloor
 }
