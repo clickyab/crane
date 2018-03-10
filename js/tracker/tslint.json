@@ -1,0 +1,11 @@
+{
+  "extends": [
+    "tslint-config-standard",
+    "tslint-config-prettier"
+  ],
+  "cliOptions" : {
+    "exclude": [
+      "src/effect.ts"
+    ]
+  }
+}
