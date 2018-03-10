@@ -19,6 +19,10 @@ func conversionHandler(ctx context.Context, w http.ResponseWriter, r *http.Reque
 	t := time.Now()
 
 	rh := r.URL.Query().Get("imp_id")
+	if rh == "" {
+		_ = pixel.Render(ctx, w, nil)
+		return
+	}
 	// TODO : Remove the ByID function after removing the old show ad
 	if impid, err := strconv.ParseInt(rh, 10, 64); err == nil {
 		safe.GoRoutine(ctx, func() { ads.ConversionByID(ctx, impid, acid, t) })
