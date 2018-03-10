@@ -310,6 +310,10 @@ type Advertise struct {
 	capping  entity.Capping
 }
 
+func (a *Advertise) Assets() []entity.Asset {
+	return a.assets
+}
+
 // MaxBID is the max bid of campaign
 func (a *Advertise) MaxBID() int64 {
 	return a.FCampaignMaxBid
@@ -411,8 +415,8 @@ func (a *Advertise) MimeType() string {
 	return a.FMimeType.String
 }
 
-// Assets return the asset for this advertise
-func (a *Advertise) Assets(assetType entity.AssetType, sub int, filter ...entity.AssetFilter) []entity.Asset {
+// Asset return the asset for this advertise
+func (a *Advertise) Asset(assetType entity.AssetType, sub int, filter ...entity.AssetFilter) []entity.Asset {
 	var res []entity.Asset
 	// Ignore if the assets is empty
 	if len(a.assets) == 0 {

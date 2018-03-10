@@ -39,7 +39,7 @@ func nativeMarkup(ctx entity.Context, s entity.NativeSeat) *openrtb.Bid {
 	}
 	for _, f := range s.Filters() {
 		// TODO : Decide for duplicate assets per type :/
-		a := s.WinnerAdvertise().Assets(f.Type, f.SubType, f.Extra...)
+		a := s.WinnerAdvertise().Asset(f.Type, f.SubType, f.Extra...)
 		if len(a) > 0 {
 			req := 0
 			if f.Required {
