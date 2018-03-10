@@ -57,7 +57,9 @@ type Creative interface {
 	// MimeType of media
 	MimeType() string
 	// Asset return the asset that pass all filters and type is exactly matched the value
-	Assets(AssetType, int, ...AssetFilter) []Asset
+	Asset(AssetType, int, ...AssetFilter) []Asset
+	// Asset return the assets
+	Assets() []Asset
 }
 
 // SelectedCreative is used during the rtb loop.
