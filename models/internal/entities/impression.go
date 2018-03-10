@@ -35,7 +35,7 @@ func FindImpressionByID(impid int64, t time.Time) (*Impression, error) {
 	q := fmt.Sprintf(`SELECT w_id,app_id,wp_id,ca_id,ad_id,cop_id,cp_id,slot_id,imp_id, reserved_hash
 				FROM  %s WHERE imp_id = ?`, impTableName(t))
 	var x = &Impression{}
-	err := NewManager().GetRDbMap().SelectOne(x, q, impid)
+	err := NewManager().GetWDbMap().SelectOne(x, q, impid)
 	return x, err
 }
 
@@ -44,7 +44,7 @@ func FindImpressionByRH(rh string, t time.Time) (*Impression, error) {
 	q := fmt.Sprintf(`SELECT w_id,app_id,wp_id,ca_id,ad_id,cop_id,cp_id,slot_id,imp_id, reserved_hash
 				FROM  %s WHERE reserved_hash = ?`, impTableName(t))
 	var x = &Impression{}
-	err := NewManager().GetRDbMap().SelectOne(x, q, rh)
+	err := NewManager().GetWDbMap().SelectOne(x, q, rh)
 
 	return x, err
 }
