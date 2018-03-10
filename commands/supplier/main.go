@@ -4,10 +4,10 @@ import (
 	"os"
 
 	"clickyab.com/crane/commands"
-	_ "clickyab.com/crane/supplier/layer/app"
-	_ "clickyab.com/crane/supplier/layer/native"
-	_ "clickyab.com/crane/supplier/layer/video"
-	_ "clickyab.com/crane/supplier/layer/web"
+	_ "clickyab.com/crane/supplier/layers/app"
+	_ "clickyab.com/crane/supplier/layers/native"
+	_ "clickyab.com/crane/supplier/layers/video"
+	_ "clickyab.com/crane/supplier/layers/web"
 	// CORS is required for supplier
 	_ "clickyab.com/crane/supplier/middleware/cors"
 	"github.com/clickyab/services/assert"

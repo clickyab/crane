@@ -9,8 +9,8 @@ import (
 
 	website "clickyab.com/crane/models/clickyabwebsite"
 	"clickyab.com/crane/supplier/client"
-	"clickyab.com/crane/supplier/layer/internal/supplier"
-	"clickyab.com/crane/supplier/layer/output"
+	"clickyab.com/crane/supplier/layers/internal/supplier"
+	"clickyab.com/crane/supplier/layers/output"
 	"github.com/bsm/openrtb"
 	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/framework"

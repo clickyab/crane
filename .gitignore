@@ -16,3 +16,5 @@ contrib/*.BIN
 contrib/*.BIN.md5
 contrib/*.BIN.gz
 js/dist
+js/demand
+js/supplier
