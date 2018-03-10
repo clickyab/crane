@@ -37,10 +37,7 @@
 
   function appendImgHit(click: string | null, imp: string, actionId: string) {
     const imgHit = document.createElement('img')
-    imgHit.setAttribute(
-      'src',
-      `https://a.clickyab.com/conversion/?click_id=${click}imp_id=${imp}&action_id=${actionId}`
-    )
+    imgHit.setAttribute('src', '{{.URL}}')
     document.body.appendChild(imgHit)
   }
 
