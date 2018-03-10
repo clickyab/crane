@@ -1,6 +1,7 @@
 package filter
 
 import (
+	"errors"
 	"math"
 
 	"clickyab.com/crane/demand/entity"
@@ -20,20 +21,28 @@ type AreaInGlob struct {
 }
 
 // Check filter area in glob
-func (*AreaInGlob) Check(c entity.Context, in entity.Creative) bool {
+func (*AreaInGlob) Check(c entity.Context, in entity.Creative) error {
 	b, lat, lon, radius := in.Campaign().LatLon()
 	ll := c.Location().LatLon()
 	if !ll.Valid {
 		// there is no location detected
 		// if the campaign is regional, ignore it
-		return !b
+		if !b {
+			return nil
+		}
+		return errors.New("area in glob filter not met")
+
 		// no location and no regional campaign so be it!
 	}
 	// The campaign is not regional, so return ok and add them to list
 	if !b {
-		return true
+		return nil
 	}
 	// Campaign is regional and phone is detected
 
-	return areaInGlob(lat, lon, ll.Lat, ll.Lon, radius)
+	if areaInGlob(lat, lon, ll.Lat, ll.Lon, radius) {
+		return nil
+	}
+	return errors.New("area in glob filter not met")
+
 }

@@ -1,6 +1,8 @@
 package filter
 
 import (
+	"errors"
+
 	"clickyab.com/crane/demand/entity"
 )
 
@@ -9,6 +11,10 @@ type AppBrand struct {
 }
 
 // Check test if campaign accept brand
-func (*AppBrand) Check(c entity.Context, in entity.Creative) bool {
-	return hasString(true, in.Campaign().AppBrands(), c.Brand())
+func (*AppBrand) Check(c entity.Context, in entity.Creative) error {
+	if hasString(true, in.Campaign().AppBrands(), c.Brand()) {
+		return nil
+	}
+	return errors.New("app brand filter not met")
+
 }

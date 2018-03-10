@@ -1,6 +1,7 @@
 package filter
 
 import (
+	"fmt"
 	"strings"
 
 	"clickyab.com/crane/demand/entity"
@@ -11,9 +12,9 @@ type Category struct {
 }
 
 // Check iab category
-func (*Category) Check(c entity.Context, in entity.Creative) bool {
+func (*Category) Check(c entity.Context, in entity.Creative) error {
 	if len(in.Campaign().Category()) == 0 {
-		return true
+		return nil
 	}
 	f := make(map[string]bool)
 	for _, v := range c.Category() {
@@ -21,8 +22,8 @@ func (*Category) Check(c entity.Context, in entity.Creative) bool {
 	}
 	for _, v := range in.Campaign().Category() {
 		if f[string(v)] {
-			return true
+			return nil
 		}
 	}
-	return false
+	return fmt.Errorf("category filter not met")
 }
