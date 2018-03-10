@@ -7,7 +7,7 @@ import (
 
 	"fmt"
 
-	"clickyab.com/crane/supplier/layer/output"
+	"clickyab.com/crane/supplier/layers/output"
 	"github.com/bsm/openrtb"
 	"github.com/clickyab/services/array"
 	"github.com/clickyab/services/assert"

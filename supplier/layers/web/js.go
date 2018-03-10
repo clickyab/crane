@@ -6,7 +6,7 @@ import (
 	"net/url"
 	"strings"
 
-	"clickyab.com/crane/supplier/layer/internal/js"
+	"clickyab.com/crane/supplier/layers/internal/js"
 	"github.com/clickyab/services/framework/router"
 )
 
