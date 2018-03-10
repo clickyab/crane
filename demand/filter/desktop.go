@@ -1,6 +1,8 @@
 package filter
 
 import (
+	"errors"
+
 	"clickyab.com/crane/demand/entity"
 )
 
@@ -9,9 +11,16 @@ type Desktop struct {
 }
 
 // Check filter network for desktop
-func (*Desktop) Check(c entity.Context, in entity.Creative) bool {
+func (*Desktop) Check(c entity.Context, in entity.Creative) error {
 	if c.IsMobile() {
-		return in.Campaign().WebMobile()
+		if in.Campaign().WebMobile() {
+			return nil
+		}
+		return errors.New("desktop campaign not webmobile")
 	}
-	return in.Campaign().Web()
+	if in.Campaign().Web() {
+		return nil
+	}
+	return errors.New("desktop campaign is not web or webmobile")
+
 }
