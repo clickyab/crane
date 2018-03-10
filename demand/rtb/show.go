@@ -2,8 +2,10 @@ package rtb
 
 import (
 	"context"
+	"sort"
 
 	"clickyab.com/crane/demand/builder"
+	"clickyab.com/crane/demand/capping"
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/demand/reducer"
 	"clickyab.com/crane/models/ads"
@@ -23,4 +25,26 @@ func Select(c context.Context, sel reducer.Filter, opt ...builder.ShowOptionSett
 	selectAds(c, ctx, all)
 
 	return ctx, nil
+}
+
+// MinimalSelect return all ads sorted
+func MinimalSelect(
+	c context.Context, ctx *builder.Context, seat entity.Seat, all []entity.Creative) (
+	[]entity.SelectedCreative, []entity.SelectedCreative) {
+	exceed, underfloor := selector(ctx, all, seat, false, nil)
+	exceed = capping.ApplyCapping(ctx.Capping(), ctx.User().ID(), exceed, ctx.EventPage())
+	underfloor = capping.ApplyCapping(ctx.Capping(), ctx.User().ID(), underfloor, ctx.EventPage())
+
+	ef := byMulti{
+		Ads:   exceed,
+		Video: false,
+	}
+	uf := byMulti{
+		Ads:   underfloor,
+		Video: false,
+	}
+	sort.Sort(ef)
+	sort.Sort(uf)
+
+	return ef.Ads, uf.Ads
 }
