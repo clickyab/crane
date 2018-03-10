@@ -16,6 +16,7 @@ import (
 	"github.com/clickyab/services/framework"
 	"github.com/clickyab/services/framework/router"
 	"github.com/clickyab/services/store/jwt"
+	"github.com/rs/xhandler"
 	"github.com/rs/xmux"
 )
 
@@ -131,8 +132,7 @@ func (controller) Routes(m framework.Mux) {
 	m.GET("pixel", pixelPath, showPixel)
 	m.POST("ortb", demandPath, openRTBInput)
 	m.GET("notice", noticePath, noticeHandler)
-	m.GET("conversion", conversionPath, conversionHandler)
-
+	m.RootMux().GET(conversionPath, xhandler.HandlerFuncC(conversionHandler))
 }
 
 func init() {
