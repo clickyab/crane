@@ -17,8 +17,9 @@ import (
 )
 
 var (
-	showExpire  = config.RegisterDuration("crane.context.seat.show_exp", 1*time.Hour, "determine how long show url is valid")
-	clickExpire = config.RegisterDuration("crane.context.seat.click_exp", 72*time.Hour, "determine how long click url is valid")
+	showExpire    = config.RegisterDuration("crane.context.seat.show_exp", 1*time.Hour, "determine how long show url is valid")
+	clickExpire   = config.RegisterDuration("crane.context.seat.click_exp", 72*time.Hour, "determine how long click url is valid")
+	currentRegion = config.RegisterString("crane.regions.current", "fr", "determine current region")
 )
 
 // seat is the seat for input request
@@ -213,18 +214,19 @@ func (s *seat) makeURL(route string, params map[string]string, cpm float64, expi
 		tiny = "T"
 	}
 	j := jwt.NewJWT().Encode(map[string]string{
-		"aid":  fmt.Sprint(s.winnerAd.ID()),
-		"dom":  s.context.Publisher().Name(),
-		"sup":  s.context.Publisher().Supplier().Name(),
-		"bid":  fmt.Sprint(s.bid),
-		"uaip": string(data),
-		"pid":  s.publicID,
-		"susp": fmt.Sprint(s.context.Suspicious()),
-		"now":  fmt.Sprint(time.Now().Unix()),
-		"cpm":  fmt.Sprint(cpm),
-		"ff":   ff,
-		"pt":   s.context.Publisher().Type().String(),
-		"t":    tiny,
+		"aid":   fmt.Sprint(s.winnerAd.ID()),
+		"dom":   s.context.Publisher().Name(),
+		"sup":   s.context.Publisher().Supplier().Name(),
+		"bid":   fmt.Sprint(s.bid),
+		"uaip":  string(data),
+		"pid":   s.publicID,
+		"susp":  fmt.Sprint(s.context.Suspicious()),
+		"now":   fmt.Sprint(time.Now().Unix()),
+		"cpm":   fmt.Sprint(cpm),
+		"ff":    ff,
+		"pt":    s.context.Publisher().Type().String(),
+		"t":     tiny,
+		"cmode": fmt.Sprint(s.context.Capping()),
 	}, expire)
 	s.winnerAd.ID()
 	params["jt"] = j
@@ -237,11 +239,11 @@ func (s *seat) makeURL(route string, params map[string]string, cpm float64, expi
 		Scheme: s.context.Protocol().String(),
 		Path:   res,
 	}
-
 	v := url.Values{}
 	v.Set("tid", s.context.tid)
 	v.Set("ref", s.context.referrer)
 	v.Set("parent", s.context.parent)
+	v.Set("reg", currentRegion.String())
 	u.RawQuery = v.Encode()
 	return u
 }
