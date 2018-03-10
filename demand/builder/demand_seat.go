@@ -35,6 +35,14 @@ func coalesce(v ...int) int {
 	return 0
 }
 
+// SetSeats try to add demand seat
+func SetSeats(sd ...entity.Seat) ShowOptionSetter {
+	return func(o *Context) (*Context, error) {
+		o.seats = sd
+		return o, nil
+	}
+}
+
 // SetDemandSeats try to add demand seat
 func SetDemandSeats(sd ...DemandSeatData) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
