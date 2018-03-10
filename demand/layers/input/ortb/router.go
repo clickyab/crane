@@ -132,7 +132,12 @@ func (controller) Routes(m framework.Mux) {
 	m.GET("pixel", pixelPath, showPixel)
 	m.POST("ortb", demandPath, openRTBInput)
 	m.GET("notice", noticePath, noticeHandler)
+	// Backward compatible route
 	m.RootMux().GET(conversionPath, xhandler.HandlerFuncC(conversionHandler))
+	m.RootMux().GET(conversionTrackerJS, xhandler.HandlerFuncC(trackerJS))
+	// New routes
+	m.GET("conversion", conversionPath, conversionHandler)
+	m.GET("conversion-js", conversionTrackerJS, trackerJS)
 }
 
 func init() {
