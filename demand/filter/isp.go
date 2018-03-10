@@ -1,6 +1,7 @@
 package filter
 
 import (
+	"errors"
 	"fmt"
 
 	"clickyab.com/crane/demand/entity"
@@ -11,10 +12,9 @@ type ISP struct {
 }
 
 //Check find isp
-func (*ISP) Check(c entity.Context, in entity.Creative) bool {
-	isp := c.Location().ISP().ID
-	if isp == 0 {
-		return len(in.Campaign().ISP()) == 0
+func (*ISP) Check(c entity.Context, in entity.Creative) error {
+	if hasString(true, in.Campaign().ISP(), fmt.Sprint(c.Location().ISP().ID)) {
+		return nil
 	}
-	return hasString(true, in.Campaign().ISP(), fmt.Sprint(isp))
+	return errors.New("isp not met")
 }

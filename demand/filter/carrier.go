@@ -1,6 +1,8 @@
 package filter
 
 import (
+	"errors"
+
 	"clickyab.com/crane/demand/entity"
 )
 
@@ -9,6 +11,10 @@ type AppCarrier struct {
 }
 
 // Check test if campaign accept carrier
-func (*AppCarrier) Check(c entity.Context, in entity.Creative) bool {
-	return hasString(true, in.Campaign().AppCarriers(), c.Carrier())
+func (*AppCarrier) Check(c entity.Context, in entity.Creative) error {
+	if hasString(true, in.Campaign().AppCarriers(), c.Carrier()) {
+		return nil
+	}
+	return errors.New("app carrier not met")
+
 }
