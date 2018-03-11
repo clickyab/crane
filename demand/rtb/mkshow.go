@@ -10,7 +10,7 @@ import (
 	"clickyab.com/crane/demand/entity"
 )
 
-func getSecondCPM(floorCPM int64, exceedFloor []entity.SelectedCreative) float64 {
+func getSecondCPM(floorCPM float64, exceedFloor []entity.SelectedCreative) float64 {
 	if !exceedFloor[0].IsSecBid() {
 		return float64(exceedFloor[0].CalculatedCPM())
 	}
@@ -22,14 +22,14 @@ func getSecondCPM(floorCPM int64, exceedFloor []entity.SelectedCreative) float64
 		return float64(exceedFloor[1].CalculatedCPM() + 10)
 	}
 
-	return float64(floorCPM)
+	return floorCPM
 }
 
 func defaultCTR(seatType entity.RequestType, pub entity.PublisherType, sup entity.Supplier) float64 {
 	return sup.DefaultCTR(fmt.Sprint(seatType), fmt.Sprint(pub))
 }
 
-func doBid(ad entity.Creative, slot entity.Seat, floorCPM int64, pub entity.Publisher) (float64, int64, int64, bool) {
+func doBid(ad entity.Creative, slot entity.Seat, minCPM, minCPC float64, pub entity.Publisher) (float64, float64, float64, bool) {
 	slotCtr := slot.CTR()
 	if slot.CTR() < 0 {
 		//get ctr based on the creative and seat type native app / native web / vast web ...
@@ -41,16 +41,19 @@ func doBid(ad entity.Creative, slot entity.Seat, floorCPM int64, pub entity.Publ
 		adCtr = defaultCTR(slot.RequestType(), pub.Type(), pub.Supplier())
 	}
 	ctr := (adCtr*float64(adCTREffect.Int()) + slotCtr*float64(slotCTREffect.Int())) / float64(100)
-	var cpc, cpm int64
+	var cpc, cpm float64
+	var under bool
 	if ad.Campaign().Strategy() == entity.StrategyCPC {
-		cpm = int64(float64(ad.MaxBID()) * ctr * 10.0)
-		cpc = ad.MaxBID()
+		cpm = float64(ad.MaxBID()) * ctr * 10.0
+		cpc = float64(ad.MaxBID())
+		under = float64(cpc) > minCPC
 	} else {
-		cpm = ad.MaxBID()
-		cpc = int64(float64(ad.MaxBID()) / (ctr * 10.0))
+		cpm = float64(ad.MaxBID())
+		cpc = float64(ad.MaxBID()) / (ctr * 10.0)
+		under = float64(cpm) > minCPM
 	}
 
-	return ctr, cpm, cpc, cpm >= floorCPM
+	return ctr, cpm, cpc, under
 }
 
 func incShare(sup entity.Supplier, price int64) int64 {
@@ -64,12 +67,12 @@ func decShare(sup entity.Supplier, price float64) float64 {
 type adAndBid struct {
 	entity.Creative
 	ctr    float64
-	cpm    int64
-	cpc    int64
+	cpm    float64
+	cpc    float64
 	secBid bool
 }
 
-func (aab adAndBid) CalculatedCPC() int64 {
+func (aab adAndBid) CalculatedCPC() float64 {
 	return aab.cpc
 }
 
@@ -77,7 +80,7 @@ func (aab adAndBid) CalculatedCTR() float64 {
 	return aab.ctr
 }
 
-func (aab adAndBid) CalculatedCPM() int64 {
+func (aab adAndBid) CalculatedCPM() float64 {
 	return aab.cpm
 }
 
@@ -97,8 +100,8 @@ func internalSelect(
 		var (
 			exceedFloor []entity.SelectedCreative                                                                                              // above  hard floor (the minimum cpm ), legit ads
 			underFloor  []entity.SelectedCreative                                                                                              // not passed from floor, only used if the supplier accept less than minCPM bids, normally only us, as clickyab
-			softCPM     = ctx.Publisher().Supplier().SoftFloorCPM(fmt.Sprint(seat.RequestType()), fmt.Sprint(ctx.Publisher().Type()))          // softCPM floor , determine the sec bidding pricing
-			minCPM      = incShare(ctx.Publisher().Supplier(), seat.MinBid())                                                                  // minimum cpm of this seat, aka hard floor, after adding our share to it
+			softCPM     = float64(ctx.Publisher().Supplier().SoftFloorCPM(fmt.Sprint(seat.RequestType()), fmt.Sprint(ctx.Publisher().Type()))) // softCPM floor , determine the sec bidding pricing
+			minCPM      = float64(incShare(ctx.Publisher().Supplier(), seat.MinBid()))                                                         // minimum cpm of this seat, aka hard floor, after adding our share to it
 			minCPC      = float64(ctx.Publisher().Supplier().SoftFloorCPC(fmt.Sprint(seat.RequestType()), fmt.Sprint(ctx.Publisher().Type()))) // minimum cpc of this seat, aka hard floor, after adding our share to it
 		)
 
@@ -118,7 +121,7 @@ func internalSelect(
 				continue
 			}
 
-			if ctr, cpm, cpc, ok := doBid(creative, seat, minCPM, ctx.Publisher()); ok {
+			if ctr, cpm, cpc, ok := doBid(creative, seat, float64(minCPM), minCPC, ctx.Publisher()); ok {
 				// a pass!
 				exceedFloor = append(
 					exceedFloor,
@@ -151,6 +154,7 @@ func internalSelect(
 
 		// order is to get data from exceed floor, then capp passed and if the config allowed,
 		// use the under floor. for under floor there is no second biding pricing
+		var under bool
 		if len(exceedFloor) > 0 {
 			ef = byMulti{
 				Ads:   exceedFloor,
@@ -158,6 +162,7 @@ func internalSelect(
 			}
 		} else if ctx.UnderFloor() && len(underFloor) > 0 {
 			// under floor means we want to fill the seat at any cost. normally our own seat
+			under = true
 			ef = byMulti{
 				Ads:   underFloor,
 				Video: ctx.MultiVideo(),
@@ -178,8 +183,8 @@ func internalSelect(
 		targetCPM := getSecondCPM(softCPM, sorted)
 		targetCPC := targetCPM / (theAd.CalculatedCTR() * 10.0)
 
-		if theAd.Campaign().Strategy() == entity.StrategyCPC && targetCPC < minCPC {
-			targetCPC = minCPC
+		if !under {
+			targetCPC, targetCPM = fixPrice(theAd.Campaign().Strategy(), targetCPC, targetCPM, minCPC, minCPM)
 		}
 
 		selected[theAd.ID()] = true
@@ -192,6 +197,16 @@ func internalSelect(
 		// TODO : The real problem is what if we are not going to win? this assume any select means show.
 		theAd.Capping().Store(theAd.ID())
 	}
+}
+
+func fixPrice(strategy entity.Strategy, cpc, cpm, minCPC, minCPM float64) (float64, float64) {
+	if strategy == entity.StrategyCPC && cpm < minCPM {
+		return cpc, minCPM
+	}
+	if strategy == entity.StrategyCPM && cpc < minCPC {
+		return minCPC, cpm
+	}
+	return cpc, cpm
 }
 
 // selectAds is the only function that one must call to get ads

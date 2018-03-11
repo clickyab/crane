@@ -65,7 +65,7 @@ type Creative interface {
 type SelectedCreative interface {
 	Creative
 	CalculatedCTR() float64
-	CalculatedCPM() int64
-	CalculatedCPC() int64
+	CalculatedCPM() float64
+	CalculatedCPC() float64
 	IsSecBid() bool
 }
