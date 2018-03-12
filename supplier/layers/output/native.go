@@ -1,16 +1,16 @@
 package output
 
 import (
+	"bytes"
 	"context"
 	"fmt"
-	"io"
+	"html/template"
 	"strings"
 
 	"encoding/json"
 
 	"github.com/bsm/openrtb"
 	"github.com/bsm/openrtb/native/response"
-	"github.com/clickyab/services/assert"
 )
 
 type nativeResp struct {
@@ -20,8 +20,42 @@ type nativeResp struct {
 	Click      string `json:"click"`
 }
 
+const defaultTemplateText string = `
+{{range $index, $results := .}}
+	{{if isOdd $index}}
+		<div>
+	{{end}}
+	<div>
+        <a href='{{.Click}}'>
+            <img src='{{.Image}}'/‎>
+            <img style="display: none;" src='{{.Impression}}'/‎>
+            <div>{{.Title}}</div>
+        </a>
+    </div>
+	{{if isEven $index}}
+		</div>
+	{{end}}
+{{end}}
+`
+
+var (
+	templateFuncs = template.FuncMap{
+		"isEven": isEven,
+		"isOdd":  isOdd,
+	}
+	nativeTemplate = template.Must(template.New("inapp-template").Funcs(templateFuncs).Parse(defaultTemplateText))
+)
+
+func isEven(x int) bool {
+	return (x+1)%2 == 0
+}
+
+func isOdd(x int) bool {
+	return (x+1)%2 != 0
+}
+
 // RenderNative is the native ad renderer
-func RenderNative(_ context.Context, w io.Writer, resp *openrtb.BidResponse) error {
+func RenderNative(_ context.Context, resp *openrtb.BidResponse) ([]byte, error) {
 	var res []nativeResp
 
 	for i := range resp.SeatBid {
@@ -51,8 +85,14 @@ func RenderNative(_ context.Context, w io.Writer, resp *openrtb.BidResponse) err
 		res = append(res, d)
 	}
 
-	b, err := json.Marshal(res)
-	assert.Nil(err)
-	_, _ = w.Write(b)
-	return nil
+	var outputHTML bytes.Buffer
+	err := nativeTemplate.Execute(&outputHTML, res)
+	if err != nil {
+		return nil, err
+	}
+
+	r := map[string]string{"html": outputHTML.String()}
+	b, err := json.Marshal(r)
+
+	return b, err
 }
