@@ -1,12 +1,14 @@
 package video
 
 import (
+	"encoding/json"
 	"net/http"
 	"strconv"
 	"strings"
 
 	"fmt"
 
+	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/supplier/layers/output"
 	"github.com/bsm/openrtb"
 	"github.com/clickyab/services/array"
@@ -137,7 +139,7 @@ func getMimes(requsted ...string) []string {
 
 // the first map is just an array of map, the key is the start value (from the seat) but the returning map is a bit
 // tricky, the key is the id, so we can identify each slot in response
-func getImps(r *http.Request, baseID string, s map[string]output.Seat, pubFloor int64, requestedMime ...string) ([]openrtb.Impression, map[string]output.Seat) {
+func getImps(r *http.Request, pub entity.Publisher, s map[string]output.Seat, requestedMime ...string) ([]openrtb.Impression, map[string]output.Seat) {
 	var (
 		res   []openrtb.Impression
 		times = make(map[string]output.Seat)
@@ -145,7 +147,16 @@ func getImps(r *http.Request, baseID string, s map[string]output.Seat, pubFloor 
 		mimes = getMimes(requestedMime...)
 	)
 
+	baseID := fmt.Sprintf("%s", pub.ID())
+
 	assert.True(len(mimes) > 0)
+
+	// calculate min cpc and insert in impression ext
+	impExt := map[string]interface{}{
+		"min_cpc": pub.MinCPC(string(entity.RequestTypeVast)),
+	}
+	iExt, err := json.Marshal(impExt)
+	assert.Nil(err)
 
 	for i := range s {
 		li := 0
@@ -165,8 +176,9 @@ func getImps(r *http.Request, baseID string, s map[string]output.Seat, pubFloor 
 				Linearity:   li,
 				Protocols:   []int{3}, // Only supporting version 3
 				Protocol:    3,
+				Ext:         iExt,
 			},
-			BidFloor: float64(pubFloor),
+			BidFloor: float64(pub.FloorCPM()),
 		}
 
 		res = append(res, imp)

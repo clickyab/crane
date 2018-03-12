@@ -63,7 +63,7 @@ func vast(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		mimes = strings.Split(mim, ",")
 	}
 
-	imps, seats := getImps(r, fmt.Sprint(pub.ID()), getSlots(ln), pub.FloorCPM(), mimes...)
+	imps, seats := getImps(r, pub, getSlots(ln), mimes...)
 
 	ua := user_agent.New(r.UserAgent())
 	mi := 0

@@ -218,6 +218,7 @@ func contextMaker(minbid int64, winner entity.Creative, underfloor bool, strateg
 	seat.EXPECT().RequestType().Return(entity.RequestTypeBanner).AnyTimes()
 	seat.EXPECT().Type().Return(entity.InputTypeDemand).AnyTimes()
 	seat.EXPECT().MinBid().Return(minbid).AnyTimes()
+	seat.EXPECT().MinCPC().Return(float64(minbid)).AnyTimes()
 	seat.EXPECT().Acceptable(gomock.Any()).Return(true).AnyTimes()
 	seat.EXPECT().CTR().Return(.1).AnyTimes()
 	if winner == nil {
