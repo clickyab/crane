@@ -42,6 +42,7 @@ type seat struct {
 	ctr float64
 
 	minBid float64
+	minCPC float64
 
 	impTime time.Time
 	scpm    float64
@@ -291,4 +292,9 @@ func (s *seat) Acceptable(advertise entity.Creative) bool {
 
 	return true
 
+}
+
+// MinCPC return min cpc (clickyab only)
+func (s *seat) MinCPC() float64 {
+	return s.minCPC
 }

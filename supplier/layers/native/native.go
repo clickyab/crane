@@ -87,7 +87,7 @@ func getNative(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		User: &openrtb.User{
 			ID: nativeUserIDGenerator(tid, useragent, ip),
 		},
-		Imp: getImps(r, intCount, pub.ID(), pub.FloorCPM()),
+		Imp: getImps(r, intCount, pub),
 		Site: &openrtb.Site{
 			Page:   parent,
 			Ref:    ref,

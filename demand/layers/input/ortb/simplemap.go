@@ -38,3 +38,29 @@ func (s simpleMap) String(k string) (string, bool) {
 		return "", true
 	}
 }
+
+func (s simpleMap) Float64(k string) float64 {
+	d, ok := s[k]
+	if !ok {
+		return 0
+	}
+	switch t := d.(type) {
+	case float64:
+		return t
+	case string:
+		f, err := strconv.ParseFloat(t, 64)
+		if err != nil {
+			return 0
+		}
+		return f
+	case []byte:
+		x := string(t)
+		f, err := strconv.ParseFloat(x, 64)
+		if err != nil {
+			return 0
+		}
+		return f
+	default:
+		return 0
+	}
+}

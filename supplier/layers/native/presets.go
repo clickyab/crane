@@ -5,17 +5,24 @@ import (
 	"fmt"
 	"net/http"
 
+	"clickyab.com/crane/demand/entity"
 	"github.com/bsm/openrtb"
 	"github.com/bsm/openrtb/native/request"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/framework"
 )
 
-func getImps(r *http.Request, count int, pubID, pubFloor int64) []openrtb.Impression {
+func getImps(r *http.Request, count int, pub entity.Publisher) []openrtb.Impression {
 	var (
 		res []openrtb.Impression
 		sec = secure(r)
 	)
+	// calculate min cpc and insert in impression ext
+	impExt := map[string]interface{}{
+		"min_cpc": pub.MinCPC(string(entity.RequestTypeNative)),
+	}
+	iExt, err := json.Marshal(impExt)
+	assert.Nil(err)
 	for i := 1; i <= count; i++ {
 		// make request
 		req := request.Request{
@@ -39,12 +46,13 @@ func getImps(r *http.Request, count int, pubID, pubFloor int64) []openrtb.Impres
 		bReq, err := json.Marshal(req)
 		assert.Nil(err)
 		imp := openrtb.Impression{
-			ID:       fmt.Sprintf("%d%s%d", pubID, "470", i),
-			BidFloor: float64(pubFloor),
+			ID:       fmt.Sprintf("%d%s%d", pub.ID(), "470", i),
+			BidFloor: float64(pub.FloorCPM()),
 			Secure:   sec,
 			Native: &openrtb.Native{
 				Request: bReq,
 			},
+			Ext: iExt,
 		}
 		res = append(res, imp)
 	}

@@ -10,6 +10,10 @@ type fakepub struct {
 	att map[entity.PublisherAttributes]interface{}
 }
 
+func (fp *fakepub) MinCPC(string) float64 {
+	panic("implement me")
+}
+
 func (fp *fakepub) Attributes() map[entity.PublisherAttributes]interface{} {
 	if fp.att == nil {
 		fp.att = make(map[entity.PublisherAttributes]interface{})
