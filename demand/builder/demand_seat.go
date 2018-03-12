@@ -20,6 +20,7 @@ type DemandSeatData struct {
 	PubID  string
 	Size   string
 	MinBid float64
+	MinCPC float64
 	Type   entity.RequestType
 	Video  *openrtb.Video
 	Banner *openrtb.Banner
@@ -75,6 +76,7 @@ func SetDemandSeats(sd ...DemandSeatData) ShowOptionSetter {
 				ctr:         o.publisher.CTR(size),
 				rate:        o.rate,
 				requestType: sd[i].Type,
+				minCPC:      sd[i].MinCPC,
 			}
 			if sd[i].Type == entity.RequestTypeVast {
 				seat.mimes = sd[i].Video.Mimes

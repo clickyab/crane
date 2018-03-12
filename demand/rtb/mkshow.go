@@ -98,10 +98,13 @@ func internalSelect(
 
 	for _, seat := range ctx.Seats() {
 		var (
-			softCPM = float64(ctx.Publisher().Supplier().SoftFloorCPM(fmt.Sprint(seat.RequestType()), fmt.Sprint(ctx.Publisher().Type()))) // softCPM floor , determine the sec bidding pricing
-			minCPM  = float64(incShare(ctx.Publisher().Supplier(), seat.MinBid()))                                                         // minimum cpm of this seat, aka hard floor, after adding our share to it
-			minCPC  = float64(ctx.Publisher().Supplier().SoftFloorCPC(fmt.Sprint(seat.RequestType()), fmt.Sprint(ctx.Publisher().Type()))) // minimum cpc of this seat, aka hard floor, after adding our share to it
+			softCPM     = float64(ctx.Publisher().Supplier().SoftFloorCPM(fmt.Sprint(seat.RequestType()), fmt.Sprint(ctx.Publisher().Type()))) // softCPM floor , determine the sec bidding pricing
+			minCPM      = float64(incShare(ctx.Publisher().Supplier(), seat.MinBid()))                                                         // minimum cpm of this seat, aka hard floor, after adding our share to it
 		)
+		minCPC := seat.MinCPC()
+		if minCPC == 0 {
+			minCPC = float64(ctx.Publisher().Supplier().SoftFloorCPC(fmt.Sprint(seat.RequestType()), fmt.Sprint(ctx.Publisher().Type()))) // minimum cpc of this seat, aka hard floor, after adding our share to it
+		}
 
 		// softCPM floor is smaller than hard floor, so we do not have sec biding
 		if softCPM < minCPM {
