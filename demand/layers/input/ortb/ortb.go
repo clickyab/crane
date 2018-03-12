@@ -229,6 +229,11 @@ func seatDetail(req openrtb.BidRequest) ([]builder.DemandSeatData, bool) {
 			assert.Nil(err)
 			assets = req.Assets
 		}
+		var (
+			ext = make(simpleMap)
+		)
+		// If this is not a valid json, just pass by.
+		_ = json.Unmarshal(imp[i].Ext, &ext)
 		seats = append(seats, builder.DemandSeatData{
 			MinBid: imp[i].BidFloor,
 			PubID:  imp[i].ID,
@@ -237,6 +242,7 @@ func seatDetail(req openrtb.BidRequest) ([]builder.DemandSeatData, bool) {
 			Video:  imp[i].Video,
 			Banner: imp[i].Banner,
 			Assets: assets,
+			MinCPC: ext.Float64("min_cpc"),
 		})
 	}
 	return seats, vast

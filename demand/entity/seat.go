@@ -49,6 +49,8 @@ type Seat interface {
 	// Some seat need extra filter so the specific ad could be removed, for example in mime-type if a seat
 	// only accept video/mp4 but another seat in same imp accept image/jpeg then we can not use normal filters
 	Acceptable(Creative) bool
+	// MinCPC return min cpc of seat
+	MinCPC() float64
 }
 
 // VastSeat is a seat with vast compatibility

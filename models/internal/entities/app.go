@@ -12,21 +12,23 @@ import (
 	"fmt"
 
 	"clickyab.com/crane/demand/entity"
+	"github.com/clickyab/services/mysql"
 	"github.com/clickyab/services/simplehash"
 )
 
 // App entity
 type App struct {
-	AppID         int64          `db:"app_id"`
-	AppName       sql.NullString `db:"app_name"`
-	AppSupplier   string         `db:"app_supplier"`
-	AppPackage    string         `db:"app_package"`
-	AppMinBid     int64          `db:"app_minbid"`
-	Status        int64          `db:"app_status"`
-	AppFloorCpm   sql.NullInt64  `db:"app_floor_cpm"`
-	AppFatFinger  int            `db:"app_fatfinger"`
-	AppCategories SharpArray     `db:"app_cat"`
-	AppToken      string         `db:"app_token"`
+	AppID         int64                  `db:"app_id"`
+	AppName       sql.NullString         `db:"app_name"`
+	AppSupplier   string                 `db:"app_supplier"`
+	AppPackage    string                 `db:"app_package"`
+	AppMinBid     int64                  `db:"app_minbid"`
+	Status        int64                  `db:"app_status"`
+	AppFloorCpm   sql.NullInt64          `db:"app_floor_cpm"`
+	AppFatFinger  int                    `db:"app_fatfinger"`
+	AppCategories SharpArray             `db:"app_cat"`
+	AppToken      string                 `db:"app_token"`
+	AppMinCPC     mysql.GenericJSONField `db:"app_min_cpc"`
 	Supp          entity.Supplier
 	FCTR          [21]float64
 	CTRStat
@@ -111,7 +113,7 @@ func AppLoaderGen(name bool) func(ctx context.Context) (map[string]kv.Serializab
 			where = " WHERE app_supplier='clickyab' "
 		}
 		for j := 0; ; j = j + cnt {
-			q := fmt.Sprintf(`SELECT app_id,app_token, app_package, app_supplier, app_name, app_cat, app_minbid, app_floor_cpm, app_fatfinger, app_status,
+			q := fmt.Sprintf(`SELECT app_id,app_token, app_package, app_supplier, app_name, app_cat, app_minbid, app_floor_cpm, app_fatfinger, app_status,app_min_cpc,
   SUM(imp_1) AS imp1, SUM(imp_2) AS imp2, SUM(imp_3) AS imp3, SUM(imp_4) AS imp4, SUM(imp_5) AS imp5,
   SUM(imp_6) AS imp6, SUM(imp_7) AS imp7, SUM(imp_8) AS imp8, SUM(imp_9) AS imp9, SUM(imp_10) AS imp10,
   SUM(imp_11) AS imp11, SUM(imp_12) AS imp12, SUM(imp_13) AS imp13, SUM(imp_14) AS imp14, SUM(imp_15) AS imp15,
@@ -196,6 +198,16 @@ func (app *App) totalImp() (res int64) {
 		app.Impression18.Int64 +
 		app.Impression19.Int64 +
 		app.Impression20.Int64
+}
+
+// MinCPC return min cpc for this app
+func (app *App) MinCPC(adType string) float64 {
+	if val, ok := app.AppMinCPC[adType]; ok {
+		if x, ok := val.(float64); ok {
+			return x
+		}
+	}
+	return 0
 }
 
 // AppPublicIDGen generate app token from supplier name and package
