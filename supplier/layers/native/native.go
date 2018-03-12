@@ -12,6 +12,7 @@ import (
 	"clickyab.com/crane/supplier/layers/internal/supplier"
 	"clickyab.com/crane/supplier/layers/output"
 	"github.com/bsm/openrtb"
+	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/framework"
 	"github.com/clickyab/services/random"
@@ -112,10 +113,19 @@ func getNative(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	if output.RenderNative(ctx, w, br) != nil {
+
+	if len(br.SeatBid) == 0 {
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+
+	result, err := output.RenderNative(ctx, br)
+	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+	_, err = w.Write(result)
+	assert.Nil(err)
 }
 
 // nativeUserIDGenerator create user id for native
