@@ -30,7 +30,7 @@ var (
 		17: {Width: 48, Height: 320},
 		18: {Width: 128, Height: 128},
 		19: {Width: 800, Height: 440}, // This last entry is here for vast.
-		20: {Width: 800, Height: 440}, // This last entry is here for native.
+		20: {Width: 0, Height: 0},     // This last entry is here for native.
 	}
 )
 
