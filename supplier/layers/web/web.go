@@ -2,6 +2,7 @@ package web
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
 
 	"strings"
@@ -24,6 +25,7 @@ import (
 	"clickyab.com/crane/supplier/layers/internal/supplier"
 	"clickyab.com/crane/supplier/layers/output"
 	"github.com/bsm/openrtb"
+	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/framework"
 	"github.com/clickyab/services/random"
@@ -143,7 +145,16 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 
 	// better since the json is static :)
-	bq.Ext = []byte(`{"capping_mode": "reset","underfloor":true}`)
+	ext := map[string]interface{}{
+		"capping_mode": "reset",
+		"underfloor":   true,
+	}
+	if _, ok := pub.Attributes()[entity.PAFatFinger]; ok {
+		ext["fat_finger"] = true
+	}
+	j, err := json.Marshal(ext)
+	assert.Nil(err)
+	bq.Ext = j
 	br, err := client.Call(ctx, method.String(), server.String(), bq)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
