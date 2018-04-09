@@ -201,7 +201,10 @@ func exSlot(ctx context.Context, s string, l int, r *http.Request, pubFloor int6
 		if err != nil {
 			return nil, err
 		}
-		w, h := sizesModel[sz].Width, sizesModel[sz].Height
+		var w, h int
+		if sizeVal, ok := sizesModel[sz]; ok {
+			w, h = sizeVal.Width, sizeVal.Height
+		}
 		if w == 0 || h == 0 {
 			xlog.Get(ctx).Debug("wrong size")
 			return nil, errors.New("wrong size")
