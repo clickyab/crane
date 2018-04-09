@@ -129,11 +129,9 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 			Page:   l,
 			Ref:    ref,
 			Inventory: openrtb.Inventory{
-				Publisher: &openrtb.Publisher{
-					Domain: pub.Name(),
-					Name:   pub.Name(),
-					ID:     fmt.Sprint(pub.ID()),
-				},
+				Domain: pub.Name(),
+				Name:   pub.Name(),
+				ID:     fmt.Sprint(pub.ID()),
 			},
 		},
 		Device: &openrtb.Device{
