@@ -2,6 +2,7 @@ package allads
 
 import (
 	"context"
+	"errors"
 	"net/http"
 	"strconv"
 	"strings"
@@ -17,15 +18,26 @@ import (
 	"clickyab.com/crane/models/website"
 	"github.com/bsm/openrtb"
 	"github.com/clickyab/services/assert"
-	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/framework"
 	"github.com/clickyab/services/random"
 )
 
-var (
-	adCTREffect   = config.RegisterInt("crane.rtb.ad_ctr_effect", 50, "ad ctr effect")
-	slotCTREffect = config.RegisterInt("crane.rtb.slot_ctr_effect", 50, "slot ctr effect")
-)
+func checkPublisherRequest(r *http.Request, sup entity.Supplier) (entity.RequestType, int64, string, error) {
+	reqType := entity.RequestType(r.URL.Query().Get("type"))
+	if !(reqType.IsValid()) {
+		return reqType, 0, "", errors.New("invalid request type")
+	}
+
+	var percentage int64 = 100
+	if reqType == entity.RequestTypeNative {
+		percentage = 200
+	}
+	pub := r.URL.Query().Get("pub")
+	if !sup.AllowCreate() && pub == "" {
+		return reqType, 0, "", errors.New("publisher required")
+	}
+	return reqType, percentage, pub, nil
+}
 
 func allAdHandler(c context.Context, w http.ResponseWriter, r *http.Request) {
 
@@ -36,24 +48,11 @@ func allAdHandler(c context.Context, w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 		return
 	}
-	reqType := entity.RequestType(r.URL.Query().Get("type"))
-	if !(reqType.IsValid()) {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("invalid request type"))
-		return
-	}
 
-	var percentage int64 = 100
-	if reqType == entity.RequestTypeNative {
-		percentage = 200
-	}
-	pub := r.URL.Query().Get("pub")
-	if !sup.AllowCreate() && pub == "" {
-		framework.JSON(w, http.StatusBadRequest, struct {
-			Error string `json:"error"`
-		}{
-			Error: "publisher required",
-		})
+	reqType, percentage, pub, err := checkPublisherRequest(r, sup)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
 		return
 	}
 
@@ -87,41 +86,12 @@ func allAdHandler(c context.Context, w http.ResponseWriter, r *http.Request) {
 		ip = framework.RealIP(r)
 	}
 
-	var (
-		publisher entity.Publisher
-		selector  []reducer.Filter
-	)
+	var bq *openrtb.BidRequest
 
-	bq := openrtb.BidRequest{}
-	if target == "web" {
-		publisher, err = website.GetWebSiteOrFake(sup, pub)
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("publisher err"))
-			return
-		}
-		bq.Site = &openrtb.Site{
-			Inventory: openrtb.Inventory{
-				Cat: cat,
-			},
-		}
-		selector = filterWebBuilder(desktop, province, os, isp, whitelist, blacklist, cat)
-	} else if target == "app" {
-		publisher, err = apps.GetAppOrFake(sup, pub)
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("publisher err"))
-			return
-		}
-		bq.App = &openrtb.App{
-			Inventory: openrtb.Inventory{
-				Cat: cat,
-			},
-		}
-		selector = filterAppBuilder(province, latLon, carrier, brand, isp, whitelist, blacklist, cat)
-	} else {
+	publisher, selector, err := applyPublisherFilter(bq, target, sup, pub, os, latLon, carrier, brand, cat, desktop, province, isp, whitelist, blacklist)
+	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("target invalid"))
+		w.Write([]byte(err.Error()))
 		return
 	}
 
@@ -200,6 +170,44 @@ func allAdHandler(c context.Context, w http.ResponseWriter, r *http.Request) {
 
 	filteredAds := reducer.Apply(nil, ctx, ads.GetAds(), mix)
 
+	framework.JSON(w, http.StatusOK, internalSelect(c, ctx, seat, filteredAds, fe))
+}
+
+func applyPublisherFilter(bq *openrtb.BidRequest, target string, sup entity.Supplier, pub, os, latLon, carrier, brand string, cat []string, desktop, province, isp, whitelist, blacklist bool) (entity.Publisher, []reducer.Filter, error) {
+	var (
+		publisher entity.Publisher
+		selector  []reducer.Filter
+		err       error
+	)
+	if target == "web" {
+		publisher, err = website.GetWebSiteOrFake(sup, pub)
+		if err != nil {
+			return nil, nil, errors.New("publisher err")
+		}
+		bq.Site = &openrtb.Site{
+			Inventory: openrtb.Inventory{
+				Cat: cat,
+			},
+		}
+		selector = filterWebBuilder(desktop, province, os, isp, whitelist, blacklist, cat)
+	} else if target == "app" {
+		publisher, err = apps.GetAppOrFake(sup, pub)
+		if err != nil {
+			return nil, nil, errors.New("publisher err")
+		}
+		bq.App = &openrtb.App{
+			Inventory: openrtb.Inventory{
+				Cat: cat,
+			},
+		}
+		selector = filterAppBuilder(province, latLon, carrier, brand, isp, whitelist, blacklist, cat)
+	} else {
+		return nil, nil, errors.New("target invalid")
+	}
+	return publisher, selector, err
+}
+
+func internalSelect(c context.Context, ctx *builder.Context, seat entity.Seat, filteredAds []entity.Creative, fe map[int64][]string) response {
 	fAds := make([]responseAds, 0)
 	for id, ers := range fe {
 		a, err := ads.GetAd(id)
@@ -217,16 +225,15 @@ func allAdHandler(c context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 
 	ex, un := rtb.MinimalSelect(c, ctx, seat, filteredAds)
-
-	framework.JSON(w, http.StatusOK, response{
+	return response{
 		FilteredAds:   fAds,
 		ExceedAds:     responseBuilder(ex),
 		UnderfloorAds: responseBuilder(un),
-	})
+	}
 }
 
 func makeBuilder(carrier, ua string, percentage int64, ip string,
-	ou *openrtb.User, publisher entity.Publisher, sup entity.Supplier, bq openrtb.BidRequest) []builder.ShowOptionSetter {
+	ou *openrtb.User, publisher entity.Publisher, sup entity.Supplier, bq *openrtb.BidRequest) []builder.ShowOptionSetter {
 	return []builder.ShowOptionSetter{
 		builder.SetTimestamp(),
 		builder.SetOSUserAgent(ua),
