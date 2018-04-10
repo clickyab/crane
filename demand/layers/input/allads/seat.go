@@ -10,14 +10,13 @@ import (
 )
 
 type seat struct {
-	mimes      []string
-	rq         entity.RequestType
-	ctr        float64
-	minBid     float64
-	context    entity.Context
-	rate       float64
-	acceptable bool
-	size       int
+	mimes   []string
+	rq      entity.RequestType
+	ctr     float64
+	minBid  float64
+	context entity.Context
+	rate    float64
+	size    int
 }
 
 func (s *seat) PublicID() string {
