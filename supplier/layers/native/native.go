@@ -7,7 +7,7 @@ import (
 
 	"fmt"
 
-	website "clickyab.com/crane/models/clickyabwebsite"
+	website "clickyab.com/crane/models/website"
 	"clickyab.com/crane/supplier/client"
 	"clickyab.com/crane/supplier/layers/internal/supplier"
 	"clickyab.com/crane/supplier/layers/output"
@@ -48,8 +48,8 @@ var (
 // count		:number of impression
 // handle supplier native route
 func getNative(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-	pubID := r.URL.Query().Get("a")
-	pub, err := website.GetWebSite(sup, pubID)
+	domain := r.URL.Query().Get("d")
+	pub, err := website.GetWebSite(sup, domain, 0)
 	if err != nil {
 		xlog.GetWithError(ctx, err).Debug("no website")
 		w.WriteHeader(http.StatusBadRequest)
