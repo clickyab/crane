@@ -144,16 +144,20 @@ func SetEventPage(ep string) ShowOptionSetter {
 }
 
 // SetCategory set the capping mode
-func SetCategory(b openrtb.BidRequest) ShowOptionSetter {
+func SetCategory(b *openrtb.BidRequest) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
 		var category []entity.Category
 		if b.Site != nil {
 			for _, v := range b.Site.Cat {
-				category = append(category, entity.Category(v[3:]))
+				if len(v) > 3 {
+					category = append(category, entity.Category(v[3:]))
+				}
 			}
 		} else if b.App != nil {
 			for _, v := range b.App.Cat {
-				category = append(category, entity.Category(v[3:]))
+				if len(v) > 3 {
+					category = append(category, entity.Category(v[3:]))
+				}
 			}
 		}
 		o.cat = category

@@ -13,6 +13,11 @@ func (r InputType) String() string {
 // RequestType is the request type
 type RequestType string
 
+// IsValid will return true if request if true
+func (r RequestType) IsValid() bool {
+	return r == RequestTypeBanner || r == RequestTypeVast || r == RequestTypeNative
+}
+
 const (
 	// RequestTypeNative is native type (for clickyab native only)
 	RequestTypeNative RequestType = "native"

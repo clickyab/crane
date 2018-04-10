@@ -310,7 +310,7 @@ type Advertise struct {
 	capping  entity.Capping
 }
 
-// Assets return the assets
+// Assets return creative's asset
 func (a *Advertise) Assets() []entity.Asset {
 	return a.assets
 }
