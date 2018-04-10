@@ -157,7 +157,7 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetPreventDefault(prevent),
 		builder.SetCappingMode(cappingMode),
 		builder.SetUnderfloor(underfloor),
-		builder.SetCategory(payload),
+		builder.SetCategory(&payload),
 	}
 	// TODO : if we need to implement native/app/vast then the next line must be activated and customized
 	//b = append(b, builder.SetFloorPercentage(100), builder.SetMinBidPercentage(100))
