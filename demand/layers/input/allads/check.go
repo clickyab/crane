@@ -88,7 +88,7 @@ func allAdHandler(c context.Context, w http.ResponseWriter, r *http.Request) {
 		ip = framework.RealIP(r)
 	}
 
-	var bq *openrtb.BidRequest
+	var bq = &openrtb.BidRequest{}
 
 	publisher, selector, err := applyPublisherFilter(bq, target, sup, pub, os, latLon, carrier, brand, cat, desktop, province, isp, whitelist, blacklist)
 	if err != nil {
