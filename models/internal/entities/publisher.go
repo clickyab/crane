@@ -44,7 +44,7 @@ func FindAppByAppToken(token string, supplier entity.Supplier) (entity.Publisher
 		return nil, errors.New("app not found")
 	}
 	if app[0].AppSupplier != supplier.Name() {
-		return nil, fmt.Errorf("mismatch supplier for package %s with app token  %d. suppliers %s and %s",
+		return nil, fmt.Errorf("mismatch supplier for package %s with app token  %s. suppliers %s and %s",
 			app[0].AppPackage, token, app[0].AppSupplier, supplier.Name())
 	}
 	app[0].Supp = supplier
