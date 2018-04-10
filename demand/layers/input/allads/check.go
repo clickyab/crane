@@ -27,7 +27,7 @@ var (
 	slotCTREffect = config.RegisterInt("crane.rtb.slot_ctr_effect", 50, "slot ctr effect")
 )
 
-func AllAdHandler(c context.Context, w http.ResponseWriter, r *http.Request) {
+func allAdHandler(c context.Context, w http.ResponseWriter, r *http.Request) {
 
 	sup, err := suppliers.GetSupplierByName(r.URL.Query().Get("sup"))
 
