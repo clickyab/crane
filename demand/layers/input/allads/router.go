@@ -9,7 +9,7 @@ type controller struct {
 }
 
 func (controller) Routes(m framework.Mux) {
-	m.GET("check", "/rtb", AllAdHandler)
+	m.GET("check", "/rtb", allAdHandler)
 }
 
 func init() {
