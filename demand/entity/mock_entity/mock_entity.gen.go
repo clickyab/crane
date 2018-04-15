@@ -1551,6 +1551,18 @@ func (mr *MockSeatMockRecorder) MinCPC() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MinCPC", reflect.TypeOf((*MockSeat)(nil).MinCPC))
 }
 
+// MinCPM mocks base method
+func (m *MockSeat) MinCPM() float64 {
+	ret := m.ctrl.Call(m, "MinCPM")
+	ret0, _ := ret[0].(float64)
+	return ret0
+}
+
+// MinCPM indicates an expected call of MinCPM
+func (mr *MockSeatMockRecorder) MinCPM() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MinCPM", reflect.TypeOf((*MockSeat)(nil).MinCPM))
+}
+
 // PublicID mocks base method
 func (m *MockSeat) PublicID() string {
 	ret := m.ctrl.Call(m, "PublicID")
@@ -1607,6 +1619,18 @@ func (m *MockSeat) Size() int {
 // Size indicates an expected call of Size
 func (mr *MockSeatMockRecorder) Size() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Size", reflect.TypeOf((*MockSeat)(nil).Size))
+}
+
+// SoftCPM mocks base method
+func (m *MockSeat) SoftCPM() float64 {
+	ret := m.ctrl.Call(m, "SoftCPM")
+	ret0, _ := ret[0].(float64)
+	return ret0
+}
+
+// SoftCPM indicates an expected call of SoftCPM
+func (mr *MockSeatMockRecorder) SoftCPM() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SoftCPM", reflect.TypeOf((*MockSeat)(nil).SoftCPM))
 }
 
 // SupplierCPM mocks base method
