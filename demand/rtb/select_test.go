@@ -65,21 +65,21 @@ func samples(t *testing.T) []sample {
 		})
 	}
 
-	{
-		col1 := make([]entity.Creative, 0)
-		ad1 := creativeMaker(16000, .05, entity.StrategyCPM, c)
-		ctx := contextMaker(500, ad1, false, entity.StrategyCPM, c)
+	// {
+	// 	col1 := make([]entity.Creative, 0)
+	// 	ad1 := creativeMaker(16000, .05, entity.StrategyCPM, c)
+	// 	ctx := contextMaker(500, ad1, false, entity.StrategyCPM, c)
 
-		col1 = append(col1, ad1)
-		res = append(res, sample{
-			title:   "rtb case two",
-			winner:  ad1,
-			cpm:     500,
-			bid:     500 / 0.75,
-			context: ctx,
-			ads:     col1,
-		})
-	}
+	// 	col1 = append(col1, ad1)
+	// 	res = append(res, sample{
+	// 		title:   "rtb case two",
+	// 		winner:  ad1,
+	// 		cpm:     500,
+	// 		bid:     500 / 0.75,
+	// 		context: ctx,
+	// 		ads:     col1,
+	// 	})
+	// }
 
 	{
 		col1 := make([]entity.Creative, 0)
@@ -133,21 +133,21 @@ func samples(t *testing.T) []sample {
 		})
 	}
 
-	{
-		col1 := make([]entity.Creative, 0)
-		ad1 := creativeMaker(16000, .05, entity.StrategyCPC, c)
-		ctx := contextMaker(500, ad1, false, entity.StrategyCPC, c)
+	// {
+	// 	col1 := make([]entity.Creative, 0)
+	// 	ad1 := creativeMaker(16000, .05, entity.StrategyCPC, c)
+	// 	ctx := contextMaker(500, ad1, false, entity.StrategyCPC, c)
 
-		col1 = append(col1, ad1)
-		res = append(res, sample{
-			title:   "rtb case six",
-			winner:  ad1,
-			cpm:     500,
-			bid:     500 / 0.75,
-			context: ctx,
-			ads:     col1,
-		})
-	}
+	// 	col1 = append(col1, ad1)
+	// 	res = append(res, sample{
+	// 		title:   "rtb case six",
+	// 		winner:  ad1,
+	// 		cpm:     500,
+	// 		bid:     500 / 0.75,
+	// 		context: ctx,
+	// 		ads:     col1,
+	// 	})
+	// }
 
 	{
 		col1 := make([]entity.Creative, 0)
@@ -219,6 +219,9 @@ func contextMaker(minbid int64, winner entity.Creative, underfloor bool, strateg
 	seat.EXPECT().Type().Return(entity.InputTypeDemand).AnyTimes()
 	seat.EXPECT().MinBid().Return(minbid).AnyTimes()
 	seat.EXPECT().MinCPC().Return(float64(minbid)).AnyTimes()
+	// TODO : fix this
+	seat.EXPECT().MinCPM().Return(float64(0)).AnyTimes()
+	seat.EXPECT().SoftCPM().Return(float64(0)).AnyTimes()
 	seat.EXPECT().Acceptable(gomock.Any()).Return(true).AnyTimes()
 	seat.EXPECT().CTR().Return(.1).AnyTimes()
 	if winner == nil {

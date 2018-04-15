@@ -96,6 +96,18 @@ func (s *seat) FatFinger() bool {
 	panic("implement me")
 }
 
+func (s *seat) MinCPC() float64 {
+	return 0
+}
+
+func (s *seat) MinCPM() float64 {
+	return 0
+}
+
+func (s *seat) SoftCPM() float64 {
+	return 0
+}
+
 func (s *seat) Acceptable(advertise entity.Creative) bool {
 	// this function, handle banner only
 	if !s.genericTests(advertise) {
