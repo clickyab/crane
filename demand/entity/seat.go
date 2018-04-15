@@ -51,6 +51,10 @@ type Seat interface {
 	Acceptable(Creative) bool
 	// MinCPC return min cpc of seat
 	MinCPC() float64
+	// The minimum CPM allowed by this, HARD FLOOR, after share calculation
+	MinCPM() float64
+	// Soft minimum. lower than this means no sec biding. must not be lower than min cpm
+	SoftCPM() float64
 }
 
 // VastSeat is a seat with vast compatibility
