@@ -5,13 +5,12 @@
 package mock_entity
 
 import (
+	entity "clickyab.com/crane/demand/entity"
+	gomock "github.com/golang/mock/gomock"
 	net "net"
 	url "net/url"
 	reflect "reflect"
 	time "time"
-
-	entity "clickyab.com/crane/demand/entity"
-	gomock "github.com/golang/mock/gomock"
 )
 
 // MockContext is a mock of Context interface
@@ -433,7 +432,7 @@ func (mr *MockCreativeMockRecorder) AdCTR() *gomock.Call {
 }
 
 // Asset mocks base method
-func (m *MockCreative) Assets(arg0 entity.AssetType, arg1 int, arg2 ...entity.AssetFilter) []entity.Asset {
+func (m *MockCreative) Asset(arg0 entity.AssetType, arg1 int, arg2 ...entity.AssetFilter) []entity.Asset {
 	varargs := []interface{}{arg0, arg1}
 	for _, a := range arg2 {
 		varargs = append(varargs, a)
@@ -444,9 +443,21 @@ func (m *MockCreative) Assets(arg0 entity.AssetType, arg1 int, arg2 ...entity.As
 }
 
 // Asset indicates an expected call of Asset
-func (mr *MockCreativeMockRecorder) Assets(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+func (mr *MockCreativeMockRecorder) Asset(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
 	varargs := append([]interface{}{arg0, arg1}, arg2...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Asset", reflect.TypeOf((*MockCreative)(nil).Assets), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Asset", reflect.TypeOf((*MockCreative)(nil).Asset), varargs...)
+}
+
+// Assets mocks base method
+func (m *MockCreative) Assets() []entity.Asset {
+	ret := m.ctrl.Call(m, "Assets")
+	ret0, _ := ret[0].([]entity.Asset)
+	return ret0
+}
+
+// Assets indicates an expected call of Assets
+func (mr *MockCreativeMockRecorder) Assets() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Assets", reflect.TypeOf((*MockCreative)(nil).Assets))
 }
 
 // Attributes mocks base method
@@ -964,6 +975,18 @@ func (mr *MockPublisherMockRecorder) MinBid() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MinBid", reflect.TypeOf((*MockPublisher)(nil).MinBid))
 }
 
+// MinCPC mocks base method
+func (m *MockPublisher) MinCPC(arg0 string) float64 {
+	ret := m.ctrl.Call(m, "MinCPC", arg0)
+	ret0, _ := ret[0].(float64)
+	return ret0
+}
+
+// MinCPC indicates an expected call of MinCPC
+func (mr *MockPublisherMockRecorder) MinCPC(arg0 interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MinCPC", reflect.TypeOf((*MockPublisher)(nil).MinCPC), arg0)
+}
+
 // Name mocks base method
 func (m *MockPublisher) Name() string {
 	ret := m.ctrl.Call(m, "Name")
@@ -1036,7 +1059,7 @@ func (mr *MockSelectedCreativeMockRecorder) AdCTR() *gomock.Call {
 }
 
 // Asset mocks base method
-func (m *MockSelectedCreative) Assets(arg0 entity.AssetType, arg1 int, arg2 ...entity.AssetFilter) []entity.Asset {
+func (m *MockSelectedCreative) Asset(arg0 entity.AssetType, arg1 int, arg2 ...entity.AssetFilter) []entity.Asset {
 	varargs := []interface{}{arg0, arg1}
 	for _, a := range arg2 {
 		varargs = append(varargs, a)
@@ -1047,9 +1070,21 @@ func (m *MockSelectedCreative) Assets(arg0 entity.AssetType, arg1 int, arg2 ...e
 }
 
 // Asset indicates an expected call of Asset
-func (mr *MockSelectedCreativeMockRecorder) Assets(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+func (mr *MockSelectedCreativeMockRecorder) Asset(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
 	varargs := append([]interface{}{arg0, arg1}, arg2...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Asset", reflect.TypeOf((*MockSelectedCreative)(nil).Assets), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Asset", reflect.TypeOf((*MockSelectedCreative)(nil).Asset), varargs...)
+}
+
+// Assets mocks base method
+func (m *MockSelectedCreative) Assets() []entity.Asset {
+	ret := m.ctrl.Call(m, "Assets")
+	ret0, _ := ret[0].([]entity.Asset)
+	return ret0
+}
+
+// Assets indicates an expected call of Assets
+func (mr *MockSelectedCreativeMockRecorder) Assets() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Assets", reflect.TypeOf((*MockSelectedCreative)(nil).Assets))
 }
 
 // Attributes mocks base method
@@ -1065,9 +1100,9 @@ func (mr *MockSelectedCreativeMockRecorder) Attributes() *gomock.Call {
 }
 
 // CalculatedCPC mocks base method
-func (m *MockSelectedCreative) CalculatedCPC() int64 {
+func (m *MockSelectedCreative) CalculatedCPC() float64 {
 	ret := m.ctrl.Call(m, "CalculatedCPC")
-	ret0, _ := ret[0].(int64)
+	ret0, _ := ret[0].(float64)
 	return ret0
 }
 
@@ -1077,9 +1112,9 @@ func (mr *MockSelectedCreativeMockRecorder) CalculatedCPC() *gomock.Call {
 }
 
 // CalculatedCPM mocks base method
-func (m *MockSelectedCreative) CalculatedCPM() int64 {
+func (m *MockSelectedCreative) CalculatedCPM() float64 {
 	ret := m.ctrl.Call(m, "CalculatedCPM")
-	ret0, _ := ret[0].(int64)
+	ret0, _ := ret[0].(float64)
 	return ret0
 }
 
@@ -1504,6 +1539,30 @@ func (mr *MockSeatMockRecorder) MinBid() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MinBid", reflect.TypeOf((*MockSeat)(nil).MinBid))
 }
 
+// MinCPC mocks base method
+func (m *MockSeat) MinCPC() float64 {
+	ret := m.ctrl.Call(m, "MinCPC")
+	ret0, _ := ret[0].(float64)
+	return ret0
+}
+
+// MinCPC indicates an expected call of MinCPC
+func (mr *MockSeatMockRecorder) MinCPC() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MinCPC", reflect.TypeOf((*MockSeat)(nil).MinCPC))
+}
+
+// MinCPM mocks base method
+func (m *MockSeat) MinCPM() float64 {
+	ret := m.ctrl.Call(m, "MinCPM")
+	ret0, _ := ret[0].(float64)
+	return ret0
+}
+
+// MinCPM indicates an expected call of MinCPM
+func (mr *MockSeatMockRecorder) MinCPM() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MinCPM", reflect.TypeOf((*MockSeat)(nil).MinCPM))
+}
+
 // PublicID mocks base method
 func (m *MockSeat) PublicID() string {
 	ret := m.ctrl.Call(m, "PublicID")
@@ -1560,6 +1619,18 @@ func (m *MockSeat) Size() int {
 // Size indicates an expected call of Size
 func (mr *MockSeatMockRecorder) Size() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Size", reflect.TypeOf((*MockSeat)(nil).Size))
+}
+
+// SoftCPM mocks base method
+func (m *MockSeat) SoftCPM() float64 {
+	ret := m.ctrl.Call(m, "SoftCPM")
+	ret0, _ := ret[0].(float64)
+	return ret0
+}
+
+// SoftCPM indicates an expected call of SoftCPM
+func (mr *MockSeatMockRecorder) SoftCPM() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SoftCPM", reflect.TypeOf((*MockSeat)(nil).SoftCPM))
 }
 
 // SupplierCPM mocks base method

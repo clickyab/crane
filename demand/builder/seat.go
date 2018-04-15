@@ -41,7 +41,10 @@ type seat struct {
 
 	ctr float64
 
-	minBid float64
+	minBid  float64
+	minCPC  float64
+	softCPM float64
+	minCPM  float64
 
 	impTime time.Time
 	scpm    float64
@@ -115,7 +118,7 @@ func (s *seat) Size() int {
 func (s *seat) SetWinnerAdvertise(wa entity.Creative, bid float64, cpm float64) {
 	s.winnerAd = wa
 	s.bid = bid
-	s.cpm = cpm
+	s.cpm = decShare(s.context.publisher.Supplier(), cpm)
 }
 
 func (s *seat) WinnerAdvertise() entity.Creative {
@@ -291,4 +294,19 @@ func (s *seat) Acceptable(advertise entity.Creative) bool {
 
 	return true
 
+}
+
+// MinCPC return min cpc
+func (s *seat) MinCPC() float64 {
+	return s.minCPC
+}
+
+// MinCPM return min cpm
+func (s *seat) MinCPM() float64 {
+	return s.minCPM
+}
+
+// SoftCPM is the soft lower cpm
+func (s *seat) SoftCPM() float64 {
+	return s.softCPM
 }

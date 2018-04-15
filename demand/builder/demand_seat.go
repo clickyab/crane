@@ -20,6 +20,7 @@ type DemandSeatData struct {
 	PubID  string
 	Size   string
 	MinBid float64
+	MinCPC float64
 	Type   entity.RequestType
 	Video  *openrtb.Video
 	Banner *openrtb.Banner
@@ -33,6 +34,14 @@ func coalesce(v ...int) int {
 		}
 	}
 	return 0
+}
+
+func incShare(sup entity.Supplier, price float64) float64 {
+	return (price * float64(sup.Share())) / 100
+}
+
+func decShare(sup entity.Supplier, price float64) float64 {
+	return (price * 100.0) / float64(sup.Share())
 }
 
 // SetSeats try to add demand seat
@@ -67,6 +76,10 @@ func SetDemandSeats(sd ...DemandSeatData) ShowOptionSetter {
 				}
 			}
 
+			minCPC := sd[i].MinCPC
+			if minCPC == 0 {
+				minCPC = float64(o.publisher.Supplier().SoftFloorCPC(fmt.Sprint(sd[i].Type), fmt.Sprint(o.publisher.Type())))
+			}
 			seat := seat{
 				context:     o,
 				size:        size,
@@ -75,7 +88,15 @@ func SetDemandSeats(sd ...DemandSeatData) ShowOptionSetter {
 				ctr:         o.publisher.CTR(size),
 				rate:        o.rate,
 				requestType: sd[i].Type,
+				minCPC:      minCPC,
+				softCPM:     float64(o.Publisher().Supplier().SoftFloorCPM(fmt.Sprint(sd[i].Type), fmt.Sprint(o.Publisher().Type()))),
+				minCPM:      float64(incShare(o.Publisher().Supplier(), sd[i].MinBid)),
 			}
+
+			if seat.softCPM < seat.minCPM {
+				seat.softCPM = seat.minCPM
+			}
+
 			if sd[i].Type == entity.RequestTypeVast {
 				seat.mimes = sd[i].Video.Mimes
 

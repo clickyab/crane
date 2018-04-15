@@ -62,6 +62,13 @@ func getApp(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+	// calculate min cpc and insert in impression ext
+	impExt := map[string]interface{}{
+		"min_cpc": pub.MinCPC(string(entity.RequestTypeBanner)),
+	}
+	iExt, err := json.Marshal(impExt)
+	assert.Nil(err)
+
 	q := &openrtb.BidRequest{
 		ID: <-random.ID,
 		App: &openrtb.App{
@@ -77,6 +84,7 @@ func getApp(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 					ID: <-random.ID,
 				},
 				BidFloor: float64(pub.FloorCPM()),
+				Ext:      iExt,
 			},
 		},
 	}

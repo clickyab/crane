@@ -104,7 +104,7 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	if ok && m {
 		extra = simplehash.CRC32(pub.Name())
 	}
-	imps, err := exSlot(ctx, s, c, r, pub.FloorCPM(), extra)
+	imps, err := exSlot(ctx, s, c, r, pub, extra)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 
@@ -181,7 +181,7 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func exSlot(ctx context.Context, s string, l int, r *http.Request, pubFloor int64, extra string) ([]openrtb.Impression, error) {
+func exSlot(ctx context.Context, s string, l int, r *http.Request, pub entity.Publisher, extra string) ([]openrtb.Impression, error) {
 	sec := secure(r)
 	res := make([]openrtb.Impression, 0)
 	ts := strings.Split(s, ",")
@@ -189,6 +189,12 @@ func exSlot(ctx context.Context, s string, l int, r *http.Request, pubFloor int6
 		xlog.Get(ctx).Debug("len of impression does not match with request")
 		return nil, errors.New("len of impression does not match with request")
 	}
+	// calculate min cpc and insert in impression ext
+	impExt := map[string]interface{}{
+		"min_cpc": pub.MinCPC(string(entity.RequestTypeBanner)),
+	}
+	iExt, err := json.Marshal(impExt)
+	assert.Nil(err)
 	for _, v := range ts {
 		tv := strings.Split(v, ":")
 
@@ -218,7 +224,8 @@ func exSlot(ctx context.Context, s string, l int, r *http.Request, pubFloor int6
 				H:  h,
 				W:  w,
 			},
-			BidFloor: float64(pubFloor),
+			Ext:      iExt,
+			BidFloor: float64(pub.FloorCPM()),
 		})
 
 	}
@@ -231,7 +238,8 @@ func exSlot(ctx context.Context, s string, l int, r *http.Request, pubFloor int6
 				H:  50,
 				W:  320,
 			},
-			BidFloor: float64(pubFloor),
+			BidFloor: float64(pub.FloorCPM()),
+			Ext:      iExt,
 		})
 	}
 	return res, nil
