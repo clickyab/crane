@@ -9,6 +9,8 @@ import (
 	"strconv"
 	"time"
 
+	"unicode/utf8"
+
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/internal/cyslot"
 	"github.com/clickyab/services/assert"
@@ -171,7 +173,7 @@ func extractAssets(in ad) []entity.Asset {
 	//}
 
 	if entity.AdType(in.FType) == entity.AdTypeNative {
-		txt := in.FAdAttribute["banner_title_text_type"].(string)
+		txt := in.FAdName.String
 		w, _ := in.FAdAttribute["w"].(string)
 		h, _ := in.FAdAttribute["h"].(string)
 		width, _ := strconv.ParseInt(w, 10, 64)
@@ -196,7 +198,7 @@ func extractAssets(in ad) []entity.Asset {
 				MimeType: "text/html",
 				Type:     entity.AssetTypeText,
 				SubType:  entity.AssetTypeTextSubTypeTitle,
-				Len:      len(txt),
+				Len:      utf8.RuneCountInString(txt),
 				Data:     txt,
 			},
 		}
