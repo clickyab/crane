@@ -22,9 +22,6 @@ type nativeResp struct {
 
 const defaultTemplateText string = `
 {{range $index, $results := .}}
-	{{if isOdd $index}}
-		<div>
-	{{end}}
 	<div>
         <a href='{{.Click}}'>
             <img src='{{.Image}}'/‎>
@@ -32,9 +29,6 @@ const defaultTemplateText string = `
             <div>{{.Title}}</div>
         </a>
     </div>
-	{{if isEven $index}}
-		</div>
-	{{end}}
 {{end}}
 `
 
