@@ -42,9 +42,9 @@ func setCapping(ctx context.Context, pl *payloadData, u string, proto string) {
 			var httpClient = &http.Client{}
 
 			urlPath := router.MustPath("capping", map[string]string{
-				"adID":     fmt.Sprint(pl.Ad.ID()),
-				"userID":   u,
-				"cappMode": fmt.Sprint(pl.CMode),
+				"ad_id":     fmt.Sprint(pl.Ad.ID()),
+				"user_id":   u,
+				"capp_mode": fmt.Sprint(pl.CMode),
 			})
 
 			cappUpdateURL := &url.URL{

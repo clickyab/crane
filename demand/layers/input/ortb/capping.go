@@ -10,12 +10,12 @@ import (
 	"github.com/rs/xmux"
 )
 
-const cappingURL = "/capping/:adID/:userID/:cappMode"
+const cappingURL = "/capping/:ad_id/:user_id/:capp_mode"
 
 func applyCapp(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-	adID := xmux.Param(ctx, "adID")
-	userID := xmux.Param(ctx, "userID")
-	cappMode := xmux.Param(ctx, "cappMode")
+	adID := xmux.Param(ctx, "ad_id")
+	userID := xmux.Param(ctx, "user_id")
+	cappMode := xmux.Param(ctx, "capp_mode")
 	cappModeInt, err := strconv.Atoi(cappMode)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -24,8 +24,9 @@ func applyCapp(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 	cp := entity.CappingMode(cappModeInt)
 
-	if !cp.Validate() {
+	if cp.Validate() {
 		w.WriteHeader(http.StatusBadRequest)
+		_, _ = w.Write([]byte("validation failed"))
 		return
 	}
 
@@ -33,6 +34,7 @@ func applyCapp(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		adIDInt, err := strconv.ParseInt(adID, 10, 64)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
+			_, _ = w.Write([]byte("invalid id"))
 			return
 		}
 
