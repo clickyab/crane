@@ -6,6 +6,8 @@ import (
 
 	"fmt"
 
+	"time"
+
 	"github.com/clickyab/services/framework"
 	"github.com/clickyab/services/framework/router"
 	"github.com/rs/xhandler"
@@ -30,6 +32,7 @@ func (r route) check(ctx context.Context, w http.ResponseWriter, rq *http.Reques
 		}
 	}
 
+	w.Header().Set("time", time.Now().String())
 	if len(errs) > 0 {
 		w.WriteHeader(http.StatusInternalServerError)
 		for i := range errs {
@@ -37,7 +40,11 @@ func (r route) check(ctx context.Context, w http.ResponseWriter, rq *http.Reques
 		}
 		return
 	}
-	w.WriteHeader(http.StatusOK)
+	framework.JSON(w, http.StatusOK, struct {
+		Time string `json:"time"`
+	}{
+		Time: time.Now().String(),
+	})
 }
 
 func (r route) Routes(mux framework.Mux) {
