@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"sync"
 	"time"
 
 	"clickyab.com/crane/demand/builder"
@@ -28,48 +29,83 @@ const showPath = "/banner/:rh/:size/:type/:subtype/:jt"
 var (
 	regions       = config.RegisterString("crane.regions.urls", "us:us-demand.com,fr:fr-demand.com", "determine valid regions and related domain for update capp url")
 	currentRegion = config.RegisterString("crane.regions.current", "fr", "determine current region")
+	lock          = sync.RWMutex{}
+	regionPath    = map[string]string{}
 )
 
-func setCapping(ctx context.Context, pl *payloadData, u string, proto string) {
+type configInit struct{}
 
+func (configInit) Initialize() config.DescriptiveLayer {
+	return nil
+}
+
+func (configInit) Loaded() {
+	lock.Lock()
+	defer lock.Unlock()
+
+	for _, v := range strings.Split(regions.String(), ",") {
+		x := strings.Split(v, ":")
+		if len(x) != 2 {
+			continue
+		}
+		regionPath[x[0]] = x[1]
+	}
+}
+
+func getRegion(key string) string {
+	lock.RLock()
+	defer lock.RUnlock()
+	return regionPath[key]
+}
+
+func setCapping(ctx context.Context, pl *payloadData, u string, proto string) {
 	if (pl.CappRegion == currentRegion.String() || pl.CappRegion == "") && pl.CMode != entity.CappingNone {
 		capping.StoreCapping(pl.CMode, u, pl.Ad.ID())
 		return
 	}
 
-	for _, v := range strings.Split(regions.String(), ",") {
-		if x := strings.Split(v, ":"); x[0] == pl.CappRegion {
-			var httpClient = &http.Client{}
-
-			urlPath := router.MustPath("capping", map[string]string{
-				"ad_id":     fmt.Sprint(pl.Ad.ID()),
-				"user_id":   u,
-				"capp_mode": fmt.Sprint(pl.CMode),
-			})
-
-			cappUpdateURL := &url.URL{
-				Host:   x[1],
-				Scheme: proto,
-				Path:   urlPath,
-			}
-
-			cappRequest, err := http.NewRequest("GET", cappUpdateURL.String(), nil)
-			if err != nil {
-				xlog.GetWithError(ctx, err).Debug("request create failed")
-				return
-			}
-
-			callCappingUpdate(ctx, httpClient, cappRequest)
-			return
-		}
+	rURL := getRegion(pl.CappRegion)
+	if rURL == "" {
+		xlog.GetWithError(ctx, fmt.Errorf("invalid region : %s", pl.CappRegion)).Error("invalid region")
+		return
 	}
 
-	xlog.GetWithFields(ctx, logrus.Fields{"capping_mode": pl.CMode,
-		"payload":        pl,
-		"region":         regions.String(),
-		"current_region": currentRegion.String()}).
-		Error("invalid region for capping")
+	var httpClient = &http.Client{}
 
+	urlPath := router.MustPath("capping", map[string]string{
+		"ad_id":     fmt.Sprint(pl.Ad.ID()),
+		"user_id":   u,
+		"capp_mode": fmt.Sprint(pl.CMode),
+	})
+
+	cappUpdateURL := &url.URL{
+		Host:   rURL,
+		Scheme: proto,
+		Path:   urlPath,
+	}
+
+	cappRequest, err := http.NewRequest("GET", cappUpdateURL.String(), nil)
+	if err != nil {
+		xlog.GetWithError(ctx, err).Debug("request create failed")
+		return
+	}
+
+	err = callCappingUpdate(ctx, httpClient, cappRequest)
+	if err != nil {
+		xlog.GetWithError(ctx, err).Error("call capping on the other region failed")
+	}
+}
+
+func callCappingUpdate(ctx context.Context, httpClient *http.Client, r *http.Request) error {
+	resp, err := httpClient.Do(r.WithContext(ctx))
+	if err != nil {
+		return err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("invalid status %d", resp.StatusCode)
+	}
+	return nil
 }
 
 // show is handler for show ad requestType
@@ -85,7 +121,9 @@ func showBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		// Duplicate impression!
 		pl.Suspicious = 3
 	}
-	b := []builder.ShowOptionSetter{
+
+	// Build context
+	c, err := builder.NewContext(
 		builder.SetTimestamp(),
 		builder.SetOSUserAgent(pl.UserAgent),
 		builder.SetNoTiny(!pl.Tiny),
@@ -98,20 +136,18 @@ func showBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetPublisher(pl.Publisher),
 		builder.SetSuspicious(pl.Suspicious),
 		builder.SetFatFinger(pl.FatFinger),
-	}
-
-	b = append(b, builder.SetFullSeats(pl.PublicID, pl.Size, pl.ReserveHash, pl.Ad, pl.Bid, time.Now().Unix(), pl.CPM, pl.SCPM, pl.requestType))
-	// Build context
-	c, err := builder.NewContext(b...)
+		builder.SetFullSeats(pl.PublicID, pl.Size, pl.ReserveHash, pl.Ad, pl.Bid, time.Now().Unix(), pl.CPM, pl.SCPM, pl.requestType),
+	)
 	if err != nil {
 		logrus.Error(err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	exp, _ := context.WithTimeout(ctx, 10*time.Second)
+	exp, cnl := context.WithTimeout(ctx, 10*time.Second)
 	safe.GoRoutine(exp, func() {
 		job := show.NewImpressionJob(c, c.Seats()...)
 		broker.Publish(job)
+		cnl()
 	})
 
 	safe.GoRoutine(ctx, func() {
@@ -121,16 +157,6 @@ func showBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	assert.Nil(banner.Render(ctx, w, c))
 }
 
-func callCappingUpdate(ctx context.Context, httpClient *http.Client, r *http.Request) {
-	resp, err := httpClient.Do(r.WithContext(ctx))
-	if err != nil {
-		xlog.GetWithError(ctx, err).Debug("request do failed")
-		return
-	}
-
-	if resp.StatusCode != http.StatusOK {
-		err = fmt.Errorf("invalid status %d", resp.StatusCode)
-		xlog.GetWithError(ctx, err).Debug("request do status failed")
-		return
-	}
+func init() {
+	config.Register(&configInit{})
 }
