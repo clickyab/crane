@@ -61,7 +61,7 @@
     "version",
     "xlog"
   ]
-  revision = "c9c78120e22cc2a863b6b3585de64708e9d508b8"
+  revision = "6c6febf730a58bdc682d450de127b34d111f1db3"
 
 [[projects]]
   branch = "master"
