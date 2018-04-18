@@ -29,7 +29,9 @@ func Initialize(organization, appName, prefix string, layers ...onion.Layer) {
 
 	for i := range all {
 		nL := all[i].Initialize()
-		_ = o.AddLayer(nL)
+		if nL != nil {
+			_ = o.AddLayer(nL)
+		}
 	}
 
 	// now add the layer provided by app
