@@ -1,0 +1,100 @@
+@import "../variables";
+@import "../fonts";
+
+._clickyab_ {
+  font-family: @fontFamily;
+  font-size: @fontSize;
+
+  direction: rtl;
+  box-sizing: border-box;
+  width: 100%;
+  height: auto;
+  text-align: right;
+  text-rendering: optimizeLegibility;
+
+  &.grid {
+
+    .items {
+      margin: 0 -5px;
+
+      img {
+        width: 100%;
+      }
+
+      & > div {
+
+        &:hover img {
+          opacity: 0.85;
+        }
+        width: 50%;
+        display: inline-block;
+        float: right;
+
+        padding: 5px;
+        width: 50%;
+        float: right;
+        box-sizing: border-box;
+
+      }
+    }
+
+    &.xl {
+      .items {
+        margin: 0 -5px;
+        & > div {
+          width: 25%;
+        }
+        & > div:nth-child(5), & > div:nth-child(9) {
+          clear: both;
+        }
+      }
+    }
+    &.lg {
+      .items {
+        & > div {
+          width: 25%;
+        }
+        & > div:nth-child(5), & > div:nth-child(9) {
+          clear: both;
+        }
+      }
+    }
+    &.md {
+      .items {
+        & > div {
+          width: 25%;
+        }
+        & > div:nth-child(5), & > div:nth-child(9) {
+          clear: both;
+        }
+      }
+    }
+    &.sm {
+      .items {
+        & > div {
+          width: 50%;
+        }
+        & > div:nth-child(3), & > div:nth-child(5),& > div:nth-child(7), & > div:nth-child(9) {
+          clear: both;
+        }
+      }
+    }
+    &.xs {
+      .items {
+
+        img {
+          width: 100%;
+        }
+
+        & > div {
+          width: 100%;
+
+          & > div {
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+
+}
