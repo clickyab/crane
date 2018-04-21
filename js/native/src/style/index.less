@@ -1,0 +1,36 @@
+@import "variables";
+@import "fonts";
+@import "templates/grid";
+
+._clickyab_ {
+  direction: rtl;
+  font-family: @fontFamily;
+  font-size: @fontSize;
+
+  a, a:hover {
+    text-decoration: none;
+  }
+
+  .title-holder {
+    color: @titleColor;
+    background-color: @titleBackGroundColor;
+    padding: 5px;
+
+    .title {
+      display: inline;
+    }
+
+    .logo {
+      float: left;
+
+      font-size: 10pt;
+
+      img {
+        top: 5px;
+        position: relative;
+      }
+
+    }
+  }
+
+}
