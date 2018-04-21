@@ -10,7 +10,8 @@ type controller struct {
 
 // Routes is for registering routes
 func (controller) Routes(r framework.Mux) {
-	r.GET("native", "/api/native", getNative)
+	r.GET("nativejs", "/api/native.js", getNativeJS)
+	r.GET("native", "/api/get/native", getNative)
 }
 
 func init() {

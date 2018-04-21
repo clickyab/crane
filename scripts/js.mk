@@ -18,7 +18,8 @@ build-js: npm-install
 	sed -i 's/registerPlugin("vast/registerPlugin("{{.PLUG}}/' $(ROOT)/js/supplier/jwplayer.js
 	cp $(ROOT)/js/vmap/node_modules/vmap-kit/dist/videojs/vast.js $(ROOT)/js/supplier/videojs.js
 	sed -i 's/videojs.plugin("vast/videojs.plugin("clickyabAdScheduler/' $(ROOT)/js/supplier/videojs.js
-	cp $(ROOT)/js/native && $(NPM) run build
+	cd $(ROOT)/js/native && $(NPM) run build
+	cp $(ROOT)/js/native/build/browser/index.cjs.js $(ROOT)/js/supplier/native.js
 
 js: build-js go-bindata
 	cd $(ROOT)/js/supplier && $(BIN)/go-bindata -nometadata -o $(ROOT)/supplier/layers/internal/js/js.gen.go -nomemcopy=true -pkg=js ./
