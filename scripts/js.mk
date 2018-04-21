@@ -5,6 +5,7 @@ npm-install:
 	rm -rf $(ROOT)/js/vmap/node_modules
 	rm -rf $(ROOT)/js/vmap/package-lock.json
 	cd $(ROOT)/js/vmap && $(NPM) install
+	cd $(ROOT)/js/native && $(NPM) install
 
 build-js: npm-install
 	cd $(ROOT)/js/banner && $(NPM) run build
@@ -17,6 +18,7 @@ build-js: npm-install
 	sed -i 's/registerPlugin("vast/registerPlugin("{{.PLUG}}/' $(ROOT)/js/supplier/jwplayer.js
 	cp $(ROOT)/js/vmap/node_modules/vmap-kit/dist/videojs/vast.js $(ROOT)/js/supplier/videojs.js
 	sed -i 's/videojs.plugin("vast/videojs.plugin("clickyabAdScheduler/' $(ROOT)/js/supplier/videojs.js
+	cp $(ROOT)/js/native && $(NPM) run build
 
 js: build-js go-bindata
 	cd $(ROOT)/js/supplier && $(BIN)/go-bindata -nometadata -o $(ROOT)/supplier/layers/internal/js/js.gen.go -nomemcopy=true -pkg=js ./
