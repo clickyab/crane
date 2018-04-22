@@ -18,3 +18,5 @@ contrib/*.BIN.gz
 js/dist
 js/demand
 js/supplier
+js/native/build/
+js/native/node_modules/
