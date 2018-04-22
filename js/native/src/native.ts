@@ -100,11 +100,9 @@ export default class NativeComponent {
 		return new Promise((resolve, reject) => {
 			const xhr = new XMLHttpRequest();
 			const url = this.compiler(this.nativeUrl, Object.assign(this.defaultOptions, this.customOptions));
-			console.log(url);
 			xhr.onreadystatechange = function () {
 				if (this.readyState === 4 && this.status === 200) {
 					let nativeObj = JSON.parse(xhr.responseText);
-					console.debug(`Native Json loaded:`, nativeObj);
 					resolve(nativeObj as INative);
 				}
 			};
