@@ -98,6 +98,7 @@ func (s *nativeSeat) ImpressionURL() *url.URL {
 		},
 		s.cpm,
 		showExpire.Duration(),
+		s.context.protocol.String(),
 	)
 	return s.imp
 }
