@@ -20,3 +20,4 @@ js/demand
 js/supplier
 js/native/build/
 js/native/node_modules/
+.Trash-*
