@@ -37,7 +37,7 @@
 
   function appendImgHit(click: string | null, imp: string, actionId: string) {
     const imgHit = document.createElement('img');
-    imgHit.setAttribute('src', `{{.URL}}?click_id=${click}imp_id=${imp}&action_id=${actionId}`);
+    imgHit.setAttribute('src', `{{.URL}}?click_id=${click}&imp_id=${imp}&action_id=${actionId}`);
     document.body.appendChild(imgHit)
   }
 
