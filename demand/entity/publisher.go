@@ -37,7 +37,7 @@ type Publisher interface {
 	Supplier() Supplier
 	// CTR returns ctr of a slot with specific size
 	CTR(int) float64
-	// Type return type of this publisher
+	// Type return type of this publisherAddImpressionShadow
 	Type() PublisherType
 	// Attributes si any other attributes that is not generally required for other part of the system
 	Attributes() map[PublisherAttributes]interface{}

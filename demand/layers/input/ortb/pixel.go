@@ -8,6 +8,7 @@ import (
 	"clickyab.com/crane/demand/builder"
 	"clickyab.com/crane/demand/layers/output/pixel"
 	"clickyab.com/crane/workers/show"
+	"clickyab.com/crane/workers/show-shadow"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/broker"
 	"github.com/clickyab/services/kv"
@@ -49,9 +50,15 @@ func showPixel(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	exp, _ := context.WithTimeout(ctx, 10*time.Second)
-	safe.GoRoutine(exp, func() {
+	exp1, _ := context.WithTimeout(ctx, 10*time.Second)
+	safe.GoRoutine(exp1, func() {
 		job := show.NewImpressionJob(c, c.Seats()...)
+		broker.Publish(job)
+	})
+
+	exp2, _ := context.WithTimeout(ctx, 10*time.Second)
+	safe.GoRoutine(exp2, func() {
+		job := show_shadow.NewImpressionJob(c, c.Seats()...)
 		broker.Publish(job)
 	})
 
