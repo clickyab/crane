@@ -6,18 +6,18 @@
  *
  */
 
-;(function() {
-  let cyClick: string | null
-  let cyImp: string | null
+;(function () {
+  let cyClick: string | null;
+  let cyImp: string | null;
 
   function getCookie(name: string): string | null {
-    const re = new RegExp(name + '=([^;]+)')
-    const value = re.exec(document.cookie)
-    return value != null ? decodeURI(value[1]) : null
+    const re = new RegExp(name + '=([^;]+)');
+    const value = re.exec(document.cookie);
+    return value != null ? decodeURI(value[1]) : null;
   }
 
   function decode(s: string) {
-    return decodeURIComponent(s.replace(/\+/g, ' '))
+    return decodeURIComponent(s.replace(/\+/g, ' '));
   }
 
   function getQueryStrings() {
@@ -42,10 +42,6 @@
   }
 
   function clickyab_callback(actionId: string) {
-    if (actionId === undefined) {
-      actionId = ''
-    }
-
     if (cyImp !== null && cyImp !== undefined) {
       appendImgHit(cyClick, cyImp, actionId)
     }
@@ -56,12 +52,12 @@
   cyImp = getWholeQuery['cy_imp'];
 
   if (cyClick && cyImp) {
-    document.cookie = 'cy_click=' + cyClick + '; expires=Fri, 31 Dec 2022 23:59:59 GMT'
-    document.cookie = 'cy_imp=' + cyImp + '; expires=Fri, 31 Dec 2022 23:59:59 GMT'
+    document.cookie = 'cy_click=' + cyClick + '; expires=Fri, 31 Dec 2022 23:59:59 GMT';
+    document.cookie = 'cy_imp=' + cyImp + '; expires=Fri, 31 Dec 2022 23:59:59 GMT';
   } else {
     cyClick = getCookie('cy_click');
     cyClick = getCookie('cy_imp');
   }
 
-  ;(window as any).clickyab_callback = clickyab_callback
-})()
+  (window as any).clickyab_callback = clickyab_callback
+})();
