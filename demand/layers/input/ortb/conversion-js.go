@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"clickyab.com/crane/demand/layers/internal/js"
-	"github.com/clickyab/services/framework/router"
 )
 
 var (
@@ -21,7 +20,9 @@ func trackerJS(_ context.Context, w http.ResponseWriter, r *http.Request) {
 	u := url.URL{
 		Host: r.Host,
 		//	Scheme: proto,
-		Path: router.MustPath("conversion", map[string]string{}),
+
+		// Path: router.MustPath("conversion", map[string]string{}),
+		Path: "/conversion", // TODO: we re-write the path for BC, must switch to real path
 	}
 	// Exactly once!
 	str := strings.Replace(string(tracker), "{{.URL}}", u.String(), 1)
