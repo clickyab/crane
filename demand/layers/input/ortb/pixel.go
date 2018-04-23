@@ -7,15 +7,19 @@ import (
 
 	"clickyab.com/crane/demand/builder"
 	"clickyab.com/crane/demand/layers/output/pixel"
+	"clickyab.com/crane/workers/shadow/impression"
 	"clickyab.com/crane/workers/show"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/broker"
+	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/kv"
 	"github.com/clickyab/services/safe"
 	"github.com/sirupsen/logrus"
 )
 
 const pixelPath = "/pixel/:rh/:size/:type/:subtype/:jt"
+
+var timeout = config.RegisterDuration("crane.demand.workers.imp.timeout", 10*time.Second, "worker timeout")
 
 // showPixel for ads which is not rendered by us.
 func showPixel(ctx context.Context, w http.ResponseWriter, r *http.Request) {
@@ -49,9 +53,15 @@ func showPixel(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	exp, _ := context.WithTimeout(ctx, 10*time.Second)
-	safe.GoRoutine(exp, func() {
+	exp1, _ := context.WithTimeout(ctx, timeout.Duration())
+	safe.GoRoutine(exp1, func() {
 		job := show.NewImpressionJob(c, c.Seats()...)
+		broker.Publish(job)
+	})
+
+	exp2, _ := context.WithTimeout(ctx, timeout.Duration())
+	safe.GoRoutine(exp2, func() {
+		job := impression.NewImpressionJob(c, c.Seats()...)
 		broker.Publish(job)
 	})
 

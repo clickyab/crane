@@ -8,6 +8,7 @@ import (
 
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/workers/models"
+	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/mysql"
 )
 
@@ -130,5 +131,109 @@ func AddImpression(p entity.Publisher, m models.Impression, s models.Seat) error
 		m.Timestamp.Unix(), m.Timestamp.Format("20060102"), said,
 		sID, p.Supplier().Name(), sDiffCPM,
 		impCPM, impCPM*float64(p.Supplier().Share())/100)
+	return err
+}
+
+// AddImpressionShadow insert new impression to daily table
+// TODO : multiple insert per one query
+func AddImpressionShadow(p entity.Publisher, m models.Impression, s models.Seat) error {
+	var err error
+	manger := NewManager()
+	err = manger.Begin()
+	assert.Nil(err)
+	defer func() {
+		if err != nil {
+			assert.Nil(manger.Rollback())
+		} else {
+			assert.Nil(manger.Commit())
+		}
+	}()
+	impCPM := s.CPM
+	if s.SCPM != 0 {
+		impCPM = s.SCPM
+	}
+	sDiffCPM := sql.NullFloat64{Valid: s.SCPM != 0, Float64: s.CPM - s.SCPM}
+	wID := sql.NullInt64{}
+	appID := sql.NullInt64{}
+	refer := sql.NullString{Valid: m.Referrer != "", String: m.Referrer}
+	parent := sql.NullString{Valid: m.ParentURL != "", String: m.ParentURL}
+
+	if p.Type() == entity.PublisherTypeWeb {
+		wID = sql.NullInt64{Valid: p.ID() != 0, Int64: p.ID()}
+
+	} else if p.Type() == entity.PublisherTypeApp {
+		appID = sql.NullInt64{Valid: p.ID() != 0, Int64: p.ID()}
+	} else {
+		panic("mismatch impression and publisher type")
+	}
+
+	var sID int64
+
+	// find slot id
+	if wID.Valid {
+		sID, err = FindWebSlotID(s.SlotPublicID, wID.Int64, s.AdSize)
+	} else if appID.Valid {
+		sID, err = FindAppSlotID(s.SlotPublicID, appID.Int64, s.AdSize)
+	}
+	if err != nil {
+		return err
+	}
+
+	ca, err := GetAd(s.AdID)
+	if err != nil {
+		return err
+	}
+	copString := m.CopID
+	if len(m.CopID) > 10 {
+		copString = copString[:10]
+	}
+	copID, _ := strconv.ParseInt(copString, 16, 64)
+	q1 := fmt.Sprintf(`INSERT INTO impressions (
+							campaign_id,
+							id,
+							publisher_name,
+							publisher_type,
+							creative_id,
+							cpc,
+							supplier,
+							diff,
+							cpm,
+							seat_id,
+							created_at,
+							share
+							) VALUES (
+							?,?,?,
+							?,?,?,
+							?,?,?,
+							?,?,?
+							)`)
+
+	_, err = manger.GetWDbMap().Exec(q1,
+		ca.Campaign().ID(), s.ReserveHash,
+		p.Name(), string(p.Type()),
+		s.AdID, s.WinnerBID, p.Supplier().Name(), sDiffCPM, impCPM, sID,
+		m.Timestamp, p.Supplier().Share())
+
+	if err != nil {
+		return err
+	}
+
+	q2 := fmt.Sprintf(`INSERT INTO impression_details (
+							id,
+							ref,
+							page,
+							ip,
+							ua,
+							user_id,
+							created_at
+							) VALUES (
+							?,?,?,
+							?,?,?,
+							?
+							)`)
+	_, err = manger.GetWDbMap().Exec(q2,
+		s.ReserveHash, refer, parent, m.IP.String(), m.UserAgent, copID,
+		m.Timestamp)
+
 	return err
 }

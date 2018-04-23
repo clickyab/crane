@@ -68,6 +68,12 @@ func AddImpression(publisher entity.Publisher, impression models.Impression, sea
 	return entities.AddImpression(publisher, impression, seat)
 }
 
+// AddImpression insert new impression to daily table
+// TODO : multiple insert per query
+func AddImpressionShadow(publisher entity.Publisher, impression models.Impression, seat models.Seat) error {
+	return entities.AddImpressionShadow(publisher, impression, seat)
+}
+
 // AdClick will get impression from job and insert it into click table
 func AdClick(p entity.Publisher, m models.Impression, s models.Seat,
 	os entity.OS, fast int64) error {
