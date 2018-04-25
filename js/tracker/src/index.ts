@@ -52,8 +52,8 @@
   cyImp = getWholeQuery['cy_imp'];
 
   if (cyClick && cyImp) {
-    document.cookie = 'cy_click=' + cyClick + '; expires=Fri, 31 Dec 2022 23:59:59 GMT';
-    document.cookie = 'cy_imp=' + cyImp + '; expires=Fri, 31 Dec 2022 23:59:59 GMT';
+    document.cookie = 'cy_click=' + cyClick + '; expires=Fri, 31 Dec 2022 23:59:59 GMT' + `; path=/`;
+    document.cookie = 'cy_imp=' + cyImp + '; expires=Fri, 31 Dec 2022 23:59:59 GMT' + `; path=/`;
   } else {
     cyClick = getCookie('cy_click');
     cyClick = getCookie('cy_imp');
