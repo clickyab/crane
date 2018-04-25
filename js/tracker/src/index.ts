@@ -42,6 +42,8 @@
   }
 
   function clickyab_callback(actionId: string) {
+    cyClick = getCookie('cy_click');
+    cyImp = getCookie('cy_imp');
     if (cyImp !== null && cyImp !== undefined) {
       appendImgHit(cyClick, cyImp, actionId)
     }
@@ -56,7 +58,7 @@
     document.cookie = 'cy_imp=' + cyImp + '; expires=Fri, 31 Dec 2022 23:59:59 GMT' + `; path=/`;
   } else {
     cyClick = getCookie('cy_click');
-    cyClick = getCookie('cy_imp');
+    cyImp = getCookie('cy_imp');
   }
 
   (window as any).clickyab_callback = clickyab_callback
