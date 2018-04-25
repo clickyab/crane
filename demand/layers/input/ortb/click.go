@@ -107,7 +107,7 @@ func replaceParameters(url, domain, campaign, impID, ip string) string {
 	)
 
 	url = r.Replace(url)
-	return `<html><head><title>` + url + `</title><meta name="robots" content="nofollow"/></head>
-			<body><script>window.setTimeout( function() { window.location.href = '` + url + `' }, 500 );</script></body>
-			</html>`
+	return `<html><head><title>` + url +
+		`</title><meta name="robots" content="nofollow"/></head><body onload="document.location.replace('` + url +
+		`')"><script>window.setTimeout( function() { window.location.href = '` + url + `' }, 3000 );</script></body></html>`
 }
