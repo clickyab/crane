@@ -145,6 +145,7 @@ func (s *seat) ImpressionURL() *url.URL {
 		},
 		s.cpm,
 		showExpire.Duration(),
+		s.context.protocol.String(),
 	)
 	return s.imp
 }
@@ -172,6 +173,7 @@ func (s *seat) ClickURL() *url.URL {
 		},
 		cpm,
 		clickExpire.Duration(),
+		entity.HTTP.String(),
 	)
 	return s.click
 }
@@ -194,12 +196,13 @@ func (s *seat) WinNoticeRequest() *url.URL {
 			"pt":      s.context.publisher.Type().String(),
 		},
 		s.cpm,
-		time.Hour, // TODO : fix me when there is actually a code to handle it
+		time.Hour, // TODO : fix me when there is actually a code to handle it,
+		s.context.protocol.String(),
 	)
 	return s.win
 }
 
-func (s *seat) makeURL(route string, params map[string]string, cpm float64, expire time.Duration) *url.URL {
+func (s *seat) makeURL(route string, params map[string]string, cpm float64, expire time.Duration, scheme string) *url.URL {
 	if s.winnerAd == nil {
 		panic("no winner")
 	}
@@ -239,7 +242,7 @@ func (s *seat) makeURL(route string, params map[string]string, cpm float64, expi
 	)
 	u := &url.URL{
 		Host:   s.context.host,
-		Scheme: s.context.Protocol().String(),
+		Scheme: scheme,
 		Path:   res,
 	}
 	v := url.Values{}
