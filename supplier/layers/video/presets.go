@@ -147,7 +147,7 @@ func getImps(r *http.Request, pub entity.Publisher, s map[string]output.Seat, re
 		mimes = getMimes(requestedMime...)
 	)
 
-	baseID := fmt.Sprintf("%s", pub.ID())
+	baseID := fmt.Sprintf("%d", pub.ID())
 
 	assert.True(len(mimes) > 0)
 

@@ -14,7 +14,7 @@ import (
 )
 
 var (
-	staticSeatExp = config.RegisterDuration("crane.models.expire.static.seat", time.Minute, "expire time of static seats")
+	staticSeatExp = config.RegisterDuration("crane.models.expire.static.seat", 10*time.Minute, "expire time of static seats")
 )
 
 type loader struct {
@@ -24,11 +24,11 @@ func (loader) Initialize() {
 	ctx := context.Background()
 	loader := entities.StaticSeatLoader
 
-	staticSeats := pool.NewPool(loader, memorypool.NewMemoryPool(), staticSeatExp.Duration(), 10*time.Second, 3)
-	staticSeats.Start(ctx)
+	seats = pool.NewPool(loader, memorypool.NewMemoryPool(), staticSeatExp.Duration(), 10*time.Second, 3)
+	seats.Start(ctx)
 
 	// Wait for the first time load
-	<-staticSeats.Notify()
+	<-seats.Notify()
 
 	logrus.Debug("Pool initialized and ready")
 }
