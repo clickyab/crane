@@ -81,7 +81,7 @@ var sup = supplier.NewClickyab()
 //	m		: mobile
 //	tid		: tracking id
 func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-	pubID := r.URL.Query().Get("a")
+	pubID := r.URL.Query().Get("i")
 	pub, err := website.GetWebSite(sup, pubID)
 
 	if err != nil {
