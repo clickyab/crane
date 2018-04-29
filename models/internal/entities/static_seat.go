@@ -72,6 +72,51 @@ type StaticSeat struct {
 	staticSeat
 }
 
+// Publisher return Publisher
+func (a *StaticSeat) Publisher() string {
+	return a.staticSeat.Publisher
+}
+
+// Supplier return Supplier
+func (a *StaticSeat) Supplier() string {
+	return a.staticSeat.Supplier
+}
+
+// Type return Type
+func (a *StaticSeat) Type() string {
+	return string(a.staticSeat.Type)
+}
+
+// Position return Position
+func (a *StaticSeat) Position() string {
+	return a.staticSeat.Position
+}
+
+// From return From
+func (a *StaticSeat) From() time.Time {
+	return a.staticSeat.From
+}
+
+// To return To
+func (a *StaticSeat) To() time.Time {
+	return a.staticSeat.To
+}
+
+// RTBMarkup return RTBMarkup
+func (a *StaticSeat) RTBMarkup() string {
+	return a.staticSeat.RTBMarkup
+}
+
+// Chance return Chance
+func (a *StaticSeat) Chance() int {
+	return a.staticSeat.Chance
+}
+
+// ID return ID
+func (a *StaticSeat) ID() int64 {
+	return a.staticSeat.ID
+}
+
 // Encode is the encode function for serialize object in io writer
 func (a *StaticSeat) Encode(w io.Writer) error {
 	g := gob.NewEncoder(w)
@@ -93,7 +138,7 @@ type staticSeat struct {
 	From      time.Time      `json:"from" db:"from"`
 	To        time.Time      `json:"to" db:"to"`
 	RTBMarkup string         `json:"rtb_markup" db:"rtb_markup"`
-	Chance    int64          `json:"chance" db:"chance"`
+	Chance    int            `json:"chance" db:"chance"`
 }
 
 // StaticSeatLoader is the loader of static ads
@@ -101,8 +146,7 @@ func StaticSeatLoader(_ context.Context) (map[string]kv.Serializable, error) {
 	var res []staticSeat
 	t := time.Now()
 
-	query := fmt.Sprintf(`SELECT id,publisher,supplier,type,position,from,to,rtb_markup,chance
-	 	FROM static_seats WHERE from <= ? AND to >=?`)
+	query := fmt.Sprintf("SELECT id,publisher,supplier,type,position,`from`,`to`,rtb_markup,chance FROM static_seats WHERE `from` <= ? AND `to` >=?")
 
 	_, err := NewManager().GetRDbMap().Select(
 		&res,
@@ -115,8 +159,8 @@ func StaticSeatLoader(_ context.Context) (map[string]kv.Serializable, error) {
 	}
 	ads := make(map[string]kv.Serializable)
 	for i := range res {
-		ads[res[i].Publisher+"/"+res[i].Supplier+"/"+string(res[i].Type)] = &StaticSeat{staticSeat: res[i]}
+		ads[res[i].Publisher+"/"+res[i].Supplier+"/"+string(res[i].Type)+"/"+res[i].Position] = &StaticSeat{staticSeat: res[i]}
 	}
-	logrus.Debugf("Load %s static ads ads", len(ads))
+	logrus.Debugf("Load %d static ads", len(ads))
 	return ads, nil
 }
