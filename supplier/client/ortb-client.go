@@ -16,6 +16,10 @@ import (
 
 // Call an openrtp end point
 func Call(ctx context.Context, method, url string, pl *openrtb.BidRequest) (*openrtb.BidResponse, error) {
+	bid := &openrtb.BidResponse{}
+	if len(pl.Imp) == 0 {
+		return bid, nil
+	}
 	d, err := json.Marshal(pl)
 	if err != nil {
 		xlog.GetWithError(ctx, err).Debug("marshal failed")
@@ -44,11 +48,10 @@ func Call(ctx context.Context, method, url string, pl *openrtb.BidRequest) (*ope
 		return nil, err
 	}
 
-	bid := openrtb.BidResponse{}
-	err = json.NewDecoder(resp.Body).Decode(&bid)
+	err = json.NewDecoder(resp.Body).Decode(bid)
 	if err != nil {
 		xlog.GetWithError(ctx, err).Debug("decode failed")
 		return nil, err
 	}
-	return &bid, nil
+	return bid, nil
 }
