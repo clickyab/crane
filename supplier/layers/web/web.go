@@ -91,7 +91,7 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	l := r.URL.Query().Get("l")
 	ref := r.URL.Query().Get("r")
 	dnt, _ := strconv.Atoi(r.Header.Get("DNT"))
-	m := r.URL.Query().Get("m") != ""
+	m, _ := strconv.ParseBool(r.URL.Query().Get("m"))
 	tid := r.URL.Query().Get("tid")
 	s := r.URL.Query().Get("s")
 	c, err := strconv.Atoi(r.URL.Query().Get("c"))
