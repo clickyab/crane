@@ -185,7 +185,7 @@ func bannerMarkup(ctx entity.Context, s entity.Seat) *openrtb.Bid {
 		ID:    s.ReservedHash(),
 		ImpID: s.PublicID(),
 		AdMarkup: fmt.Sprintf(
-			`<iframe src="%s&scpm=${AUCTION_PRICE}" width="%d" height="%d" frameborder="0"  scrolling="no" style="max-width:100%"></iframe>`,
+			`<iframe src="%s&scpm=${AUCTION_PRICE}" width="%d" height="%d" frameborder="0"  scrolling="no" style="max-width:100%%"></iframe>`,
 			s.ImpressionURL().String(),
 			s.Width(),
 			s.Height(),
