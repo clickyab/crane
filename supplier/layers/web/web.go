@@ -149,7 +149,8 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		"capping_mode": "reset",
 		"underfloor":   true,
 	}
-	if _, ok := pub.Attributes()[entity.PAFatFinger]; ok {
+	// fat finger is allowed only on mobile
+	if _, ok := pub.Attributes()[entity.PAFatFinger]; ok && m {
 		ext["fat_finger"] = true
 	}
 	j, err := json.Marshal(ext)
