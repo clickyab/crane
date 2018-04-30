@@ -75,7 +75,7 @@ const bannerTemplateText = `<!DOCTYPE html>
 	{{ end }}
 
     {{ if .Tiny }}<a class="tiny" href="{{.TinyURL}}" target="_blank"></a>{{ end }}
-    <a id="click_banner_id" href="{{ .Link }}" target="_blank"><img src="{{ .Src }}" border="0" height="{{ .Height }}" width="{{ .Width }}" style="width:100vw;height:100vh;"/></a>
+    <a id="click_banner_id" href="{{ .Link }}" target="_blank"><img src="{{ .Src }}" border="0" height="{{ .Height }}" width="{{ .Width }}" style="width:100vw;height:100vh;" class="adhere"/></a>
     <br style="clear: both;"/>
 	<script>
 	var elem = document.getElementById("click_banner_id");
