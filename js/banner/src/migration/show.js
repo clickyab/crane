@@ -29,13 +29,13 @@ if (window.clickyab_ad) {
 
 
     setTimeout(function () {
-      // if (!window.injectClickyabMultiJs) {
+      var hasElement  = document.getElementById("clickyab-show-js-v2");
+      if (hasElement) return;
       window.injectClickyabMultiJs = true;
       var scriptDom = document.createElement("script");
       scriptDom.setAttribute("id", "clickyab-show-js-v2");
       scriptDom.setAttribute("src", "{{.URL}}");
       document.body.appendChild(scriptDom);
-      // }
     }, time);
 
 
