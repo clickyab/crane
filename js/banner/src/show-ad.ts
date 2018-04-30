@@ -19,6 +19,7 @@ export default class ShowAd {
     } else {
       this.domain = clickyabParams.domain
       this.publisherId = clickyabParams.id
+      window.addEventListener('resize', this.setHeights.bind(this))
     }
   }
 
@@ -33,6 +34,7 @@ export default class ShowAd {
     this.getAdsFromRemote(ads => {
       this.injectSrc(ads)
       this.injectIframes()
+      this.setHeights()
       if (ads.m) {
         this.injectMobileAds(ads.m)
       }
@@ -41,7 +43,6 @@ export default class ShowAd {
 
   private setStyle(ad: IAd) {
     ad.element.style.height = ad.height + 'px'
-    ad.element.style.width = ad.width + 'px'
     ad.element.style.maxWidth = ad.width + 'px'
     ad.element.style.textAlign = 'center'
     return ad
@@ -59,15 +60,25 @@ export default class ShowAd {
         ) {
           this.setCookie('cy_interstitial', 'true', 0.5)
         }
-
         if (!ignoreAdBecauseCookie && ad.iframe) {
-          ad.element.innerHTML = decodeURIComponent(ad.iframe || '')
-
+          ad.element.innerHTML = ad.iframe
           if (ad.effect) {
             const effectAct = new Effect(ad)
           }
         }
       }
+    })
+  }
+
+  private setHeights() {
+    this.ads.forEach(ad => {
+      let newHeight =
+        ad.element.offsetWidth *
+        parseInt(ad.height ? ad.height : '0') /
+        parseInt(ad.width ? ad.width : '0')
+      ad.element.style.height = newHeight + 'px'
+      let iframe = ad.element.getElementsByTagName('iframe')
+      iframe.item(0).style.height = newHeight + 'px'
     })
   }
 
