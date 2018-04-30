@@ -23,7 +23,8 @@ export default class ShowAd {
   }
 
   public run() {
-    if (window.document.body.getAttribute('clickyab-showAd-ready') === 'true') return
+    if (window.document.body.getAttribute('clickyab-showAd-ready') === 'true')
+      return
     window.document.body.setAttribute('clickyab-showAd-ready', 'true')
     console.log('start show ad')
     this.ads = this.findAdsInPage()
@@ -40,6 +41,8 @@ export default class ShowAd {
 
   private setStyle(ad: IAd) {
     ad.element.style.height = ad.height + 'px'
+    ad.element.style.width = ad.width + 'px'
+    ad.element.style.maxWidth = ad.width + 'px'
     ad.element.style.textAlign = 'center'
     return ad
   }
@@ -50,7 +53,10 @@ export default class ShowAd {
       if (ad.valid) {
         if (ad.effect === 'interstitial' && this.getCookie('cy_interstitial')) {
           ignoreAdBecauseCookie = true
-        } else if (ad.effect === 'interstitial' && !this.getCookie('cy_interstitial')) {
+        } else if (
+          ad.effect === 'interstitial' &&
+          !this.getCookie('cy_interstitial')
+        ) {
           this.setCookie('cy_interstitial', 'true', 0.5)
         }
 
@@ -135,7 +141,9 @@ export default class ShowAd {
 
   private findAdsInPage(): HTMLElement[] {
     let elements: HTMLElement[] = []
-    const elementsCollection = document.getElementsByClassName(CONFIG.SELECTOR_CLASS)
+    const elementsCollection = document.getElementsByClassName(
+      CONFIG.SELECTOR_CLASS
+    )
     for (let i = 0; i < elementsCollection.length; i++) {
       elements.push(elementsCollection.item(i) as HTMLElement)
     }
@@ -161,20 +169,22 @@ export default class ShowAd {
   }
 
   private injectMobileAds(src: string) {
-    const div = document.createElement('div');
+    const div = document.createElement('div')
     div.setAttribute(
       'style',
       `position: fixed; width: 100%; z-index:99999999; left: 0; bottom: 0px; margin: 0; padding: 0; text-align: center;`
-    );
-    div.style.height = "50px";
-    div.innerHTML = src;
+    )
+    div.style.height = '50px'
+    div.innerHTML = src
 
     document.getElementsByTagName('body')[0].appendChild(div)
   }
 
   private getAdSize(ad: IAd): number {
     const size: string = `${ad.width}_${ad.height}`
-    const sizes: { [index: string]: number } = CONFIG.BANNER_SIZES as { [index: string]: number }
+    const sizes: { [index: string]: number } = CONFIG.BANNER_SIZES as {
+      [index: string]: number
+    }
     return sizes[size] || -1
   }
 
