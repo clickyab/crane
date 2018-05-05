@@ -32,12 +32,24 @@ const defaultTemplateText string = `
 {{end}}
 `
 
+const textListTemplateText string = `
+{{range $index, $results := .}}
+	<div>
+        <a href='{{.Click}}'>
+            <img style="display: none;" src='{{.Impression}}'/‎>
+            <div>{{.Title}}</div>
+        </a>
+    </div>
+{{end}}
+`
+
 var (
 	templateFuncs = template.FuncMap{
 		"isEven": isEven,
 		"isOdd":  isOdd,
 	}
-	nativeTemplate = template.Must(template.New("inapp-template").Funcs(templateFuncs).Parse(defaultTemplateText))
+	nativeTemplate     = template.Must(template.New("inapp-template").Funcs(templateFuncs).Parse(defaultTemplateText))
+	textNativeTemplate = template.Must(template.New("inapp-template").Funcs(templateFuncs).Parse(textListTemplateText))
 )
 
 func isEven(x int) bool {
@@ -49,7 +61,7 @@ func isOdd(x int) bool {
 }
 
 // RenderNative is the native ad renderer
-func RenderNative(_ context.Context, resp *openrtb.BidResponse) ([]byte, error) {
+func RenderNative(_ context.Context, resp *openrtb.BidResponse, textOnly bool) ([]byte, error) {
 	var res []nativeResp
 
 	for i := range resp.SeatBid {
@@ -80,9 +92,16 @@ func RenderNative(_ context.Context, resp *openrtb.BidResponse) ([]byte, error) 
 	}
 
 	var outputHTML bytes.Buffer
-	err := nativeTemplate.Execute(&outputHTML, res)
-	if err != nil {
-		return nil, err
+	if textOnly {
+		err := textNativeTemplate.Execute(&outputHTML, res)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		err := nativeTemplate.Execute(&outputHTML, res)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	r := map[string]string{"html": outputHTML.String()}

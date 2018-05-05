@@ -12,7 +12,7 @@ import (
 	"github.com/clickyab/services/framework"
 )
 
-func getImps(r *http.Request, count int, pub entity.Publisher) []openrtb.Impression {
+func getImps(r *http.Request, count int, pub entity.Publisher, image, text bool) []openrtb.Impression {
 	var (
 		res []openrtb.Impression
 		sec = secure(r)
@@ -25,23 +25,27 @@ func getImps(r *http.Request, count int, pub entity.Publisher) []openrtb.Impress
 	assert.Nil(err)
 	for i := 1; i <= count; i++ {
 		// make request
+		var resAssets []request.Asset
+		if image {
+			resAssets = append(resAssets, request.Asset{
+				ID:       2, // ID 2 is for image
+				Required: 1,
+				Image: &request.Image{
+					TypeID: request.ImageTypeMain,
+				},
+			})
+		}
+		if text {
+			resAssets = append(resAssets, request.Asset{
+				ID:       1, // ID 1 is for text
+				Required: 1,
+				Title: &request.Title{
+					Length: nativeMaxTitleLen.Int(),
+				},
+			})
+		}
 		req := request.Request{
-			Assets: []request.Asset{
-				{
-					ID:       1, // ID 1 is for text
-					Required: 1,
-					Title: &request.Title{
-						Length: nativeMaxTitleLen.Int(),
-					},
-				},
-				{
-					ID:       2, // ID 2 is for image
-					Required: 1,
-					Image: &request.Image{
-						TypeID: request.ImageTypeMain,
-					},
-				},
-			},
+			Assets: resAssets,
 		}
 		bReq, err := json.Marshal(req)
 		assert.Nil(err)
