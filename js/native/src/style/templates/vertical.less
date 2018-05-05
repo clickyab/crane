@@ -1,0 +1,57 @@
+@import "../variables";
+@import "../fonts";
+
+._clickyab_ {
+  &.vertical {
+
+    &.carve {
+      .items {
+        img {
+          border-radius: 5px;
+          margin-bottom: 5px;
+        }
+      }
+    }
+
+    .items {
+      margin: 0 -5px;
+
+      img {
+        width: 100%;
+      }
+
+      & > div {
+
+        &:hover img {
+          opacity: 0.85;
+        }
+        width: 100%;
+        display: inline-block;
+        padding: 5px;
+        box-sizing: border-box;
+
+      }
+    }
+
+    &.horizontal-item {
+      .items {
+        & > div {
+          img {
+            width: 30%;
+          }
+          a {
+            * {
+              float: right;
+            }
+            div {
+              padding: 5px;
+              width: 70%;
+              box-sizing: border-box;
+            }
+          }
+        }
+      }
+    }
+  }
+
+}
