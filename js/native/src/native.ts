@@ -157,13 +157,14 @@ export default class NativeComponent {
 			</div>
 		`;
 
+
 		return templ;
 	}
 
 	private compiler(text, options): string {
 		let re = /__(.+?)__/g,
 			reExp = /(^( )?(var|if|for|else|switch|case|break|{|}|;))(.*)?/g,
-			code = "with(obj) { console.log(obj, this); var r=[];\n",
+			code = "with(obj) { var r=[];\n",
 			cursor = 0,
 			result,
 			match;
