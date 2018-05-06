@@ -73,7 +73,6 @@ export default class NativeComponent {
 
 
 		const width = this.wrapperElement.offsetWidth;
-		console.log(width, 280 > width && width <= 480)
 		if (width <= 280) {
 			this.addClass("xs");
 		} else if (280 < width && width <= 480) {
