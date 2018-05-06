@@ -138,6 +138,9 @@ type slaveStatus struct {
 	MasterSSLCrlpath          sql.NullString `db:"Master_SSL_Crlpath"`
 	UsingGtid                 sql.NullString `db:"Using_Gtid"`
 	GtidIOPos                 sql.NullString `db:"Gtid_IO_Pos"`
+	ReplicateDoDomainIds      sql.NullString `db:"replicate_do_domain_ids"`
+	ReplicateIgnoreDomainIds  sql.NullString `db:"replicate_ignore_domain_ids"`
+	ParallelMode              sql.NullString `db:"parallel_mode"`
 }
 
 // GenericJSONField is used to handle generic json data in postgres

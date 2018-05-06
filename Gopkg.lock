@@ -61,7 +61,7 @@
     "version",
     "xlog"
   ]
-  revision = "6c6febf730a58bdc682d450de127b34d111f1db3"
+  revision = "5a45db291c56d200aea6bd78f746ee59e738c29f"
 
 [[projects]]
   branch = "master"
@@ -224,6 +224,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "7dbaa0d33a0cd977b8b74eefcefa74636200def0ac018de521b71e63d477f2cf"
+  inputs-digest = "9981e132cdb83223e5a25aff9e455c0264e8ca684b373a5e2104baf8e7a68a73"
   solver-name = "gps-cdcl"
   solver-version = 1
