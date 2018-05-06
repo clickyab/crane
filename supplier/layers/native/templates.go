@@ -90,4 +90,5 @@ func init() {
 	registerNativeTemplate("grid4x", normalTpl, true, 4, 8, 12)
 	registerNativeTemplate("single", normalTpl, true, 1)
 	registerNativeTemplate("text-list", textTpl, false, 1, 3, 4, 6, 8, 12)
+	registerNativeTemplate("vertical", normalTpl, true, 1, 3, 4, 6, 8, 12)
 }
