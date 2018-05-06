@@ -12,7 +12,7 @@ const (
 	normalTemplate = `
 {{range $index, $results := .}}
 	<div>
-        <a href='{{.Click}}'>
+        <a href='{{.Click}}' target='_blank'>
             <img src='{{.Image}}'/‎>
             <img style="display: none;" src='{{.Impression}}'/‎>
             <div>{{.Title}}</div>
@@ -24,7 +24,7 @@ const (
 	textTemplate = `
 {{range $index, $results := .}}
 	<div>
-        <a href='{{.Click}}'>
+        <a href='{{.Click}}' target='_blank'>
             <img style="display: none;" src='{{.Impression}}'/‎>
             <div>{{.Title}}</div>
         </a>
