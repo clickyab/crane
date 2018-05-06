@@ -93,13 +93,17 @@ func ping(replication bool, db ...*gorp.DbMap) error {
 		f := slaveStatus{}
 		err := db[i].SelectOne(&f, `SHOW SLAVE STATUS`)
 		if err != nil {
+
+			logrus.WithField("database", i).Error(err)
 			continue
 		}
 
 		if f.LastErrno != 0 || f.SlaveIORunning == "No" || f.SlaveSQLRunning == "No" {
+			logrus.WithField("database", i).Error("slave is not running")
 			continue
 		} else if f.SecondsBehindMaster.Valid {
 			if f.SecondsBehindMaster.Int64 > validSecondsSlaveBehind.Int64() {
+				logrus.WithField("database", i).Errorf("slave is to late %d > %d", f.SecondsBehindMaster.Int64, validSecondsSlaveBehind.Int64())
 				continue
 			}
 		}
