@@ -9,7 +9,7 @@ export default class NativeComponent {
 	private defaultOptions: INativeOptions = {
 		clickyab: "_clickyab_",
 		type: types.grid4x,
-		fontFamily: fontFamilies.nazanin,
+		fontFamily: fontFamilies.samim,
 		count: "4",
 		corners: corners.sharp,
 		title: "مطالب از سراسر وب",
