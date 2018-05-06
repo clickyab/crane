@@ -20,36 +20,8 @@ type nativeResp struct {
 	Click      string `json:"click"`
 }
 
-const defaultTemplateText string = `
-{{range $index, $results := .}}
-	<div>
-        <a href='{{.Click}}'>
-            <img src='{{.Image}}'/‎>
-            <img style="display: none;" src='{{.Impression}}'/‎>
-            <div>{{.Title}}</div>
-        </a>
-    </div>
-{{end}}
-`
-
-var (
-	templateFuncs = template.FuncMap{
-		"isEven": isEven,
-		"isOdd":  isOdd,
-	}
-	nativeTemplate = template.Must(template.New("inapp-template").Funcs(templateFuncs).Parse(defaultTemplateText))
-)
-
-func isEven(x int) bool {
-	return (x+1)%2 == 0
-}
-
-func isOdd(x int) bool {
-	return (x+1)%2 != 0
-}
-
 // RenderNative is the native ad renderer
-func RenderNative(_ context.Context, resp *openrtb.BidResponse) ([]byte, error) {
+func RenderNative(_ context.Context, resp *openrtb.BidResponse, tpl *template.Template) ([]byte, error) {
 	var res []nativeResp
 
 	for i := range resp.SeatBid {
@@ -80,7 +52,7 @@ func RenderNative(_ context.Context, resp *openrtb.BidResponse) ([]byte, error) 
 	}
 
 	var outputHTML bytes.Buffer
-	err := nativeTemplate.Execute(&outputHTML, res)
+	err := tpl.Execute(&outputHTML, res)
 	if err != nil {
 		return nil, err
 	}
