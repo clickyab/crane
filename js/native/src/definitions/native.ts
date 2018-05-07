@@ -50,8 +50,8 @@ export enum position {
 }
 
 export enum types {
-	grid = "grid",
-	grid4x = "grid",
+	grid = "grid4x",
+	grid4x = "grid4x",
 	grid3x = "grid3x",
 	single = "single",
 	vertical = "vertical",
