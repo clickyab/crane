@@ -141,7 +141,7 @@ export default class NativeComponent {
 				${this.compiler(this.style, this.options)
 			.replace(new RegExp("_clickyab_", "ig"), `clickyab_${this.randomSting}`)}
 				</style>` : "";
-		return ` ${this.getHeader()}${styleTag} <div class="items">${html}</div>`;
+		return ` ${this.getHeader()}${styleTag} <div class="cy-items">${html}</div>`;
 	}
 
 	private getHeader() {
