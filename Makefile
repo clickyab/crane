@@ -50,6 +50,9 @@ debug-supplier: debuger
 run-imp: all ip2location
 	$(ROOT)/bin/impression-worker
 
+run-imp-shadow: all ip2location
+	$(ROOT)/bin/impression-shadow-worker
+
 debug-imp: ip2location debuger
 	$(BIN)/dlv --listen=:2345 --headless=true --api-version=2 exec $(BIN)/impression-worker
 
