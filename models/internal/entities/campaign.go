@@ -135,7 +135,7 @@ func (c *Campaign) Country() []string {
 
 // Province allowed province (Iran only)
 func (c *Campaign) Province() []string {
-	return c.CampaignRegion.Array()
+	return c.CampaignGeos.Array()
 }
 
 // LatLon allowed lat lon radius
