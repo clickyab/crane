@@ -129,7 +129,7 @@ func internalSelect(
 		targetCPC := targetCPM / (theAd.CalculatedCTR() * 10.0)
 
 		if !under {
-			targetCPC, targetCPM = fixPrice(theAd.Campaign().Strategy(), targetCPC, targetCPM, seat.MinCPC(), seat.MinCPC())
+			targetCPC, targetCPM = fixPrice(theAd.Campaign().Strategy(), targetCPC, targetCPM, seat.MinCPC(), seat.MinCPM())
 		}
 
 		selected[theAd.ID()] = true
@@ -143,13 +143,13 @@ func internalSelect(
 }
 
 func fixPrice(strategy entity.Strategy, cpc, cpm, minCPC, minCPM float64) (float64, float64) {
-	if strategy == entity.StrategyCPC && cpm < minCPM {
-		return cpc, minCPM
-	}
-	if strategy == entity.StrategyCPM && cpc < minCPC {
+	if strategy == entity.StrategyCPC && cpc < minCPC {
 		return minCPC, cpm
 	}
-	return cpc, cpm
+	if strategy == entity.StrategyCPM && cpm < minCPM {
+		return cpc, minCPM
+	}
+	return cpc, minCPM
 }
 
 // selectAds is the only function that one must call to get ads
