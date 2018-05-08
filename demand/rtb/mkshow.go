@@ -127,9 +127,8 @@ func internalSelect(
 		// Do not do second biding pricing on this ads, they can not pass CPMFloor
 		targetCPM := getSecondCPM(seat.SoftCPM(), sorted)
 		targetCPC := targetCPM / (theAd.CalculatedCTR() * 10.0)
-
-		if !under {
-			targetCPC, targetCPM = fixPrice(theAd.Campaign().Strategy(), targetCPC, targetCPM, seat.MinCPC(), seat.MinCPC())
+		if under {
+			targetCPC, targetCPM = fixPrice(theAd.Campaign().Strategy(), targetCPC, targetCPM, seat.MinCPC(), seat.MinCPM())
 		}
 
 		selected[theAd.ID()] = true
@@ -143,11 +142,11 @@ func internalSelect(
 }
 
 func fixPrice(strategy entity.Strategy, cpc, cpm, minCPC, minCPM float64) (float64, float64) {
-	if strategy == entity.StrategyCPC && cpm < minCPM {
-		return cpc, minCPM
-	}
-	if strategy == entity.StrategyCPM && cpc < minCPC {
+	if strategy == entity.StrategyCPC && cpc < minCPC {
 		return minCPC, cpm
+	}
+	if strategy == entity.StrategyCPM && cpm < minCPM {
+		return cpc, minCPM
 	}
 	return cpc, cpm
 }
