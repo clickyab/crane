@@ -55,5 +55,10 @@ func showPixel(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		broker.Publish(job)
 	})
 
+	// add capping
+	safe.GoRoutine(ctx, func() {
+		setCapping(ctx, pl, c.User().ID(), c.Protocol().String())
+	})
+
 	assert.Nil(pixel.Render(ctx, w, c))
 }
