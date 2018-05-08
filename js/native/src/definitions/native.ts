@@ -4,9 +4,9 @@ export interface INative {
 }
 
 export interface INativeOptions {
-	clickyab ?: string;
-	type ?: string;
-	fontFamily ?: fontFamilies;
+	clickyab?: string;
+	type?: string;
+	fontFamily?: fontFamilies;
 	count?: string;
 	corners?: corners;
 	title?: string;
@@ -18,7 +18,9 @@ export interface INativeOptions {
 	tid?: string;
 	titleColor?: string;
 	titleBackGround?: string;
-	orientation ?: "vertical" | "horizontal";
+	orientation?: "vertical" | "horizontal";
+	parent?: string;
+	ref?: string;
 }
 
 export enum fontFamilies {

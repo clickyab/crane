@@ -21,7 +21,9 @@ export default class NativeComponent {
 		domain: "ـ",
 		id: "ـ",
 		titleBackGround: "",
-		titleColor: "#000"
+		titleColor: "#000",
+		parent: document.location.href,
+		ref: document.referrer,
 	};
 	private options: INativeOptions;
 
