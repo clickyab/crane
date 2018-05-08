@@ -3,6 +3,8 @@ package filter
 import (
 	"errors"
 
+	"fmt"
+
 	"clickyab.com/crane/demand/entity"
 )
 
@@ -19,7 +21,7 @@ func (*Province) Check(c entity.Context, in entity.Creative) error {
 		return errors.New("province is unknown")
 	}
 	// The 1 means iran. watch for it please!
-	if hasString(true, in.Campaign().Province(), c.Location().Province().Name) {
+	if hasString(true, in.Campaign().Province(), fmt.Sprint(c.Location().Province().ID)) {
 		return nil
 	}
 	return errors.New("province is not allowed")
