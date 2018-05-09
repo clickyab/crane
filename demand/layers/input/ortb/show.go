@@ -58,9 +58,9 @@ func getRegion(key string) string {
 	return regionPath[key]
 }
 
-func setCapping(ctx context.Context, pl *payloadData, u string, proto string) {
+func setCapping(ctx context.Context, pl *payloadData, proto string) {
 	if (pl.CappRegion == currentRegion.String() || pl.CappRegion == "") && pl.CMode != entity.CappingNone {
-		capping.StoreCapping(pl.CMode, u, pl.Ad.ID())
+		capping.StoreCapping(pl.CMode, pl.TID, pl.Ad.ID())
 		return
 	}
 
@@ -74,7 +74,7 @@ func setCapping(ctx context.Context, pl *payloadData, u string, proto string) {
 
 	urlPath := router.MustPath("capping", map[string]string{
 		"ad_id":     fmt.Sprint(pl.Ad.ID()),
-		"user_id":   u,
+		"user_id":   pl.TID,
 		"capp_mode": fmt.Sprint(pl.CMode),
 	})
 
@@ -151,7 +151,7 @@ func showBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	})
 
 	safe.GoRoutine(ctx, func() {
-		setCapping(ctx, pl, c.User().ID(), c.Protocol().String())
+		setCapping(ctx, pl, c.Protocol().String())
 	})
 
 	assert.Nil(banner.Render(ctx, w, c))
