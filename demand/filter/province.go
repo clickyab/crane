@@ -23,7 +23,9 @@ func (*Province) Check(c entity.Context, in entity.Creative) error {
 
 	// the 1 means for iran
 	if c.Location().Country().ISO == "IR" {
-		return nil
+		if hasString(true, in.Campaign().Province(), "1") {
+			return nil
+		}
 	}
 
 	if hasString(true, in.Campaign().Province(), fmt.Sprint(c.Location().Province().ID)) {
