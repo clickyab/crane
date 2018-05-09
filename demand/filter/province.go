@@ -20,7 +20,12 @@ func (*Province) Check(c entity.Context, in entity.Creative) error {
 		}
 		return errors.New("province is unknown")
 	}
-	// The 1 means iran. watch for it please!
+
+	// the 1 means for iran
+	if c.Location().Country().ISO == "IR" {
+		return nil
+	}
+
 	if hasString(true, in.Campaign().Province(), fmt.Sprint(c.Location().Province().ID)) {
 		return nil
 	}
