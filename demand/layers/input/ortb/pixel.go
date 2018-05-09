@@ -57,7 +57,7 @@ func showPixel(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 	// add capping
 	safe.GoRoutine(ctx, func() {
-		setCapping(ctx, pl, c.User().ID(), c.Protocol().String())
+		setCapping(ctx, pl, c.Protocol().String())
 	})
 
 	assert.Nil(pixel.Render(ctx, w, c))
