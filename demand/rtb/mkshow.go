@@ -97,9 +97,6 @@ func internalSelect(
 			ef     byMulti
 		)
 
-		// order is to get data from exceed floor, then capp passed and if the config allowed,
-		// use the under floor. for under floor there is no second biding pricing
-		var under bool
 		if len(exceedFloor) > 0 {
 			ef = byMulti{
 				Ads:   exceedFloor,
@@ -107,7 +104,6 @@ func internalSelect(
 			}
 		} else if ctx.UnderFloor() && len(underFloor) > 0 {
 			// under floor means we want to fill the seat at any cost. normally our own seat
-			under = true
 			ef = byMulti{
 				Ads:   underFloor,
 				Video: ctx.MultiVideo(),
@@ -127,9 +123,8 @@ func internalSelect(
 		// Do not do second biding pricing on this ads, they can not pass CPMFloor
 		targetCPM := getSecondCPM(seat.SoftCPM(), sorted)
 		targetCPC := targetCPM / (theAd.CalculatedCTR() * 10.0)
-		if under {
-			targetCPC, targetCPM = fixPrice(theAd.Campaign().Strategy(), targetCPC, targetCPM, seat.MinCPC(), seat.MinCPM())
-		}
+
+		targetCPC, targetCPM = fixPrice(theAd.Campaign().Strategy(), targetCPC, targetCPM, seat.MinCPC(), seat.MinCPM())
 
 		selected[theAd.ID()] = true
 		// Only decrease share for CPM (which is reported to supplier) not bid (which is used by us)
