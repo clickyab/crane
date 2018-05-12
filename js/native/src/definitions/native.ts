@@ -4,9 +4,9 @@ export interface INative {
 }
 
 export interface INativeOptions {
-	clickyab ?: string;
-	type ?: "grid";
-	fontFamily ?: fontFamilies;
+	clickyab?: string;
+	type?: string;
+	fontFamily?: fontFamilies;
 	count?: string;
 	corners?: corners;
 	title?: string;
@@ -18,7 +18,9 @@ export interface INativeOptions {
 	tid?: string;
 	titleColor?: string;
 	titleBackGround?: string;
-	orientation ?: "vertical" | "horizontal";
+	orientation?: "vertical" | "horizontal";
+	parent?: string;
+	ref?: string;
 }
 
 export enum fontFamilies {
@@ -35,14 +37,22 @@ export enum corners {
 }
 
 export enum fontSizes {
-	pt_12 = "12pt",
-	pt_14 = "14pt",
-	pt_16 = "16pt",
-	pt_18 = "18pt",
+	pt_8 = "0.8rem",
+	pt_10 = "1.0rem",
+	pt_12 = "1.2rem",
+	pt_16 = "1.6rem",
 }
 
 
 export enum position {
 	top = "top",
 	bottom = "bottom"
+}
+
+export enum types {
+	grid = "grid",
+	grid4x = "grid",
+	grid3x = "grid3x",
+	single = "single",
+	vertical = "vertical",
 }
