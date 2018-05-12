@@ -1,33 +1,50 @@
 @import "variables";
 @import "fonts";
+@import "templates/single";
 @import "templates/grid";
+@import "templates/grid3x";
+@import "templates/vertical";
+@import "templates/text-list";
 
 ._clickyab_ {
   direction: rtl;
   font-family: @fontFamily;
   font-size: @fontSize;
+  clear: both;
+  box-sizing: border-box;
+  width: 100%;
+  height: auto;
+  text-align: right;
+  text-rendering: optimizeLegibility;
+  line-height: 1.4rem;
 
   a, a:hover {
     text-decoration: none;
   }
 
-  .title-holder {
+  .cy-items {
+    display: inline-block;
+  }
+
+  .cy-title-holder {
     color: @titleColor;
     background-color: @titleBackGroundColor;
     padding: 5px;
+    font-weight: bold;
 
-    .title {
+    .cy-title {
       display: inline;
     }
 
-    .logo {
+    .cy-logo {
       float: left;
-
       font-size: 10pt;
 
       img {
-        top: 5px;
+        top: 3px;
         position: relative;
+        float: right;
+        margin-left: 5px;
       }
 
     }
