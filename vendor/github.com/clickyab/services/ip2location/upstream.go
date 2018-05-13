@@ -198,7 +198,7 @@ func readUint8(pos int64) uint8 {
 	data := make([]byte, 1)
 	_, err := f.ReadAt(data, pos-1)
 	if err != nil {
-		logrus.Debugln("File read failed in readUint8 func:", err, " file is: ", f.file.Name())
+		logrus.Warn("File read failed in readUint8 func:", err, " file is: ", f.file.Name())
 	}
 	retval = data[0]
 	return retval
@@ -211,12 +211,12 @@ func readUint32(pos uint32) uint32 {
 	data := make([]byte, 4)
 	_, err := f.ReadAt(data, pos2-1)
 	if err != nil {
-		logrus.Debugln("File read failed in readUint32 func:", err, " file is: ", f.file.Name())
+		logrus.Warn("File read failed in readUint32 func:", err, " file is: ", f.file.Name())
 	}
 	buf := bytes.NewReader(data)
 	err = binary.Read(buf, binary.LittleEndian, &retval)
 	if err != nil {
-		logrus.Debugln("Binary read failed in readUint32 func:", err, " file is: ", f.file.Name())
+		logrus.Warn("Binary read failed in readUint32 func:", err, " file is: ", f.file.Name())
 	}
 	return retval
 }
@@ -228,7 +228,7 @@ func readUint128(pos uint32) *big.Int {
 	data := make([]byte, 16)
 	_, err := f.ReadAt(data, pos2-1)
 	if err != nil {
-		logrus.Debugln("File read failed in readUint128 func:", err, " file is: ", f.file.Name())
+		logrus.Warn("File read failed in readUint128 func:", err, " file is: ", f.file.Name())
 	}
 
 	// little endian to big endian
@@ -246,13 +246,13 @@ func readStr(pos uint32) string {
 	lenbyte := make([]byte, 1)
 	_, err := f.ReadAt(lenbyte, pos2)
 	if err != nil {
-		logrus.Debugln("File read failed in readStr func:", err, " file is: ", f.file.Name())
+		logrus.Warn("File read failed in readStr func:", err, " file is: ", f.file.Name())
 	}
 	strlen := lenbyte[0]
 	data := make([]byte, strlen)
 	_, err = f.ReadAt(data, pos2+1)
 	if err != nil {
-		logrus.Debugln("File read failed in readStr func:", err, " file is: ", f.file.Name())
+		logrus.Warn("File read failed in readStr func:", err, " file is: ", f.file.Name())
 	}
 	retval = string(data[:strlen])
 	return retval
@@ -265,12 +265,12 @@ func readFloat(pos uint32) float32 {
 	data := make([]byte, 4)
 	_, err := f.ReadAt(data, pos2-1)
 	if err != nil {
-		logrus.Debugln("File read failed in readFloat func:", err, " file is: ", f.file.Name())
+		logrus.Warn("File read failed in readFloat func:", err, " file is: ", f.file.Name())
 	}
 	buf := bytes.NewReader(data)
 	err = binary.Read(buf, binary.LittleEndian, &retval)
 	if err != nil {
-		logrus.Debugln("File read failed in readFloat func:", err, " file is: ", f.file.Name())
+		logrus.Warn("File read failed in readFloat func:", err, " file is: ", f.file.Name())
 	}
 	return retval
 }
