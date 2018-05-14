@@ -43,18 +43,18 @@ func doBid(ad entity.Creative, slot entity.Seat, minCPM, minCPC float64, pub ent
 	}
 	ctr := (adCtr*float64(adCTREffect.Int()) + slotCtr*float64(slotCTREffect.Int())) / float64(100)
 	var cpc, cpm float64
-	var under bool
+	var exceed bool
 	if ad.Campaign().Strategy() == entity.StrategyCPC {
 		cpm = float64(ad.MaxBID()) * ctr * 10.0
 		cpc = float64(ad.MaxBID())
-		under = float64(cpc) > minCPC
+		exceed = float64(cpc) >= minCPC
 	} else {
 		cpm = float64(ad.MaxBID())
 		cpc = float64(ad.MaxBID()) / (ctr * 10.0)
-		under = float64(cpm) > minCPM
+		exceed = float64(cpm) >= minCPM
 	}
 
-	return ctr, cpm, cpc, under
+	return ctr, cpm, cpc, exceed
 }
 
 type adAndBid struct {
@@ -164,7 +164,7 @@ func selector(ctx entity.Context, ads []entity.Creative, seat entity.Seat, noVid
 			continue
 		}
 
-		if ctr, cpm, cpc, ok := doBid(creative, seat, seat.MinCPM(), seat.MinCPC(), ctx.Publisher()); ok {
+		if ctr, cpm, cpc, exceed := doBid(creative, seat, seat.MinCPM(), seat.MinCPC(), ctx.Publisher()); exceed {
 			// a pass!
 			exceedFloor = append(
 				exceedFloor,
