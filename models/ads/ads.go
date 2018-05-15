@@ -70,8 +70,8 @@ func AddImpression(publisher entity.Publisher, impression models.Impression, sea
 
 // AdClick will get impression from job and insert it into click table
 func AdClick(p entity.Publisher, m models.Impression, s models.Seat,
-	os entity.OS, fast int64) error {
-	click, err := entities.FillClickData(p, m, s, os, fast)
+	os entity.OS, fast int64, tv bool) error {
+	click, err := entities.FillClickData(p, m, s, os, fast, tv)
 	if err != nil {
 		return err
 	}

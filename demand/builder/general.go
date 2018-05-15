@@ -111,6 +111,14 @@ func SetTargetHost(host string) ShowOptionSetter {
 	}
 }
 
+// SetTrueView set true if true view
+func SetTrueView(tv bool) ShowOptionSetter {
+	return func(o *Context) (*Context, error) {
+		o.tv = tv
+		return o, nil
+	}
+}
+
 // SetProtocolByRequest try to find protocol of the request based on the request headers
 func SetProtocolByRequest(r *http.Request) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {

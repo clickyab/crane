@@ -22,7 +22,8 @@ var (
 type job struct {
 	worker.Impression
 	worker.Seat
-
+	// true if true view
+	TV   bool
 	OS   entity.OS `json:"os"`
 	Fast int64     `json:"fast"`
 }
@@ -64,7 +65,7 @@ func (j *job) process() error {
 		return err
 	}
 
-	return ads.AdClick(pub, j.Impression, j.Seat, j.OS, j.Fast)
+	return ads.AdClick(pub, j.Impression, j.Seat, j.OS, j.Fast, j.TV)
 
 }
 
@@ -101,6 +102,7 @@ func NewClickJob(ctx entity.Context) broker.Job {
 		},
 		OS:   ctx.OS(),
 		Fast: fast,
+		TV:   ctx.TV(),
 	}
 
 	return j

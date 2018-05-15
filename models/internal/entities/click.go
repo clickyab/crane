@@ -22,6 +22,7 @@ type Click struct {
 	slotAdID     int64
 	copID        string
 	impID        int64
+	tv           bool
 	status       int
 	ip           string
 	referrer     string
@@ -56,7 +57,7 @@ func FindImpFromClickByRH(rh string) (*Impression, error) {
 }
 
 // FillClickData try to fill Click structure
-func FillClickData(p entity.Publisher, m models.Impression, s models.Seat, os entity.OS, fast int64) (*Click, error) {
+func FillClickData(p entity.Publisher, m models.Impression, s models.Seat, os entity.OS, fast int64, tv bool) (*Click, error) {
 
 	var err error
 
@@ -105,6 +106,7 @@ func FillClickData(p entity.Publisher, m models.Impression, s models.Seat, os en
 		referrer:     m.Referrer,
 		parent:       m.ParentURL,
 		os:           os.Name,
+		tv:           tv,
 		adSize:       s.AdSize,
 		time:         m.Timestamp.Unix(),
 		date:         m.Timestamp.Format("20060102"),
@@ -146,10 +148,33 @@ func InsertClick(c *Click) error {
 	referrer := sql.NullString{Valid: c.referrer != "", String: c.referrer}
 	parent := sql.NullString{Valid: c.parent != "", String: c.parent}
 
-	_, err := NewManager().GetWDbMap().Exec(q,
+	res, err := NewManager().GetWDbMap().Exec(q,
 		c.reservedHash, c.winnerBid, c.webSiteID, c.appID, 0, c.campaignID,
 		c.campaignAdID, c.slotID, c.slotAdID, c.adID, copID, 0, c.status,
 		c.ip, referrer, parent, c.fast, c.os, c.time, c.date, c.adSize, c.supplier)
 
+	if err != nil {
+		return err
+	}
+
+	// insert true view here
+	if c.tv {
+		clickID, err := res.LastInsertId()
+		if err != nil {
+			return err
+		}
+		err = insertTrueView(clickID)
+		if err != nil {
+			return err
+		}
+
+	}
+
+	return err
+}
+
+func insertTrueView(cID int64) error {
+	q := `INSERT INTO trueview (tv_click_id) VALUES (?)`
+	_, err := NewManager().GetWDbMap().Exec(q, cID)
 	return err
 }

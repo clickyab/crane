@@ -94,4 +94,6 @@ type Context interface {
 	// UnderFloor means that this supplier allow to pass underfloor value.
 	// normally used only for clickyab
 	UnderFloor() bool
+	// TV true if true view
+	TV() bool
 }
