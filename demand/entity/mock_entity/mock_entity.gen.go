@@ -324,6 +324,18 @@ func (mr *MockContextMockRecorder) Suspicious() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Suspicious", reflect.TypeOf((*MockContext)(nil).Suspicious))
 }
 
+// TV mocks base method
+func (m *MockContext) TV() bool {
+	ret := m.ctrl.Call(m, "TV")
+	ret0, _ := ret[0].(bool)
+	return ret0
+}
+
+// TV indicates an expected call of TV
+func (mr *MockContextMockRecorder) TV() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TV", reflect.TypeOf((*MockContext)(nil).TV))
+}
+
 // Timestamp mocks base method
 func (m *MockContext) Timestamp() time.Time {
 	ret := m.ctrl.Call(m, "Timestamp")

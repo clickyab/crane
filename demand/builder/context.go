@@ -54,6 +54,8 @@ type Context struct {
 	cappingMode    entity.CappingMode
 
 	underfloor bool
+	// true view
+	tv bool
 }
 
 // ConnectionType return connection type 2g,3g,4g,...
@@ -227,4 +229,9 @@ func (c *Context) Category() []entity.Category {
 // normally used only for clickyab
 func (c *Context) UnderFloor() bool {
 	return c.underfloor
+}
+
+// TV if true means should insert true view
+func (c *Context) TV() bool {
+	return c.tv
 }

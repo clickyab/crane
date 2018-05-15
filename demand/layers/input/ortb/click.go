@@ -62,6 +62,10 @@ func clickBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetFullSeats(pl.PublicID, pl.Size, pl.ReserveHash, pl.Ad, pl.Bid, pl.PreviousTime, pl.CPM, pl.SCPM, pl.requestType),
 	}
 
+	if pl.requestType == entity.RequestTypeVast {
+		b = append(b, builder.SetTrueView(pl.TV))
+	}
+
 	if pl.PubType == entity.PublisherTypeWeb {
 		b = append(b, builder.SetParent(pl.Parent, pl.Ref))
 	}
