@@ -133,7 +133,14 @@ func vastMarkup(ctx entity.Context, s entity.VastSeat) *openrtb.Bid {
 			},
 			TrackingEvents: []vast.Tracking{
 				{
-					URI:   tracking.String(),
+					URI: func() string {
+						// TODO : it should check bcause we hard coded click to http
+						// remove it after you remove hard coded http in click url
+						if ctx.Protocol() == entity.HTTPS {
+							return strings.Replace(tracking.String(), "http://", "https://", -1)
+						}
+						return tracking.String()
+					}(),
 					Event: "complete",
 				},
 			},
