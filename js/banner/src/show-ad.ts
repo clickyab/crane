@@ -185,18 +185,18 @@ export default class ShowAd {
   }
 
   private injectMobileAds(src: string) {
-    const imgHolder = document.createElement('img')
-    const div = document.createElement('div')
+    const imgHolder = document.createElement('img');
+    const div = document.createElement('div');
     imgHolder.src =
       'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAMAAAD04JH5AAAAmVBMVEUAAAB5eXlzc3N6enp1dXV6enp7e3t1dXV4eHh4eHh2dnZ2dnZ2dnZ3d3d4eHh4eHh4eHh3d3d3d3d3d3d2dnZ3d3d2dnZ3d3d4eHh2dnZ3d3d3d3d3d3d2dnZ3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3f///8OZI20AAAAMXRSTlMAExQXGBkbIyRERU5QVldmaGlrbW5viI+TmZyqtLe4udbX2Nna3evw8fLz9vj6+/3+7LU7GwAAAAFiS0dEMkDSTMgAAADvSURBVHja7dhHDgIxEETRIuec85Azg+9/ORaAAMHabYn/LtAlgcD6EgA8pRuzaOM82ETTevrrfH4UO4/iUe7zfvngPNuX3u93Yudd3Hrdr16dgWvleT+zcya2qceAoTMyuN/PXqwGnDOSpLYz05QkTewGjCVJK7sBC0nSwW7APowBS7sB8zC+hA27AbUwfojUtxrQC+XPSEWTD+FSCOdBYv8kk5Ldo8/zx27i17N8ffJx/LT+9SwHAAAAaMW0YloxrZhWTCumFdOKacW0YloxrRgAAACgFdOKacW0YloxrZhWTCumFdOKacW0YgD/6wamymCjGEwGDgAAAABJRU5ErkJggg=='
     imgHolder.setAttribute(
       'style',
-      'height: 16px;opacity: 0.7;position: relative;top: 1px;'
+      'height: 11px;opacity: 0.7;position: absolute;top: 4px;'
     )
 
-    const holder = document.createElement('div')
-    holder.appendChild(imgHolder)
-    holder.setAttribute('style', 'height: 18px;background-color: #e8e6e6')
+    const holder = document.createElement('div');
+    holder.appendChild(imgHolder);
+    holder.setAttribute('style', 'height: 18px; background: linear-gradient(to bottom, rgba(246,248,249,1) 0%,rgba(229,235,238,1) 0%,rgba(220,224,226,1) 50%,rgb(209, 210, 211) 100%);');
 
     holder.onclick = () => {
       if (div.style.height === '18px') {
@@ -209,7 +209,7 @@ export default class ShowAd {
     div.setAttribute(
       'style',
       `position: fixed; width: 100%; z-index:99999999; left: 0; bottom: 0px; margin: 0; padding: 0; text-align: center; margin: 0 auto; background-color: #f3f3f3;`
-    )
+    );
     div.style.height = '68px'
     const divHolder = document.createElement('div')
     divHolder.innerHTML = src
