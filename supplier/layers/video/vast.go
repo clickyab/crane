@@ -152,6 +152,7 @@ func vast(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 				Domain: pub.Name(),
 				Name:   pub.Name(),
 				ID:     fmt.Sprint(pub.ID()),
+				Cat:    pub.Categories(),
 			},
 		},
 		Device: &openrtb.Device{

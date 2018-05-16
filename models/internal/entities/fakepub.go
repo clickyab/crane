@@ -10,6 +10,11 @@ type fakepub struct {
 	att map[entity.PublisherAttributes]interface{}
 }
 
+// Categories return publisher categories
+func (fp *fakepub) Categories() []string {
+	panic("implement me")
+}
+
 func (fp *fakepub) MinCPC(string) float64 {
 	panic("implement me")
 }
