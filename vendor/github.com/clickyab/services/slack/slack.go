@@ -113,6 +113,40 @@ func (reporter) Recover(err error, stack []byte, extra ...interface{}) {
 	}
 }
 
+// AddCustomSlack add custom message for slack
+func AddCustomSlack(err error) {
+	payload := &payload{}
+	payload.Channel = channel.String()
+
+	payload.Text = err.Error()
+	payload.Username = userName.String()
+	payload.Parse = "full" // WTF?
+	icon := postIcon.String()
+	if icon != "" {
+		if icon[0] == ':' {
+			payload.IconEmoji = icon
+		} else {
+			payload.IconURL = icon
+		}
+	}
+	encoded, err := json.Marshal(payload)
+	if err != nil {
+		logrus.WithField("payload", payload).Warn(err)
+		return
+	}
+
+	resp, err := http.PostForm(webHookURL.String(), url.Values{"payload": {string(encoded)}})
+	if err != nil {
+		logrus.WithField("payload", payload).Warn(err)
+		return
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		logrus.WithField("response", resp).Warn("sending payload to slack failed")
+		return
+	}
+}
+
 func init() {
 	config.Register(&reporter{})
 }
