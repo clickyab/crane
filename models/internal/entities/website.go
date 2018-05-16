@@ -117,6 +117,15 @@ func (w *Website) Supplier() entity.Supplier {
 	return w.Supp
 }
 
+// Categories return publisher categories
+func (w *Website) Categories() []string {
+	var res = make([]string, 0)
+	for i := range w.WCategories {
+		res = append(res, "IAB"+w.WCategories[i])
+	}
+	return res
+}
+
 // WebsiteLoaderGen load all confirmed website
 func WebsiteLoaderGen(name bool) func(ctx context.Context) (map[string]kv.Serializable, error) {
 	return func(ctx context.Context) (map[string]kv.Serializable, error) {

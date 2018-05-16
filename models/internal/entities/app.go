@@ -48,6 +48,15 @@ func (app *App) Attributes() map[entity.PublisherAttributes]interface{} {
 	return app.att
 }
 
+// Categories return publisher categories
+func (app *App) Categories() []string {
+	var res = make([]string, 0)
+	for i := range app.AppCategories {
+		res = append(res, "IAB"+app.AppCategories[i])
+	}
+	return res
+}
+
 // Type return type of publisher (app or web)
 func (app *App) Type() entity.PublisherType {
 	return entity.PublisherTypeApp

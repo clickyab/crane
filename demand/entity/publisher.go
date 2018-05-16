@@ -43,4 +43,6 @@ type Publisher interface {
 	Attributes() map[PublisherAttributes]interface{}
 	// MinCPC return min cpc based on ad type
 	MinCPC(string) float64
+	// Categories return categories
+	Categories() []string
 }
