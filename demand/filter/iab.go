@@ -2,7 +2,6 @@ package filter
 
 import (
 	"errors"
-	"strings"
 
 	"clickyab.com/crane/demand/entity"
 )
@@ -18,7 +17,7 @@ func (*Category) Check(c entity.Context, in entity.Creative) error {
 	}
 	f := make(map[string]bool)
 	for _, v := range c.Category() {
-		f[strings.Split(string(v), "-")[0]] = true
+		f[string(v)] = true
 	}
 	for _, v := range in.Campaign().Category() {
 		if f[string(v)] {
