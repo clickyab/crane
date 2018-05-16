@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"clickyab.com/crane/models/internal/entities"
+	"github.com/clickyab/services/slack"
 	"github.com/sirupsen/logrus"
 )
 
@@ -49,6 +50,10 @@ func WebImp(date int) error {
 		q := "INSERT INTO daily_report (supplier,type,publisher,imps,cpm,date) VALUES (?,?,?,?,?,?) ON DUPLICATE KEY UPDATE imps=VALUES(imps),cpm=VALUES(cpm)"
 		_, err := wr.Exec(q, webImps[i].Supplier, "web", webImps[i].Publisher, webImps[i].Imps, webImps[i].CPM, date)
 		if err != nil {
+			// TODO :// just for debugging
+			go func() {
+				slack.AddCustomSlack(fmt.Errorf("[WTF] insert in daily report failed publisher %s", webImps[i].Publisher))
+			}()
 			return err
 		}
 	}
@@ -84,6 +89,10 @@ func AppImp(date int) error {
 		q := "INSERT INTO daily_report (supplier,type,publisher,imps,cpm,date) VALUES (?,?,?,?,?,?) ON DUPLICATE KEY UPDATE imps=VALUES(imps),cpm=VALUES(cpm)"
 		_, err := wr.Exec(q, appImps[i].Supplier, "app", appImps[i].Publisher, appImps[i].Imps, appImps[i].CPM, date)
 		if err != nil {
+			// TODO :// just for debugging
+			go func() {
+				slack.AddCustomSlack(fmt.Errorf("[WTF] insert in daily report failed publisher %s", appImps[i].Publisher))
+			}()
 			return err
 		}
 	}
@@ -118,6 +127,10 @@ func WebClick(date int) error {
 		q := "INSERT INTO daily_report (supplier,type,publisher,clicks,cpc,date) VALUES (?,?,?,?,?,?) ON DUPLICATE KEY UPDATE clicks=VALUES(clicks),cpc=VALUES(cpc)"
 		_, err := wr.Exec(q, webClicks[i].Supplier, "web", webClicks[i].Publisher, webClicks[i].Clicks, webClicks[i].CPC, date)
 		if err != nil {
+			// TODO :// just for debugging
+			go func() {
+				slack.AddCustomSlack(fmt.Errorf("[WTF] insert in daily report failed publisher %s", webClicks[i].Publisher))
+			}()
 			return err
 		}
 	}
@@ -152,6 +165,10 @@ func AppClick(date int) error {
 		q := "INSERT INTO daily_report (supplier,type,publisher,clicks,cpc,date) VALUES (?,?,?,?,?,?) ON DUPLICATE KEY UPDATE clicks=VALUES(clicks),cpc=VALUES(cpc)"
 		_, err := wr.Exec(q, appClicks[i].Supplier, "app", appClicks[i].Publisher, appClicks[i].Clicks, appClicks[i].CPC, date)
 		if err != nil {
+			// TODO :// just for debugging
+			go func() {
+				slack.AddCustomSlack(fmt.Errorf("[WTF] insert in daily report failed publisher %s", appClicks[i].Publisher))
+			}()
 			return err
 		}
 	}
