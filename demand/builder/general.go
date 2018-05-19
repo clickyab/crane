@@ -98,6 +98,7 @@ func SetOSUserAgent(ua string) ShowOptionSetter {
 			Name:   os,
 			Valid:  osID != 0,
 			Mobile: mobile,
+			ID:     osID,
 		}
 		return o, nil
 	}

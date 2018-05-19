@@ -14,10 +14,10 @@ type Province struct {
 
 //Check find province client in campaign
 func (*Province) Check(c entity.Context, in entity.Creative) error {
-	if c.Location().Province().Name == "" {
-		if len(in.Campaign().Province()) == 0 {
-			return nil
-		}
+	if len(in.Campaign().Province()) == 0 {
+		return nil
+	}
+	if !c.Location().Province().Valid {
 		return errors.New("province is unknown")
 	}
 

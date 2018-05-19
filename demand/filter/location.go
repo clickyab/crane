@@ -24,21 +24,16 @@ type AreaInGlob struct {
 func (*AreaInGlob) Check(c entity.Context, in entity.Creative) error {
 	b, lat, lon, radius := in.Campaign().LatLon()
 	ll := c.Location().LatLon()
-	if !ll.Valid {
-		// there is no location detected
-		// if the campaign is regional, ignore it
-		if !b {
-			return nil
-		}
-		return errors.New("user is not in target area")
-		// no location and no regional campaign so be it!
-	}
 	// The campaign is not regional, so return ok and add them to list
 	if !b {
 		return nil
 	}
+	if !ll.Valid {
+		// there is no location detected
+		return errors.New("user is not in target area")
+		// no location and no regional campaign so be it!
+	}
 	// Campaign is regional and phone is detected
-
 	if areaInGlob(lat, lon, ll.Lat, ll.Lon, radius) {
 		return nil
 	}
