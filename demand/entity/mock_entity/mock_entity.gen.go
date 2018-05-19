@@ -951,6 +951,18 @@ func (mr *MockPublisherMockRecorder) CTR(arg0 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CTR", reflect.TypeOf((*MockPublisher)(nil).CTR), arg0)
 }
 
+// Categories mocks base method
+func (m *MockPublisher) Categories() []string {
+	ret := m.ctrl.Call(m, "Categories")
+	ret0, _ := ret[0].([]string)
+	return ret0
+}
+
+// Categories indicates an expected call of Categories
+func (mr *MockPublisherMockRecorder) Categories() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Categories", reflect.TypeOf((*MockPublisher)(nil).Categories))
+}
+
 // FloorCPM mocks base method
 func (m *MockPublisher) FloorCPM() int64 {
 	ret := m.ctrl.Call(m, "FloorCPM")
