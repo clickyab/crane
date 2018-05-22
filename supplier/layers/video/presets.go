@@ -23,7 +23,7 @@ var (
 	midConfig   = config.RegisterString("crane.supplier.vast.preset.mid", "start/linear/7/3,end/linear/10/3", "mid preset.Format is start_time/type/duration{/skip, only for linear}")
 	longConfig  = config.RegisterString("crane.supplier.vast.preset.long", "start/linear/7/3", "long preset.Format is start_time/type/duration{/skip, only for linear}")
 	maxDuration = config.RegisterInt("crane.supplier.vast.max_duration", 60, "maximum duration in sec")
-	mime        = config.RegisterString("crane.supplier.vast.mimes.default", "video/mp4,image/png,image/gif,image/jpeg", "comma separated list of accepted types")
+	mime        = config.RegisterString("crane.supplier.vast.mimes.default", "video/mp4,image/png,image/gif,image/jpeg,image/jpg", "comma separated list of accepted types")
 )
 
 const (
