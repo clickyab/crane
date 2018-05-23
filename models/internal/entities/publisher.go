@@ -92,7 +92,7 @@ func FindOrAddWebsite(sup entity.Supplier, domain string, pid int64) (entity.Pub
 		return &tw, nil
 	}
 
-	if err != nil && !sup.AllowCreate() {
+	if !sup.AllowCreate() {
 		return nil, ErrorNotAllowCreate
 	}
 
