@@ -1,5 +1,5 @@
 import CONFIG from './config'
-import { IAd } from './interfaces'
+import {IAd} from './interfaces'
 import IUrlParams from './interfaces/IUrlParams'
 import FP from 'fingerprintjs2'
 
@@ -9,26 +9,17 @@ declare var clickyabParams: { [key: string]: string }
 declare var escape: any
 
 export default class ShowAd {
-  private ads: IAd[] = []
-  private domain: string
-  private publisherId: string
+  private ads: IAd[] = [];
+  private domain: string;
+  private publisherId: string;
 
   constructor() {
-    if (!clickyabParams.id || !clickyabParams.domain) {
-      throw new Error("Clickyab script doesn't config correctly!")
-    } else {
-      this.domain = clickyabParams.domain
-      this.publisherId = clickyabParams.id
-      window.addEventListener('resize', this.setHeights.bind(this))
-    }
+    window.addEventListener('resize', this.setHeights.bind(this))
   }
 
-  public run() {
-    if (window.document.body.getAttribute('clickyab-showAd-ready') === 'true')
-      return
-    window.document.body.setAttribute('clickyab-showAd-ready', 'true')
+  public run(reload: boolean) {
     console.log('start show ad')
-    this.ads = this.findAdsInPage()
+    this.ads = this.findAdsInPage(reload)
       .map(elem => this.parseElementProps(elem))
       .map(this.setStyle)
     this.getAdsFromRemote(ads => {
@@ -96,7 +87,7 @@ export default class ShowAd {
   private getAdsFromRemote(onload: (ads: { [key: string]: string }) => void) {
     this.generateUrl(url => {
       let request = new XMLHttpRequest()
-      request.addEventListener('load', function() {
+      request.addEventListener('load', function () {
         try {
           onload(JSON.parse(this.responseText))
         } catch (err) {
@@ -155,13 +146,16 @@ export default class ShowAd {
     }
   }
 
-  private findAdsInPage(): HTMLElement[] {
-    let elements: HTMLElement[] = []
+  private findAdsInPage(reload: boolean): HTMLElement[] {
+    let elements: HTMLElement[] = [];
     const elementsCollection = document.getElementsByClassName(
       CONFIG.SELECTOR_CLASS
-    )
+    );
     for (let i = 0; i < elementsCollection.length; i++) {
-      elements.push(elementsCollection.item(i) as HTMLElement)
+      if (reload || elementsCollection.item(i).getAttribute("ready") !== "true") {
+        elementsCollection.item(i).setAttribute("ready", "true");
+        elements.push(elementsCollection.item(i) as HTMLElement);
+      }
     }
     return elements
   }
@@ -174,10 +168,22 @@ export default class ShowAd {
       width: element.getAttribute(CONFIG.ELEMENT_PROPERTY_PREFIX + 'width'),
       minFlex: element.getAttribute(CONFIG.ELEMENT_PROPERTY_PREFIX + 'minFlex'),
       effect: element.getAttribute(CONFIG.ELEMENT_PROPERTY_PREFIX + 'effect')
-    }
-    ad.valid = this.validateAdElement(ad)
-    ad.size = this.getAdSize(ad)
+    };
+    this.checkForDomainAndId(element);
+    ad.valid = this.validateAdElement(ad);
+    ad.size = this.getAdSize(ad);
     return ad
+  }
+
+  private checkForDomainAndId(element: HTMLElement) {
+    const domain = element.getAttribute("clickyab-domain");
+    const publisherId = element.getAttribute("clickyab-id");
+    if (!this.domain) {
+      this.domain = domain ? domain : "";
+    }
+    if (!this.publisherId) {
+      this.publisherId = publisherId ? publisherId : "";
+    }
   }
 
   private validateAdElement(ad: IAd): boolean {
