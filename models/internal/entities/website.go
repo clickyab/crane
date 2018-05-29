@@ -141,8 +141,15 @@ func WebsiteLoaderGen(name bool) func(ctx context.Context) (map[string]kv.Serial
 		if !name {
 			where = fmt.Sprintf(" WHERE w_supplier='%s' ", supplierName)
 		}
+
+		db := NewManager()
+		startID, err := db.GetRDbMap().SelectInt(fmt.Sprintf("SELECT w_id FROM websites %s ORDER BY w_id ASC", where))
+		if err != nil {
+			return nil, err
+		}
+
 		const cnt = 10000
-		for j := 0; ; j = j + cnt {
+		for j := startID; ; j = j + cnt {
 			q := fmt.Sprintf(`SELECT w_id, w_domain, w_supplier, w_name, w_categories, w_minbid, w_floor_cpm, w_fatfinger, w_status,w_mobad,w_pub_id,w_min_cpc,
   SUM(imp_1) AS imp1, SUM(imp_2) AS imp2, SUM(imp_3) AS imp3, SUM(imp_4) AS imp4, SUM(imp_5) AS imp5,
   SUM(imp_6) AS imp6, SUM(imp_7) AS imp7, SUM(imp_8) AS imp8, SUM(imp_9) AS imp9, SUM(imp_10) AS imp10,
@@ -157,7 +164,7 @@ func WebsiteLoaderGen(name bool) func(ctx context.Context) (map[string]kv.Serial
   GROUP BY w_id LIMIT %d, %d`, where, j, j+cnt)
 
 			var res []Website
-			if _, err := NewManager().GetRDbMap().Select(&res, q, "web"); err != nil {
+			if _, err := db.GetRDbMap().Select(&res, q, "web"); err != nil {
 				return nil, err
 			}
 			if len(res) == 0 {
