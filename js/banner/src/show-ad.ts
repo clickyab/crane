@@ -20,6 +20,7 @@ export default class ShowAd {
   public run(reload: boolean) {
     console.log('start show ad')
     this.ads = this.findAdsInPage(reload)
+      .filter(elem => this.domainValidation(elem))
       .map(elem => this.parseElementProps(elem))
       .map(this.setStyle)
     this.getAdsFromRemote(ads => {
@@ -30,6 +31,21 @@ export default class ShowAd {
         this.injectMobileAds(ads.m)
       }
     })
+  }
+
+  private domainValidation(element: HTMLElement): boolean {
+    if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
+      return true;
+    }
+    try {
+      const domain = element.getAttribute(CONFIG.ELEMENT_PROPERTY_PREFIX + "domain") as string;
+      const baseDomain = domain.split(":")[0].split(".").splice(-2).join(".");
+      const currentDomain = document.location.hostname.split(":")[0].split(".").splice(-2).join(".");
+      return baseDomain === currentDomain;
+    } catch (e) {
+      console.error("Current domain is not match with config. It also happens when current page's domain is not valid.");
+      return false;
+    }
   }
 
   private setStyle(ad: IAd) {
@@ -176,8 +192,8 @@ export default class ShowAd {
   }
 
   private checkForDomainAndId(element: HTMLElement) {
-    const domain = element.getAttribute("clickyab-domain");
-    const publisherId = element.getAttribute("clickyab-id");
+    const domain = element.getAttribute(CONFIG.ELEMENT_PROPERTY_PREFIX + "domain");
+    const publisherId = element.getAttribute(CONFIG.ELEMENT_PROPERTY_PREFIX + "id");
     if (!this.domain) {
       this.domain = domain ? domain : "";
     }

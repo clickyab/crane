@@ -23,6 +23,7 @@ function migration() {
 		window["clickyab_native_migration"] = {};
 	}
 	const params = window["clickyab_native"];
+	if (!params) return;
 	const elements = document.getElementsByClassName(params.selector);
 	if (elements.item(0) && !window["clickyab_native_migration"][params.selector]) {
 		const element = elements.item(0);
