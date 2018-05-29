@@ -31,6 +31,11 @@ export default class NativeComponent {
 		this.wrapperElement = wrapper;
 		this.nativeUrl = url;
 		this.randomSting = Math.random().toString().replace("0.", "");
+
+		if (!this.domainValidation(wrapper)) {
+			return;
+		}
+
 		this.fillOptions();
 		window.addEventListener("resize", this.addWrapperStyle.bind(this));
 		this.options = Object.assign(this.defaultOptions, this.customOptions) as INativeOptions;
@@ -85,6 +90,25 @@ export default class NativeComponent {
 			this.addClass("lg");
 		} else {
 			this.addClass("xl");
+		}
+	}
+
+
+	private domainValidation(element: HTMLElement): boolean {
+		if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
+			return true;
+		}
+		try {
+			const domain = element.getAttribute("data-domain") as string;
+			const baseDomain = domain.split(":")[0].split(".").splice(-2).join(".");
+			const currentDomain = document.location.hostname.split(":")[0].split(".").splice(-2).join(".");
+			if (baseDomain !== currentDomain) {
+				console.error("Current domain is not match with config. It also happens when current page's domain is not valid.");
+			}
+			return baseDomain === currentDomain;
+		} catch (e) {
+			console.error("Current domain is not match with config. It also happens when current page's domain is not valid.");
+			return false;
 		}
 	}
 
