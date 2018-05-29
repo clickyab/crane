@@ -119,7 +119,7 @@ func AppLoaderGen(name bool) func(ctx context.Context) (map[string]kv.Serializab
 		const cnt = 10000
 		where := ""
 		if !name {
-			where = " WHERE app_supplier='clickyab' "
+			where = fmt.Sprintf(" WHERE app_supplier='%s' ", supplierName)
 		}
 		for j := 0; ; j = j + cnt {
 			q := fmt.Sprintf(`SELECT app_id,app_token, app_package, app_supplier, app_name, app_cat, app_minbid, app_floor_cpm, app_fatfinger, app_status,app_min_cpc,

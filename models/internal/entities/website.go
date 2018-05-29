@@ -8,9 +8,14 @@ import (
 	"io"
 
 	"clickyab.com/crane/demand/entity"
+	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/kv"
 	"github.com/clickyab/services/mysql"
 	"github.com/clickyab/services/simplehash"
+)
+
+var (
+	supplierName = config.RegisterString("crane.supplier.clickyab.name", "clickyab", "name of our supplier name")
 )
 
 // Website type for website
@@ -134,7 +139,7 @@ func WebsiteLoaderGen(name bool) func(ctx context.Context) (map[string]kv.Serial
 
 		where := ""
 		if !name {
-			where = " WHERE w_supplier='clickyab' "
+			where = fmt.Sprintf(" WHERE w_supplier='%s' ", supplierName)
 		}
 		const cnt = 10000
 		for j := 0; ; j = j + cnt {
