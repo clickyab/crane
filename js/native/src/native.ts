@@ -24,6 +24,7 @@ export default class NativeComponent {
 		titleColor: "#000",
 		parent: document.location.href,
 		ref: document.referrer,
+		nostyle: "false",
 	};
 	private options: INativeOptions;
 
@@ -163,7 +164,7 @@ export default class NativeComponent {
 	private compileHtml(htmlData: string): string {
 		let html = htmlData.replace(new RegExp("_clickyab_", "ig"), `clickyab_${this.randomSting}`);
 
-		let styleTag = this.style ? `<style>
+		let styleTag = this.style && this.customOptions.nostyle !== "true" ? `<style>
 				${this.compiler(this.style, this.options)
 			.replace(new RegExp("_clickyab_", "ig"), `clickyab_${this.randomSting}`)}
 				</style>` : "";

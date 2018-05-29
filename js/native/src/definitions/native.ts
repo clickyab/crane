@@ -21,6 +21,7 @@ export interface INativeOptions {
 	orientation?: "vertical" | "horizontal";
 	parent?: string;
 	ref?: string;
+	nostyle?: string;
 }
 
 export enum fontFamilies {
