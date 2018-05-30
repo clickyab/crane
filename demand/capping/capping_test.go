@@ -29,10 +29,12 @@ func (a sortByCap) Swap(i, j int) {
 // Less return if the index i is less then index j?
 func (a sortByCap) Less(i, j int) bool {
 	// This is a multi-sort function.
-	iCP := a[i].Capping().View() / a[i].Capping().Frequency()
-	jCP := a[j].Capping().View() / a[j].Capping().Frequency()
-	if iCP != jCP {
-		return iCP < jCP
+	if a[i].Capping().Frequency() != 0 && a[j].Capping().Frequency() != 0 {
+		iCP := a[i].Capping().View() / a[i].Capping().Frequency()
+		jCP := a[j].Capping().View() / a[j].Capping().Frequency()
+		if iCP != jCP {
+			return iCP < jCP
+		}
 	}
 
 	return a[i].Capping().View() < a[j].Capping().View()
@@ -49,6 +51,17 @@ func creatives(ct *gomock.Controller) []entity.SelectedCreative {
 		cr.EXPECT().Campaign().Return(cp).AnyTimes()
 		cr.EXPECT().Size().Return(1).AnyTimes()
 		cr.EXPECT().ID().Return(int64(i)).AnyTimes()
+		cr.EXPECT().CalculatedCTR().Return(func() float64 {
+			if i <= 50 {
+				return 0.08
+			}
+
+			if i <= 75 {
+				return 0.18
+			}
+
+			return 1.1
+		}()).AnyTimes()
 		cr.EXPECT().SetCapping(gomock.Any()).Do(func(b entity.Capping) {
 			cr.EXPECT().Capping().Return(b).AnyTimes()
 		}).AnyTimes()
@@ -69,9 +82,11 @@ func TestApplyCapping(t *testing.T) {
 
 		Convey("none mode", func() {
 			var crs = creatives(ct)
+			// resCnt := 100
 
 			res := ApplyCapping(entity.CappingNone, "none", crs, "eventPage")
 			So(len(res), ShouldEqual, len(crs))
+
 			for i := range res {
 				StoreCapping(entity.CappingNone, "none", res[i].ID())
 			}
@@ -96,6 +111,7 @@ func TestApplyCapping(t *testing.T) {
 
 			res := ApplyCapping(entity.CappingStrict, "strict", crs, "eventPage")
 			So(len(res), ShouldEqual, len(crs))
+
 			for i := range res {
 				StoreCapping(entity.CappingStrict, "strict", res[i].ID())
 			}
@@ -111,7 +127,7 @@ func TestApplyCapping(t *testing.T) {
 			crs = creatives(ct)
 
 			xres := ApplyCapping(entity.CappingStrict, "strict", crs, "eventPage")
-			So(len(xres), ShouldEqual, 76)
+			So(len(xres), ShouldEqual, 49)
 			s := sortByCap(xres)
 
 			sort.Sort(s)

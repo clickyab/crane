@@ -5,12 +5,13 @@
 package mock_entity
 
 import (
-	entity "clickyab.com/crane/demand/entity"
-	gomock "github.com/golang/mock/gomock"
 	net "net"
 	url "net/url"
 	reflect "reflect"
 	time "time"
+
+	entity "clickyab.com/crane/demand/entity"
+	gomock "github.com/golang/mock/gomock"
 )
 
 // MockContext is a mock of Context interface

@@ -7,7 +7,8 @@ mockgen:
 	$(GO) install -v github.com/golang/mock/mockgen
 
 mockentity: $(LINTER) mockgen
-	mkdir -p $(ROOT)/crane/entity/mock_entity
+	mkdir -p $(ROOT)/entity/mock_entity
+	rm -rf $(ROOT)/entity/mock_entity/*.gen.go
 	$(BIN)/mockgen -destination=$(ROOT)/demand/entity/mock_entity/mock_entity.gen.go clickyab.com/crane/demand/entity Context,Creative,Campaign,Publisher,SelectedCreative,Location,Seat,Supplier,Request,User
 
 
