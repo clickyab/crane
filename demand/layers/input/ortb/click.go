@@ -45,7 +45,11 @@ func clickBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	pl, err := extractor(ctx, r)
 
 	//TODO: test code
-	subKP := fmt.Sprintf("%s_%s", today, pl.Publisher.Name())
+	name := "no_pub_name"
+	if pl.Publisher != nil {
+		name = pl.Publisher.Name()
+	}
+	subKP := fmt.Sprintf("%s_%s", today, name)
 	kv.NewAEAVStore("all_clicks", 240*time.Hour).IncSubKey(subKP, 1)
 
 	if err != nil {
