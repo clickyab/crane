@@ -6,6 +6,9 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/clickyab/services/slack"
+	"github.com/rs/xmux"
+
 	"github.com/clickyab/services/xlog"
 
 	"strings"
@@ -44,6 +47,13 @@ func clickBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 	pl, err := extractor(ctx, r)
 
+	if err != nil {
+		slack.AddCustomSlack(err)
+		slack.AddCustomSlack(fmt.Errorf("error jwt %s", xmux.Param(ctx, "jt")))
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
 	//TODO: test code
 	name := "no_pub_name"
 	if pl.Publisher != nil {
@@ -52,10 +62,6 @@ func clickBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	subKP := fmt.Sprintf("%s_%s", today, name)
 	kv.NewAEAVStore("all_clicks", 240*time.Hour).IncSubKey(subKP, 1)
 
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
 	// This is a very important thing in click expiry detection. so be aware of it
 	//TODO : if we lose redis somehow, it can lead to a problematic duplicate click,
 	//TODO : create an offline job to check duplicate click hash in the past 72 hours
