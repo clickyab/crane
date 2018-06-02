@@ -64,10 +64,11 @@ func ApplyCapping(mode entity.CappingMode, copID string, ads []entity.SelectedCr
 	panic("invalid capping mode")
 }
 
-func round(val float64) int {
-	if val < 0 {
-		return int(val - 0.5)
+func roundCeil(val float64) int {
+	if val < 0.5 {
+		return 1
 	}
+
 	return int(val + 0.5)
 }
 
@@ -82,7 +83,7 @@ func calculateAdsFrequency(ads []entity.SelectedCreative) map[int64]int {
 	totalCap := float64(len(ads) * 3)
 	for i := range ads {
 		perc := ads[i].CalculatedCTR() * 100 / totalCTR
-		frqs[ads[i].ID()] = int(round(perc * totalCap / 100))
+		frqs[ads[i].ID()] = int(roundCeil(perc * totalCap / 100))
 	}
 
 	return frqs
