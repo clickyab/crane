@@ -44,8 +44,12 @@ func (cfg) Loaded() {
 			},
 		)
 	case "rabbitmq":
-		initializer.Register(rabbitmq.NewRabbitMQInitializer(), 1)
+		initializer.Register(rabbitmq.NewRabbitMQInitializer(), -5)
 		p := rabbitmq.NewRabbitBroker()
+		broker.SetActiveBroker(p)
+	case "rabbitmq-test":
+		initializer.Register(rabbitmq.NewFakeRabbitMQInitializer(), -5)
+		p := rabbitmq.NewFakeRabbitBroker()
 		broker.SetActiveBroker(p)
 	default:
 		logrus.Panicf("there is no valid broker configured , %s is not valid", provider)
