@@ -14,6 +14,7 @@ const videoADTemplateText = `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta name="robots" content="nofollow">
+    <meta name="robots" content="noindex">
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
     <script type="text/javascript">function showb(){ document.getElementById("showb").style.display = "block"; }</script>
     <style>

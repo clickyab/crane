@@ -68,6 +68,7 @@ var dynamic1 = map[int]string{
 <html lang="en">
 <head>
     <meta name="robots" content="nofollow">
+    <meta name="robots" content="noindex">
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
     <style>
     body{
@@ -236,6 +237,7 @@ fill: {{.IconCtaBannerPickerSelector}};
 <html lang="en">
 <head>
     <meta name="robots" content="nofollow">
+    <meta name="robots" content="noindex">
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
     <style>
     body{
@@ -405,6 +407,7 @@ fill: {{.IconCtaBannerPickerSelector}};
 <html lang="en">
 <head>
     <meta name="robots" content="nofollow">
+    <meta name="robots" content="noindex">
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
     <style>
     body{
@@ -579,6 +582,7 @@ fill: {{.IconCtaBannerPickerSelector}};
 <html lang="en">
 <head>
     <meta name="robots" content="nofollow">
+    <meta name="robots" content="noindex">
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
     <style>
     body{
@@ -758,6 +762,7 @@ fill: {{.IconCtaBannerPickerSelector}};
 <html lang="en">
 <head>
     <meta name="robots" content="nofollow">
+    <meta name="robots" content="noindex">
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
     <style>
     body{
@@ -946,6 +951,7 @@ fill: {{.IconCtaBannerPickerSelector}};
 <html lang="en">
 <head>
     <meta name="robots" content="nofollow">
+    <meta name="robots" content="noindex">
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
     <style>
     body{
@@ -1133,6 +1139,7 @@ fill: {{.IconCtaBannerPickerSelector}};
 <html lang="en">
 <head>
     <meta name="robots" content="nofollow">
+    <meta name="robots" content="noindex">
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
     <style>
     body{
@@ -1312,6 +1319,7 @@ fill: {{.IconCtaBannerPickerSelector}};
 <html lang="en">
 <head>
     <meta name="robots" content="nofollow">
+    <meta name="robots" content="noindex">
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
     <style>
     body{
@@ -1493,6 +1501,7 @@ fill: {{.IconCtaBannerPickerSelector}};
 <html lang="en">
 <head>
     <meta name="robots" content="nofollow">
+    <meta name="robots" content="noindex">
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
     <style>
     body{
@@ -1696,6 +1705,7 @@ fill: {{.IconCtaBannerPickerSelector}};
 <html lang="en">
 <head>
     <meta name="robots" content="nofollow">
+    <meta name="robots" content="noindex">
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
     <style>
     body{
@@ -1871,6 +1881,7 @@ fill: {{.IconCtaBannerPickerSelector}};
 <html lang="en">
 <head>
     <meta name="robots" content="nofollow">
+    <meta name="robots" content="noindex">
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
     <style>
     body{

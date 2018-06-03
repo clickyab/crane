@@ -6,6 +6,7 @@ import (
 	"clickyab.com/crane/commands"
 	_ "clickyab.com/crane/demand/layers/input/allads"
 	_ "clickyab.com/crane/demand/layers/input/ortb"
+	_ "clickyab.com/crane/demand/layers/output/statics"
 	_ "github.com/clickyab/services/broker/selector"
 	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/initializer"

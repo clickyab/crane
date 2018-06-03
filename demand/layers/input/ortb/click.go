@@ -70,8 +70,13 @@ func clickBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		// Duplicate click!
 		pl.Suspicious = 1
 	}
+
+	fmt.Println("____________________________________________")
+	fmt.Println(fmt.Sprintf("%s_%s_%s", prefix, time.Now().Format(format), pl.IP))
+	fmt.Println("____________________________________________")
 	perDay := kv.NewAEAVStore(fmt.Sprintf("%s_%s_%s", prefix, time.Now().Format(format), pl.IP), 24*time.Hour).IncSubKey("C", 1)
 	if perDay > dailyClickLimit.Int64() {
+		fmt.Println("FRD : 96")
 		pl.Suspicious = 96
 	}
 
@@ -138,6 +143,6 @@ func replaceParameters(url, domain, campaign, impID, ip string) string {
 
 	url = r.Replace(url)
 	return `<html><head><title>` + url +
-		`</title><meta name="robots" content="nofollow"/></head><body onload="document.location.replace('` + url +
+		`</title><meta name="robots" content="nofollow"/><meta name="robots" content="noindex"/></head><body onload="document.location.replace('` + url +
 		`')"><script>window.setTimeout( function() { window.location.href = '` + url + `' }, 3000 );</script></body></html>`
 }
