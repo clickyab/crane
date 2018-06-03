@@ -34,7 +34,11 @@ export default class ShowAd {
   }
 
   private domainValidation(element: HTMLElement): boolean {
-    if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
+    if (location.hostname === "localhost" ||
+      location.hostname === "127.0.0.1" ||
+      location.hostname.split(".").splice(-2).join(".") === "clickyab.com" ||
+      location.hostname.split(".").splice(-2).join(".") === "clickyab.ae"
+    ) {
       return true;
     }
     try {
