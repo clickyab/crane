@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"path/filepath"
 
-	"clickyab.com/services/config"
+	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/framework"
 	"github.com/clickyab/services/framework/router"
 	"github.com/rs/xhandler"
