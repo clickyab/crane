@@ -36,31 +36,13 @@ var (
 
 // clickBanner is handler for click ad requestType
 func clickBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-	//TODO: test code
-	today := time.Now().Format("2006-01-02")
-	subKT := fmt.Sprintf("%s_total", today)
-	kv.NewAEAVStore("all_clicks", 240*time.Hour).IncSubKey(subKT, 1)
-	err := kv.NewEavStore("all_clicks").SetSubKey("last_updated", time.Now().Format(time.RFC3339)).Save(240 * time.Hour)
-	if err != nil {
-		xlog.GetWithError(ctx, err).Debug("redis set key error")
-	}
-
 	pl, err := extractor(ctx, r)
-
 	if err != nil {
-		slack.AddCustomSlack(err)
+		xlog.GetWithError(ctx, err).Debug("extrac payload in click api error")
 		slack.AddCustomSlack(fmt.Errorf("error jwt %s", xmux.Param(ctx, "jt")))
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-
-	//TODO: test code
-	name := "no_pub_name"
-	if pl.Publisher != nil {
-		name = pl.Publisher.Name()
-	}
-	subKP := fmt.Sprintf("%s_%s", today, name)
-	kv.NewAEAVStore("all_clicks", 240*time.Hour).IncSubKey(subKP, 1)
 
 	// This is a very important thing in click expiry detection. so be aware of it
 	//TODO : if we lose redis somehow, it can lead to a problematic duplicate click,
@@ -71,9 +53,6 @@ func clickBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		pl.Suspicious = 1
 	}
 
-	fmt.Println("____________________________________________")
-	fmt.Println(fmt.Sprintf("%s_%s_%s", prefix, time.Now().Format(format), pl.IP))
-	fmt.Println("____________________________________________")
 	perDay := kv.NewAEAVStore(fmt.Sprintf("%s_%s_%s", prefix, time.Now().Format(format), pl.IP), 24*time.Hour).IncSubKey("C", 1)
 	if perDay > dailyClickLimit.Int64() {
 		fmt.Println("FRD : 96")
