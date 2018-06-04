@@ -7,6 +7,7 @@ import (
 	"fmt"
 
 	"clickyab.com/crane/demand/capping"
+	"clickyab.com/crane/demand/distribution"
 	"clickyab.com/crane/demand/entity"
 	"github.com/clickyab/services/assert"
 )
@@ -94,19 +95,21 @@ func internalSelect(
 
 		var (
 			sorted []entity.SelectedCreative
-			ef     byMulti
+			ef     entity.SortableCreative
 		)
 
 		if len(exceedFloor) > 0 {
-			ef = byMulti{
-				Ads:   exceedFloor,
-				Video: ctx.MultiVideo(),
+			ef = entity.SortableCreative{
+				Ads:          exceedFloor,
+				Video:        ctx.MultiVideo(),
+				SortStrategy: distribution.GetSortStrategy(ctx, seat),
 			}
 		} else if ctx.UnderFloor() && len(underFloor) > 0 {
 			// under floor means we want to fill the seat at any cost. normally our own seat
-			ef = byMulti{
-				Ads:   underFloor,
-				Video: ctx.MultiVideo(),
+			ef = entity.SortableCreative{
+				Ads:          underFloor,
+				Video:        ctx.MultiVideo(),
+				SortStrategy: distribution.GetSortStrategy(ctx, seat),
 			}
 		} else {
 			continue
@@ -116,10 +119,12 @@ func internalSelect(
 		if len(ef.Ads) == 0 {
 			continue
 		}
+
 		sort.Sort(ef)
 		sorted = ef.Ads
 
-		theAd := sorted[0]
+		theAd := distribution.GetWinner(ctx, ef)
+
 		// Do not do second biding pricing on this ads, they can not pass CPMFloor
 		targetCPM := getSecondCPM(seat.SoftCPM(), sorted)
 		targetCPC := targetCPM / (theAd.CalculatedCTR() * 10.0)

@@ -5,6 +5,11 @@ type (
 	AdType int
 )
 
+var (
+	//CreativesStatisticsKey redis key for all creatives statistics
+	CreativesStatisticsKey = "NETWORK_CREATIVES_STATISTICS"
+)
+
 const (
 	// AdTypeBanner is the banner type
 	AdTypeBanner AdType = 0

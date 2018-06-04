@@ -5,13 +5,12 @@
 package mock_entity
 
 import (
+	entity "clickyab.com/crane/demand/entity"
+	gomock "github.com/golang/mock/gomock"
 	net "net"
 	url "net/url"
 	reflect "reflect"
 	time "time"
-
-	entity "clickyab.com/crane/demand/entity"
-	gomock "github.com/golang/mock/gomock"
 )
 
 // MockContext is a mock of Context interface
@@ -143,6 +142,18 @@ func (m *MockContext) FloorPercentage() int64 {
 // FloorPercentage indicates an expected call of FloorPercentage
 func (mr *MockContextMockRecorder) FloorPercentage() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FloorPercentage", reflect.TypeOf((*MockContext)(nil).FloorPercentage))
+}
+
+// GetNetworkCreativesStatistics mocks base method
+func (m *MockContext) GetNetworkCreativesStatistics() []entity.CreativeStatistics {
+	ret := m.ctrl.Call(m, "GetNetworkCreativesStatistics")
+	ret0, _ := ret[0].([]entity.CreativeStatistics)
+	return ret0
+}
+
+// GetNetworkCreativesStatistics indicates an expected call of GetNetworkCreativesStatistics
+func (mr *MockContextMockRecorder) GetNetworkCreativesStatistics() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetNetworkCreativesStatistics", reflect.TypeOf((*MockContext)(nil).GetNetworkCreativesStatistics))
 }
 
 // IP mocks base method

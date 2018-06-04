@@ -17,7 +17,8 @@ import (
 )
 
 var (
-	adsExp   = config.RegisterDuration("crane.models.expire.ads", time.Minute, "expire time of ads")
+	//AdsExp is ads expiration time in redis
+	AdsExp   = config.RegisterDuration("crane.models.expire.ads", time.Minute, "expire time of ads")
 	extraAds = config.RegisterString("debug.models.ads.extra_file", "", "extra file to load for ads")
 )
 
@@ -45,7 +46,7 @@ func (loader) Initialize() {
 		loader = pool.DebugLoaderGenerator(loader, extraAds.String(), pattern{})
 	}
 
-	ads = pool.NewPool(loader, memorypool.NewMemoryPool(), adsExp.Duration(), 10*time.Second, 3)
+	ads = pool.NewPool(loader, memorypool.NewMemoryPool(), AdsExp.Duration(), 10*time.Second, 3)
 	ads.Start(ctx)
 
 	// Wait for the first time load

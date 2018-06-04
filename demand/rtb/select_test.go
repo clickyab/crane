@@ -207,6 +207,29 @@ var default_floor_cpm = map[string]int64{"web_vast": 2000,
 func contextMaker(minbid int64, winner entity.Creative, underfloor bool, strategy entity.Strategy, c *gomock.Controller) entity.Context {
 
 	ctx := mock_entity.NewMockContext(c)
+	statitics := make([]entity.CreativeStatistics, 5)
+	statitics[0] = entity.CreativeStatistics{
+		AdType: 0,
+		AvgCTR: 0.06135,
+	}
+	statitics[1] = entity.CreativeStatistics{
+		AdType: 1,
+		AvgCTR: 0.03135,
+	}
+	statitics[2] = entity.CreativeStatistics{
+		AdType: 2,
+		AvgCTR: 0.03135,
+	}
+	statitics[3] = entity.CreativeStatistics{
+		AdType: 3,
+		AvgCTR: 0.13135,
+	}
+	statitics[4] = entity.CreativeStatistics{
+		AdType: 4,
+		AvgCTR: 0.03135,
+	}
+
+	ctx.EXPECT().GetNetworkCreativesStatistics().Return(statitics).AnyTimes()
 	ctx.EXPECT().EventPage().Return(<-random.ID).AnyTimes()
 	user := mock_entity.NewMockUser(c)
 	user.EXPECT().ID().Return(<-random.ID).AnyTimes()
@@ -223,7 +246,9 @@ func contextMaker(minbid int64, winner entity.Creative, underfloor bool, strateg
 	seat.EXPECT().MinCPM().Return(float64(0)).AnyTimes()
 	seat.EXPECT().SoftCPM().Return(float64(0)).AnyTimes()
 	seat.EXPECT().Acceptable(gomock.Any()).Return(true).AnyTimes()
+	seat.EXPECT().PublicID().Return("213456").AnyTimes()
 	seat.EXPECT().CTR().Return(.1).AnyTimes()
+	seat.EXPECT().Size().Return(20).AnyTimes()
 	if winner == nil {
 		seat.EXPECT().WinnerAdvertise().Return(nil).AnyTimes()
 	}
@@ -240,6 +265,7 @@ func contextMaker(minbid int64, winner entity.Creative, underfloor bool, strateg
 	sup := mock_entity.NewMockSupplier(c)
 	sup.EXPECT().Share().Return(100).AnyTimes()
 	sup.EXPECT().Strategy().Return(strategy).AnyTimes()
+	sup.EXPECT().Name().Return("clickyab").AnyTimes()
 
 	softCPC := sup.EXPECT().SoftFloorCPC(gomock.Any(), gomock.Any())
 	softCPC.Do(func(a, b string) {
@@ -252,6 +278,7 @@ func contextMaker(minbid int64, winner entity.Creative, underfloor bool, strateg
 	}).AnyTimes()
 
 	pub := mock_entity.NewMockPublisher(c)
+	pub.EXPECT().ID().Return(int64(32456)).AnyTimes()
 	pub.EXPECT().Supplier().Return(sup).AnyTimes()
 	pub.EXPECT().Type().Return(entity.PublisherTypeWeb).AnyTimes()
 
