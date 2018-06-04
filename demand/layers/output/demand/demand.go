@@ -236,5 +236,5 @@ func Render(_ context.Context, w http.ResponseWriter, ctx entity.Context) {
 		ID:       <-random.ID,
 		SeatBid:  r,
 	}
-	framework.JSON(w, http.StatusBadRequest, res)
+	framework.JSON(w, http.StatusOK, res)
 }
