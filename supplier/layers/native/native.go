@@ -52,10 +52,15 @@ func getNative(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	pubID := r.URL.Query().Get("i")
 	pub, err := website.GetWebSite(sup, pubID)
 	if err != nil {
+		res := map[string]string{
+			"error":     "publisher not found",
+			"public_id": pubID,
+		}
 		xlog.GetWithError(ctx, err).Debug("no website")
-		w.WriteHeader(http.StatusBadRequest)
+		framework.JSON(w, http.StatusBadRequest, res)
 		return
 	}
+
 	dnt, _ := strconv.Atoi(r.Header.Get("DNT"))
 	ref := r.URL.Query().Get("ref")
 	parent := r.URL.Query().Get("parent")
@@ -63,7 +68,14 @@ func getNative(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	tpl, err := getNativeTemplate(r.URL.Query().Get("t"))
 	if err != nil {
 		tpl, err = getNativeTemplate(defaultTemplate.String())
-		assert.Nil(err)
+		if err != nil {
+			res := map[string]string{
+				"error":  "can't render native template",
+				"reason": err.Error(),
+			}
+			framework.JSON(w, http.StatusBadRequest, res)
+			return
+		}
 	}
 
 	ip := framework.RealIP(r)
@@ -71,8 +83,11 @@ func getNative(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 	count, err := strconv.Atoi(r.URL.Query().Get("count"))
 	if err != nil || count < 1 {
-		xlog.GetWithError(ctx, err).Debug("wrong count")
-		w.WriteHeader(http.StatusBadRequest)
+		res := map[string]string{
+			"error":  "invalid request data",
+			"reason": "count value is invalid",
+		}
+		framework.JSON(w, http.StatusBadRequest, res)
 		return
 	}
 
@@ -82,8 +97,11 @@ func getNative(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 	targetCount := getTargetCount(count, tpl.Counts...)
 	if targetCount == 0 {
-		xlog.GetWithError(ctx, err).Debug("wrong count (during target count calculation)")
-		w.WriteHeader(http.StatusBadRequest)
+		res := map[string]string{
+			"error":  "invalid request data",
+			"reason": "wrong count (during target count calculation)",
+		}
+		framework.JSON(w, http.StatusBadRequest, res)
 		return
 	}
 

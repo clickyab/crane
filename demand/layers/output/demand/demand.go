@@ -16,6 +16,7 @@ import (
 	"github.com/bsm/openrtb"
 	"github.com/bsm/openrtb/native/response"
 	"github.com/clickyab/services/assert"
+	"github.com/clickyab/services/framework"
 	"github.com/clickyab/services/random"
 	"github.com/clickyab/services/version"
 	"github.com/rs/vast"
@@ -207,7 +208,7 @@ func bannerMarkup(ctx entity.Context, s entity.Seat) *openrtb.Bid {
 }
 
 // Render write open-rtb bid-response to writer
-func Render(_ context.Context, w http.ResponseWriter, ctx entity.Context) error {
+func Render(_ context.Context, w http.ResponseWriter, ctx entity.Context) {
 	var r []openrtb.SeatBid
 	w.Header().Set("crane-version", fmt.Sprint(vs.Count))
 	for _, v := range ctx.Seats() {
@@ -229,11 +230,11 @@ func Render(_ context.Context, w http.ResponseWriter, ctx entity.Context) error 
 			r = append(r, openrtb.SeatBid{Bid: []openrtb.Bid{*bid}})
 		}
 	}
-	w.Header().Set("content-type", "application/json")
-	j := json.NewEncoder(w)
-	return j.Encode(openrtb.BidResponse{
+
+	res := openrtb.BidResponse{
 		Currency: ctx.Currency(),
 		ID:       <-random.ID,
 		SeatBid:  r,
-	})
+	}
+	framework.JSON(w, http.StatusBadRequest, res)
 }

@@ -207,7 +207,7 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	assert.Nil(demand.Render(ctx, w, c))
+	demand.Render(ctx, w, c)
 }
 
 func setPublisherCustomContext(payload openrtb.BidRequest, b []builder.ShowOptionSetter) []builder.ShowOptionSetter {
