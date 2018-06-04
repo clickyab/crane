@@ -248,7 +248,7 @@ func (c *Context) GetNetworkCreativesStatistics() []entity.CreativeStatistics {
 
 	var ds []entity.CreativeStatistics
 	if data["PER_AD_TYPE"] == "" {
-		slack.AddCustomSlack(fmt.Errorf("[PROBLEM] empty redis key %s for network creative statistics so ctr soft floor switch to default value!", entity.CreativesStatisticsKey))
+		slack.AddCustomSlack(fmt.Errorf("[PROBLEM] empty redis key %s for network creative statistics so ctr soft floor switch to default value", entity.CreativesStatisticsKey))
 		return ds
 	}
 
