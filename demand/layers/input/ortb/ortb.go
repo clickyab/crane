@@ -8,6 +8,10 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/clickyab/services/framework"
+
+	"github.com/sirupsen/logrus"
+
 	"clickyab.com/crane/demand/builder"
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/demand/filter"
@@ -104,18 +108,26 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 	if err := payload.Validate(); err != nil {
 		xlog.GetWithError(ctx, err).Error("invalid data")
-		writesErrorStatus(w, http.StatusBadRequest, err.Error())
+		res := map[string]string{
+			"error":  "invalid request data",
+			"reason": err.Error(),
+		}
+		framework.JSON(w, http.StatusBadRequest, res)
 		return
 	}
 
-	publisher, selector, ps, prevent, err := handlePublisherSelector(payload, sup, prevent)
+	publisher, selector, ps, prevent, err := handlePublisherSelector(ctx, payload, sup, prevent)
 
 	if err != nil {
-		e := fmt.Sprintf("publisher not supported : %s", ps)
-		writesErrorStatus(w, http.StatusBadRequest, e)
-		xlog.GetWithError(ctx, err).Debug(e)
+		res := map[string]string{
+			"error":     "publisher not supported",
+			"publisher": ps,
+			"reason":    err.Error(),
+		}
+		framework.JSON(w, http.StatusBadRequest, res)
 		return
 	}
+
 	proto := entity.HTTP
 	for i := range payload.Imp {
 		if payload.Imp[i].Secure != 0 {
@@ -135,10 +147,24 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		us = payload.User.ID
 	}
 
-	if ua == "" || ip == "" {
-		err := fmt.Errorf("no ip/no ua")
-		xlog.GetWithError(ctx, err).Debug("invalid request")
-		writesErrorStatus(w, http.StatusBadRequest, err.Error())
+	if ip == "" {
+		res := map[string]string{
+			"error":     "invalid request",
+			"publisher": ps,
+			"reason":    "user ip not found",
+		}
+		xlog.GetWithError(ctx, fmt.Errorf("user ip not found")).Debug("invalid request")
+		framework.JSON(w, http.StatusBadRequest, res)
+		return
+	}
+	if ua == "" {
+		res := map[string]string{
+			"error":     "invalid request",
+			"publisher": ps,
+			"reason":    "user-agent not found",
+		}
+		xlog.GetWithError(ctx, fmt.Errorf("user-agent not found")).Debug("invalid request")
+		framework.JSON(w, http.StatusBadRequest, res)
 		return
 	}
 
@@ -171,8 +197,13 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 	c, err := rtb.Select(ctx, selector, b...)
 	if err != nil {
-		xlog.GetWithError(ctx, err).Error("invalid request")
-		writesErrorStatus(w, http.StatusBadRequest, err.Error())
+		res := map[string]string{
+			"error":     "can't select creatives",
+			"publisher": ps,
+			"reason":    err.Error(),
+		}
+		xlog.GetWithError(ctx, err).Error("can't select creatives")
+		framework.JSON(w, http.StatusBadRequest, res)
 		return
 	}
 
@@ -248,7 +279,7 @@ func seatDetail(req openrtb.BidRequest) ([]builder.DemandSeatData, bool) {
 	return seats, vast
 }
 
-func handlePublisherSelector(payload openrtb.BidRequest, sup entity.Supplier, prevent bool) (entity.Publisher, reducer.Filter, string, bool, error) {
+func handlePublisherSelector(ctx context.Context, payload openrtb.BidRequest, sup entity.Supplier, prevent bool) (entity.Publisher, reducer.Filter, string, bool, error) {
 	var (
 		publisher entity.Publisher
 		selector  reducer.Filter
@@ -261,6 +292,10 @@ func handlePublisherSelector(payload openrtb.BidRequest, sup entity.Supplier, pr
 		} else {
 			ps = payload.Site.Domain
 			publisher, err = website.GetWebSiteOrFake(sup, payload.Site.Domain)
+			if err != nil {
+				err = errors.New("not found publisher in publishers pool")
+			}
+
 			prevent = false // do not accept prevent default on web requestType
 			selector = ortbWebSelector
 		}
@@ -270,6 +305,10 @@ func handlePublisherSelector(payload openrtb.BidRequest, sup entity.Supplier, pr
 		} else {
 			ps = payload.App.Bundle
 			publisher, err = apps.GetAppOrFake(sup, payload.App.Bundle)
+			if err != nil {
+				err = errors.New("not found publisher in publishers pool")
+			}
+
 			selector = ortbAppSelector
 		}
 
@@ -277,5 +316,11 @@ func handlePublisherSelector(payload openrtb.BidRequest, sup entity.Supplier, pr
 		ps = "None"
 		err = errors.New("not supported")
 	}
+
+	logrus.Debug("_____________________________________________")
+	//TODO: we should check publisher quality here
+	logrus.Debug("we should check publisher quality here")
+	logrus.Debug("_____________________________________________")
+
 	return publisher, selector, ps, prevent, err
 }
