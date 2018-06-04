@@ -2,9 +2,11 @@ package builder
 
 import (
 	"encoding/json"
+	"fmt"
 	"net"
 
 	"github.com/clickyab/services/assert"
+	"github.com/clickyab/services/slack"
 
 	"time"
 
@@ -245,6 +247,11 @@ func (c *Context) GetNetworkCreativesStatistics() []entity.CreativeStatistics {
 	data := kv.NewEavStore(entity.CreativesStatisticsKey).AllKeys()
 
 	var ds []entity.CreativeStatistics
+	if data["PER_AD_TYPE"] == "" {
+		slack.AddCustomSlack(fmt.Errorf("[PROBLEM] empty redis key %s for network creative statistics so ctr soft floor switch to default value!", entity.CreativesStatisticsKey))
+		return ds
+	}
+
 	err := json.Unmarshal([]byte(data["PER_AD_TYPE"]), &ds)
 	assert.Nil(err)
 	return ds

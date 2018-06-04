@@ -39,6 +39,7 @@ func clickBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	pl, err := extractor(ctx, r)
 	if err != nil {
 		xlog.GetWithError(ctx, err).Debug("extrac payload in click api error")
+		slack.AddCustomSlack(err)
 		slack.AddCustomSlack(fmt.Errorf("error jwt %s", xmux.Param(ctx, "jt")))
 		w.WriteHeader(http.StatusBadRequest)
 		return
