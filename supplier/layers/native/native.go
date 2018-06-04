@@ -139,11 +139,7 @@ func getNative(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 	bq.Ext = []byte(`{"capping_mode": "reset", "underfloor": true}`)
 	br, err := client.Call(ctx, method.String(), server.String(), bq)
-	if err != nil {
-		// TODO send proper message
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
+	assert.Nil(err)
 
 	targetCount = getTargetCount(len(br.SeatBid), tpl.Counts...)
 
@@ -151,12 +147,11 @@ func getNative(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNoContent)
 		return
 	}
+
 	br.SeatBid = br.SeatBid[:targetCount] // drop unwanted count
 	result, err := output.RenderNative(ctx, br, tpl.Template)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
+	assert.Nil(err)
+
 	_, err = w.Write(result)
 	assert.Nil(err)
 }
