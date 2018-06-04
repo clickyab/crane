@@ -35,11 +35,11 @@ func MinimalSelect(
 	exceed = capping.ApplyCapping(ctx.Capping(), ctx.User().ID(), exceed, ctx.EventPage())
 	underfloor = capping.ApplyCapping(ctx.Capping(), ctx.User().ID(), underfloor, ctx.EventPage())
 
-	ef := byMulti{
+	ef := entity.SortableCreative{
 		Ads:   exceed,
 		Video: false,
 	}
-	uf := byMulti{
+	uf := entity.SortableCreative{
 		Ads:   underfloor,
 		Video: false,
 	}

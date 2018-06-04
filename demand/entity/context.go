@@ -96,4 +96,5 @@ type Context interface {
 	UnderFloor() bool
 	// TV true if true view
 	TV() bool
+	GetNetworkCreativesStatistics() []CreativeStatistics
 }

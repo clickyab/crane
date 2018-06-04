@@ -1,11 +1,15 @@
 package builder
 
 import (
+	"encoding/json"
 	"net"
+
+	"github.com/clickyab/services/assert"
 
 	"time"
 
 	"clickyab.com/crane/demand/entity"
+	"github.com/clickyab/services/kv"
 )
 
 // Context is the app Context
@@ -234,4 +238,14 @@ func (c *Context) UnderFloor() bool {
 // TV if true means should insert true view
 func (c *Context) TV() bool {
 	return c.tv
+}
+
+//GetNetworkCreativesStatistics get total statistics of all creatives in network per type
+func (c *Context) GetNetworkCreativesStatistics() []entity.CreativeStatistics {
+	data := kv.NewEavStore(entity.CreativesStatisticsKey).AllKeys()
+
+	var ds []entity.CreativeStatistics
+	err := json.Unmarshal([]byte(data["PER_AD_TYPE"]), &ds)
+	assert.Nil(err)
+	return ds
 }
