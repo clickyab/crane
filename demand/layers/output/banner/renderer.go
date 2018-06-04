@@ -30,6 +30,6 @@ func Render(c context.Context, w http.ResponseWriter, ctx entity.Context) error 
 		return renderVideoBanner(w, ctx, s)
 	}
 
-	xlog.GetWithField(c, "ad_type", s.WinnerAdvertise().Type()).Error("invalid ad type")
+	xlog.GetWithField(c, "ad_type", s.WinnerAdvertise().Type()).Error(fmt.Sprintf("invalid ad type: %d", s.WinnerAdvertise().Type()))
 	return fmt.Errorf("invalid ad type ")
 }
