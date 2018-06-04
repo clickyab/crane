@@ -22,7 +22,7 @@ var (
 	underCreatives           = make([]string, 0)
 	lock                     = &sync.Mutex{}
 	firstTry                 = true
-	ctrSoftFloor             = 0.03
+	ctrSoftFloor             = 0.039
 	seatCnt                  = 1
 	sortableCreatives        entity.SortableCreative
 )

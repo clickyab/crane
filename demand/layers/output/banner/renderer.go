@@ -31,5 +31,5 @@ func Render(c context.Context, w http.ResponseWriter, ctx entity.Context) error 
 	}
 
 	xlog.GetWithField(c, "ad_type", s.WinnerAdvertise().Type()).Error(fmt.Sprintf("invalid ad type: %d", s.WinnerAdvertise().Type()))
-	return fmt.Errorf("invalid ad type ")
+	return fmt.Errorf("invalid ad type: %d", s.WinnerAdvertise().Type())
 }
