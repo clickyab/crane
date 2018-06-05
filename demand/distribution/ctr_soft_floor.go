@@ -69,10 +69,10 @@ func GetWinner(ctx entity.Context, sc entity.SortableCreative) entity.SelectedCr
 	sortableCreatives = sc
 	sorted := sortableCreatives.Ads
 
-	statistics := ctx.GetNetworkCreativesStatistics()
+	statistics := ctx.GetCreativesStatistics()
 	for _, v := range statistics {
-		if entity.AdType(v.AdType) == sorted[0].Type() {
-			ctrSoftFloor = (100 - ctrSoftFloorReduceMargin.Float64()) * v.AvgCTR / 100
+		if entity.AdType(v.CreativeType()) == sorted[0].Type() {
+			ctrSoftFloor = (100 - ctrSoftFloorReduceMargin.Float64()) * v.AvgCTR() / 100
 			break
 		}
 	}

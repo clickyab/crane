@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"encoding/gob"
-	"encoding/json"
 	"fmt"
 	"io"
 	"strconv"
@@ -252,59 +251,6 @@ func AdLoader(_ context.Context) (map[string]kv.Serializable, error) {
 		return nil, err
 	}
 
-	sq := fmt.Sprintf(`SELECT
-			A.ad_type,
-			MIN(CA.ca_ctr) 						  AS min_ctr,
-			MAX(CA.ca_ctr) 						  AS max_ctr,
-			SUM(CA.ca_clicks)*100/SUM(CA.ca_imps) AS avg_ctr,
-			COUNT(1)							  AS count
-		FROM
-			campaigns AS C 
-		INNER JOIN
-			users AS U 
-			ON C.u_id = U.u_id 
-		INNER JOIN
-			campaigns_ads AS CA 
-			ON C.cp_id = CA.cp_id 
-		INNER JOIN
-			ads AS A 
-			ON A.ad_id = CA.ad_id
-		WHERE
-			A.ad_status = 1 
-			AND C.cp_status = 1 
-			AND CA.ca_status = 1 
-			AND 
-			(
-				C.cp_start <= %d 
-				OR C.cp_start = 0
-			)
-			AND 
-			(
-				C.cp_end >= %d 
-				OR C.cp_end = 0
-			)
-			AND C.cp_daily_budget > C.cp_today_spend 
-			AND C.cp_total_budget > C.cp_total_spend 
-			AND U.u_balance > U.u_today_spend 
-			AND U.u_balance > %d
-		GROUP BY A.ad_type
-		`, u, u, minUserBalance.Int())
-
-	var sresult []entity.CreativeStatistics
-	_, err = NewManager().GetRDbMap().Select(
-		&sresult,
-		sq,
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	stat, _ := json.Marshal(&sresult)
-	err = kv.NewEavStore(entity.CreativesStatisticsKey).SetSubKey("PER_AD_TYPE", string(stat)).Save(time.Minute * 10)
-	if err != nil {
-		return nil, err
-	}
-
 	ads := make(map[string]kv.Serializable)
 	for i := range res {
 		if res[i].FCaCTR.Valid {
@@ -358,6 +304,67 @@ func GetAd(adID int64) (entity.Creative, error) {
 	}
 	res.assets = extractAssets(res.ad)
 	return &res, nil
+}
+
+//StatisticsLoader is a loader for network creatives statistics
+func StatisticsLoader(_ context.Context) (map[string]kv.Serializable, error) {
+	t := time.Now()
+	u := t.Unix() //return date in unixtimestamp
+
+	sq := fmt.Sprintf(`SELECT
+			A.ad_type,
+			MIN(CA.ca_ctr) 						  AS min_ctr,
+			MAX(CA.ca_ctr) 						  AS max_ctr,
+			SUM(CA.ca_clicks)*100/SUM(CA.ca_imps) AS avg_ctr,
+			COUNT(1)							  AS count
+		FROM
+			campaigns AS C 
+		INNER JOIN
+			users AS U 
+			ON C.u_id = U.u_id 
+		INNER JOIN
+			campaigns_ads AS CA 
+			ON C.cp_id = CA.cp_id 
+		INNER JOIN
+			ads AS A 
+			ON A.ad_id = CA.ad_id
+		WHERE
+			A.ad_status = 1 
+			AND C.cp_status = 1 
+			AND CA.ca_status = 1 
+			AND 
+			(
+				C.cp_start <= %d 
+				OR C.cp_start = 0
+			)
+			AND 
+			(
+				C.cp_end >= %d 
+				OR C.cp_end = 0
+			)
+			AND C.cp_daily_budget > C.cp_today_spend 
+			AND C.cp_total_budget > C.cp_total_spend 
+			AND U.u_balance > U.u_today_spend 
+			AND U.u_balance > %d
+		GROUP BY A.ad_type
+		`, u, u, minUserBalance.Int())
+
+	var sresult []CreativeStatistics
+	_, err := NewManager().GetRDbMap().Select(
+		&sresult,
+		sq,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	stat := make(map[string]kv.Serializable)
+	for i := range sresult {
+		stat[fmt.Sprint(sresult[i].CreativeType())] = &sresult[i]
+	}
+	logrus.Debugf("Load %d type of statistics", len(stat))
+
+	return stat, nil
 }
 
 // Advertise implement entity advertise interface

@@ -207,29 +207,6 @@ var default_floor_cpm = map[string]int64{"web_vast": 2000,
 func contextMaker(minbid int64, winner entity.Creative, underfloor bool, strategy entity.Strategy, c *gomock.Controller) entity.Context {
 
 	ctx := mock_entity.NewMockContext(c)
-	statitics := make([]entity.CreativeStatistics, 5)
-	statitics[0] = entity.CreativeStatistics{
-		AdType: 0,
-		AvgCTR: 0.06135,
-	}
-	statitics[1] = entity.CreativeStatistics{
-		AdType: 1,
-		AvgCTR: 0.03135,
-	}
-	statitics[2] = entity.CreativeStatistics{
-		AdType: 2,
-		AvgCTR: 0.03135,
-	}
-	statitics[3] = entity.CreativeStatistics{
-		AdType: 3,
-		AvgCTR: 0.13135,
-	}
-	statitics[4] = entity.CreativeStatistics{
-		AdType: 4,
-		AvgCTR: 0.03135,
-	}
-
-	ctx.EXPECT().GetNetworkCreativesStatistics().Return(statitics).AnyTimes()
 	ctx.EXPECT().EventPage().Return(<-random.ID).AnyTimes()
 	user := mock_entity.NewMockUser(c)
 	user.EXPECT().ID().Return(<-random.ID).AnyTimes()
@@ -237,6 +214,9 @@ func contextMaker(minbid int64, winner entity.Creative, underfloor bool, strateg
 	ctx.EXPECT().MultiVideo().Return(false).AnyTimes()
 	ctx.EXPECT().Capping().Return(entity.CappingNone).AnyTimes()
 	ctx.EXPECT().UnderFloor().Return(underfloor).AnyTimes()
+
+	//TODO: make sample data for statistics
+	ctx.EXPECT().GetCreativesStatistics().Return(make([]entity.CreativeStatistics, 0)).AnyTimes()
 	seat := mock_entity.NewMockSeat(c)
 	seat.EXPECT().RequestType().Return(entity.RequestTypeBanner).AnyTimes()
 	seat.EXPECT().Type().Return(entity.InputTypeDemand).AnyTimes()

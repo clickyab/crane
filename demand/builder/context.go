@@ -1,17 +1,11 @@
 package builder
 
 import (
-	"encoding/json"
-	"fmt"
 	"net"
-
-	"github.com/clickyab/services/assert"
-	"github.com/clickyab/services/slack"
 
 	"time"
 
 	"clickyab.com/crane/demand/entity"
-	"github.com/clickyab/services/kv"
 )
 
 // Context is the app Context
@@ -62,6 +56,9 @@ type Context struct {
 	underfloor bool
 	// true view
 	tv bool
+
+	// network creatives statistics base on types
+	creativesStat []entity.CreativeStatistics
 }
 
 // ConnectionType return connection type 2g,3g,4g,...
@@ -242,17 +239,7 @@ func (c *Context) TV() bool {
 	return c.tv
 }
 
-//GetNetworkCreativesStatistics get total statistics of all creatives in network per type
-func (c *Context) GetNetworkCreativesStatistics() []entity.CreativeStatistics {
-	data := kv.NewEavStore(entity.CreativesStatisticsKey).AllKeys()
-
-	var ds []entity.CreativeStatistics
-	if data["PER_AD_TYPE"] == "" {
-		slack.AddCustomSlack(fmt.Errorf("[PROBLEM] empty redis key %s for network creative statistics so ctr soft floor switch to default value", entity.CreativesStatisticsKey))
-		return ds
-	}
-
-	err := json.Unmarshal([]byte(data["PER_AD_TYPE"]), &ds)
-	assert.Nil(err)
-	return ds
+// GetCreativesStatistics return statistics of all active network creatives base on it's type
+func (c *Context) GetCreativesStatistics() []entity.CreativeStatistics {
+	return c.creativesStat
 }

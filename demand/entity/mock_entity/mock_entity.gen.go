@@ -144,16 +144,16 @@ func (mr *MockContextMockRecorder) FloorPercentage() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FloorPercentage", reflect.TypeOf((*MockContext)(nil).FloorPercentage))
 }
 
-// GetNetworkCreativesStatistics mocks base method
-func (m *MockContext) GetNetworkCreativesStatistics() []entity.CreativeStatistics {
-	ret := m.ctrl.Call(m, "GetNetworkCreativesStatistics")
+// GetCreativesStatistics mocks base method
+func (m *MockContext) GetCreativesStatistics() []entity.CreativeStatistics {
+	ret := m.ctrl.Call(m, "GetCreativesStatistics")
 	ret0, _ := ret[0].([]entity.CreativeStatistics)
 	return ret0
 }
 
-// GetNetworkCreativesStatistics indicates an expected call of GetNetworkCreativesStatistics
-func (mr *MockContextMockRecorder) GetNetworkCreativesStatistics() *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetNetworkCreativesStatistics", reflect.TypeOf((*MockContext)(nil).GetNetworkCreativesStatistics))
+// GetCreativesStatistics indicates an expected call of GetCreativesStatistics
+func (mr *MockContextMockRecorder) GetCreativesStatistics() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCreativesStatistics", reflect.TypeOf((*MockContext)(nil).GetCreativesStatistics))
 }
 
 // IP mocks base method
