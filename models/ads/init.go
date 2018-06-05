@@ -52,7 +52,7 @@ func (loader) Initialize() {
 	// Wait for the first time load
 	<-ads.Notify()
 
-	logrus.Debug("Pool initialized and ready")
+	logrus.Debug("Pool of creatives statistics initialized and ready")
 }
 
 func init() {

@@ -18,6 +18,7 @@ import (
 	"clickyab.com/crane/demand/layers/output/demand"
 	"clickyab.com/crane/demand/reducer"
 	"clickyab.com/crane/demand/rtb"
+	"clickyab.com/crane/models/ads/statistics"
 	"clickyab.com/crane/models/apps"
 	"clickyab.com/crane/models/suppliers"
 	"clickyab.com/crane/models/website"
@@ -168,6 +169,8 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	creativesStat := statistics.GetNetworkCreativesStatistics()
+
 	b := []builder.ShowOptionSetter{
 		builder.SetTimestamp(),
 		builder.SetTargetHost(sup.ShowDomain()),
@@ -184,6 +187,7 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetCappingMode(cappingMode),
 		builder.SetUnderfloor(underfloor),
 		builder.SetCategory(&payload),
+		builder.SetCreativesStatistics(creativesStat),
 	}
 	// TODO : if we need to implement native/app/vast then the next line must be activated and customized
 	//b = append(b, builder.SetFloorPercentage(100), builder.SetMinBidPercentage(100))

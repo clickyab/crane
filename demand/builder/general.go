@@ -335,6 +335,14 @@ func SetPreventDefault(prevent bool) ShowOptionSetter {
 	}
 }
 
+// SetCreativesStatistics is set network creatives statistics
+func SetCreativesStatistics(data []entity.CreativeStatistics) ShowOptionSetter {
+	return func(o *Context) (*Context, error) {
+		o.creativesStat = data
+		return o, nil
+	}
+}
+
 func createHash(l int, items ...[]byte) string {
 	h := sha1.New()
 	for i := range items {
