@@ -67,6 +67,7 @@ func GetWinner(ctx entity.Context, sc entity.SortableCreative) entity.SelectedCr
 	defer checkAndReset()
 
 	sortableCreatives = sc
+	sort.Sort(sortableCreatives)
 	sorted := sortableCreatives.Ads
 
 	statistics := ctx.GetCreativesStatistics()
@@ -85,6 +86,11 @@ func GetWinner(ctx entity.Context, sc entity.SortableCreative) entity.SelectedCr
 	return findWinnerSingleSeats(sorted)
 }
 
+// GetSortedCreatives only return final sort of pool creatives to use in second bid and another
+func GetSortedCreatives() entity.SortableCreative {
+	return sortableCreatives
+}
+
 func findWinnerMultiSeats(sorted []entity.SelectedCreative) entity.SelectedCreative {
 	if len(upperCreatives) < getNeedUpCount() {
 		for i := range sorted {
@@ -97,7 +103,7 @@ func findWinnerMultiSeats(sorted []entity.SelectedCreative) entity.SelectedCreat
 		}
 	}
 
-	sorted = sortAgainByCPM()
+	sorted = SortAgainByCPM()
 	for i := range sorted {
 		crID := fmt.Sprintf("%d", sorted[i].ID())
 
@@ -121,14 +127,15 @@ func findWinnerSingleSeats(sorted []entity.SelectedCreative) entity.SelectedCrea
 		}
 	}
 
-	sorted = sortAgainByCPM()
+	sorted = SortAgainByCPM()
 
 	//We don't check upper and under here. beacause don't want to break capping roles
 	selectUnder(fmt.Sprintf("%d", sorted[0].ID()))
 	return sorted[0]
 }
 
-func sortAgainByCPM() []entity.SelectedCreative {
+// SortAgainByCPM resort creative pool base on CPM and return creatives
+func SortAgainByCPM() []entity.SelectedCreative {
 	sortableCreatives.SortStrategy = entity.SortByCPM
 	sort.Sort(sortableCreatives)
 
