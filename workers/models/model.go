@@ -27,6 +27,7 @@ type Impression struct {
 	Suspicious    int                  `json:"sp"`
 	Referrer      string               `json:"r"`
 	ParentURL     string               `json:"par"`
+	PublisherID   int64                `json:"pub_id"`
 	Publisher     string               `json:"pub"`
 	Supplier      string               `json:"sub"`
 	Timestamp     time.Time            `json:"ts"`

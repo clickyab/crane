@@ -82,6 +82,7 @@ func NewImpressionJob(ctx entity.Context, s ...entity.Seat) broker.Job {
 			Suspicious:    ctx.Suspicious(),
 			Referrer:      ctx.Referrer(),
 			ParentURL:     ctx.Parent(),
+			PublisherID:   ctx.Publisher().ID(),
 			Publisher:     ctx.Publisher().Name(),
 			Supplier:      ctx.Publisher().Supplier().Name(),
 			Timestamp:     ctx.Timestamp(),

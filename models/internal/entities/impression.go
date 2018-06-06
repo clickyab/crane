@@ -130,5 +130,29 @@ func AddImpression(p entity.Publisher, m models.Impression, s models.Seat) error
 		m.Timestamp.Unix(), m.Timestamp.Format("20060102"), said,
 		sID, p.Supplier().Name(), sDiffCPM,
 		impCPM, impCPM*float64(p.Supplier().Share())/100)
+	if err != nil {
+		return err
+	}
+
+	seat, err := AddAndGetSeat(m, sID)
+	if err != nil {
+		return err
+	}
+
+	pubPage, err := AddAndGetPublisherPage(m)
+	if err != nil {
+		return err
+	}
+
+	crReport := CreativesLocationsReport{
+		PublisherID:     m.PublisherID,
+		PublisherDomain: m.Publisher,
+		PublisherPageID: pubPage.ID,
+		URLKey:          pubPage.URLKey,
+		CreativeID:      s.AdID,
+		SeatID:          seat.ID,
+	}
+	_, err = AddAndGetCreativesLocationsReport(crReport)
+
 	return err
 }

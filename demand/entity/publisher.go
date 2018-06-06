@@ -1,5 +1,12 @@
 package entity
 
+import (
+	"database/sql/driver"
+	"fmt"
+
+	"github.com/clickyab/services/array"
+)
+
 // PublisherType is the type of publisher
 type PublisherType string
 
@@ -10,8 +17,46 @@ const (
 	PublisherTypeWeb PublisherType = "web"
 )
 
-func (s PublisherType) String() string {
-	return string(s)
+func (e PublisherType) String() string {
+	return string(e)
+}
+
+// Scan convert the json array ino string slice
+func (e *PublisherType) Scan(src interface{}) error {
+	var b []byte
+	switch src.(type) {
+	case []byte:
+		b = src.([]byte)
+	case string:
+		b = []byte(src.(string))
+	case nil:
+		b = make([]byte, 0)
+	default:
+		return fmt.Errorf("unsupported type")
+	}
+	if !PublisherType(b).IsValid() {
+		return fmt.Errorf("invalid value")
+	}
+	*e = PublisherType(b)
+	return nil
+}
+
+// Value try to get the string slice representation in database
+func (e PublisherType) Value() (driver.Value, error) {
+	if !e.IsValid() {
+		return nil, fmt.Errorf("invalid publisher type: %s", e)
+	}
+
+	return string(e), nil
+}
+
+// IsValid try to validate enum value on ths type
+func (e PublisherType) IsValid() bool {
+	return array.StringInArray(
+		string(e),
+		string(PublisherTypeApp),
+		string(PublisherTypeWeb),
+	)
 }
 
 // PublisherAttributes is the key for publisher attributes
