@@ -2,7 +2,6 @@ package rtb
 
 import (
 	"context"
-	"sort"
 
 	"fmt"
 
@@ -12,9 +11,14 @@ import (
 	"github.com/clickyab/services/assert"
 )
 
-func getSecondCPM(floorCPM float64, exceedFloor []entity.SelectedCreative) float64 {
-	if !exceedFloor[0].IsSecBid() {
-		return float64(exceedFloor[0].CalculatedCPM())
+func getSecondCPM(floorCPM float64, winner entity.SelectedCreative, pool entity.SortableCreative) float64 {
+	if !winner.IsSecBid() {
+		return float64(winner.CalculatedCPM())
+	}
+
+	exceedFloor := distribution.SortAgainByCPM()
+	if exceedFloor[0].ID() != winner.ID() {
+		return float64(winner.CalculatedCPM())
 	}
 
 	if len(exceedFloor) > 1 &&
@@ -93,11 +97,7 @@ func internalSelect(
 	for _, seat := range ctx.Seats() {
 		exceedFloor, underFloor := selector(ctx, ads, seat, noVideo, selected)
 
-		var (
-			sorted []entity.SelectedCreative
-			ef     entity.SortableCreative
-		)
-
+		var ef entity.SortableCreative
 		if len(exceedFloor) > 0 {
 			ef = entity.SortableCreative{
 				Ads:          exceedFloor,
@@ -120,17 +120,34 @@ func internalSelect(
 			continue
 		}
 
-		sort.Sort(ef)
-		sorted = ef.Ads
-
 		theAd := distribution.GetWinner(ctx, ef)
+		ef = distribution.GetSortedCreatives()
 
 		// Do not do second biding pricing on this ads, they can not pass CPMFloor
-		targetCPM := getSecondCPM(seat.SoftCPM(), sorted)
+		targetCPM := getSecondCPM(seat.SoftCPM(), theAd, ef)
 		targetCPC := targetCPM / (theAd.CalculatedCTR() * 10.0)
 
 		targetCPC, targetCPM = fixPrice(theAd.Campaign().Strategy(), targetCPC, targetCPM, seat.MinCPC(), seat.MinCPM())
 
+		if targetCPC > float64(theAd.MaxBID()) && targetCPC-float64(theAd.MaxBID()) > 1000 {
+			fmt.Println("____________________________________________")
+			fmt.Println("id:", theAd.ID())
+			fmt.Println("ad ctr:", theAd.AdCTR())
+			fmt.Println("cal ctr:", theAd.CalculatedCTR())
+			fmt.Println("cpm:", theAd.CalculatedCPM())
+			fmt.Println("cpc:", theAd.CalculatedCPC())
+			fmt.Println("capp:", theAd.Capping().Capping())
+			fmt.Println("max_bid:", theAd.MaxBID())
+			fmt.Println("target cpm:", targetCPM)
+			fmt.Println("target cpc:", targetCPC)
+			fmt.Println("seat soft cpm:", seat.SoftCPM())
+			fmt.Println("fix price:", theAd.Campaign().Strategy(), targetCPC, targetCPM, seat.MinCPC(), seat.MinCPM())
+			// fmt.Println("sorted[1] cpm:", sorted[1].CalculatedCPM())
+			fmt.Println("____________________________________________")
+
+			//TODO: only for test and force .....
+			targetCPC = float64(theAd.MaxBID())
+		}
 		selected[theAd.ID()] = true
 		// Only decrease share for CPM (which is reported to supplier) not bid (which is used by us)
 		seat.SetWinnerAdvertise(theAd, targetCPC, targetCPM)

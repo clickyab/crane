@@ -185,6 +185,25 @@ func samples(t *testing.T) []sample {
 		})
 	}
 
+	/* {
+		col1 := make([]entity.Creative, 0)
+		ad1, ad2, ad3 := creativeMaker(3500, 0.024132, entity.StrategyCPC, c),
+			creativeMaker(710, 0.2012465, entity.StrategyCPC, c),
+			creativeMaker(3500, 0.018, entity.StrategyCPC, c)
+
+		ctx := contextMaker(1500, ad1, false, entity.StrategyCPC, c)
+
+		col1 = append(col1, ad1, ad2, ad3)
+		res = append(res, sample{
+			title:   "rtb case nine",
+			winner:  ad1,
+			cpm:     844,   // 12010 * 0.75,
+			bid:     12010, // its calculated and its ok
+			context: ctx,
+			ads:     col1,
+		})
+	} */
+
 	return res
 }
 
