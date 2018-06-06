@@ -1,12 +1,19 @@
 package entities
 
 import (
+	"context"
 	"crypto/md5"
 	"database/sql"
+	"encoding/gob"
 	"encoding/hex"
+	"fmt"
+	"io"
+	"strconv"
 	"time"
 
 	"github.com/clickyab/services/assert"
+	"github.com/clickyab/services/kv"
+	"github.com/sirupsen/logrus"
 
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/workers/models"
@@ -97,8 +104,11 @@ func AddAndGetPublisherPage(m models.Impression) (*PublisherPage, error) {
 
 // GenerateURLKey generate url key
 func GenerateURLKey(url string) string {
+	url, err := NormalizeURL(url)
+	assert.Nil(err)
+
 	hasher := md5.New()
-	_, err := hasher.Write([]byte(url))
+	_, err = hasher.Write([]byte(url))
 	assert.Nil(err)
 	return hex.EncodeToString(hasher.Sum(nil))
 }
@@ -118,4 +128,79 @@ func NormalizeURL(url string) (string, error) {
 			purell.FlagSortQuery|
 			purell.FlagForceHTTP,
 	)
+}
+
+// PagesLoader load all publisher pages
+func PagesLoader() func(ctx context.Context) (map[string]kv.Serializable, error) {
+	return func(ctx context.Context) (map[string]kv.Serializable, error) {
+		pages := make(map[string]kv.Serializable)
+		// return b, nil // Uncomment this line after first time in DEV mode
+
+		yesterday, _ := strconv.Atoi(time.Now().AddDate(0, 0, -1).Format("20060102"))
+		const cnt = 10000
+		for j := 0; ; j = j + cnt {
+			q := fmt.Sprintf(`SELECT 
+					id,
+					publisher_id,
+					publisher_domain,
+					kind,
+					url,
+					url_key,
+					active_days,
+					avg_daily_imp,
+					avg_daily_clicks,
+					today_imp,
+					today_clicks,
+					today_ctr
+				FROM publisher_pages
+				WHERE updated_at IS NULL OR updated_at>?
+				LIMIT %d, %d`,
+				j,
+				j+cnt,
+			)
+
+			var res []PublisherPage
+			if _, err := NewManager().GetRDbMap().Select(&res, q, yesterday); err != nil {
+				logrus.Warn(err)
+				return nil, err
+			}
+
+			if len(res) == 0 {
+				break
+			}
+
+			for i := range res {
+				key := GenPagePoolKey(
+					res[i].PublisherDomain,
+					res[i].URLKey,
+				)
+				pages[key] = &res[i]
+			}
+		}
+
+		logrus.Debugf("Load %d publisher pages", len(pages))
+
+		return pages, nil
+	}
+}
+
+// GenPagePoolKey generate cache key for pool
+func GenPagePoolKey(publisherDomain, URLKey string) string {
+	return fmt.Sprintf(
+		"pubdo%s_url%",
+		publisherDomain,
+		URLKey,
+	)
+}
+
+// Encode is the encode function for serialize object in io writer
+func (p PublisherPage) Encode(w io.Writer) error {
+	g := gob.NewEncoder(w)
+	return g.Encode(p)
+}
+
+// Decode try to decode object from io reader
+func (p PublisherPage) Decode(r io.Reader) error {
+	g := gob.NewDecoder(r)
+	return g.Decode(p)
 }

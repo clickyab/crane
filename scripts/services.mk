@@ -6,6 +6,7 @@ mysql-setup: needroot
 	echo 'FLUSH PRIVILEGES;' | mysql mysql | true
 	echo 'DROP DATABASE IF EXISTS $(DB_NAME); CREATE DATABASE $(DB_NAME);' | mysql -u $(DB_USER) -p$(DBPASS)
 	mysql -u $(DB_USER) -p$(DBPASS)<$(ROOT)/scripts/clickyab-schema.sql
+	mysql -u $(DB_USER) -p$(DBPASS)<$(ROOT)/scripts/creative_location_reports.sql
 	echo 'CREATE TABLE impressions$(IMPDATE)  LIKE impressions; ' | mysql -u $(DB_USER) -p$(DBPASS) -c $(DB_NAME)
 
 rabbitmq-setup: needroot

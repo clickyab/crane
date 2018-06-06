@@ -4,6 +4,9 @@ import (
 	"os"
 
 	"clickyab.com/crane/commands"
+	_ "clickyab.com/crane/models/ads/statistics/perlocations"
+	_ "clickyab.com/crane/models/pages"
+	_ "clickyab.com/crane/models/seats"
 	"clickyab.com/crane/workers/show"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/broker"

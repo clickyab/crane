@@ -4,8 +4,12 @@ import (
 	"context"
 	"encoding/json"
 
+	"clickyab.com/crane/models/ads/statistics/perlocations"
+	"clickyab.com/crane/models/pages"
+
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/models/ads"
+	"clickyab.com/crane/models/seats"
 	m "clickyab.com/crane/workers/models"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/broker"
@@ -61,8 +65,26 @@ func (j *job) process(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	for _, v := range j.Seats {
-		err := ads.AddImpression(pub, j.Impression, v)
+	for _, s := range j.Seats {
+		seat, err := seats.AddAndGetSeat(j.Impression, s)
+		if err != nil {
+			xlog.GetWithError(ctx, err)
+			errs.add(err)
+		}
+
+		pubPage, err := pages.AddAndGetPublisherPage(j.Impression)
+		if err != nil {
+			xlog.GetWithError(ctx, err)
+			errs.add(err)
+		}
+
+		_, err = perlocations.AddAndGetCreativePerLocation(*seat, *pubPage, s.AdID, int64(s.AdSize))
+		if err != nil {
+			xlog.GetWithError(ctx, err)
+			errs.add(err)
+		}
+
+		err = ads.AddImpression(pub, j.Impression, s)
 		if err != nil {
 			xlog.GetWithError(ctx, err)
 			errs.add(err)
