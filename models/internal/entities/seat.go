@@ -27,7 +27,7 @@ import (
 // }
 type Seat struct {
 	ID              int64                `json:"id" db:"id"`
-	SlotID          int64                `json:"slot_id" db:"slot_id"`
+	SlotID          string               `json:"slot_id" db:"slot_id"`
 	SupplierName    string               `json:"supplier_name" db:"supplier_name"`
 	PublisherID     int64                `json:"publisher_id" db:"publisher_id"`
 	PublisherDomain string               `json:"publisher_domain" db:"publisher_domain"`
@@ -44,7 +44,7 @@ type Seat struct {
 }
 
 // AddAndGetSeat return seat if exist and insert if not
-func AddAndGetSeat(m models.Impression, crSize, slID int64) (*Seat, error) {
+func AddAndGetSeat(m models.Impression, crSize int64, slID string) (*Seat, error) {
 	var seat Seat
 
 	fSeatQ := `SELECT 
@@ -58,7 +58,6 @@ func AddAndGetSeat(m models.Impression, crSize, slID int64) (*Seat, error) {
 		WHERE
 			slot_id=?
 			AND supplier_name=?
-			AND publisher_id=?
 			AND publisher_domain=?
 			AND creative_size=?
 	`
@@ -69,7 +68,6 @@ func AddAndGetSeat(m models.Impression, crSize, slID int64) (*Seat, error) {
 		fSeatQ,
 		slID,
 		m.Supplier,
-		m.PublisherID,
 		m.Publisher,
 		crSize,
 	)
@@ -92,7 +90,7 @@ func AddAndGetSeat(m models.Impression, crSize, slID int64) (*Seat, error) {
 
 		err = NewManager().GetWDbMap().Insert(&seat)
 		if err != nil {
-			logrus.Debug(err)
+			logrus.Warn(err)
 			return nil, err
 		}
 	}
@@ -141,7 +139,6 @@ func SeatsLoader() func(ctx context.Context) (map[string]kv.Serializable, error)
 				sID := GenSeatPoolKey(
 					res[i].SupplierName,
 					res[i].SlotID,
-					res[i].PublisherID,
 					res[i].PublisherDomain,
 					res[i].CreativeSize,
 				)
@@ -156,12 +153,11 @@ func SeatsLoader() func(ctx context.Context) (map[string]kv.Serializable, error)
 }
 
 // GenSeatPoolKey generate cache key for pool
-func GenSeatPoolKey(supplierName string, slID int64, publisherID int64, publisherDomain string, crType int64) string {
+func GenSeatPoolKey(supplierName, slID, publisherDomain string, crType int64) string {
 	return fmt.Sprintf(
-		"sl%d_sup%s_pubid%d_pubdo%s_crtype%d",
+		"sl%s_sup%s_pubdo%s_crtype%d",
 		slID,
 		supplierName,
-		publisherID,
 		publisherDomain,
 		crType,
 	)

@@ -1,8 +1,6 @@
 package seats
 
 import (
-	"strconv"
-
 	"clickyab.com/crane/models/internal/entities"
 	"clickyab.com/crane/workers/models"
 	"github.com/clickyab/services/pool"
@@ -27,13 +25,12 @@ func GetSeats() []entities.Seat {
 
 // GetSeatByKeys try to get network seats based on its creative type
 //TODO: should use seat interface instead of structure
-func GetSeatByKeys(supplierName string, slID int64, publisherID int64, publisherDomain string, crSize int64) *entities.Seat {
+func GetSeatByKeys(supplierName string, slID string, publisherID int64, publisherDomain string, crSize int64) *entities.Seat {
 	data := seatsPool.All()
 
 	key := entities.GenSeatPoolKey(
 		supplierName,
 		slID,
-		publisherID,
 		publisherDomain,
 		crSize,
 	)
@@ -49,12 +46,10 @@ func GetSeatByKeys(supplierName string, slID int64, publisherID int64, publisher
 // AddAndGetSeat get seat by key in pool if not found select on db and if not found again inser it
 func AddAndGetSeat(m models.Impression, s models.Seat) (*entities.Seat, error) {
 	size := int64(s.AdSize)
-	sl, _ := strconv.Atoi(s.SlotPublicID)
-	slID := int64(sl)
 
 	seat := GetSeatByKeys(
 		m.Supplier,
-		slID,
+		s.SlotPublicID,
 		m.PublisherID,
 		m.Publisher,
 		size,
@@ -64,5 +59,5 @@ func AddAndGetSeat(m models.Impression, s models.Seat) (*entities.Seat, error) {
 		return seat, nil
 	}
 
-	return entities.AddAndGetSeat(m, size, slID)
+	return entities.AddAndGetSeat(m, size, s.SlotPublicID)
 }
