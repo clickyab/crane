@@ -1,7 +1,6 @@
 package config
 
 import (
-	"io/ioutil"
 	"runtime"
 
 	"github.com/clickyab/services/assert"
@@ -78,7 +77,7 @@ func SetConfigParameter() {
 	} else {
 		logrus.SetFormatter(&logrus.TextFormatter{ForceColors: false, DisableColors: true})
 		logrus.SetLevel(logrus.WarnLevel)
-		logrus.SetOutput(ioutil.Discard) // Discard the stdout logging
+		// logrus.SetOutput(ioutil.Discard) // Discard the stdout logging
 	}
 
 	numcpu := cfg.MaxCPUAvailable
