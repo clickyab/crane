@@ -71,7 +71,7 @@ func AddAndGetPublisherPage(m models.Impression) (*PublisherPage, error) {
 	`
 	var publisherPage PublisherPage
 	//Important: use GetWDbMap because read db may take time to synce and fire err and finally miss impression
-	err = NewManager().GetWDbMap().SelectOne(
+	err = NewManager().GetRDbMap().SelectOne(
 		&publisherPage,
 		fPubPageQ,
 		urlKey,

@@ -18,7 +18,7 @@ import (
 
 var (
 	//seatsExp is ads expiration time in redis
-	seatsExp  = config.RegisterDuration("crane.models.expire.seats", time.Hour, "expire time of seats. default is 1 hour")
+	seatsExp  = config.RegisterDuration("crane.models.expire.seats", 20*time.Minute, "expire time of seats. default is 1 hour")
 	extraStat = config.RegisterString("debug.models.seats.extra_file", "", "extra file to load for seats")
 )
 

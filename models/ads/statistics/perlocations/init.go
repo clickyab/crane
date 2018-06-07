@@ -18,7 +18,7 @@ import (
 
 var (
 	//crPerLocationsExp is ads expiration time in redis
-	crPerLocationsExp = config.RegisterDuration("crane.models.creatuves.statistics.perlocations", 30*time.Minute, "expire time of crPerLocations. default is 1 hour")
+	crPerLocationsExp = config.RegisterDuration("crane.models.creatuves.statistics.perlocations", 15*time.Minute, "expire time of crPerLocations. default is 1 hour")
 	extraStat         = config.RegisterString("debug.models.creatuves.statistics.perlocations.extra_file", "", "extra file to load for crPerLocations")
 )
 
