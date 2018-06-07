@@ -18,7 +18,7 @@ import (
 
 var (
 	//pagesExp is ads expiration time in redis
-	pagesExp  = config.RegisterDuration("crane.models.expire.pages", 30*time.Minute, "expire time of pages. default is 1 hour")
+	pagesExp  = config.RegisterDuration("crane.models.expire.pages", 15*time.Minute, "expire time of pages. default is 1 hour")
 	extraStat = config.RegisterString("debug.models.pages.extra_file", "", "extra file to load for pages")
 )
 

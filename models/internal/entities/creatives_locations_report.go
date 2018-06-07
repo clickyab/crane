@@ -69,7 +69,7 @@ func AddAndGetCreativesLocationsReport(creativeReport CreativesLocationsReport) 
 			AND seat_id=?
 	`
 	//Important: use GetWDbMap because read db may take time to synce and fire err and finally miss impression
-	err := NewManager().GetWDbMap().SelectOne(
+	err := NewManager().GetRDbMap().SelectOne(
 		&creativeReport,
 		fCreativeRepQ,
 		creativeReport.PublisherID,
