@@ -25,7 +25,7 @@ func GetSeats() []entities.Seat {
 
 // GetSeatByKeys try to get network seats based on its creative type
 //TODO: should use seat interface instead of structure
-func GetSeatByKeys(supplierName string, slID string, publisherID int64, publisherDomain string, crSize int64) *entities.Seat {
+func GetSeatByKeys(supplierName, slID, publisherDomain string, crSize int64) *entities.Seat {
 	data := seatsPool.All()
 
 	key := entities.GenSeatPoolKey(
@@ -50,7 +50,6 @@ func AddAndGetSeat(m models.Impression, s models.Seat) (*entities.Seat, error) {
 	seat := GetSeatByKeys(
 		m.Supplier,
 		s.SlotPublicID,
-		m.PublisherID,
 		m.Publisher,
 		size,
 	)

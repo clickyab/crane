@@ -21,15 +21,19 @@ type Seat struct {
 
 // Impression is model for show and click job
 type Impression struct {
-	IP            net.IP               `json:"ip"`
-	CopID         string               `json:"cop"`
-	UserAgent     string               `json:"ua"`
-	Suspicious    int                  `json:"sp"`
-	Referrer      string               `json:"r"`
-	ParentURL     string               `json:"par"`
-	PublisherID   int64                `json:"pub_id"`
-	Publisher     string               `json:"pub"`
-	Supplier      string               `json:"sub"`
-	Timestamp     time.Time            `json:"ts"`
-	PublisherType entity.PublisherType `json:"pt"`
+	ID                  int64                `json:"id"`
+	SeatID              int64                `json:"seat_id"`
+	PublisherPageID     int64                `json:"publisher_page_id"`
+	CreativesLocationID int64                `json:"creatives_location_id"`
+	IP                  net.IP               `json:"ip"`
+	CopID               string               `json:"cop"`
+	UserAgent           string               `json:"ua"`
+	Suspicious          int                  `json:"sp"`
+	Referrer            string               `json:"r"`
+	ParentURL           string               `json:"par"`
+	PublisherID         int64                `json:"pub_id"`
+	Publisher           string               `json:"pub"`
+	Supplier            string               `json:"sub"`
+	Timestamp           time.Time            `json:"ts"`
+	PublisherType       entity.PublisherType `json:"pt"`
 }

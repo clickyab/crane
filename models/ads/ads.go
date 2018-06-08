@@ -28,6 +28,19 @@ func GetAds() []entity.Creative {
 	return all
 }
 
+func getIds() []int64 {
+	data := ads.All()
+	ids := make([]int64, len(data))
+
+	var c int
+	for i := range data {
+		ids[c] = data[i].(entity.Creative).ID()
+		c++
+	}
+
+	return ids
+}
+
 // GetAd try to get advertise based on its id
 func GetAd(adID int64) (entity.Creative, error) {
 	ad, err := ads.Get(fmt.Sprint(adID), &entities.Advertise{})
@@ -64,8 +77,13 @@ func FindPublisher(sup, domain string, pid int64, t entity.PublisherType) (entit
 
 // AddImpression insert new impression to daily table
 // TODO : multiple insert per query
-func AddImpression(publisher entity.Publisher, impression models.Impression, seat models.Seat) error {
+func AddImpression(publisher entity.Publisher, impression models.Impression, seat models.Seat) (int64, error) {
 	return entities.AddImpression(publisher, impression, seat)
+}
+
+// UpdateImpressionLocation update impression locations fields
+func UpdateImpressionLocation(impID, seatID, pageID, locationID int64) error {
+	return entities.UpdateImpressionLocation(impID, seatID, pageID, locationID)
 }
 
 // AdClick will get impression from job and insert it into click table

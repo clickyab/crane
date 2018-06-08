@@ -1,7 +1,12 @@
 package ads
 
 import (
+	"sync/atomic"
 	"time"
+
+	"clickyab.com/crane/models/ads/statistics/locationctr"
+
+	"github.com/clickyab/services/safe"
 
 	"context"
 
@@ -20,6 +25,7 @@ var (
 	//AdsExp is ads expiration time in redis
 	AdsExp   = config.RegisterDuration("crane.models.expire.ads", time.Minute, "expire time of ads")
 	extraAds = config.RegisterString("debug.models.ads.extra_file", "", "extra file to load for ads")
+	started  int64
 )
 
 type pattern struct {
@@ -51,8 +57,32 @@ func (loader) Initialize() {
 
 	// Wait for the first time load
 	<-ads.Notify()
+	logrus.Debug("Pool of creatives initialized and ready")
+	listenToUpdates()
+}
 
-	logrus.Debug("Pool of creatives statistics initialized and ready")
+func listenToUpdates() {
+	if !atomic.CompareAndSwapInt64(&started, 0, 1) {
+		return
+	}
+
+	ctx := context.Background()
+	safe.ContinuesGoRoutine(ctx, func(x context.CancelFunc) time.Duration {
+		for i := 0; ; i++ {
+			select {
+			case <-ads.Notify():
+				err := locationctr.Load(getIds())
+				if err != nil {
+					logrus.Warn(err)
+				} else {
+					logrus.Debug("Pool of creatives ctr per page and location initialized and ready")
+				}
+			default:
+			}
+		}
+
+		return AdsExp.Duration()
+	})
 }
 
 func init() {

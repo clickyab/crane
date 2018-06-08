@@ -38,6 +38,12 @@ func GetPageByKeys(publisherDomain, URLKey string) *entities.PublisherPage {
 	return page.(*entities.PublisherPage)
 }
 
+// GetByURLAndDomain try to get network seats based on its creative type
+func GetByURLAndDomain(publisherDomain, URL string) *entities.PublisherPage {
+	ukey := entities.GenerateURLKey(URL)
+	return GetPageByKeys(publisherDomain, ukey)
+}
+
 // AddAndGetPublisherPage get page by key in pool if not found select on db and if not found again inser it
 func AddAndGetPublisherPage(im models.Impression) (*entities.PublisherPage, error) {
 	ukey := entities.GenerateURLKey(im.ParentURL)

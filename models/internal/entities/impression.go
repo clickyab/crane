@@ -51,7 +51,7 @@ func FindImpressionByRH(rh string, t time.Time) (*Impression, error) {
 
 // AddImpression insert new impression to daily table
 // TODO : multiple insert per one query
-func AddImpression(p entity.Publisher, m models.Impression, s models.Seat) error {
+func AddImpression(p entity.Publisher, m models.Impression, s models.Seat) (int64, error) {
 	var err error
 	impCPM := s.CPM
 	if s.SCPM != 0 {
@@ -81,17 +81,17 @@ func AddImpression(p entity.Publisher, m models.Impression, s models.Seat) error
 		sID, err = FindAppSlotID(s.SlotPublicID, appID.Int64, s.AdSize)
 	}
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	// find slot ad
 	said, err := FindSlotAd(sID, s.AdID)
 	if err != nil {
-		return err
+		return 0, err
 	}
 	ca, err := GetAd(s.AdID)
 	if err != nil {
-		return err
+		return 0, err
 	}
 	copString := m.CopID
 	if len(m.CopID) > 10 {
@@ -99,6 +99,7 @@ func AddImpression(p entity.Publisher, m models.Impression, s models.Seat) error
 	}
 	copID, _ := strconv.ParseInt(copString, 16, 64)
 	q := fmt.Sprintf(`INSERT INTO impressions%s (
+							seat_id, publisher_page_id, creatives_location_id,
 							cp_id,reserved_hash,ad_size,
 							w_id,wp_id,app_id,
 							ad_id,cop_id,ca_id,
@@ -113,6 +114,7 @@ func AddImpression(p entity.Publisher, m models.Impression, s models.Seat) error
 							?,?,?,
 							?,?,?,
 							?,?,?,
+							?,?,?,
 							?,?,
 							?,?,?,
 							?,?,?,
@@ -120,7 +122,8 @@ func AddImpression(p entity.Publisher, m models.Impression, s models.Seat) error
 							?,?
 							)`, time.Now().Format("20060102"))
 
-	_, err = NewManager().GetWDbMap().Exec(q,
+	sqresult, err := NewManager().GetWDbMap().Exec(q,
+		m.SeatID, m.PublisherPageID, m.CreativesLocationID,
 		ca.Campaign().ID(), s.ReserveHash, s.AdSize,
 		wID, 0, appID,
 		s.AdID, copID, ca.CampaignAdID(),
@@ -130,6 +133,33 @@ func AddImpression(p entity.Publisher, m models.Impression, s models.Seat) error
 		m.Timestamp.Unix(), m.Timestamp.Format("20060102"), said,
 		sID, p.Supplier().Name(), sDiffCPM,
 		impCPM, impCPM*float64(p.Supplier().Share())/100)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return sqresult.LastInsertId()
+}
+
+// UpdateImpressionLocation update impression locations fields
+func UpdateImpressionLocation(impID, seatID, pageID, locationID int64) error {
+	q := fmt.Sprintf(
+		`UPDATE impressions%s SET
+		seat_id=?,
+		publisher_page_id=?,
+		creatives_location_id=?
+		WHERE imp_id=?
+		`,
+		time.Now().Format("20060102"),
+	)
+
+	_, err := NewManager().GetWDbMap().Exec(
+		q,
+		seatID,
+		pageID,
+		locationID,
+		impID,
+	)
 
 	return err
 }

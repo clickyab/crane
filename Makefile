@@ -59,4 +59,10 @@ run-click: all ip2location
 debug-click: ip2location debuger
 	$(BIN)/dlv --listen=:2345 --headless=true --api-version=2 exec $(BIN)/click-worker
 
+run-ctrpage: all ip2location
+	$(ROOT)/bin/ctrpage-worker
+
+debug-ctrpage: ip2location debuger
+	$(BIN)/dlv --listen=:2345 --headless=true --api-version=2 exec $(BIN)/ctrpage-worker
+
 include $(ROOT)/scripts/*.mk
