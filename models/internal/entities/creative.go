@@ -252,6 +252,8 @@ func AdLoader(_ context.Context) (map[string]kv.Serializable, error) {
 	}
 
 	ads := make(map[string]kv.Serializable)
+	ids := make([]int64, len(res))
+	var c int
 	for i := range res {
 		if res[i].FCaCTR.Valid {
 			res[i].FCTR = res[i].FCaCTR.Float64
@@ -260,6 +262,7 @@ func AdLoader(_ context.Context) (map[string]kv.Serializable, error) {
 		}
 		res[i].assets = extractAssets(res[i])
 		ads[fmt.Sprint(res[i].FID)] = &Advertise{ad: res[i]}
+		ids[c] = res[i].FID
 	}
 	logrus.Debugf("Load %d ads", len(ads))
 

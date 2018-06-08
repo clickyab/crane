@@ -7,7 +7,7 @@ import (
 	_ "clickyab.com/crane/models/ads/statistics/locationctr"
 	_ "clickyab.com/crane/models/pages"
 	_ "clickyab.com/crane/models/seats"
-	"clickyab.com/crane/workers/show"
+	"clickyab.com/crane/workers/ctrpage"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/broker"
 	_ "github.com/clickyab/services/broker/selector"
@@ -25,7 +25,7 @@ func main() {
 
 	defer initializer.Initialize()()
 
-	assert.Nil(broker.RegisterConsumer(show.NewConsumer()))
+	assert.Nil(broker.RegisterConsumer(ctrpage.NewConsumer()))
 
 	sig := shell.WaitExitSignal()
 	logrus.Debugf("%s received, exiting...", sig.String())

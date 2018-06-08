@@ -62,7 +62,6 @@ func AddAndGetSeat(m models.Impression, crSize int64, slID string) (*Seat, error
 			AND creative_size=?
 	`
 
-	//Important: use GetWDbMap because read db may take time to synce and fire err and finally miss impression
 	err := NewManager().GetRDbMap().SelectOne(
 		&seat,
 		fSeatQ,
@@ -102,7 +101,7 @@ func AddAndGetSeat(m models.Impression, crSize int64, slID string) (*Seat, error
 func SeatsLoader() func(ctx context.Context) (map[string]kv.Serializable, error) {
 	return func(ctx context.Context) (map[string]kv.Serializable, error) {
 		seatData := make(map[string]kv.Serializable)
-		// return b, nil // Uncomment this line after first time in DEV mode
+		// return seatData, nil // Uncomment this line after first time in DEV mode
 
 		const cnt = 10000
 		for j := 0; ; j = j + cnt {

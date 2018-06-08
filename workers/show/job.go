@@ -3,16 +3,21 @@ package show
 import (
 	"context"
 	"encoding/json"
+	"time"
 
-	"clickyab.com/crane/models/ads/statistics/perlocations"
+	"clickyab.com/crane/workers/ctrpage"
+
+	"clickyab.com/crane/models/ads/statistics/locationctr"
 	"clickyab.com/crane/models/pages"
+
+	"clickyab.com/crane/models/seats"
 
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/models/ads"
-	"clickyab.com/crane/models/seats"
 	m "clickyab.com/crane/workers/models"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/broker"
+	"github.com/clickyab/services/safe"
 	"github.com/clickyab/services/xlog"
 	"github.com/sirupsen/logrus"
 )
@@ -65,29 +70,53 @@ func (j *job) process(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+	j.Impression.PublisherID = pub.ID()
 	for _, s := range j.Seats {
-		seat, err := seats.AddAndGetSeat(j.Impression, s)
-		if err != nil {
-			xlog.GetWithError(ctx, err)
-			errs.add(err)
+		crSize := int64(s.AdSize)
+
+		seat := seats.GetSeatByKeys(
+			j.Impression.Supplier,
+			s.SlotPublicID,
+			j.Impression.Publisher,
+			crSize,
+		)
+		if seat != nil {
+			page := pages.GetByURLAndDomain(
+				j.Impression.Publisher,
+				j.Impression.ParentURL,
+			)
+
+			if page != nil {
+				crlocation := locationctr.GetCRPerLocationByKeys(
+					j.Impression.Publisher,
+					page.ID,
+					seat.ID,
+					s.AdID,
+					crSize,
+				)
+
+				j.Impression.SeatID = seat.ID
+				j.Impression.PublisherPageID = page.ID
+				j.Impression.CreativesLocationID = crlocation.CreativeLocationID()
+			}
 		}
 
-		pubPage, err := pages.AddAndGetPublisherPage(j.Impression)
-		if err != nil {
-			xlog.GetWithError(ctx, err)
-			errs.add(err)
-		}
+		impID, err := ads.AddImpression(pub, j.Impression, s)
 
-		_, err = perlocations.AddAndGetCreativePerLocation(*seat, *pubPage, s.AdID, int64(s.AdSize))
 		if err != nil {
 			xlog.GetWithError(ctx, err)
 			errs.add(err)
-		}
+		} else if j.Impression.CreativesLocationID == 0 {
+			j.Impression.ID = impID
 
-		err = ads.AddImpression(pub, j.Impression, s)
-		if err != nil {
-			xlog.GetWithError(ctx, err)
-			errs.add(err)
+			exp, _ := context.WithTimeout(ctx, 10*time.Second)
+			safe.GoRoutine(exp, func() {
+				newJob := ctrpage.Job{
+					Impression: j.Impression,
+					Seats:      j.Seats,
+				}
+				broker.Publish(&newJob)
+			})
 		}
 	}
 	return errs.result()

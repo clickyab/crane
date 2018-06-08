@@ -66,16 +66,14 @@ func AddAndGetPublisherPage(m models.Impression) (*PublisherPage, error) {
 		FROM publisher_pages
 		WHERE
 			url_key=?
-			AND publisher_id=?
 			AND publisher_domain=?
 	`
 	var publisherPage PublisherPage
-	//Important: use GetWDbMap because read db may take time to synce and fire err and finally miss impression
+
 	err = NewManager().GetRDbMap().SelectOne(
 		&publisherPage,
 		fPubPageQ,
 		urlKey,
-		m.PublisherID,
 		m.Publisher,
 	)
 	if err == nil {
@@ -134,7 +132,7 @@ func NormalizeURL(url string) (string, error) {
 func PagesLoader() func(ctx context.Context) (map[string]kv.Serializable, error) {
 	return func(ctx context.Context) (map[string]kv.Serializable, error) {
 		pages := make(map[string]kv.Serializable)
-		// return b, nil // Uncomment this line after first time in DEV mode
+		// return pages, nil // Uncomment this line after first time in DEV mode
 
 		yesterday, _ := strconv.Atoi(time.Now().AddDate(0, 0, -1).Format("20060102"))
 		const cnt = 10000

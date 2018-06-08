@@ -1306,6 +1306,9 @@ CREATE TABLE IF NOT EXISTS `hits` (
 DROP TABLE IF EXISTS `impressions`;
 CREATE TABLE IF NOT EXISTS `impressions` (
   `imp_id` int(11) NOT NULL AUTO_INCREMENT,
+  `seat_id` int(11) DEFAULT '0',
+  `publisher_page_id` int(11) DEFAULT '0',
+  `creatives_location_id` int(11) DEFAULT '0',
   `reserved_hash` varchar(63) DEFAULT NULL,
   `cp_id` int(11) DEFAULT '0',
   `w_id` int(11) DEFAULT '0',
