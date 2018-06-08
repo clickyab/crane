@@ -95,9 +95,11 @@ func (j *job) process(ctx context.Context) error {
 					crSize,
 				)
 
-				j.Impression.SeatID = seat.ID
-				j.Impression.PublisherPageID = page.ID
-				j.Impression.CreativesLocationID = crlocation.CreativeLocationID()
+				if crlocation != nil {
+					j.Impression.SeatID = seat.ID
+					j.Impression.PublisherPageID = page.ID
+					j.Impression.CreativesLocationID = crlocation.CreativeLocationID()
+				}
 			}
 		}
 
