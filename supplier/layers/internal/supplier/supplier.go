@@ -7,6 +7,10 @@ import (
 type dummy struct {
 }
 
+func (s *dummy) Markup() bool {
+	return false
+}
+
 func (s *dummy) SoftFloorCPC(string, string) int64 {
 	panic("implement dummy SoftFloorCPC not valid")
 }

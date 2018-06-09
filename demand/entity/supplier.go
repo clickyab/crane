@@ -43,4 +43,6 @@ type Supplier interface {
 	Share() int
 	// Strategy return default strategy of supplier (cpm, cpc)
 	Strategy() Strategy
+	// Markup return true if do not need iframe
+	Markup() bool
 }

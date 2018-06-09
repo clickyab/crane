@@ -146,6 +146,24 @@ func (s *seat) ImpressionURL() *url.URL {
 		s.cpm,
 		showExpire.Duration(),
 	)
+
+	//check for markup if markup is true act like native impression
+	// TODO : move to better place :(
+	if s.context.bannerMarkup {
+		s.imp = s.makeURL(
+			"pixel",
+			map[string]string{
+				"rh":      s.ReservedHash(),
+				"size":    "20",
+				"type":    s.Type().String(),
+				"subtype": s.RequestType().String(),
+				"pt":      s.context.publisher.Type().String(),
+			},
+			s.cpm,
+			showExpire.Duration(),
+		)
+	}
+
 	return s.imp
 }
 

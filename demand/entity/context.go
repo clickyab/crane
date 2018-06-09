@@ -96,6 +96,8 @@ type Context interface {
 	UnderFloor() bool
 	// TV true if true view
 	TV() bool
+	// BannerMarkup true if do not need iframe
+	BannerMarkup() bool
 	// GetCreativesStatistics return statistics of all active network creatives base on it's type
 	GetCreativesStatistics() []CreativeStatistics
 }

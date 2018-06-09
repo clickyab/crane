@@ -270,6 +270,14 @@ func SetNoTiny(noTiny bool) ShowOptionSetter {
 	}
 }
 
+// SetBannerMarkup is the option to set custom banner markup
+func SetBannerMarkup(sup entity.Supplier) ShowOptionSetter {
+	return func(o *Context) (*Context, error) {
+		o.bannerMarkup = sup.Markup()
+		return o, nil
+	}
+}
+
 // SetStrategy is the option to set strategy for request
 func SetStrategy(s []string, sup entity.Supplier) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {

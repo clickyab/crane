@@ -35,6 +35,7 @@ type Context struct {
 	parent   string
 
 	noTiny           bool
+	bannerMarkup     bool
 	multiVideo       bool
 	floorPercentage  int64
 	softFloorCPM     int64
@@ -237,6 +238,11 @@ func (c *Context) UnderFloor() bool {
 // TV if true means should insert true view
 func (c *Context) TV() bool {
 	return c.tv
+}
+
+// BannerMarkup if true means should not render iframe
+func (c *Context) BannerMarkup() bool {
+	return c.bannerMarkup
 }
 
 // GetCreativesStatistics return statistics of all active network creatives base on it's type
