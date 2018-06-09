@@ -107,6 +107,21 @@ func (s *nativeSeat) Acceptable(advertise entity.Creative) bool {
 	if !s.genericTests(advertise) {
 		return false
 	}
+
+	// check campaign network
+	switch s.context.Publisher().Type() {
+	case entity.PublisherTypeApp:
+		// TODO : fix when implement app native
+		return false
+	case entity.PublisherTypeWeb:
+		// TODO: not totally sure
+		if advertise.Target() != entity.TargetNative && advertise.Target() != entity.TargetWeb {
+			return false
+		}
+	default:
+		panic("invalid type")
+	}
+
 	for i := range s.filters {
 		if !s.filters[i].Required {
 			continue

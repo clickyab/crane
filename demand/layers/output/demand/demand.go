@@ -188,16 +188,29 @@ func vastMarkup(ctx entity.Context, s entity.VastSeat) *openrtb.Bid {
 	}
 }
 
+const bannerMarkupWithoutIframe = `
+	<div>
+        <a href='%s' target='_blank'>
+            <img src='%s'/‎>
+            <img style="display: none;" src='%s'/‎>
+        </a>
+    </div>`
+
 func bannerMarkup(ctx entity.Context, s entity.Seat) *openrtb.Bid {
+	adMarkup := fmt.Sprintf(
+		`<iframe src="%s&scpm=${AUCTION_PRICE}" width="%d" height="%d" frameborder="0"  scrolling="no" style="max-width:100%%"></iframe>`,
+		s.ImpressionURL().String(),
+		s.Width(),
+		s.Height(),
+	)
+	// check for banner markup
+	if ctx.BannerMarkup() {
+		adMarkup = fmt.Sprintf(bannerMarkupWithoutIframe, s.ClickURL().String(), s.WinnerAdvertise().TargetURL(), s.ImpressionURL().String())
+	}
 	return &openrtb.Bid{
-		ID:    s.ReservedHash(),
-		ImpID: s.PublicID(),
-		AdMarkup: fmt.Sprintf(
-			`<iframe src="%s&scpm=${AUCTION_PRICE}" width="%d" height="%d" frameborder="0"  scrolling="no" style="max-width:100%%"></iframe>`,
-			s.ImpressionURL().String(),
-			s.Width(),
-			s.Height(),
-		),
+		ID:         s.ReservedHash(),
+		ImpID:      s.PublicID(),
+		AdMarkup:   adMarkup,
 		AdID:       fmt.Sprint(s.WinnerAdvertise().ID()),
 		CreativeID: fmt.Sprint(s.WinnerAdvertise().ID()),
 		H:          s.Height(),
