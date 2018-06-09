@@ -52,7 +52,7 @@ func (loader) Initialize() {
 		loader = pool.DebugLoaderGenerator(loader, extraAds.String(), pattern{})
 	}
 
-	ads = pool.NewPool(loader, memorypool.NewMemoryPool(), AdsExp.Duration(), 10*time.Second, 3)
+	ads = pool.NewPool(loader, memorypool.NewMemoryPool(), AdsExp.Duration(), 15*time.Second, 3)
 	ads.Start(ctx)
 
 	// Wait for the first time load
