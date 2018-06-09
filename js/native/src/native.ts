@@ -96,17 +96,21 @@ export default class NativeComponent {
 
 
 	private domainValidation(element: HTMLElement): boolean {
-		if (location.hostname === "localhost" ||
-			location.hostname === "127.0.0.1" ||
-			location.hostname.split(".").splice(-2).join(".") === "clickyab.com" ||
-			location.hostname.split(".").splice(-2).join(".") === "clickyab.ae"
+		let url = (window.location != window.parent.location)
+            ? document.referrer
+            : document.location.href;
+		let hostname = url.split(":")[1].split("/")[2];
+		if (hostname === "localhost" ||
+			hostname === "127.0.0.1" ||
+			hostname.split(".").splice(-2).join(".") === "clickyab.com" ||
+			hostname.split(".").splice(-2).join(".") === "clickyab.ae"
 		) {
 			return true;
 		}
 		try {
 			const domain = element.getAttribute("data-domain") as string;
 			const baseDomain = domain.split(":")[0].split(".").splice(-2).join(".");
-			const currentDomain = document.location.hostname.split(":")[0].split(".").splice(-2).join(".");
+			const currentDomain = hostname.split(":")[0].split(".").splice(-2).join(".");
 			if (baseDomain !== currentDomain) {
 				console.error("Current domain is not match with config. It also happens when current page's domain is not valid.");
 			}
