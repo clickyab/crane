@@ -132,7 +132,8 @@ func NormalizeURL(url string) (string, error) {
 func PagesLoader() func(ctx context.Context) (map[string]kv.Serializable, error) {
 	return func(ctx context.Context) (map[string]kv.Serializable, error) {
 		pages := make(map[string]kv.Serializable)
-		// return pages, nil // Uncomment this line after first time in DEV mode
+		//TODO: should comment after fix it
+		return pages, nil // Uncomment this line after first time in DEV mode
 
 		yesterday, _ := strconv.Atoi(time.Now().AddDate(0, 0, -1).Format("20060102"))
 		const cnt = 10000
