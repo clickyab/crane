@@ -97,6 +97,7 @@ RUN apk add --no-cache --virtual .build-deps git go libc-dev make \
     && apk del .build-deps \
     && mkdir -p /app/bin \
     && mv /gopath/src/clickyab.com/crane/bin/* /app/bin/ \
+    && chmod -R 755 /app/bin/* \
     && mkdir -p /app/statics \
     && mv /gopath/src/clickyab.com/crane/statics/* /app/statics/ \
     && rm -rf /gopath /go
