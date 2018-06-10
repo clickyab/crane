@@ -174,7 +174,8 @@ func AddAndGetCreativesLocationsReport(creativeReport CreativesLocationsReport) 
 // CRlocationctrLoader load all creatives statistics per locations
 func CRlocationctrLoader(ids []int64) (map[int64]map[string]kv.Serializable, error) {
 	crlocationctr := make(map[int64]map[string]kv.Serializable)
-	// return crlocationctr, nil // Uncomment this line after first time in DEV mode
+	//TODO: should comment after fix it
+	return crlocationctr, nil // Uncomment this line after first time in DEV mode
 	if len(ids) == 0 {
 		return crlocationctr, fmt.Errorf("no creatives id")
 	}
