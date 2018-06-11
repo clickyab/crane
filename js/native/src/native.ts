@@ -1,178 +1,186 @@
 import {corners, fontFamilies, fontSizes, INative, INativeOptions, position, types} from "./definitions/native";
 
 export default class NativeComponent {
-	private wrapperElement: HTMLElement;
-	private nativeUrl: string;
-	private randomSting: string;
-	private style: string = `__STYLE_TEMPLATE__`;
-	private customOptions: INativeOptions = {};
-	private defaultOptions: INativeOptions = {
-		clickyab: "_clickyab_",
-		type: types.grid4x,
-		fontFamily: fontFamilies.samim,
-		count: "4",
-		corners: corners.sharp,
-		title: "مطالب از سراسر وب",
-		horizontal: false,
-		fontsize: fontSizes.pt_8,
-		position: position.top,
-		orientation: "horizontal",
-		tid: "ـ",
-		domain: "ـ",
-		id: "ـ",
-		titleBackGround: "",
-		titleColor: "#000",
-		parent: document.location.href,
-		ref: document.referrer,
-		nostyle: "false",
-	};
-	private options: INativeOptions;
+    private wrapperElement: HTMLElement;
+    private nativeUrl: string;
+    private randomSting: string;
+    private style: string = `__STYLE_TEMPLATE__`;
+    private customOptions: INativeOptions = {};
+    private defaultOptions: INativeOptions = {
+        clickyab: "_clickyab_",
+        type: types.grid4x,
+        fontFamily: fontFamilies.samim,
+        count: "4",
+        corners: corners.sharp,
+        title: "مطالب از سراسر وب",
+        horizontal: false,
+        fontsize: fontSizes.pt_8,
+        position: position.top,
+        orientation: "horizontal",
+        tid: "ـ",
+        domain: "ـ",
+        id: "ـ",
+        titleBackGround: "",
+        titleColor: "#000",
+        parent: document.location.href,
+        ref: document.referrer,
+        nostyle: "false",
+    };
+    private options: INativeOptions;
 
-	constructor(wrapper: HTMLElement, url: string) {
-		this.wrapperElement = wrapper;
-		this.nativeUrl = url;
-		this.randomSting = Math.random().toString().replace("0.", "");
+    constructor(wrapper: HTMLElement, url: string) {
+        this.wrapperElement = wrapper;
+        this.nativeUrl = url;
+        this.randomSting = Math.random().toString().replace("0.", "");
 
-		if (!this.domainValidation(wrapper)) {
-			return;
-		}
+        if (!this.domainValidation(wrapper)) {
+            return;
+        }
 
-		this.fillOptions();
-		window.addEventListener("resize", this.addWrapperStyle.bind(this));
-		this.options = Object.assign(this.defaultOptions, this.customOptions) as INativeOptions;
-		if (!this.customOptions.type) {
-			this.customOptions.type = this.getType();
-		}
-		this.reload();
-	}
+        this.fillOptions();
+        window.addEventListener("resize", this.addWrapperStyle.bind(this));
+        this.options = Object.assign(this.defaultOptions, this.customOptions) as INativeOptions;
+        if (!this.customOptions.type) {
+            this.customOptions.type = this.getType();
+        }
+        this.reload();
+    }
 
-	public reload() {
-		this.loadNativeJson()
-			.then((data: INative) => {
-				this.wrapperElement.innerHTML = this.compileHtml(data.html);
-				this.addClass(this.options.type || "");
-				this.addClass(this.options.corners || "");
-				this.addClass(this.options.horizontal ? "horizontal-item" : "");
-				this.addClass(`clickyab_${this.randomSting}`);
-				this.addClass(this.options.orientation || "");
-				this.addWrapperStyle();
-			});
-	}
+    public reload() {
+        this.loadNativeJson()
+            .then((data: INative) => {
+                this.wrapperElement.innerHTML = this.compileHtml(data.html);
+                this.addClass(this.options.type || "");
+                this.addClass(this.options.corners || "");
+                this.addClass(this.options.horizontal ? "horizontal-item" : "");
+                this.addClass(`clickyab_${this.randomSting}`);
+                this.addClass(this.options.orientation || "");
+                this.addWrapperStyle();
+            });
+    }
 
-	private getType() {
-		let type = types.grid4x;
-		if (this.options.orientation === "vertical") {
-			type = types.vertical;
-		} else if (this.options.count === "1") {
-			type = types.single;
-		} else if (this.options.count === "3" || this.options.count === "6" || this.options.count === "9") {
-			type = types.grid3x;
-		}
-		return type;
-	}
+    private getType() {
+        let type = types.grid4x;
+        if (this.options.orientation === "vertical") {
+            type = types.vertical;
+        } else if (this.options.count === "1") {
+            type = types.single;
+        } else if (this.options.count === "3" || this.options.count === "6" || this.options.count === "9") {
+            type = types.grid3x;
+        }
+        return type;
+    }
 
-	private addWrapperStyle() {
+    private addWrapperStyle() {
 
-		this.removeClass("xs");
-		this.removeClass("sm");
-		this.removeClass("md");
-		this.removeClass("lg");
-		this.removeClass("xl");
-
-
-		const width = this.wrapperElement.offsetWidth;
-		if (width <= 280) {
-			this.addClass("xs");
-		} else if (280 < width && width <= 480) {
-			this.addClass("sm");
-		} else if (480 < width && width <= 970) {
-			this.addClass("md");
-		} else if (970 < width && width < 1200) {
-			this.addClass("lg");
-		} else {
-			this.addClass("xl");
-		}
-	}
+        this.removeClass("xs");
+        this.removeClass("sm");
+        this.removeClass("md");
+        this.removeClass("lg");
+        this.removeClass("xl");
 
 
-	private domainValidation(element: HTMLElement): boolean {
-		if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
-			return true;
-		}
-		try {
-			const domain = element.getAttribute("data-domain") as string;
-			const baseDomain = domain.split(":")[0].split(".").splice(-2).join(".");
-			const currentDomain = document.location.hostname.split(":")[0].split(".").splice(-2).join(".");
-			if (baseDomain !== currentDomain) {
-				console.error("Current domain is not match with config. It also happens when current page's domain is not valid.");
-			}
-			return baseDomain === currentDomain;
-		} catch (e) {
-			console.error("Current domain is not match with config. It also happens when current page's domain is not valid.");
-			return false;
-		}
-	}
+        const width = this.wrapperElement.offsetWidth;
+        if (width <= 280) {
+            this.addClass("xs");
+        } else if (280 < width && width <= 480) {
+            this.addClass("sm");
+        } else if (480 < width && width <= 970) {
+            this.addClass("md");
+        } else if (970 < width && width < 1200) {
+            this.addClass("lg");
+        } else {
+            this.addClass("xl");
+        }
+    }
 
-	private addClass(className: string) {
-		let classes: string[] = (this.wrapperElement.getAttribute("class") || "").split(" ");
-		if (classes.findIndex((c: string) => (c === className)) === -1) {
-			classes.push(className);
-			this.wrapperElement.setAttribute("class", classes.join(" "));
-		}
-	}
 
-	private removeClass(className: string) {
-		let classes: string[] = (this.wrapperElement.getAttribute("class") || "").split(" ");
-		const indexOfClass = classes.findIndex((c: string) => (c === className));
-		if (indexOfClass > -1) {
-			classes.splice(indexOfClass, 1);
-			this.wrapperElement.setAttribute("class", classes.join(" "));
-		}
-	}
+    private domainValidation(element: HTMLElement): boolean {
+        let url = (window.location != window.parent.location)
+            ? document.referrer
+            : document.location.href;
+        let hostname = url.split(":")[1].split("/")[2];
+        if (hostname === "localhost" ||
+            hostname === "127.0.0.1" ||
+            hostname.split(".").splice(-2).join(".") === "clickyab.com" ||
+            hostname.split(".").splice(-2).join(".") === "clickyab.ae"
+        ) {
+            return true;
+        }
+        try {
+            const domain = element.getAttribute("data-domain") as string;
+            const baseDomain = domain.split(":")[0].split(".").splice(-2).join(".");
+            const currentDomain = hostname.split(":")[0].split(".").splice(-2).join(".");
+            if (baseDomain !== currentDomain) {
+                console.error("Current domain is not match with config. It also happens when current page's domain is not valid.");
+            }
+            return baseDomain === currentDomain;
+        } catch (e) {
+            console.error("Current domain is not match with config. It also happens when current page's domain is not valid.");
+            return false;
+        }
+    }
 
-	private fillOptions() {
-		this.customOptions = {};
-		Object.keys(this.defaultOptions).forEach(key => {
-			const optionKey = key.replace(/([A-Z])/g, (g) => `-${g[0].toLowerCase()}`);
-			if (this.wrapperElement.getAttribute(`data-${optionKey}`)) {
-				this.customOptions[key] = this.wrapperElement.getAttribute(`data-${optionKey}`);
-			}
-		});
-	}
+    private addClass(className: string) {
+        let classes: string[] = (this.wrapperElement.getAttribute("class") || "").split(" ");
+        if (classes.findIndex((c: string) => (c === className)) === -1) {
+            classes.push(className);
+            this.wrapperElement.setAttribute("class", classes.join(" "));
+        }
+    }
 
-	private loadNativeJson(): Promise<INative> {
-		return new Promise((resolve, reject) => {
-			const xhr = new XMLHttpRequest();
-			const url = this.compiler(this.nativeUrl, Object.assign(this.defaultOptions, this.customOptions));
-			xhr.onreadystatechange = function () {
-				if (this.readyState === 4 && this.status === 200) {
-					let nativeObj = JSON.parse(xhr.responseText);
-					resolve(nativeObj as INative);
-				}
-			};
+    private removeClass(className: string) {
+        let classes: string[] = (this.wrapperElement.getAttribute("class") || "").split(" ");
+        const indexOfClass = classes.findIndex((c: string) => (c === className));
+        if (indexOfClass > -1) {
+            classes.splice(indexOfClass, 1);
+            this.wrapperElement.setAttribute("class", classes.join(" "));
+        }
+    }
 
-			xhr.onerror = () => {
-				reject();
-				throw new Error(`Failed to load Native Json from ${url}`);
-			};
+    private fillOptions() {
+        this.customOptions = {};
+        Object.keys(this.defaultOptions).forEach(key => {
+            const optionKey = key.replace(/([A-Z])/g, (g) => `-${g[0].toLowerCase()}`);
+            if (this.wrapperElement.getAttribute(`data-${optionKey}`)) {
+                this.customOptions[key] = this.wrapperElement.getAttribute(`data-${optionKey}`);
+            }
+        });
+    }
 
-			xhr.open("GET", url);
-			xhr.send();
-		});
-	}
+    private loadNativeJson(): Promise<INative> {
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            const url = this.compiler(this.nativeUrl, Object.assign(this.defaultOptions, this.customOptions));
+            xhr.onreadystatechange = function () {
+                if (this.readyState === 4 && this.status === 200) {
+                    let nativeObj = JSON.parse(xhr.responseText);
+                    resolve(nativeObj as INative);
+                }
+            };
 
-	private compileHtml(htmlData: string): string {
-		let html = htmlData.replace(new RegExp("_clickyab_", "ig"), `clickyab_${this.randomSting}`);
+            xhr.onerror = () => {
+                reject();
+                throw new Error(`Failed to load Native Json from ${url}`);
+            };
 
-		let styleTag = this.style && this.customOptions.nostyle !== "true" ? `<style>
+            xhr.open("GET", url);
+            xhr.send();
+        });
+    }
+
+    private compileHtml(htmlData: string): string {
+        let html = htmlData.replace(new RegExp("_clickyab_", "ig"), `clickyab_${this.randomSting}`);
+
+        let styleTag = this.style && this.customOptions.nostyle !== "true" ? `<style>
 				${this.compiler(this.style, this.options)
-			.replace(new RegExp("_clickyab_", "ig"), `clickyab_${this.randomSting}`)}
+            .replace(new RegExp("_clickyab_", "ig"), `clickyab_${this.randomSting}`)}
 				</style>` : "";
-		return ` ${this.getHeader()}${styleTag} <div class="cy-items">${html}</div>`;
-	}
+        return ` ${this.getHeader()}${styleTag} <div class="cy-items">${html}</div>`;
+    }
 
-	private getHeader() {
-		let templ = `
+    private getHeader() {
+        let templ = `
 			<div class="cy-title-holder">
 				<div class="cy-title ">${this.options.title}</div>
 				<div class="cy-logo">
@@ -184,34 +192,34 @@ export default class NativeComponent {
 		`;
 
 
-		return templ;
-	}
+        return templ;
+    }
 
-	private compiler(text, options): string {
-		let re = /__(.+?)__/g,
-			reExp = /(^( )?(var|if|for|else|switch|case|break|{|}|;))(.*)?/g,
-			code = "with(obj) { var r=[];\n",
-			cursor = 0,
-			result,
-			match;
-		let add = function (line, js = false) {
-			js ? (code += line.match(reExp) ? `${line}\n` : `r.push(${line} ? ${line} : "");\n`) :
-				(code += line !== "" ? `r.push('${line.replace(/"/g, "\"")}');\n` : "");
-			return add;
-		};
-		while (match = re.exec(text)) {
-			add(text.slice(cursor, match.index))(match[1], true);
-			cursor = match.index + match[0].length;
-		}
-		add(text.substr(cursor, text.length - cursor));
-		code = (code + `return r.join("");}`).replace(/[\r\t\n]/g, " ");
-		try {
-			result = new Function("obj", code).apply(options, [options]);
-		}
-		catch (err) {
-			console.error("'" + err.message + "'", " in \n\nCode:\n", code, "\n");
-		}
-		return result;
-	}
+    private compiler(text, options): string {
+        let re = /__(.+?)__/g,
+            reExp = /(^( )?(var|if|for|else|switch|case|break|{|}|;))(.*)?/g,
+            code = "with(obj) { var r=[];\n",
+            cursor = 0,
+            result,
+            match;
+        let add = function (line, js = false) {
+            js ? (code += line.match(reExp) ? `${line}\n` : `r.push(${line} ? ${line} : "");\n`) :
+                (code += line !== "" ? `r.push('${line.replace(/"/g, "\"")}');\n` : "");
+            return add;
+        };
+        while (match = re.exec(text)) {
+            add(text.slice(cursor, match.index))(match[1], true);
+            cursor = match.index + match[0].length;
+        }
+        add(text.substr(cursor, text.length - cursor));
+        code = (code + `return r.join("");}`).replace(/[\r\t\n]/g, " ");
+        try {
+            result = new Function("obj", code).apply(options, [options]);
+        }
+        catch (err) {
+            console.error("'" + err.message + "'", " in \n\nCode:\n", code, "\n");
+        }
+        return result;
+    }
 
 }
