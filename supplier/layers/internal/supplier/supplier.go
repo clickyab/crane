@@ -73,6 +73,10 @@ func (s *dummy) Rate() int {
 	panic("implement dummy Rate not valid")
 }
 
+func (s *dummy) Markup() bool {
+	return false
+}
+
 // NewClickyab return a dummy clickyab supplier
 func NewClickyab() entity.Supplier {
 	return &dummy{}

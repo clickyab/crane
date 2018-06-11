@@ -326,6 +326,14 @@ func SetConnType(v int) ShowOptionSetter {
 	}
 }
 
+// SetBannerMarkup is the option to set custom banner markup
+func SetBannerMarkup(sup entity.Supplier) ShowOptionSetter {
+	return func(o *Context) (*Context, error) {
+		o.bannerMarkup = sup.Markup()
+		return o, nil
+	}
+}
+
 // SetPreventDefault is a simple workaround for our old sdk. the old sdk do not pass click to higher level
 // and we use post message to handle that, pre 4 sdk are that way
 func SetPreventDefault(prevent bool) ShowOptionSetter {

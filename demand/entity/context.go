@@ -96,4 +96,6 @@ type Context interface {
 	UnderFloor() bool
 	// TV true if true view
 	TV() bool
+	// BannerMarkup true if do not need iframe
+	BannerMarkup() bool
 }

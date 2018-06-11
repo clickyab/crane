@@ -31,6 +31,7 @@ type Supplier struct {
 	FRate         int                    `db:"rate"`
 	FTinyLogo     string                 `db:"tiny_logo"`
 	FTinyURL      string                 `db:"tiny_url"`
+	FMarkup       bool                   `db:"markup"`
 	FShare        int                    `db:"share"`
 	strategy      entity.Strategy        `db:"-"`
 }
@@ -141,13 +142,18 @@ func (s *Supplier) DefaultMinBid() int64 {
 	return s.DefaultMinBID
 }
 
+// Markup return markup status
+func (s *Supplier) Markup() bool {
+	return s.FMarkup
+}
+
 // Share of this supplier
 func (s *Supplier) Share() int {
 	return s.FShare
 }
 
 var (
-	supQuery = `SELECT name,token,user_id,soft_floor_cpm, soft_floor_cpc, default_min_bid,bid_type,ctr,tiny_mark,
+	supQuery = `SELECT name,token,markup,user_id,soft_floor_cpm, soft_floor_cpc, default_min_bid,bid_type,ctr,tiny_mark,
 show_domain,created_at,updated_at,rate,tiny_logo,tiny_url,share FROM suppliers`
 )
 

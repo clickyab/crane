@@ -36,6 +36,18 @@ func (m *MockContext) EXPECT() *MockContextMockRecorder {
 	return m.recorder
 }
 
+// BannerMarkup mocks base method
+func (m *MockContext) BannerMarkup() bool {
+	ret := m.ctrl.Call(m, "BannerMarkup")
+	ret0, _ := ret[0].(bool)
+	return ret0
+}
+
+// BannerMarkup indicates an expected call of BannerMarkup
+func (mr *MockContextMockRecorder) BannerMarkup() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BannerMarkup", reflect.TypeOf((*MockContext)(nil).BannerMarkup))
+}
+
 // Brand mocks base method
 func (m *MockContext) Brand() string {
 	ret := m.ctrl.Call(m, "Brand")
@@ -1774,6 +1786,18 @@ func (m *MockSupplier) DefaultMinBid() int64 {
 // DefaultMinBid indicates an expected call of DefaultMinBid
 func (mr *MockSupplierMockRecorder) DefaultMinBid() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DefaultMinBid", reflect.TypeOf((*MockSupplier)(nil).DefaultMinBid))
+}
+
+// Markup mocks base method
+func (m *MockSupplier) Markup() bool {
+	ret := m.ctrl.Call(m, "Markup")
+	ret0, _ := ret[0].(bool)
+	return ret0
+}
+
+// Markup indicates an expected call of Markup
+func (mr *MockSupplierMockRecorder) Markup() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Markup", reflect.TypeOf((*MockSupplier)(nil).Markup))
 }
 
 // Name mocks base method
