@@ -8,9 +8,11 @@ package amqp
 import (
 	"bufio"
 	"crypto/tls"
+	"fmt"
 	"io"
 	"net"
 	"reflect"
+	"runtime/debug"
 	"strconv"
 	"strings"
 	"sync"
@@ -226,6 +228,9 @@ func Open(conn io.ReadWriteCloser, config Config) (*Connection, error) {
 		deadlines: make(chan readDeadliner, 1),
 	}
 	go c.reader(conn)
+	fmt.Println("____________________________________________ 2222")
+	fmt.Println(string(debug.Stack()))
+	fmt.Println("____________________________________________222222")
 	return c, c.open(config)
 }
 
@@ -359,6 +364,9 @@ func (c *Connection) send(f frame) error {
 
 	if err != nil {
 		// shutdown could be re-entrant from signaling notify chans
+		fmt.Println("____________________________________________ 367")
+		fmt.Println(string(debug.Stack()))
+		fmt.Println("____________________________________________")
 		go c.shutdown(&Error{
 			Code:   FrameError,
 			Reason: err.Error(),

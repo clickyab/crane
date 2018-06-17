@@ -8,7 +8,6 @@ import (
 
 	"github.com/clickyab/services/broker/rabbitmq/mqinterface"
 
-	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/broker"
 	"github.com/streadway/amqp"
 )
@@ -27,15 +26,14 @@ type consumer struct {
 }
 
 // Publish try to publish an event
-func (c consumer) Publish(in broker.Job) {
+func (c consumer) Publish(in broker.Job) error {
 	rep := in.Report()
 	var err error
 	defer func() {
 		rep(err)
 	}()
 
-	err = c.amqp.Publish(in)
-	assert.Nil(err)
+	return c.amqp.Publish(in)
 }
 
 // NewRabbitBroker return a new rabbit broker

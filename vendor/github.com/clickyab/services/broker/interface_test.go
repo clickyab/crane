@@ -9,8 +9,9 @@ import (
 type dum struct {
 }
 
-func (dum) Publish(Job) {
+func (dum) Publish(Job) error {
 	panic("HI THIS IS ME")
+	return nil
 }
 
 func TestSpec(t *testing.T) {

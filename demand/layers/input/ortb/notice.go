@@ -35,7 +35,7 @@ func noticeHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) 
 
 	safe.GoRoutine(exp, func() {
 		job := notice.NewNoticeJob(c, c.Seats()...)
-		broker.Publish(job)
+		assert.Nil(broker.Publish(job))
 	})
 
 	assert.Nil(pixel.Render(ctx, w, c))

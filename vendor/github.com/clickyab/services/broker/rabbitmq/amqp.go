@@ -4,11 +4,15 @@ import (
 	"container/ring"
 	"context"
 	"errors"
+	"fmt"
 	"sync"
 	"sync/atomic"
 	"time"
 
 	"github.com/clickyab/services/broker/rabbitmq/mqinterface"
+	"github.com/clickyab/services/config"
+	"github.com/clickyab/services/xlog"
+	"github.com/manucorporat/try"
 
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/broker"
@@ -19,6 +23,8 @@ import (
 )
 
 var (
+	retryMax = config.RegisterDuration("services.mysql.max_retry_connection", 5*time.Minute, "max time app should fallback to get mysql connection")
+
 	connRng *ring.Ring
 	pubRng  *ring.Ring
 
@@ -104,6 +110,10 @@ func (rb *Amqp) RegisterPublishers(count int) error {
 			closed: false,
 		}
 		go publishConfirm(&tmp)
+		ctx := context.Background()
+		safe.GoRoutine(ctx, func() {
+			notifyChannelClose(ctx, &tmp)
+		})
 
 		pubRng.Value = &tmp
 
@@ -120,11 +130,17 @@ func (rb *Amqp) Publish(in broker.Job) error {
 	pubCh.lock.Lock()
 
 	defer pubCh.lock.Unlock()
-	if pubCh.closed {
-		return errors.New("waiting for finalize, can not publish")
-	}
 
-	automicPubRngNext()
+	if pubCh.closed {
+		cnt := pubRng.Len()
+		for i := 0; i < cnt; i++ {
+			automicPubRngNext()
+			if !pubCh.closed {
+				return rb.Publish(in)
+			}
+		}
+		return errors.New("amqp channels is closed, can not publish")
+	}
 
 	msg, err := in.Encode()
 	if err != nil {
@@ -275,6 +291,60 @@ func publishConfirm(cl *chnlLock) {
 	for range cl.rtrn {
 		cl.wg.Done()
 	}
+}
+
+func notifyChannelClose(ctx context.Context, cl *chnlLock) {
+	err := cl.chn.NotifyClose(make(chan *amqp.Error))
+	er := <-err
+	xlog.GetWithError(ctx, fmt.Errorf("amqp error code: %d, Reason: %s", er.Code, er.Reason)).Error("amqp channel closed")
+
+	cl.closed = true
+	if er.Code == 320 { //check if close connection notify fire after notify channel close
+		cl.cnn.Closed()
+	}
+
+	safe.Try(func() error { return tryReconnect(cl) }, retryMax.Duration())
+}
+
+func tryReconnect(cl *chnlLock) error {
+	connection := cl.cnn
+
+	if connection.IsClosed() {
+		return fmt.Errorf("channel connection is closed and we wait to reconnect")
+	}
+
+	var err error
+	try.This(func() {
+		logrus.Debug("try reconnect channel .... ")
+
+		pchn, err := connection.Channel()
+		if pchn == nil {
+			err = fmt.Errorf("connection problem, we can not make channel")
+		}
+
+		if err == nil {
+			rtrn := make(chan amqp.Confirmation, confirmLen.Int())
+			err = pchn.Confirm(false)
+			if err == nil {
+				pchn.NotifyPublish(rtrn)
+
+				cl.lock.Lock()
+				defer cl.lock.Unlock()
+				cl.chn = pchn
+				cl.cnn = connection
+				cl.rtrn = rtrn
+				cl.closed = false
+
+				logrus.Debug("ok channel reconnect")
+			}
+		}
+
+	}).Catch(func(e try.E) {
+		fmt.Println("catch error in try reconnect")
+		err = fmt.Errorf("try error: %s", e)
+	})
+
+	return err
 }
 
 // ConnectionsCount get connections count

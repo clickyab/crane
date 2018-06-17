@@ -78,9 +78,9 @@ func (in *initRabbit) Initialize(ctx context.Context) {
 			cnl() // the parent context normally take care of the children. but for idiotic linter :)
 			in.finalize()
 		}()
-	})
 
-	healthz.Register(in)
+		healthz.Register(in)
+	})
 }
 
 func (in *initRabbit) Statistics() map[string]interface{} {

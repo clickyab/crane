@@ -146,7 +146,7 @@ func showBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	exp, cnl := context.WithTimeout(ctx, 10*time.Second)
 	safe.GoRoutine(exp, func() {
 		job := show.NewImpressionJob(c, c.Seats()...)
-		broker.Publish(job)
+		assert.Nil(broker.Publish(job))
 		cnl()
 	})
 

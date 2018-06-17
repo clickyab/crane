@@ -90,7 +90,7 @@ func clickBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	safe.GoRoutine(exp, func() {
 		defer cnl()
 		job := click.NewClickJob(c)
-		broker.Publish(job)
+		assert.Nil(broker.Publish(job), "publish click job")
 	})
 	body := replaceParameters(pl.Ad.TargetURL(), pl.Publisher.Name(), pl.Ad.Campaign().Name(), pl.ReserveHash, pl.IP)
 

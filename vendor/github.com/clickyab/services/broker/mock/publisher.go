@@ -18,7 +18,7 @@ type chnBroker struct {
 }
 
 // Publish is here for satisfy the interface
-func (p *chnBroker) Publish(j broker.Job) {
+func (p *chnBroker) Publish(j broker.Job) error {
 	p.lock.RLock()
 	defer p.lock.RUnlock()
 
@@ -29,6 +29,8 @@ func (p *chnBroker) Publish(j broker.Job) {
 		default:
 		}
 	}
+
+	return nil
 }
 
 // getChannel return a channel for getting messages on

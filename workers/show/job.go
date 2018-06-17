@@ -117,7 +117,7 @@ func (j *job) process(ctx context.Context) error {
 					Impression: j.Impression,
 					Seats:      j.Seats,
 				}
-				broker.Publish(&newJob)
+				assert.Nil(broker.Publish(&newJob))
 			})
 		}
 	}

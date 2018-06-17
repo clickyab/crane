@@ -46,7 +46,7 @@ type Consumer interface {
 // Publisher is the base broker interface in system
 type Publisher interface {
 	// Publish is the async publisher for the broker
-	Publish(Job)
+	Publish(Job) error
 }
 
 // Interface is the full broker interface
@@ -71,12 +71,12 @@ func SetActiveBroker(b Publisher) {
 }
 
 // Publish try to Publish a job into system using the broker
-func Publish(j Job) {
+func Publish(j Job) error {
 	lock.RLock()
 	defer lock.RUnlock()
 
 	assert.NotNil(activeBroker, "[BUG] active broker is not set")
-	activeBroker.Publish(j)
+	return activeBroker.Publish(j)
 }
 
 // RegisterConsumer is the endpoint to register a consumer in active broker

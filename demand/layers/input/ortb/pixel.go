@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/clickyab/services/xlog"
+
 	"clickyab.com/crane/demand/builder"
 	"clickyab.com/crane/demand/layers/output/pixel"
 	"clickyab.com/crane/workers/show"
@@ -12,7 +14,6 @@ import (
 	"github.com/clickyab/services/broker"
 	"github.com/clickyab/services/kv"
 	"github.com/clickyab/services/safe"
-	"github.com/sirupsen/logrus"
 )
 
 const pixelPath = "/pixel/:rh/:size/:type/:subtype/:jt"
@@ -21,6 +22,7 @@ const pixelPath = "/pixel/:rh/:size/:type/:subtype/:jt"
 func showPixel(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	pl, err := extractor(ctx, r)
 	if err != nil {
+		xlog.GetWithError(ctx, err).Error("can not extract payload in pixel route", pl)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -45,14 +47,14 @@ func showPixel(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	// Build context
 	c, err := builder.NewContext(b...)
 	if err != nil {
-		logrus.Error(err)
+		xlog.GetWithError(ctx, err).Error("context builder error in pixel rout", c)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	exp, _ := context.WithTimeout(ctx, 10*time.Second)
 	safe.GoRoutine(exp, func() {
 		job := show.NewImpressionJob(c, c.Seats()...)
-		broker.Publish(job)
+		assert.Nil(broker.Publish(job))
 	})
 
 	// add capping
