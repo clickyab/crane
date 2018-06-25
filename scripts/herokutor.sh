@@ -129,8 +129,8 @@ if [[ "${BRANCH}" == "revert" ]]; then
 fi
 
 if [[ "${BRANCH}" == "revert-dev" ]]; then
-    NAMESPACE=${APP}
-    BRANCH="staging"
+    NAMESPACE=${APP}-staging
+#    BRANCH="staging"
     #VERSION="latest"
 fi
 
