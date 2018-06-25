@@ -130,7 +130,7 @@ fi
 
 if [[ "${BRANCH}" == "revert-dev" ]]; then
     NAMESPACE=${APP}
-    BRANCH="dev"
+    BRANCH="staging"
     #VERSION="latest"
 fi
 
