@@ -4,7 +4,6 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/framework"
 	"github.com/clickyab/services/framework/router"
 	"github.com/rs/xhandler"
@@ -18,7 +17,10 @@ type controller struct {
 }
 
 func (c controller) serveRobot(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-	assert.Nil(w.Write([]byte(robotTxt)))
+	_, err := w.Write([]byte(robotTxt))
+	if err != nil {
+		w.Write([]byte("error occurred"))
+	}
 }
 
 func (c controller) Routes(m framework.Mux) {
