@@ -195,9 +195,6 @@ var copLen = config.RegisterInt("crane.context.cop_len", 10, "cop key len")
 // SetTID try to set tid
 func SetTID(id string, ip, ua string, extra ...string) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
-		if o.ua == "" || o.ip == nil {
-			return nil, fmt.Errorf("use this after setting ip and ua")
-		}
 		ee := make([][]byte, len(extra)+3)
 		ee[0] = []byte(id)
 		ee[1] = []byte(ip)
