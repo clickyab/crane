@@ -96,8 +96,8 @@ RUN apk add --no-cache --virtual .build-deps git go libc-dev make \
     && cd /gopath/src/clickyab.com/crane && make \
     && apk del .build-deps \
     && mkdir -p /app/bin \
-    && mv /gopath/src/clickyab.com/crane/bin/* /app/bin/ \
-    && mv /gopath/src/clickyab.com/crane/statics/* /app/statics/ \
+    && cp -r /gopath/src/clickyab.com/crane/bin/* /app/bin/ \
+    && cp -r /gopath/src/clickyab.com/crane/statics/* /app/statics/ \
     && mkdir -p /app/statics \
     && rm -rf /gopath /go
 
