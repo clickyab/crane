@@ -97,6 +97,8 @@ RUN apk add --no-cache --virtual .build-deps git go libc-dev make \
     && apk del .build-deps \
     && mkdir -p /app/bin \
     && mv /gopath/src/clickyab.com/crane/bin/* /app/bin/ \
+    && mv /gopath/src/clickyab.com/crane/statics/* /app/statics/ \
+    && mkdir -p /app/statics \
     && rm -rf /gopath /go
 
 TAG registry.clickyab.ae/clickyab/{{ .App }}:{{ .Version }}
