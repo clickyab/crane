@@ -51,6 +51,7 @@ func (consumer) Publish(in broker.Job) {
 	pub := amqp.Publishing{
 		CorrelationId: <-random.ID,
 		Body:          msg,
+		DeliveryMode:  amqp.Persistent,
 	}
 
 	v.wg.Add(1)
