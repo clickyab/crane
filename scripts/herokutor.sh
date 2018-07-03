@@ -62,7 +62,7 @@ popd
 
 [ -z ${APP} ] && exit_message "The APP is not defined." # WTF, the APP NAME is important
 [ -z ${CHANGE_AUTHOR} ] || exit_message "It's a PR, bail out" 0
-if [[ ( "${BRANCH}" != "master" ) && ( "${BRANCH}" != "dev" ) && ( "${BRANCH}" != "revert" ) ]]; then
+if [[ ( "${BRANCH}" != "master" ) && ( "${BRANCH}" != "dev" ) ]]; then
     exit_message "Its not on correct branch, bail out" 0
 fi
 
@@ -111,7 +111,7 @@ TARGET=$(mktemp -d)
 pushd ${TEMPORARY}
 # Actual build
 PUSH="--push"
-if [[ ( "${BRANCH}" != "master" ) && ( "${BRANCH}" != "dev" ) && ( "${BRANCH}" != "revert" ) ]]; then
+if [[ ( "${BRANCH}" != "master" ) && ( "${BRANCH}" != "dev" ) ]]; then
     PUSH=""
 fi
 rocker build --no-cache ${PUSH} -var Build=${BUILD} -var EnvDir=${VARS} -var Cache=${CACHE} -var Target=${TARGET} -var Version=${COMMIT_COUNT} -var App=${APP}_${BRANCH}
@@ -121,12 +121,6 @@ NAMESPACE="${APP}"
 VERSION="${COMMIT_COUNT}"
 if [[ "${BRANCH}" == "dev" ]]; then
     NAMESPACE=${APP}-staging
-    #VERSION="latest"
-fi
-
-if [[ "${BRANCH}" == "revert" ]]; then
-    NAMESPACE=${APP}
-    BRANCH="master"
     #VERSION="latest"
 fi
 
