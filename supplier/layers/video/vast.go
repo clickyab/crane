@@ -188,10 +188,14 @@ func vast(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 	br, err = client.Call(ctx, method.String(), server.String(), bq)
 	if err != nil {
-		e := "demand error"
-		writesErrorStatus(w, http.StatusInternalServerError, e)
-		xlog.GetWithError(ctx, err).Debugf(e)
-		return
+		if len(finalStaticSeats) > 0 {
+			br = &openrtb.BidResponse{}
+		} else {
+			e := "demand error"
+			writesErrorStatus(w, http.StatusInternalServerError, e)
+			xlog.GetWithError(ctx, err).Debugf(e)
+			return
+		}
 	}
 
 	for i := range finalStaticSeats {

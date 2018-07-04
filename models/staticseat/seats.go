@@ -43,7 +43,7 @@ func GetMultiStaticSeat(pub entity.Publisher, typ, position string) ([]entities.
 	var resObj = make([]*entities2.StaticSeat, 0)
 	res := seats.All()
 	for i := range res {
-		if ok, _ := regexp.Match(fmt.Sprint(pub.Name()+"/"+pub.Supplier().Name()+"/"+typ+"/"+position)+"*", []byte(i)); ok {
+		if ok, _ := regexp.Match(fmt.Sprint(pub.Name()+"/"+pub.Supplier().Name()+"/"+typ+"/"+position, "*"), []byte(i)); ok {
 			resObj = append(resObj, res[i].(*entities2.StaticSeat))
 		}
 	}
