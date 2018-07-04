@@ -129,7 +129,7 @@ func (a *StaticSeat) Decode(r io.Reader) error {
 	return g.Decode(a.staticSeat)
 }
 
-// OnlyFix check for fix only
+// Fix check for fix only
 func (a *StaticSeat) Fix() bool {
 	return a.OnlyFix
 }
