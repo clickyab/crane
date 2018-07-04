@@ -75,57 +75,75 @@ func vast(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 	imps, seats := getImps(r, pub, getSlots(ln), mimes...)
 
-	//vast rtb mark up example :
 	//<VAST version="3">
-	//	<Ad id="awdawdawdawd">
-	//		<InLine>
-	//			<AdSystem version="115"><![CDATA[3rdAd]]></AdSystem>
-	//			<AdTitle><![CDATA[Test Campaign22]]></AdTitle>
-	//			<Impression><![CDATA[http://demand.clickyab.com/api/pixel/9b7eaf834c3bcee6907f98f466218bdd1dc0dfc0/9/demand/vast/eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhaWQiOiIxMDEiLCJiaWQiOiIyOTk5Ljk5OTk5OTk5OTk5OTUiLCJjbW9kZSI6IjEiLCJjcG0iOiIxMjM0Ni45NzAzNjcwOTQyMDQiLCJkb20iOiJqYWJlaC5jb20iLCJleHAiOiIxODA0MjkxMzI3MDgiLCJmZiI6IkYiLCJpYXQiOjE1MjQ5ODg2MjgsIm5vdyI6IjE1MjQ5ODg2MjgiLCJwaWQiOiIxNzY0NTExIiwicHQiOiJ3ZWIiLCJzdXAiOiJjbGlja3lhYiIsInN1c3AiOiIwIiwidCI6IlQiLCJ1YWlwIjoiMjdlNWQ1OGI0OWE5YjBiOTMwNWQyNTQ2OTAzODg1YTcifQ.na5Aj_x3QO3PQtTh7V-Cr-sL82kMIh1S_rjWGN2tBGbBH7DXZjJnE4j4MhbOhW3fWwYIjEwLXGGElg_boMj18bQjL0Vw7y3230_HEnjdrJ7E7rkfX-lKiRjA5z6Xp9Mirt8nMWkRKSSB0-RH3kKyoOU5djP57VMBFbpU-VOVrCXArIVQF9EvCcvI5cxvkOImIxWRDah7fTipvHEZ0OvQ17S7s2jwCKMG02o5YIobFDTNffr0TDty8oA-CM1CTSgmGY5V4K-dsbljqOpJIwkV2Y2SXmsLe5aUbA5KQLrykDkb4Gssk5DevfR5XQLjxBJmLIK0UHqZajmME0CCrKZ6_A?parent=&ref=&reg=fr&tid=0f894c5f7c]]></Impression>
-	//			<Creatives>
-	//			<Creative id="9b7eaf834c3bcee6907f98f466218bdd1dc0dfc0" AdID="101">
-	//			<Linear skipoffset="00:00:03">
-	//			<Duration>00:00:18</Duration>
-	//			<TrackingEvents>
-	//			<Tracking event="complete"><![CDATA[http://demand.clickyab.com/api/click/9b7eaf834c3bcee6907f98f466218bdd1dc0dfc0/9/demand/vast/eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhaWQiOiIxMDEiLCJiaWQiOiIyOTk5Ljk5OTk5OTk5OTk5OTUiLCJjbW9kZSI6IjEiLCJjcG0iOiIxMjM0Ni45NzAzNjcwOTQyMDQiLCJkb20iOiJqYWJlaC5jb20iLCJleHAiOiIxODA1MDIxMjI3MDgiLCJmZiI6IkYiLCJpYXQiOjE1MjQ5ODg2MjgsIm5vdyI6IjE1MjQ5ODg2MjgiLCJwaWQiOiIxNzY0NTExIiwicHQiOiJ3ZWIiLCJzdXAiOiJjbGlja3lhYiIsInN1c3AiOiIwIiwidCI6IlQiLCJ1YWlwIjoiMjdlNWQ1OGI0OWE5YjBiOTMwNWQyNTQ2OTAzODg1YTcifQ.Kh2uTKC1F5EznpqDenWD278XRaZEQ0YbgrfC9wF3rfYghbeLFcZsniGtDoCN9Jg5HR4Ouo0tXPLxuSiTCw5don31OAWIU2sNY_KEoFiYBkGp4Z6S-uPqQfNuwryp7blEtpTtdKAk63bpYFvxtyuL2qF8OH0tkzkbHhSWhTOD6cn8P086xVWSX3RNp-KrEycTw5bfxCWRoYfOyrBu-YXSX6Ry7eEVtCKpPJ70Da3Lrm74cR_iqDWiBvNt0V9yM-NqIpwHP3JBOwLYV46CzlaloymAN5ayavzYJhT5X7vWTQeNrC62u8crbEIS41oJ0YQdsNyPPOMcwJ7NEeaexIqU7Q?parent=&ref=&reg=fr&tid=0f894c5f7c&tv=1]]></Tracking>
-	//			</TrackingEvents>
-	//			<VideoClicks>
-	//			<ClickThrough><![CDATA[http://demand.clickyab.com/api/click/9b7eaf834c3bcee6907f98f466218bdd1dc0dfc0/9/demand/vast/eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhaWQiOiIxMDEiLCJiaWQiOiIyOTk5Ljk5OTk5OTk5OTk5OTUiLCJjbW9kZSI6IjEiLCJjcG0iOiIxMjM0Ni45NzAzNjcwOTQyMDQiLCJkb20iOiJqYWJlaC5jb20iLCJleHAiOiIxODA1MDIxMjI3MDgiLCJmZiI6IkYiLCJpYXQiOjE1MjQ5ODg2MjgsIm5vdyI6IjE1MjQ5ODg2MjgiLCJwaWQiOiIxNzY0NTExIiwicHQiOiJ3ZWIiLCJzdXAiOiJjbGlja3lhYiIsInN1c3AiOiIwIiwidCI6IlQiLCJ1YWlwIjoiMjdlNWQ1OGI0OWE5YjBiOTMwNWQyNTQ2OTAzODg1YTcifQ.Kh2uTKC1F5EznpqDenWD278XRaZEQ0YbgrfC9wF3rfYghbeLFcZsniGtDoCN9Jg5HR4Ouo0tXPLxuSiTCw5don31OAWIU2sNY_KEoFiYBkGp4Z6S-uPqQfNuwryp7blEtpTtdKAk63bpYFvxtyuL2qF8OH0tkzkbHhSWhTOD6cn8P086xVWSX3RNp-KrEycTw5bfxCWRoYfOyrBu-YXSX6Ry7eEVtCKpPJ70Da3Lrm74cR_iqDWiBvNt0V9yM-NqIpwHP3JBOwLYV46CzlaloymAN5ayavzYJhT5X7vWTQeNrC62u8crbEIS41oJ0YQdsNyPPOMcwJ7NEeaexIqU7Q?parent=&ref=&reg=fr&tid=0f894c5f7c]]></ClickThrough>
-	//			</VideoClicks>
-	//			<MediaFiles>
-	//			<MediaFile delivery="streaming" type="video/mp4" width="800" height="440"><![CDATA[http://static.clickyab.com/ad/video/20180110-7476975-6fc73384b929682ad3afb164bed22c9a15463881.cy]]></MediaFile>
-	//			</MediaFiles>
-	//			</Linear>
-	//			<CreativeExtensions></CreativeExtensions>
-	//			</Creative>
-	//			</Creatives>
-	//			<Description></Description>
-	//			<Survey></Survey>
-	//			<Pricing>${AUCTION_PRICE}</Pricing>
-	//			<Extensions></Extensions>
-	//		</InLine>
-	//	</Ad>
+	//<Ad id="bac0d290eb20ed608ddb01ada293dcc3ae40d59d">
+	//<InLine>
+	//<AdSystem version="115"><![CDATA[3rdAd]]></AdSystem>
+	//<AdTitle><![CDATA[Test Campaign22]]></AdTitle>
+	//<Impression />
+	//<Creatives>
+	//<Creative id="5ae5c712d0c45" AdID="1ae5c712d0c25">
+	//<Linear skipoffset="00:00:03">
+	//<Duration>00:00:28</Duration>
+	//<TrackingEvents>
+	//<Tracking event="complete" />
+	//</TrackingEvents>
+	//<VideoClicks>
+	//<ClickThrough><![CDATA[https://goo.gl/Ur8w1Z]]></ClickThrough>
+	//</VideoClicks>
+	//<MediaFiles>
+	//<MediaFile delivery="streaming" type="image/jpeg" width="800" height="440"><![CDATA[http://static.clickyab.com/ad/800x440/20180704-6915843-0934823740273336e888788e798d6dc0f8bded34.jpg]]></MediaFile>
+	//</MediaFiles>
+	//</Linear>
+	//<CreativeExtensions />
+	//</Creative>
+	//</Creatives>
+	//<Description />
+	//<Survey />
+	//<Pricing>10</Pricing>
+	//<Extensions />
+	//</InLine>
+	//</Ad>
 	//</VAST>
 
 	var finalStaticSeats = make([]staticSeat, 0)
 
 	for j := range seats {
-		d, err := staticseat.GetStaticSeat(pub, "vast", seats[j].Start)
-		if err == nil && d.Chance() > rand.Intn(100) {
-			finalStaticSeats = append(finalStaticSeats, staticSeat{
-				staticSeat: d,
-				seat: map[string]output.Seat{
-					j: {
-						Type:     seats[j].Type,
-						Duration: seats[j].Duration,
-						IDExtra:  seats[j].IDExtra,
-						Skip:     seats[j].Skip,
-						Start:    seats[j].Start,
+		d, exists := staticseat.GetMultiStaticSeat(pub, "vast", seats[j].Start)
+		if exists {
+			if d[0].Fix() { // at least one is fix we should exactly return 1 from those no matter what the chance is
+				finalStaticSeats = append(finalStaticSeats, staticSeat{
+					staticSeat: alwaysReturnFix(d),
+					seat: map[string]output.Seat{
+						j: {
+							Type:     seats[j].Type,
+							Duration: seats[j].Duration,
+							IDExtra:  seats[j].IDExtra,
+							Skip:     seats[j].Skip,
+							Start:    seats[j].Start,
+						},
 					},
-				},
-				key: j,
-			})
-			delete(seats, j)
+					key: j,
+				})
+				delete(seats, j)
+			} else {
+				if d[0].Chance() > rand.Intn(100) {
+					finalStaticSeats = append(finalStaticSeats, staticSeat{
+						staticSeat: d[0],
+						seat: map[string]output.Seat{
+							j: {
+								Type:     seats[j].Type,
+								Duration: seats[j].Duration,
+								IDExtra:  seats[j].IDExtra,
+								Skip:     seats[j].Skip,
+								Start:    seats[j].Start,
+							},
+						},
+						key: j,
+					})
+					delete(seats, j)
+				}
+			}
 		}
 	}
 
@@ -195,6 +213,11 @@ func vast(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		xlog.GetWithError(ctx, err).Debugf(e)
 		return
 	}
+}
+
+func alwaysReturnFix(seats []entities.StaticSeat) entities.StaticSeat {
+	n := rand.Int() % len(seats)
+	return seats[n]
 }
 
 // vastUserIDGenerator create user id for vast

@@ -11,6 +11,7 @@ type StaticSeat interface {
 	Position() string
 	From() time.Time
 	To() time.Time
+	Fix() bool
 	RTBMarkup() string
 	Chance() int
 }

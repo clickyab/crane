@@ -14,7 +14,7 @@ import (
 )
 
 var (
-	staticSeatExp = config.RegisterDuration("crane.models.expire.static.seat", 10*time.Minute, "expire time of static seats")
+	staticSeatExp = config.RegisterDuration("crane.models.expire.static.seat", 2*time.Minute, "expire time of static seats")
 )
 
 type loader struct {
