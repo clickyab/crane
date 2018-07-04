@@ -129,6 +129,11 @@ func (a *StaticSeat) Decode(r io.Reader) error {
 	return g.Decode(a.staticSeat)
 }
 
+// OnlyFix check for fix only
+func (a *StaticSeat) Fix() bool {
+	return a.OnlyFix
+}
+
 type staticSeat struct {
 	ID        int64          `json:"id" db:"id"`
 	Publisher string         `json:"publisher" db:"publisher"`
@@ -139,6 +144,7 @@ type staticSeat struct {
 	To        time.Time      `json:"to" db:"to"`
 	RTBMarkup string         `json:"rtb_markup" db:"rtb_markup"`
 	Chance    int            `json:"chance" db:"chance"`
+	OnlyFix   bool           `json:"only_fix" db:"only_fix"`
 }
 
 // StaticSeatLoader is the loader of static ads
@@ -146,7 +152,7 @@ func StaticSeatLoader(_ context.Context) (map[string]kv.Serializable, error) {
 	var res []staticSeat
 	t := time.Now()
 
-	query := fmt.Sprintf("SELECT id,publisher,supplier,type,position,`from`,`to`,rtb_markup,chance FROM static_seats WHERE `from` <= ? AND `to` >=?")
+	query := fmt.Sprintf("SELECT id,publisher,supplier,type,position,`from`,`to`,rtb_markup,chance,only_fix FROM static_seats WHERE `from` <= ? AND `to` >=?")
 
 	_, err := NewManager().GetRDbMap().Select(
 		&res,
@@ -159,7 +165,7 @@ func StaticSeatLoader(_ context.Context) (map[string]kv.Serializable, error) {
 	}
 	ads := make(map[string]kv.Serializable)
 	for i := range res {
-		ads[res[i].Publisher+"/"+res[i].Supplier+"/"+string(res[i].Type)+"/"+res[i].Position] = &StaticSeat{staticSeat: res[i]}
+		ads[res[i].Publisher+"/"+res[i].Supplier+"/"+string(res[i].Type)+"/"+res[i].Position+"/"+fmt.Sprint(res[i].ID)] = &StaticSeat{staticSeat: res[i]}
 	}
 	logrus.Debugf("Load %d static ads", len(ads))
 	return ads, nil
