@@ -17,5 +17,5 @@ var monitoredApps = config.RegisterString(
 func getInappJSON(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprint(w, monitoredApps.String())
+	_, _ = fmt.Fprint(w, monitoredApps.String())
 }

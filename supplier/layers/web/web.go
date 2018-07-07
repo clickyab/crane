@@ -87,7 +87,7 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		xlog.GetWithError(ctx, err).Debugf("website with publisher id %s and supplier %s not found", pubID, sup)
 		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprint(w, "website not found")
+		_, _ = fmt.Fprint(w, "website not found")
 		return
 	}
 	l := r.URL.Query().Get("l")
@@ -99,7 +99,7 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	c, err := strconv.Atoi(r.URL.Query().Get("c"))
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprint(w, "invalid c param")
+		_, _ = fmt.Fprint(w, "invalid c param")
 		return
 	}
 	_, ok := pub.Attributes()[entity.PAMobileAd]
