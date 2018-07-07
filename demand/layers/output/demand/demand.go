@@ -204,7 +204,7 @@ func bannerMarkup(ctx entity.Context, s entity.Seat) *openrtb.Bid {
 	)
 	// check for banner markup
 	if ctx.BannerMarkup() {
-		adMarkup = fmt.Sprintf(bannerMarkupWithoutIframe, s.ClickURL().String(), s.WinnerAdvertise().TargetURL(), s.ImpressionURL().String())
+		adMarkup = fmt.Sprintf(bannerMarkupWithoutIframe, s.ClickURL().String(), s.WinnerAdvertise().Media(), s.ImpressionURL().String())
 	}
 	return &openrtb.Bid{
 		ID:         s.ReservedHash(),
