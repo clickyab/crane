@@ -56,7 +56,7 @@ var (
 func writesErrorStatus(w http.ResponseWriter, status int, detail string) {
 	assert.False(status == http.StatusOK)
 	w.WriteHeader(status)
-	fmt.Fprint(w, detail)
+	_, _ = fmt.Fprint(w, detail)
 }
 
 // openRTBInput is the route for rtb input layer
