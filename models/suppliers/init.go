@@ -15,7 +15,7 @@ import (
 )
 
 var (
-	supplierExp = config.RegisterDuration("crane.models.expire.supplier", time.Hour, "expire time of supplier")
+	supplierExp = config.RegisterDuration("crane.models.expire.supplier", 1*time.Hour, "expire time of supplier")
 	extraSup    = config.RegisterString("debug.models.supplier.extra_file", "", "extra file to load for suppliers")
 )
 
