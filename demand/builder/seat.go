@@ -154,7 +154,7 @@ func (s *seat) ImpressionURL() *url.URL {
 			"pixel",
 			map[string]string{
 				"rh":      s.ReservedHash(),
-				"size":    "20",
+				"size":    fmt.Sprint(s.size),
 				"type":    s.Type().String(),
 				"subtype": s.RequestType().String(),
 				"pt":      s.context.publisher.Type().String(),
