@@ -41,7 +41,7 @@ func (s *vastSeat) ImpressionURL() *url.URL {
 		"pixel",
 		map[string]string{
 			"rh":      s.ReservedHash(),
-			"size":    fmt.Sprint(s.size),
+			"size":    fmt.Sprint(s.Size()),
 			"type":    s.Type().String(),
 			"subtype": s.RequestType().String(),
 			"pt":      s.context.publisher.Type().String(),
