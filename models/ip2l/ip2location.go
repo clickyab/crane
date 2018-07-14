@@ -31,7 +31,7 @@ func IP2Location(ip string) Data {
 
 var ispConst = map[int64]*regexp.Regexp{
 	1: regexp.MustCompile(`(?i)iran\s?cell`),
-	2: regexp.MustCompile(`(?i)Mobile Communication Company of Iran PLC`),
+	2: regexp.MustCompile(`(?i)Mobile Communication Company of Iran PLC|(?i)Telecommunication Company of *`),
 }
 
 var m = map[string]int64{
