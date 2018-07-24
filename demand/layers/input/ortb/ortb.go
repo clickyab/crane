@@ -20,7 +20,6 @@ import (
 	"github.com/bsm/openrtb"
 	"github.com/bsm/openrtb/native/request"
 	"github.com/clickyab/services/assert"
-	"github.com/clickyab/services/slack"
 	"github.com/clickyab/services/xlog"
 	"github.com/rs/xmux"
 )
@@ -56,7 +55,7 @@ var (
 func writesErrorStatus(w http.ResponseWriter, status int, detail string) {
 	assert.False(status == http.StatusOK)
 	w.WriteHeader(status)
-	fmt.Fprint(w, detail)
+	_, _ = fmt.Fprint(w, detail)
 }
 
 // openRTBInput is the route for rtb input layer
@@ -141,12 +140,6 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		xlog.GetWithError(ctx, err).Debug("invalid request")
 		writesErrorStatus(w, http.StatusBadRequest, err.Error())
 		return
-	}
-
-	if sup.Token() == "f7033f7f55e99da475097798aa611e0b390a8f79" {
-		go func() {
-			slack.AddCustomSlack(fmt.Errorf("chavoosh request markup is %t", sup.Markup()))
-		}()
 	}
 
 	b := []builder.ShowOptionSetter{
