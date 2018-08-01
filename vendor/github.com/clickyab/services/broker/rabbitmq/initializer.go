@@ -171,13 +171,14 @@ func (in *initRabbit) Initialize(ctx context.Context) {
 				c, err := amqp.Dial(dsn.String())
 				if err == nil {
 					connRng.Value = c
-					connRng.Next()
+					connRng = connRng.Next()
 				}
 				return err
 			}, tryLimit.Duration())
 		}
 
-		connRng.Next()
+		connRng = connRng.Next()
+
 		conn := connRng.Value.(*amqp.Connection)
 		chn, err := conn.Channel()
 		assert.Nil(err)
@@ -199,7 +200,7 @@ func (in *initRabbit) Initialize(ctx context.Context) {
 
 		rng = ring.New(publisher.Int())
 		for i := 0; i < publisher.Int(); i++ {
-			connRng.Next()
+			connRng = connRng.Next()
 			conn := connRng.Value.(*amqp.Connection)
 			pchn, err := conn.Channel()
 			assert.Nil(err)
