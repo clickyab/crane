@@ -17,8 +17,8 @@ var (
 )
 
 type chnlLock struct {
-	chn    Channel
-	lock   *sync.Mutex
+	chn Channel
+	*sync.Mutex
 	rtrn   chan amqp.Confirmation
 	wg     *sync.WaitGroup
 	closed bool
@@ -36,8 +36,8 @@ func (consumer) Publish(in broker.Job) {
 	}()
 	rng = rng.Next()
 	v := rng.Value.(*chnlLock)
-	v.lock.Lock()
-	defer v.lock.Unlock()
+	v.Lock()
+	defer v.Unlock()
 	if v.closed {
 		err = errors.New("waiting for finalize, can not publish")
 		return
@@ -64,7 +64,11 @@ func (consumer) Publish(in broker.Job) {
 	if debug.Bool() {
 		topic = "debug." + topic
 	}
-	err = v.chn.Publish(exchange.String(), topic, true, false, pub)
+	err = v.chn.Publish(exchange.String(),
+		topic,
+		true,
+		false,
+		pub)
 }
 
 // FinalizeWait is a function to wait for all publication to finish. after calling this,
@@ -73,9 +77,9 @@ func finalizeWait() {
 	for i := 0; i < publisher.Int(); i++ {
 		rng = rng.Next()
 		v := rng.Value.(*chnlLock)
-		v.lock.Lock()
+		v.Lock()
 		// I know this lock release at the end, not after for, and this is ok
-		defer v.lock.Unlock()
+		defer v.Unlock()
 
 		v.closed = true
 		v.wg.Wait()
