@@ -17,7 +17,7 @@ func (c *consumer) Topic() string {
 }
 
 func (c *consumer) Queue() string {
-	return "cy-impression"
+	return "core-impression"
 }
 
 func (c *consumer) Consume(ctx context.Context) chan<- broker.Delivery {
