@@ -155,6 +155,7 @@ func (in *initRabbit) Healthy(context.Context) error {
 
 // Initialize the module at the beginning of the application to create a publish channel
 func (in *initRabbit) Initialize(ctx context.Context) {
+
 	once.Do(func() {
 		// the size is here for channel to not block the caller. since we read this on the health check command
 		in.notifyCloser = make(chan *amqp.Error, 10)
@@ -209,7 +210,7 @@ func (in *initRabbit) Initialize(ctx context.Context) {
 			pchn.NotifyPublish(rtrn)
 			tmp := chnlLock{
 				chn:    pchn,
-				Mutex:   &sync.Mutex{},
+				lock:   &sync.Mutex{},
 				wg:     &sync.WaitGroup{},
 				rtrn:   rtrn,
 				closed: false,
