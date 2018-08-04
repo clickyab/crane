@@ -13,7 +13,7 @@ type consumer struct {
 }
 
 func (c *consumer) Topic() string {
-	return "impression"
+	return "#.impression"
 }
 
 func (c *consumer) Queue() string {
