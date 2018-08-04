@@ -32,7 +32,7 @@ func (j *job) Length() int {
 
 // Topic is the job topic
 func (j *job) Topic() string {
-	return "#.impression"
+	return "clickyab.#.impression"
 }
 
 // Key is partitioning key, and not work in rabbitmq, so let it be
