@@ -13,8 +13,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-const topic = "impression"
-
 // job is an show (impression) job
 type job struct {
 	m.Impression
@@ -34,12 +32,12 @@ func (j *job) Length() int {
 
 // Topic is the job topic
 func (j *job) Topic() string {
-	return topic
+	return "clickyab.#.impression"
 }
 
 // Key is partitioning key, and not work in rabbitmq, so let it be
 func (j *job) Key() string {
-	return topic
+	return "impression"
 }
 
 func (j *job) rep(err error) {
