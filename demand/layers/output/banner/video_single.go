@@ -91,7 +91,7 @@ blockquote, q {
 
 	var clickyab_video = document.getElementById('e_video_{{ .Rand }}');
 
-   document.getElementById("video_advertise_{{ .Rand }}").addEventListener("click", function(t) {
+   document.getElementById("video_advertise_{{ .Rand }}").addEventListener("mouseover", function(t) {
         t.target.muted = false;
     });
     document.getElementById("video_advertise_{{ .Rand }}").addEventListener("mouseout", function(t) {
