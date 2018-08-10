@@ -89,7 +89,7 @@ func nativeMarkup(ctx entity.Context, s entity.NativeSeat) *openrtb.Bid {
 		W:          s.Width(),
 		Price:      s.CPM() / ctx.Rate(),
 		CampaignID: openrtb.StringOrNumber(fmt.Sprint(s.WinnerAdvertise().Campaign().ID())),
-		//NURL:       s.WinNoticeRequest().String(),
+		NURL:       s.WinNoticeRequest().String(),
 	}
 }
 
@@ -183,7 +183,7 @@ func vastMarkup(ctx entity.Context, s entity.VastSeat) *openrtb.Bid {
 		W:          s.Width(),
 		Price:      s.CPM() / ctx.Rate(),
 		CampaignID: openrtb.StringOrNumber(fmt.Sprint(s.WinnerAdvertise().Campaign().ID())),
-		//NURL:       s.WinNoticeRequest().String(),
+		NURL:       s.WinNoticeRequest().String(),
 	}
 }
 
@@ -216,6 +216,7 @@ func bannerMarkup(ctx entity.Context, s entity.Seat) *openrtb.Bid {
 		W:          s.Width(),
 		Price:      s.CPM() / ctx.Rate(),
 		CampaignID: openrtb.StringOrNumber(fmt.Sprint(s.WinnerAdvertise().Campaign().ID())),
+		NURL:       s.WinNoticeRequest().String(),
 	}
 }
 
