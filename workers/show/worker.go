@@ -13,11 +13,11 @@ type consumer struct {
 }
 
 func (c *consumer) Topic() string {
-	return "#.impression"
+	return topic
 }
 
 func (c *consumer) Queue() string {
-	return "core-impression"
+	return "cy-" + topic
 }
 
 func (c *consumer) Consume(ctx context.Context) chan<- broker.Delivery {

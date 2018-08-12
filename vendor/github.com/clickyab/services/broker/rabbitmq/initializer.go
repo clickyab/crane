@@ -155,6 +155,7 @@ func (in *initRabbit) Healthy(context.Context) error {
 
 // Initialize the module at the beginning of the application to create a publish channel
 func (in *initRabbit) Initialize(ctx context.Context) {
+
 	once.Do(func() {
 		// the size is here for channel to not block the caller. since we read this on the health check command
 		in.notifyCloser = make(chan *amqp.Error, 10)
@@ -170,14 +171,13 @@ func (in *initRabbit) Initialize(ctx context.Context) {
 				c, err := amqp.Dial(dsn.String())
 				if err == nil {
 					connRng.Value = c
-					connRng = connRng.Next()
+					connRng.Next()
 				}
 				return err
 			}, tryLimit.Duration())
 		}
 
-		connRng = connRng.Next()
-
+		connRng.Next()
 		conn := connRng.Value.(*amqp.Connection)
 		chn, err := conn.Channel()
 		assert.Nil(err)
@@ -199,7 +199,7 @@ func (in *initRabbit) Initialize(ctx context.Context) {
 
 		rng = ring.New(publisher.Int())
 		for i := 0; i < publisher.Int(); i++ {
-			connRng = connRng.Next()
+			connRng.Next()
 			conn := connRng.Value.(*amqp.Connection)
 			pchn, err := conn.Channel()
 			assert.Nil(err)
@@ -209,7 +209,7 @@ func (in *initRabbit) Initialize(ctx context.Context) {
 			pchn.NotifyPublish(rtrn)
 			tmp := chnlLock{
 				chn:    pchn,
-				Mutex:   &sync.Mutex{},
+				lock:   &sync.Mutex{},
 				wg:     &sync.WaitGroup{},
 				rtrn:   rtrn,
 				closed: false,
