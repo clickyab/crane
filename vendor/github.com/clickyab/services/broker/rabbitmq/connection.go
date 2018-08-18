@@ -9,8 +9,13 @@ import (
 
 type ccn struct {
 	amqp *amqp.Connection
-	sync.Locker
+	sync.RWMutex
 }
+ func (c ccn) Connection () *amqp.Connection {
+ 	c.RWMutex.RLock()
+ 	defer c.RWMutex.RUnlock()
+ 	return c.amqp
+ }
 
 func newConnection() *ccn {
 	var cnn *ccn
@@ -22,6 +27,7 @@ func newConnection() *ccn {
 		if err == nil {
 			cnn = &ccn{
 				amqp: c,
+				RWMutex: sync.RWMutex{},
 			}
 		}
 		return err
@@ -30,6 +36,8 @@ func newConnection() *ccn {
 	go func() {
 		for {
 			err := <-errChn
+			cnn.Lock()
+
 			logrus.Error(err)
 			safe.Try(func() error {
 				c, err := amqp.Dial(dsn.String())
@@ -39,6 +47,9 @@ func newConnection() *ccn {
 				}
 				return err
 			}, tryLimit.Duration())
+
+			cnn.Unlock()
+
 		}
 
 	}()
