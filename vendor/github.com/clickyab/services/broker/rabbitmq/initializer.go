@@ -11,8 +11,7 @@ import (
 
 	"fmt"
 
-	"github.com/clickyab/services/safe"
-	"github.com/sirupsen/logrus"
+		"github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 )
 
@@ -166,24 +165,13 @@ func (in *initRabbit) Initialize(ctx context.Context) {
 		}
 		connRng = ring.New(cnt)
 		for i := 0; i < cnt; i++ {
-			safe.Try(func() error {
-				c, err := amqp.Dial(dsn.String())
-				if err == nil {
-					connRng.Value = c
+					connRng.Value = newConnection()
 					connRng = connRng.Next()
-				}
-				return err
-			}, tryLimit.Duration())
 		}
-
 		connRng = connRng.Next()
-
-		conn := connRng.Value.(*amqp.Connection)
-		chn, err := conn.Channel()
+		conn := connRng.Value.(*ccn)
+		chn, err := conn.amqp.Channel()
 		assert.Nil(err)
-		defer func() {
-			assert.Nil(chn.Close())
-		}()
 
 		assert.Nil(
 			chn.ExchangeDeclare(
@@ -200,8 +188,8 @@ func (in *initRabbit) Initialize(ctx context.Context) {
 		rng = ring.New(publisher.Int())
 		for i := 0; i < publisher.Int(); i++ {
 			connRng = connRng.Next()
-			conn := connRng.Value.(*amqp.Connection)
-			pchn, err := conn.Channel()
+			conn := connRng.Value.(*ccn)
+			pchn, err := conn.amqp.Channel()
 			assert.Nil(err)
 			rtrn := make(chan amqp.Confirmation, confirmLen.Int())
 			err = pchn.Confirm(false)
