@@ -22,8 +22,8 @@ var prefetchCount = config.RegisterInt("services.broker.rabbitmq.prefetch", 100,
 
 func (cn consumer) RegisterConsumer(consumer broker.Consumer) error {
 	connRng = connRng.Next()
-	conn := connRng.Value.(*amqp.Connection)
-	c, err := conn.Channel()
+	conn := connRng.Value.(*ccn)
+	c, err := conn.amqp.Channel()
 	if err != nil {
 		return err
 	}
