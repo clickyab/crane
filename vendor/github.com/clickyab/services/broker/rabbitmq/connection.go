@@ -23,12 +23,13 @@ func newConnection() *ccn {
 	errChn := make(chan *amqp.Error)
 	safe.Try(func() error {
 		c, err := amqp.Dial(dsn.String())
-		cnn.amqp.NotifyClose(errChn)
 		if err == nil {
 			cnn = &ccn{
 				amqp: c,
 				RWMutex: sync.RWMutex{},
 			}
+			cnn.amqp.NotifyClose(errChn)
+
 		}
 		return err
 	}, tryLimit.Duration())
