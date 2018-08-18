@@ -169,8 +169,8 @@ func (in *initRabbit) Initialize(ctx context.Context) {
 					connRng = connRng.Next()
 		}
 		connRng = connRng.Next()
-		conn := connRng.Value.(*ccn)
-		chn, err := conn.amqp.Channel()
+		conn := connRng.Value.(*ccn).Connection()
+		chn, err := conn.Channel()
 		assert.Nil(err)
 
 		assert.Nil(
@@ -188,8 +188,8 @@ func (in *initRabbit) Initialize(ctx context.Context) {
 		rng = ring.New(publisher.Int())
 		for i := 0; i < publisher.Int(); i++ {
 			connRng = connRng.Next()
-			conn := connRng.Value.(*ccn)
-			pchn, err := conn.amqp.Channel()
+			conn := connRng.Value.(*ccn).Connection()
+			pchn, err := conn.Channel()
 			assert.Nil(err)
 			rtrn := make(chan amqp.Confirmation, confirmLen.Int())
 			err = pchn.Confirm(false)
