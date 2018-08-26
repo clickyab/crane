@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"strings"
 
+	"time"
+
 	"clickyab.com/crane/demand/builder"
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/demand/filter"
@@ -20,6 +22,7 @@ import (
 	"github.com/bsm/openrtb"
 	"github.com/bsm/openrtb/native/request"
 	"github.com/clickyab/services/assert"
+	"github.com/clickyab/services/kv"
 	"github.com/clickyab/services/xlog"
 	"github.com/rs/xmux"
 )
@@ -68,6 +71,11 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		writesErrorStatus(w, http.StatusNotFound, e)
 		return
 	}
+	go func() {
+		kv.NewAEAVStore(fmt.Sprintf("RQS_%s", time.Now().Truncate(time.Hour*24).Format("060102")), time.Hour*72).
+			IncSubKey(fmt.Sprintf("%s_%s", sup.Name(), time.Now().Truncate(time.Hour).Format("15")), 1)
+	}()
+
 	payload := openrtb.BidRequest{}
 	dec := json.NewDecoder(r.Body)
 	if err := dec.Decode(&payload); err != nil {
