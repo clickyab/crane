@@ -71,10 +71,6 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		writesErrorStatus(w, http.StatusNotFound, e)
 		return
 	}
-	go func() {
-		kv.NewAEAVStore(fmt.Sprintf("RQS_%s", time.Now().Truncate(time.Hour*24).Format("060102")), time.Hour*72).
-			IncSubKey(fmt.Sprintf("%s_%s", sup.Name(), time.Now().Truncate(time.Hour).Format("15")), 1)
-	}()
 
 	payload := openrtb.BidRequest{}
 	dec := json.NewDecoder(r.Body)
@@ -84,6 +80,16 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	go func() {
+		rqs := kv.NewAEAVStore(fmt.Sprintf("DRQS_%s", time.Now().Truncate(time.Hour*24).Format("060102")), time.Hour*72)
+		rqs.IncSubKey(fmt.Sprintf("%s_%s", sup.Name(), time.Now().Truncate(time.Hour).Format("15")), 1)
+		rqs.IncSubKey(fmt.Sprintf("%s_ALL", sup.Name()), 1)
+		rqs.IncSubKey("ALL", 1)
+		iqs := kv.NewAEAVStore(fmt.Sprintf("DIQS_%s", time.Now().Truncate(time.Hour*24).Format("060102")), time.Hour*72)
+		iqs.IncSubKey(fmt.Sprintf("%s_%s", sup.Name(), time.Now().Truncate(time.Hour).Format("15")), int64(len(payload.Imp)))
+		iqs.IncSubKey(fmt.Sprintf("%s_ALL", sup.Name()), int64(len(payload.Imp)))
+		iqs.IncSubKey("ALL", int64(len(payload.Imp)))
+	}()
 	// Known extensions are (currently) fat finger
 	var (
 		ext         = make(simpleMap)
