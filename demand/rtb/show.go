@@ -32,6 +32,7 @@ func MinimalSelect(
 	c context.Context, ctx *builder.Context, seat entity.Seat, all []entity.Creative) (
 	[]entity.SelectedCreative, []entity.SelectedCreative) {
 	exceed, underfloor := selector(ctx, all, seat, false, nil)
+
 	exceed = capping.ApplyCapping(ctx.Capping(), ctx.User().ID(), exceed, ctx.EventPage())
 	underfloor = capping.ApplyCapping(ctx.Capping(), ctx.User().ID(), underfloor, ctx.EventPage())
 
