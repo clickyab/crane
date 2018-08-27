@@ -180,7 +180,7 @@ func selector(ctx entity.Context, ads []entity.Creative, seat entity.Seat, noVid
 			)
 		} else {
 			if ctx.Publisher().Supplier().Name() != "clickyab" {
-				logrus.Warnf("SELECT PRICE CTR: %d, CPM: %d, CPC: %d", ctr, cpm, cpc)
+				logrus.Warnf("SELECT PRICE CTR: %f, CPM: %f, CPC: %f", ctr, cpm, cpc)
 				iqs := kv.NewAEAVStore(fmt.Sprintf("DEQS_%s", time.Now().Truncate(time.Hour*24).Format("060102")), time.Hour*72)
 				iqs.IncSubKey(fmt.Sprintf("%s_%s_%s", ctx.Publisher().Supplier().Name(), time.Now().Truncate(time.Hour).Format("15"), "PRICE"), 1)
 			}
