@@ -12,7 +12,7 @@ import (
 )
 
 // Select is the main entry point for this module
-func Select(c context.Context, sel reducer.Filter, opt ...builder.ShowOptionSetter) (entity.Context, error) {
+func Select(c context.Context, sel []reducer.Filter, opt ...builder.ShowOptionSetter) (entity.Context, error) {
 	// Build context
 	ctx, err := builder.NewContext(opt...)
 	if err != nil {

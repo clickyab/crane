@@ -2,9 +2,15 @@ package reducer
 
 import (
 	"context"
-	"errors"
+
+	"sync"
+
+	"fmt"
+
+	"time"
 
 	"clickyab.com/crane/demand/entity"
+	"github.com/clickyab/services/kv"
 )
 
 // Filter is the interface to filter ads
@@ -12,36 +18,65 @@ type Filter interface {
 	Check(entity.Context, entity.Creative) error
 }
 
-type mixer struct {
-	f []Filter
-}
-
-func (m *mixer) Check(c entity.Context, a entity.Creative) error {
-	for i := range m.f {
-		if err := m.f[i].Check(c, a); err != nil {
-			// Un-coment this for debug
-			//fmt.Printf("\nfalse on %T", m.f[i])
-			return errors.New("some filter didn't pass")
-		}
-	}
-	//fmt.Printf("\true on %d", a.ID())
-	return nil
-}
-
-// Mix try to mix multiple filter to single function so there is no need to
-// call Apply more than once
-func Mix(f ...Filter) Filter {
-	return &mixer{f: f}
-}
-
 // Apply get the data and then call filter on each of them concurrently, the
 // result is the accepted items
-func Apply(_ context.Context, imp entity.Context, ads []entity.Creative, ff Filter) []entity.Creative {
+func Apply(_ context.Context, imp entity.Context, ads []entity.Creative, ff []Filter) []entity.Creative {
+	var mads = make([]map[int64]entity.Creative, 0)
+
 	var m = make([]entity.Creative, 0, len(ads))
-	for i := range ads {
-		if ff.Check(imp, ads[i]) == nil {
-			m = append(m, ads[i])
+	lock := sync.RWMutex{}
+	var done = make(chan int)
+	var cancel = make(chan error)
+
+	for _, f := range ff {
+		go func(f Filter) {
+			var fads = make(map[int64]entity.Creative)
+			var err error
+			for i := range ads {
+				if ferr := f.Check(imp, ads[i]); ferr != nil {
+					err = ferr
+					continue
+				}
+				fads[ads[i].ID()] = ads[i]
+			}
+			if len(fads) == 0 {
+				cancel <- err
+				close(cancel)
+			}
+			lock.Lock()
+			mads = append(mads, fads)
+			lock.Unlock()
+			done <- 0
+		}(f)
+	}
+
+	var c int
+SELECT:
+	for {
+		select {
+		case <-done:
+			c++
+			if len(ff) == c {
+				ref := mads[0]
+			LOOP:
+				for kr, vr := range ref {
+					for _, v := range mads[1:] {
+						if _, ok := v[kr]; !ok {
+							continue LOOP
+						}
+					}
+
+					m = append(m, vr)
+				}
+				break SELECT
+			}
+
+		case err := <-cancel:
+			iqs := kv.NewAEAVStore(fmt.Sprintf("DEQS_%s", time.Now().Truncate(time.Hour*24).Format("060102")), time.Hour*72)
+			iqs.IncSubKey(fmt.Sprintf("%s_%s_%s", imp.Publisher().Supplier().Name(), time.Now().Truncate(time.Hour).Format("15"), err.Error()), 1)
+			return nil
 		}
 	}
+
 	return m
 }

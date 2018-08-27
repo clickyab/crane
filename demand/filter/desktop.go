@@ -16,11 +16,11 @@ func (*Desktop) Check(c entity.Context, in entity.Creative) error {
 		if in.Campaign().WebMobile() {
 			return nil
 		}
-		return errors.New("desktop campaign not webmobile")
+		return errors.New("DESKTOP_WEBMOBILE")
 	}
 	if in.Campaign().Web() {
 		return nil
 	}
-	return errors.New("desktop campaign is not web or webmobile")
+	return errors.New("NO_DESKTOP_WEBMOBILE")
 
 }

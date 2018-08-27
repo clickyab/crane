@@ -15,5 +15,5 @@ func (*ConnectionType) Check(c entity.Context, in entity.Creative) error {
 	if hasInt(true, in.Campaign().ConnectionType(), c.ConnectionType()) {
 		return nil
 	}
-	return errors.New("connection type not allowed")
+	return errors.New("CONNECTION")
 }

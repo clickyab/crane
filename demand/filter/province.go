@@ -18,7 +18,7 @@ func (*Province) Check(c entity.Context, in entity.Creative) error {
 		return nil
 	}
 	if !c.Location().Province().Valid {
-		return errors.New("province is unknown")
+		return errors.New("UNKNOWN_PROVINCE")
 	}
 
 	// the 1 means for iran
@@ -31,5 +31,5 @@ func (*Province) Check(c entity.Context, in entity.Creative) error {
 	if hasString(true, in.Campaign().Province(), fmt.Sprint(c.Location().Province().ID)) {
 		return nil
 	}
-	return errors.New("province is not allowed")
+	return errors.New("NOT_ALLOWED_PROVINCE")
 }

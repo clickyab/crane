@@ -16,7 +16,7 @@ func (*WhiteList) Check(impression entity.Context, ad entity.Creative) error {
 	if hasString(true, ad.Campaign().WhiteListPublisher(), fmt.Sprint(impression.Publisher().ID())) {
 		return nil
 	}
-	return errors.New("whitelist not met")
+	return errors.New("WHITELIST")
 
 }
 
@@ -29,6 +29,6 @@ func (*BlackList) Check(impression entity.Context, ad entity.Creative) error {
 	if !hasString(false, ad.Campaign().BlackListPublisher(), fmt.Sprint(impression.Publisher().ID())) {
 		return nil
 	}
-	return errors.New("blacklist not allowed")
+	return errors.New("BLACKLIST")
 
 }

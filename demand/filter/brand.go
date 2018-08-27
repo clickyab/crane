@@ -15,6 +15,6 @@ func (*AppBrand) Check(c entity.Context, in entity.Creative) error {
 	if hasString(true, in.Campaign().AppBrands(), c.Brand()) {
 		return nil
 	}
-	return errors.New("app brand not met")
+	return errors.New("APP_BRAND")
 
 }
