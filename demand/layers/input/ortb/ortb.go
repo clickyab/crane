@@ -31,7 +31,6 @@ const demandPath = "/ortb/:token"
 
 var (
 	ortbWebSelector = []reducer.Filter{
-		&filter.Strategy{},
 		&filter.Desktop{},
 		&filter.OS{},
 		&filter.WhiteList{},
@@ -39,10 +38,10 @@ var (
 		&filter.Category{},
 		&filter.Province{},
 		&filter.ISP{},
+		&filter.Strategy{},
 	}
 
 	ortbAppSelector = []reducer.Filter{
-		&filter.Strategy{},
 		&filter.AppBrand{},
 		&filter.ConnectionType{},
 		&filter.AppCarrier{},
@@ -52,6 +51,7 @@ var (
 		&filter.Province{},
 		&filter.ISP{},
 		&filter.AreaInGlob{},
+		&filter.Strategy{},
 	}
 )
 

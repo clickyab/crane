@@ -28,7 +28,9 @@ func Apply(_ context.Context, imp entity.Context, ads []entity.Creative, ff []Fi
 		for i := range ads {
 			if ferr := f.Check(imp, ads[i]); ferr != nil {
 				err = ferr
+				continue
 			}
+			fads[ads[i].ID()] = ads[i]
 		}
 		if len(fads) == 0 && len(ads) != 0 {
 			if imp.Publisher().Supplier().Name() != "clickyab" {
