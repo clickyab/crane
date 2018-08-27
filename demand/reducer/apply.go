@@ -35,13 +35,16 @@ func Apply(_ context.Context, imp entity.Context, ads []entity.Creative, ff []Fi
 			for i := range ads {
 				if ferr := f.Check(imp, ads[i]); ferr != nil {
 					err = ferr
+					if i == len(ads)-1 {
+						cancel <- err
+					}
 					continue
 				}
 				fads[ads[i].ID()] = ads[i]
 			}
-			if len(fads) == 0 {
+			if len(fads) == 0 && len(ads) != 0 {
 				cancel <- err
-				close(cancel)
+				return
 			}
 			lock.Lock()
 			mads = append(mads, fads)
@@ -54,6 +57,8 @@ func Apply(_ context.Context, imp entity.Context, ads []entity.Creative, ff []Fi
 SELECT:
 	for {
 		select {
+		case <-time.After(time.Millisecond * 100):
+			break SELECT
 		case <-done:
 			c++
 			if len(ff) == c {
