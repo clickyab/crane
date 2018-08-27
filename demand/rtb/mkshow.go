@@ -6,9 +6,12 @@ import (
 
 	"fmt"
 
+	"time"
+
 	"clickyab.com/crane/demand/capping"
 	"clickyab.com/crane/demand/entity"
 	"github.com/clickyab/services/assert"
+	"github.com/clickyab/services/kv"
 	"github.com/sirupsen/logrus"
 )
 
@@ -193,8 +196,8 @@ func selector(ctx entity.Context, ads []entity.Creative, seat entity.Seat, noVid
 
 	if len(ads) != 0 && len(exceedFloor) == 0 && ctx.Publisher().Supplier().Name() != "clickyab" {
 		logrus.Warnf("SELECT PRICE CTR: %d, CPM: %d, CPC: %d")
-		//iqs := kv.NewAEAVStore(fmt.Sprintf("DEQS_%s", time.Now().Truncate(time.Hour*24).Format("060102")), time.Hour*72)
-		//iqs.IncSubKey(fmt.Sprintf("%s_%s_%s", ctx.Publisher().Supplier().Name(), time.Now().Truncate(time.Hour).Format("15"), sd[i].Size), 1)
+		iqs := kv.NewAEAVStore(fmt.Sprintf("DEQS_%s", time.Now().Truncate(time.Hour*24).Format("060102")), time.Hour*72)
+		iqs.IncSubKey(fmt.Sprintf("%s_%s_%s", ctx.Publisher().Supplier().Name(), time.Now().Truncate(time.Hour).Format("15"), "PRICE"), 1)
 	}
 	return exceedFloor, underFloor
 }
