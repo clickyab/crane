@@ -240,7 +240,7 @@ func contextMaker(minbid int64, winner entity.Creative, underfloor bool, strateg
 	sup := mock_entity.NewMockSupplier(c)
 	sup.EXPECT().Share().Return(100).AnyTimes()
 	sup.EXPECT().Strategy().Return(strategy).AnyTimes()
-	sup.EXPECT().Name().Return("test sup")
+	sup.EXPECT().Name().Return("test sup").AnyTimes()
 
 	softCPC := sup.EXPECT().SoftFloorCPC(gomock.Any(), gomock.Any())
 	softCPC.Do(func(a, b string) {
