@@ -68,14 +68,14 @@ func SetDemandSeats(sd ...DemandSeatData) ShowOptionSetter {
 			}
 			size, err = cyslot.GetSize(sd[i].Size)
 			if err != nil {
+				iqs := kv.NewAEAVStore(fmt.Sprintf("DEQS_%s", time.Now().Truncate(time.Hour*24).Format("060102")), time.Hour*72)
+				iqs.IncSubKey(fmt.Sprintf("%s_%s_%s", o.Publisher().Supplier().Name(), time.Now().Truncate(time.Hour).Format("15"), sd[i].Size), 1)
 				switch sd[i].Type {
 				case entity.RequestTypeNative:
 					size = 20
 				case entity.RequestTypeVast:
 					size = 9
 				default:
-					iqs := kv.NewAEAVStore(fmt.Sprintf("DEQS_%s", time.Now().Truncate(time.Hour*24).Format("060102")), time.Hour*72)
-					iqs.IncSubKey(fmt.Sprintf("%s_%s_%s", o.Publisher().Supplier().Name(), time.Now().Truncate(time.Hour).Format("15"), sd[i].Size), 1)
 					return nil, err
 				}
 			}
