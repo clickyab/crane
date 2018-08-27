@@ -155,6 +155,8 @@ func selectAds(_ context.Context, ctx entity.Context, ads []entity.Creative) {
 
 func selector(ctx entity.Context, ads []entity.Creative, seat entity.Seat, noVideo bool, selected map[int64]bool) (exceedFloor []entity.SelectedCreative, underFloor []entity.SelectedCreative) {
 	assert.True(seat.SoftCPM() >= seat.MinCPM())
+	iqs := kv.NewAEAVStore(fmt.Sprintf("DEQS_%s", time.Now().Truncate(time.Hour*24).Format("060102")), time.Hour*72)
+	iqs.IncSubKey(fmt.Sprintf("%s_%s_%s", ctx.Publisher().Supplier().Name(), time.Now().Truncate(time.Hour).Format("15"), "SELECT"), 1)
 	for _, creative := range ads {
 		if creative.Type() == entity.AdTypeVideo && noVideo {
 			continue
