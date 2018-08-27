@@ -25,6 +25,7 @@ import (
 	"github.com/clickyab/services/kv"
 	"github.com/clickyab/services/xlog"
 	"github.com/rs/xmux"
+	"github.com/sirupsen/logrus"
 )
 
 const demandPath = "/ortb/:token"
@@ -195,6 +196,10 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 	iqs := kv.NewAEAVStore(fmt.Sprintf("DEQS_%s", time.Now().Truncate(time.Hour*24).Format("060102")), time.Hour*72)
 	iqs.IncSubKey(fmt.Sprintf("%s_%s_%s", sup.Name(), time.Now().Truncate(time.Hour).Format("15"), "RESPONSE"), int64(len(c.Seats())))
+	ll, err := json.Marshal(c.Seats())
+	if err == nil && sup.Name() != "clickyab" {
+		logrus.Warnf("%s: %s", sup.Name(), string(ll))
+	}
 
 }
 
