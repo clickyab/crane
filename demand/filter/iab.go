@@ -25,6 +25,6 @@ func (*Category) Check(c entity.Context, in entity.Creative) error {
 		}
 	}
 
-	return errors.New("iab not met")
+	return errors.New("IAB")
 
 }

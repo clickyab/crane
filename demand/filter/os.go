@@ -21,6 +21,6 @@ func (*OS) Check(c entity.Context, in entity.Creative) error {
 		return nil
 	}
 
-	return errors.New("os not allowed")
+	return errors.New("OS")
 
 }

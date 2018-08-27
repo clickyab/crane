@@ -2,12 +2,14 @@ package builder
 
 import (
 	"fmt"
+	"time"
 
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/internal/cyslot"
 	"github.com/bsm/openrtb"
 	"github.com/bsm/openrtb/native/request"
 	"github.com/clickyab/services/config"
+	"github.com/clickyab/services/kv"
 )
 
 var (
@@ -72,6 +74,8 @@ func SetDemandSeats(sd ...DemandSeatData) ShowOptionSetter {
 				case entity.RequestTypeVast:
 					size = 9
 				default:
+					iqs := kv.NewAEAVStore(fmt.Sprintf("DEQS_%s", time.Now().Truncate(time.Hour*24).Format("060102")), time.Hour*72)
+					iqs.IncSubKey(fmt.Sprintf("%s_%s_%s", o.Publisher().Supplier().Name(), time.Now().Truncate(time.Hour).Format("15"), sd[i].Size), 1)
 					return nil, err
 				}
 			}

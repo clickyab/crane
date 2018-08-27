@@ -30,7 +30,7 @@ import (
 const demandPath = "/ortb/:token"
 
 var (
-	ortbWebSelector = reducer.Mix(
+	ortbWebSelector = []reducer.Filter{
 		&filter.Strategy{},
 		&filter.Desktop{},
 		&filter.OS{},
@@ -39,9 +39,9 @@ var (
 		&filter.Category{},
 		&filter.Province{},
 		&filter.ISP{},
-	)
+	}
 
-	ortbAppSelector = reducer.Mix(
+	ortbAppSelector = []reducer.Filter{
 		&filter.Strategy{},
 		&filter.AppBrand{},
 		&filter.ConnectionType{},
@@ -52,7 +52,7 @@ var (
 		&filter.Province{},
 		&filter.ISP{},
 		&filter.AreaInGlob{},
-	)
+	}
 )
 
 func writesErrorStatus(w http.ResponseWriter, status int, detail string) {
@@ -263,10 +263,10 @@ func seatDetail(req openrtb.BidRequest) ([]builder.DemandSeatData, bool) {
 	return seats, vast
 }
 
-func handlePublisherSelector(payload openrtb.BidRequest, sup entity.Supplier, prevent bool) (entity.Publisher, reducer.Filter, string, bool, error) {
+func handlePublisherSelector(payload openrtb.BidRequest, sup entity.Supplier, prevent bool) (entity.Publisher, []reducer.Filter, string, bool, error) {
 	var (
 		publisher entity.Publisher
-		selector  reducer.Filter
+		selector  []reducer.Filter
 		ps        string
 		err       error
 	)

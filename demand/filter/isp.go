@@ -16,5 +16,5 @@ func (*ISP) Check(c entity.Context, in entity.Creative) error {
 	if hasString(true, in.Campaign().ISP(), fmt.Sprint(c.Location().ISP().ID)) {
 		return nil
 	}
-	return errors.New("isp not met")
+	return errors.New("ISP")
 }

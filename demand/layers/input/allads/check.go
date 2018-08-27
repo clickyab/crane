@@ -100,10 +100,6 @@ func allAdHandler(c context.Context, w http.ResponseWriter, r *http.Request) {
 
 	// filtered ads with errors
 	fe := make(map[int64][]string)
-	fn := func(id int64, errs []string) {
-		fe[id] = errs
-	}
-	mix := Mix(fn, selector...)
 
 	var ou *openrtb.User
 	if latLon != "" {
@@ -175,7 +171,7 @@ func allAdHandler(c context.Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	filteredAds := reducer.Apply(context.Background(), ctx, ads.GetAds(), mix)
+	filteredAds := reducer.Apply(context.Background(), ctx, ads.GetAds(), selector)
 
 	framework.JSON(w, http.StatusOK, internalSelect(c, ctx, seat, filteredAds, fe))
 }

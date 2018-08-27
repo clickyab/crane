@@ -30,13 +30,13 @@ func (*AreaInGlob) Check(c entity.Context, in entity.Creative) error {
 	}
 	if !ll.Valid {
 		// there is no location detected
-		return errors.New("user is not in target area")
+		return errors.New("TARGET_AREA")
 		// no location and no regional campaign so be it!
 	}
 	// Campaign is regional and phone is detected
 	if areaInGlob(lat, lon, ll.Lat, ll.Lon, radius) {
 		return nil
 	}
-	return errors.New("user is not in target area")
+	return errors.New("NO_TARGET_AREA")
 
 }
