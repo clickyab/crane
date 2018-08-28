@@ -19,7 +19,6 @@ import (
 	"github.com/clickyab/services/random"
 	"github.com/clickyab/services/version"
 	"github.com/rs/vast"
-	"github.com/sirupsen/logrus"
 )
 
 var vs = version.GetVersion()
@@ -244,10 +243,6 @@ func Render(_ context.Context, w http.ResponseWriter, ctx entity.Context) error 
 		}
 	}
 
-	ll, err := json.Marshal(r)
-	if err == nil && ctx.Publisher().Supplier().Name() != "clickyab" {
-		logrus.Warnf("%s: %s", ctx.Publisher().Supplier().Name(), string(ll))
-	}
 	w.Header().Set("content-type", "application/json")
 	j := json.NewEncoder(w)
 	return j.Encode(openrtb.BidResponse{
