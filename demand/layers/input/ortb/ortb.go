@@ -111,7 +111,7 @@ func monitoring(tk time.Time, sup string) {
 
 		if t != 0 && c != 0 {
 			current.SetSubKey(fmt.Sprintf("%s_AVG", ms), fmt.Sprintf("%d ms", t/c))
-			current.SetSubKey(fmt.Sprintf("%s_COUNT", ms), old.AllKeys()[fmt.Sprintf("%d P/S", c/5)])
+			current.SetSubKey(fmt.Sprintf("%s_COUNT", ms), fmt.Sprintf("%d p/s", c/5))
 
 		}
 	}
