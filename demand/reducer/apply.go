@@ -3,12 +3,9 @@ package reducer
 import (
 	"context"
 
-	"fmt"
-
 	"time"
 
 	"clickyab.com/crane/demand/entity"
-	"github.com/clickyab/services/kv"
 )
 
 // Filter is the interface to filter ads
@@ -16,46 +13,59 @@ type Filter interface {
 	Check(entity.Context, entity.Creative) error
 }
 
+type filtered struct {
+	ad      entity.Creative
+	confirm int
+}
+
 // Apply get the data and then call filter on each of them concurrently, the
 // result is the accepted items
-func Apply(_ context.Context, imp entity.Context, ads []entity.Creative, ff []Filter) []entity.Creative {
-	var mads = make([]map[int64]entity.Creative, 0)
-	var m = make([]entity.Creative, 0, len(ads))
-
+func Apply(c context.Context, imp entity.Context, ads []entity.Creative, ff []Filter) []entity.Creative {
+	var mads = make(map[int64]*filtered)
+	var res = make([]entity.Creative, 0)
+	fads := make(chan entity.Creative)
+	ctx, cl := context.WithCancel(c)
+	dl := time.After(time.Millisecond * 20)
 	for _, f := range ff {
-		var fads = make(map[int64]entity.Creative)
-		var err error
-		for i := range ads {
-			if ferr := f.Check(imp, ads[i]); ferr != nil {
-				err = ferr
-				continue
+		go func(f Filter) {
+			c := 0
+			for i := range ads {
+				if ferr := f.Check(imp, ads[i]); ferr == nil {
+					c++
+					fads <- ads[i]
+				}
 			}
-			fads[ads[i].ID()] = ads[i]
-		}
-		if len(fads) == 0 && len(ads) != 0 {
-			if imp.Publisher().Supplier().Name() != "clickyab" {
-				iqs := kv.NewAEAVStore(fmt.Sprintf("DEQS_%s", time.Now().Truncate(time.Hour*24).Format("060102")), time.Hour*72)
-				iqs.IncSubKey(fmt.Sprintf("%s_%s_%s", imp.Publisher().Supplier().Name(), time.Now().Truncate(time.Hour).Format("15"), err.Error()), 1)
+			if c == 0 {
+				cl()
 			}
-			return nil
-		}
-		if len(fads) == 0 {
-			return nil
-		}
-		mads = append(mads, fads)
+		}(f)
 	}
 
-	ref := mads[0]
 LOOP:
-	for kr, vr := range ref {
-		for _, v := range mads[1:] {
-			if _, ok := v[kr]; !ok {
-				continue LOOP
+	for {
+		select {
+		case <-ctx.Done():
+			return nil
+		case <-dl:
+			return nil
+		case ad := <-fads:
+			if v, ok := mads[ad.ID()]; ok {
+				v.confirm++
+				if v.confirm == len(ff) {
+					break LOOP
+				}
+			}
+			mads[ad.ID()] = &filtered{
+				ad:      ad,
+				confirm: 1,
 			}
 		}
-
-		m = append(m, vr)
 	}
 
-	return m
+	for _, v := range mads {
+		if v.confirm == len(ff) {
+			res = append(res, v.ad)
+		}
+	}
+	return res
 }
