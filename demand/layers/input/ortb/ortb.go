@@ -125,10 +125,15 @@ func monitoring(tk time.Time, sup string) {
 		for i := 0; i < 11; i++ {
 			ps, _ := strconv.ParseInt(old.AllKeys()[fmt.Sprintf("%s_%d", ms, i)], 10, 64)
 			if ps > 0 && c > 0 {
-				current.SetSubKey(fmt.Sprintf("RESPONSE_IN_%d0ms", i), fmt.Sprintf("%d%% - %d RQS", (ps*100)/c, ps))
+				if i == 10 {
+					current.SetSubKey(fmt.Sprintf("%03d0ms>", i), fmt.Sprintf("%3d%%  %d", (ps*100)/c, ps))
+					continue
+				}
+				current.SetSubKey(fmt.Sprintf(">%03d0ms>", i), fmt.Sprintf("%3d%%  %d", (ps*100)/c, ps))
 				continue
 			}
-			current.SetSubKey(fmt.Sprintf("RESPONSE_IN_%dms", i), fmt.Sprintf("%d%% - %d RQS", 0, 0))
+
+			current.SetSubKey(fmt.Sprintf(">%03dms>", i), fmt.Sprintf("%3d%%  %d", 0, 0))
 
 		}
 		assert.Nil(current.Save(window * 100))
