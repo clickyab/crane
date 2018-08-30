@@ -30,7 +30,7 @@ import (
 	"github.com/rs/xmux"
 )
 
-var monitoringSuppliers = config.RegisterString("crane_monitoring_suppliers", "comma separated suppliers name ", "clickyab,chavoosh")
+var monitoringSuppliers = config.RegisterString("crane_monitoring_suppliers", "clickyab,chavoosh", "comma separated suppliers name ")
 
 const demandPath = "/ortb/:token"
 
