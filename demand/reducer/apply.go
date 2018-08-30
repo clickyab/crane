@@ -25,7 +25,9 @@ func Apply(c context.Context, imp entity.Context, ads []entity.Creative, ff []Fi
 	var res = make([]entity.Creative, 0)
 	fads := make(chan entity.Creative)
 	ctx, cl := context.WithCancel(c)
-	dl := time.After(time.Millisecond * 20)
+	cfx, fl := context.WithCancel(context.Background())
+	dl := time.After(time.Millisecond * 100)
+
 	for _, f := range ff {
 		go func(f Filter) {
 			c := 0
@@ -37,9 +39,13 @@ func Apply(c context.Context, imp entity.Context, ads []entity.Creative, ff []Fi
 			}
 			if c == 0 {
 				cl()
+			} else {
+				fl()
 			}
 		}(f)
 	}
+
+	var counter = 0
 
 LOOP:
 	for {
@@ -48,12 +54,15 @@ LOOP:
 			return nil
 		case <-dl:
 			return nil
+		case <-cfx.Done():
+			counter++
+			if len(ff) == counter {
+				break LOOP
+			}
 		case ad := <-fads:
 			if v, ok := mads[ad.ID()]; ok {
 				v.confirm++
-				if v.confirm == len(ff) {
-					break LOOP
-				}
+				continue
 			}
 			mads[ad.ID()] = &filtered{
 				ad:      ad,
