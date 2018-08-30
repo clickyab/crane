@@ -70,27 +70,28 @@ func monitoring(tk time.Time, sup string) {
 	if len(msup) == 0 {
 		return
 	}
-	rms := kv.NewAEAVStore(time.Now().Truncate(time.Second*5).Format("TRMS_060102150405"), time.Second*15)
+	window := time.Second * 5
+	rms := kv.NewAEAVStore(time.Now().Truncate(window).Format("TRMS_060102150405"), window*3)
 	tm := time.Since(tk).Nanoseconds() / 1e6
 	max := rms.AllKeys()[fmt.Sprintf("%s_X", sup)]
 	min := rms.AllKeys()[fmt.Sprintf("%s_M", sup)]
 	rms.IncSubKey(fmt.Sprintf("%s_T", sup), tm)
 	rms.IncSubKey(fmt.Sprintf("%s_C", sup), 1)
 
-	tms := kv.NewEavStore(time.Now().Truncate(time.Second * 5).Format("TRMS_060102150405"))
+	tms := kv.NewEavStore(time.Now().Truncate(window).Format("TRMS_060102150405"))
 	if tm > max {
 		tms.SetSubKey(fmt.Sprintf("%s_X", sup), fmt.Sprintf("%d ns", tm))
 	}
 	if min == 0 || tm < min {
 		tms.SetSubKey(fmt.Sprintf("%s_M", sup), fmt.Sprintf("%d ns", tm))
 	}
-	assert.Nil(tms.Save(time.Second * 15))
-	old := kv.NewEavStore(time.Now().Add(time.Second * 5 * -1).Truncate(time.Second * 5).Format("TRMS_060102150405"))
+	assert.Nil(tms.Save(window * 15))
+	old := kv.NewEavStore(time.Now().Add(window * -1).Truncate(window).Format("TRMS_060102150405"))
 	current := kv.NewEavStore("RMQS")
-	if current.AllKeys()["DATE"] == time.Now().Add(time.Second*5*-1).Truncate(time.Second*5).Format("TRMS_060102150405") {
+	if current.AllKeys()["DATE"] == time.Now().Add(window*-1).Truncate(window).Format("060102150405") {
 		return
 	}
-	current.SetSubKey("DATE", time.Now().Add(time.Second*5*-1).Truncate(time.Second*5).Format("TRMS_060102150405"))
+	current.SetSubKey("DATE", time.Now().Add(window*-1).Truncate(window).Format("060102150405"))
 	for _, ms := range msup {
 		current.SetSubKey(fmt.Sprintf("%s_MAX", ms), old.AllKeys()[fmt.Sprintf("%s_X", ms)])
 		current.SetSubKey(fmt.Sprintf("%s_MIN", ms), old.AllKeys()[fmt.Sprintf("%s_M", ms)])
@@ -100,7 +101,7 @@ func monitoring(tk time.Time, sup string) {
 		current.SetSubKey(fmt.Sprintf("%s_AVG", ms), fmt.Sprintf("%d ms", t/c))
 		current.SetSubKey(fmt.Sprintf("%s_COUNT", ms), old.AllKeys()[fmt.Sprintf("%d", c/5)])
 	}
-	assert.Nil(current.Save(time.Second * 15))
+	assert.Nil(current.Save(window * 3))
 
 }
 
