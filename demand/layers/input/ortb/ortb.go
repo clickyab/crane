@@ -63,8 +63,28 @@ func writesErrorStatus(w http.ResponseWriter, status int, detail string) {
 
 // openRTBInput is the route for rtb input layer
 func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+	tk := time.Now()
+
 	token := xmux.Param(ctx, "token")
 	sup, err := suppliers.GetSupplierByToken(token)
+	defer func() {
+		rms := kv.NewAEAVStore(time.Now().Format("RMS_060102150405"), time.Second*3)
+		tm := time.Since(tk).Nanoseconds() / 1e6
+		max := rms.AllKeys()["X"]
+		min := rms.AllKeys()["M"]
+		rt := rms.IncSubKey("T", tm)
+		rc := rms.IncSubKey("C", 1)
+		tms := kv.NewEavStore("RMS").
+			SetSubKey(fmt.Sprintf("%s_RPS", sup.Name()), fmt.Sprintf("%d", rc)).
+			SetSubKey(fmt.Sprintf("%s_AVG", sup.Name()), fmt.Sprintf("%d ms", rt/rc))
+		if tm > max {
+			tms.SetSubKey(fmt.Sprintf("%s_MAX", sup.Name()), fmt.Sprintf("%d ms", tm))
+		}
+		if min == 0 || tm < min {
+			tms.SetSubKey(fmt.Sprintf("%s_MIN", sup.Name()), fmt.Sprintf("%d ms", tm))
+		}
+		assert.Nil(tms.Save(time.Hour * 12))
+	}()
 	if err != nil {
 		e := fmt.Sprintf("supplier with token %s not found", token)
 		xlog.GetWithError(ctx, err).Debug(e)
