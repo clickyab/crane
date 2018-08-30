@@ -68,7 +68,7 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	token := xmux.Param(ctx, "token")
 	sup, err := suppliers.GetSupplierByToken(token)
 	defer func() {
-		rms := kv.NewAEAVStore(time.Now().Format("RMS_060102150405"), time.Second*3)
+		rms := kv.NewAEAVStore(time.Now().Truncate(time.Second*5).Format("RMS_060102150405"), time.Second*3)
 		tm := time.Since(tk).Nanoseconds() / 1e6
 		max := rms.AllKeys()["X"]
 		min := rms.AllKeys()["M"]
