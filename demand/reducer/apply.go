@@ -39,6 +39,9 @@ func Apply(_ context.Context, imp entity.Context, ads []entity.Creative, ff []Fi
 			}
 			return nil
 		}
+		if len(fads) == 0 {
+			return nil
+		}
 		mads = append(mads, fads)
 	}
 
