@@ -71,7 +71,7 @@ func monitoring(tk time.Time, sup string) {
 		return
 	}
 	window := time.Second * 5
-	rms := kv.NewAEAVStore(time.Now().Truncate(window).Format("TRMS_060102150405"), window*3)
+	rms := kv.NewAEAVStore(time.Now().Truncate(window).Format("TRMS_060102150405"), window*10)
 	tm := time.Since(tk).Nanoseconds() / 1e6
 	max := rms.AllKeys()[fmt.Sprintf("%s_X", sup)]
 	min := rms.AllKeys()[fmt.Sprintf("%s_M", sup)]
@@ -80,12 +80,12 @@ func monitoring(tk time.Time, sup string) {
 
 	tms := kv.NewEavStore(time.Now().Truncate(window).Format("TRMS_060102150405"))
 	if tm > max {
-		tms.SetSubKey(fmt.Sprintf("%s_X", sup), fmt.Sprintf("%d ns", tm))
+		tms.SetSubKey(fmt.Sprintf("%s_X", sup), fmt.Sprintf("%d", tm))
 	}
 	if min == 0 || tm < min {
-		tms.SetSubKey(fmt.Sprintf("%s_M", sup), fmt.Sprintf("%d ns", tm))
+		tms.SetSubKey(fmt.Sprintf("%s_M", sup), fmt.Sprintf("%d", tm))
 	}
-	assert.Nil(tms.Save(window * 15))
+	assert.Nil(tms.Save(window * 10))
 	old := kv.NewEavStore(time.Now().Add(window * -1).Truncate(window).Format("TRMS_060102150405"))
 	current := kv.NewEavStore("RMQS")
 	if current.AllKeys()["DATE"] == time.Now().Add(window*-1).Truncate(window).Format("060102150405") {
@@ -98,10 +98,13 @@ func monitoring(tk time.Time, sup string) {
 		t, _ := strconv.ParseInt(old.AllKeys()[fmt.Sprintf("%s_T", ms)], 10, 64)
 		c, _ := strconv.ParseInt(old.AllKeys()[fmt.Sprintf("%s_C", ms)], 10, 64)
 
-		current.SetSubKey(fmt.Sprintf("%s_AVG", ms), fmt.Sprintf("%d ms", t/c))
-		current.SetSubKey(fmt.Sprintf("%s_COUNT", ms), old.AllKeys()[fmt.Sprintf("%d", c/5)])
+		if t != 0 && c != 0 {
+			current.SetSubKey(fmt.Sprintf("%s_AVG", ms), fmt.Sprintf("%d ms", t/c))
+			current.SetSubKey(fmt.Sprintf("%s_COUNT", ms), old.AllKeys()[fmt.Sprintf("%d", c/5)])
+
+		}
 	}
-	assert.Nil(current.Save(window * 3))
+	assert.Nil(current.Save(window * 10))
 
 }
 
@@ -112,6 +115,7 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	token := xmux.Param(ctx, "token")
 	sup, err := suppliers.GetSupplierByToken(token)
 	defer monitoring(tk, sup.Name())
+
 	if err != nil {
 		e := fmt.Sprintf("supplier with token %s not found", token)
 		xlog.GetWithError(ctx, err).Debug(e)
@@ -239,9 +243,6 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 
 	assert.Nil(demand.Render(ctx, w, c))
-
-	iqs := kv.NewAEAVStore(fmt.Sprintf("DEQS_%s", time.Now().Truncate(time.Hour*24).Format("060102")), time.Hour*72)
-	iqs.IncSubKey(fmt.Sprintf("%s_%s_%s", sup.Name(), time.Now().Truncate(time.Hour).Format("15"), "RESPONSE"), int64(len(c.Seats())))
 
 }
 
