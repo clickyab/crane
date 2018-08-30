@@ -10,6 +10,8 @@ import (
 
 	"time"
 
+	"strconv"
+
 	"clickyab.com/crane/demand/builder"
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/demand/filter"
@@ -22,10 +24,13 @@ import (
 	"github.com/bsm/openrtb"
 	"github.com/bsm/openrtb/native/request"
 	"github.com/clickyab/services/assert"
+	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/kv"
 	"github.com/clickyab/services/xlog"
 	"github.com/rs/xmux"
 )
+
+var monitoringSuppliers = config.RegisterString("crane_monitoring_suppliers", "comma separated suppliers name ", "clickyab,chavoosh")
 
 const demandPath = "/ortb/:token"
 
@@ -60,6 +65,44 @@ func writesErrorStatus(w http.ResponseWriter, status int, detail string) {
 	w.WriteHeader(status)
 	_, _ = fmt.Fprint(w, detail)
 }
+func monitoring(tk time.Time, sup string) {
+	msup := strings.Split(monitoringSuppliers.String(), ",")
+	if len(msup) == 0 {
+		return
+	}
+	rms := kv.NewAEAVStore(time.Now().Truncate(time.Second*5).Format("TRMS_060102150405"), time.Second*15)
+	tm := time.Since(tk).Nanoseconds() / 1e6
+	max := rms.AllKeys()[fmt.Sprintf("%s_X", sup)]
+	min := rms.AllKeys()[fmt.Sprintf("%s_M", sup)]
+	rms.IncSubKey(fmt.Sprintf("%s_T", sup), tm)
+	rms.IncSubKey(fmt.Sprintf("%s_C", sup), 1)
+
+	tms := kv.NewEavStore(time.Now().Truncate(time.Second * 5).Format("TRMS_060102150405"))
+	if tm > max {
+		tms.SetSubKey(fmt.Sprintf("%s_X", sup), fmt.Sprintf("%d ns", tm))
+	}
+	if min == 0 || tm < min {
+		tms.SetSubKey(fmt.Sprintf("%s_M", sup), fmt.Sprintf("%d ns", tm))
+	}
+	assert.Nil(tms.Save(time.Second * 15))
+	old := kv.NewEavStore(time.Now().Add(time.Second * 5 * -1).Truncate(time.Second * 5).Format("TRMS_060102150405"))
+	current := kv.NewEavStore("RMQS")
+	if current.AllKeys()["DATE"] == time.Now().Add(time.Second*5*-1).Truncate(time.Second*5).Format("TRMS_060102150405") {
+		return
+	}
+	current.SetSubKey("DATE", time.Now().Add(time.Second*5*-1).Truncate(time.Second*5).Format("TRMS_060102150405"))
+	for _, ms := range msup {
+		current.SetSubKey(fmt.Sprintf("%s_MAX", ms), old.AllKeys()[fmt.Sprintf("%s_X", ms)])
+		current.SetSubKey(fmt.Sprintf("%s_MIN", ms), old.AllKeys()[fmt.Sprintf("%s_M", ms)])
+		t, _ := strconv.ParseInt(old.AllKeys()[fmt.Sprintf("%s_T", ms)], 10, 64)
+		c, _ := strconv.ParseInt(old.AllKeys()[fmt.Sprintf("%s_C", ms)], 10, 64)
+
+		current.SetSubKey(fmt.Sprintf("%s_AVG", ms), fmt.Sprintf("%d ms", t/c))
+		current.SetSubKey(fmt.Sprintf("%s_COUNT", ms), old.AllKeys()[fmt.Sprintf("%d", c/5)])
+	}
+	assert.Nil(current.Save(time.Second * 15))
+
+}
 
 // openRTBInput is the route for rtb input layer
 func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
@@ -67,24 +110,7 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 	token := xmux.Param(ctx, "token")
 	sup, err := suppliers.GetSupplierByToken(token)
-	defer func() {
-		rms := kv.NewAEAVStore(time.Now().Truncate(time.Second*5).Format("RMS_060102150405"), time.Second*3)
-		tm := time.Since(tk).Nanoseconds()
-		max := rms.AllKeys()["X"]
-		min := rms.AllKeys()["M"]
-		rt := rms.IncSubKey("T", tm)
-		rc := rms.IncSubKey("C", 1)
-		tms := kv.NewEavStore("RMS").
-			SetSubKey(fmt.Sprintf("%s_RPS", sup.Name()), fmt.Sprintf("%d", rc)).
-			SetSubKey(fmt.Sprintf("%s_AVG", sup.Name()), fmt.Sprintf("%d ns", rt/rc))
-		if tm > max {
-			tms.SetSubKey(fmt.Sprintf("%s_MAX", sup.Name()), fmt.Sprintf("%d ns", tm))
-		}
-		if min == 0 || tm < min {
-			tms.SetSubKey(fmt.Sprintf("%s_MIN", sup.Name()), fmt.Sprintf("%d ns", tm))
-		}
-		assert.Nil(tms.Save(time.Hour * 12))
-	}()
+	defer monitoring(tk, sup.Name())
 	if err != nil {
 		e := fmt.Sprintf("supplier with token %s not found", token)
 		xlog.GetWithError(ctx, err).Debug(e)
