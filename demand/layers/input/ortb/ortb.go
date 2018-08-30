@@ -79,14 +79,18 @@ func monitoring(tk time.Time, sup string) {
 	rms.IncSubKey(fmt.Sprintf("C_%s", sup), 1)
 
 	tms := kv.NewEavStore(time.Now().Truncate(window).Format("TRMS_060102150405"))
-	tms.AllKeys()
+	update := false
 	if tm > max {
 		tms.SetSubKey(fmt.Sprintf("X_%s", sup), fmt.Sprintf("%d", tm+1))
+		update = true
 	}
 	if min == 0 || tm < min {
 		tms.SetSubKey(fmt.Sprintf("M_%s", sup), fmt.Sprintf("%d", tm+1))
+		update = true
 	}
-	assert.Nil(tms.Save(window * 10))
+	if update {
+		assert.Nil(tms.Save(window * 10))
+	}
 	old := kv.NewEavStore(time.Now().Truncate(window).Add(window * -1).Format("TRMS_060102150405"))
 	if len(old.AllKeys()) == 0 {
 		return
