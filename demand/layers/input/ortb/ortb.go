@@ -30,10 +30,12 @@ import (
 	"github.com/rs/xmux"
 )
 
-var monitoringSuppliers = config.RegisterString("crane_monitoring_suppliers", "clickyab,chavoosh", "comma separated suppliers name ")
-
 const demandPath = "/ortb/:token"
 
+var (
+	monitoringSuppliers = config.RegisterString("crane.rtb.monitor.suppliers", "clickyab,chavoosh", "comma separated suppliers name ")
+	deadline            = config.RegisterDuration("crane.rtb.deadline", time.Millisecond*150, "maximum waiting time for ad")
+)
 var (
 	ortbWebSelector = []reducer.Filter{
 		&filter.Desktop{},
@@ -84,6 +86,12 @@ func monitoring(tk time.Time, sup string) {
 	rms.IncSubKey(fmt.Sprintf("%s_T", sup), tm)
 	rms.IncSubKey(fmt.Sprintf("%s_C", sup), 1)
 
+	if cat := tm / 10; cat > 9 {
+		rms.IncSubKey(fmt.Sprintf("%s_10", sup), 1)
+	} else {
+		rms.IncSubKey(fmt.Sprintf("%s_%d", sup, cat), 1)
+	}
+
 	tms := kv.NewEavStore(ckey)
 	update := false
 	if tm > max {
@@ -98,30 +106,41 @@ func monitoring(tk time.Time, sup string) {
 		assert.Nil(tms.Save(window * 10))
 	}
 	old := kv.NewEavStore(okey)
-	current := kv.NewEavStore("RMQS")
-	if current.AllKeys()["DATE"] == okey {
-		return
-	}
-	current.SetSubKey("DATE", okey)
+
 	for _, ms := range msup {
-		current.SetSubKey(fmt.Sprintf("%s_MAX", ms), old.AllKeys()[fmt.Sprintf("%s_X", ms)])
-		current.SetSubKey(fmt.Sprintf("%s_MIN", ms), old.AllKeys()[fmt.Sprintf("%s_M", ms)])
+		current := kv.NewEavStore(fmt.Sprintf("RMQS_%s", ms))
+		if current.AllKeys()["DATE"] == okey {
+			return
+		}
+		current.SetSubKey("DATE", okey)
+		current.SetSubKey("MAX", old.AllKeys()[fmt.Sprintf("%s_X", ms)])
 		t, _ := strconv.ParseInt(old.AllKeys()[fmt.Sprintf("%s_T", ms)], 10, 64)
 		c, _ := strconv.ParseInt(old.AllKeys()[fmt.Sprintf("%s_C", ms)], 10, 64)
 
 		if t != 0 && c != 0 {
-			current.SetSubKey(fmt.Sprintf("%s_AVG", ms), fmt.Sprintf("%d ms", t/c))
-			current.SetSubKey(fmt.Sprintf("%s_COUNT", ms), fmt.Sprintf("%d p/s", c/5))
+			current.SetSubKey("AVG", fmt.Sprintf("%d ms", t/c))
+			current.SetSubKey("COUNT", fmt.Sprintf("%d p/s", c/5))
 
 		}
+		for i := 0; i < 11; i++ {
+			ps, _ := strconv.ParseInt(old.AllKeys()[fmt.Sprintf("%s_%d", ms, i)], 10, 64)
+			if ps > 0 && c > 0 {
+				current.SetSubKey(fmt.Sprintf("RESPONSE_IN_%d0ms", i), fmt.Sprintf("%d%% - %d RQS", (ps*100)/c, ps))
+				continue
+			}
+			current.SetSubKey(fmt.Sprintf("RESPONSE_IN_%dms", i), fmt.Sprintf("%d%% - %d RQS", 0, 0))
+
+		}
+		assert.Nil(current.Save(window * 100))
+
 	}
-	assert.Nil(current.Save(window * 100))
 
 }
 
 // openRTBInput is the route for rtb input layer
 func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
-	ctx, _ := context.WithTimeout(ct, time.Millisecond*150)
+	ctx, _ := context.WithTimeout(ct, deadline.Duration())
+
 	tk := time.Now()
 
 	token := xmux.Param(ctx, "token")
@@ -143,16 +162,6 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	go func() {
-		rqs := kv.NewAEAVStore(fmt.Sprintf("DRQS_%s", time.Now().Truncate(time.Hour*24).Format("060102")), time.Hour*72)
-		rqs.IncSubKey(fmt.Sprintf("%s_%s", sup.Name(), time.Now().Truncate(time.Hour).Format("15")), 1)
-		rqs.IncSubKey(fmt.Sprintf("%s_ALL", sup.Name()), 1)
-		rqs.IncSubKey("ALL", 1)
-		iqs := kv.NewAEAVStore(fmt.Sprintf("DIQS_%s", time.Now().Truncate(time.Hour*24).Format("060102")), time.Hour*72)
-		iqs.IncSubKey(fmt.Sprintf("%s_%s", sup.Name(), time.Now().Truncate(time.Hour).Format("15")), int64(len(payload.Imp)))
-		iqs.IncSubKey(fmt.Sprintf("%s_ALL", sup.Name()), int64(len(payload.Imp)))
-		iqs.IncSubKey("ALL", int64(len(payload.Imp)))
-	}()
 	// Known extensions are (currently) fat finger
 	var (
 		ext         = make(simpleMap)
