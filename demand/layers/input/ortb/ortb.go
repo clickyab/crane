@@ -120,7 +120,8 @@ func monitoring(tk time.Time, sup string) {
 }
 
 // openRTBInput is the route for rtb input layer
-func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
+	ctx, _ := context.WithTimeout(ct, time.Millisecond*150)
 	tk := time.Now()
 
 	token := xmux.Param(ctx, "token")

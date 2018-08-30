@@ -26,7 +26,7 @@ func Apply(c context.Context, imp entity.Context, ads []entity.Creative, ff []Fi
 	fads := make(chan entity.Creative)
 	ctx, cl := context.WithCancel(c)
 	cfx, fl := context.WithCancel(context.Background())
-	dl := time.After(time.Millisecond * 100)
+	dl := time.After(time.Millisecond * 60)
 
 	for _, f := range ff {
 		go func(f Filter) {
