@@ -69,19 +69,19 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	sup, err := suppliers.GetSupplierByToken(token)
 	defer func() {
 		rms := kv.NewAEAVStore(time.Now().Truncate(time.Second*5).Format("RMS_060102150405"), time.Second*3)
-		tm := time.Since(tk).Nanoseconds() / 1e6
+		tm := time.Since(tk).Nanoseconds()
 		max := rms.AllKeys()["X"]
 		min := rms.AllKeys()["M"]
 		rt := rms.IncSubKey("T", tm)
 		rc := rms.IncSubKey("C", 1)
 		tms := kv.NewEavStore("RMS").
 			SetSubKey(fmt.Sprintf("%s_RPS", sup.Name()), fmt.Sprintf("%d", rc)).
-			SetSubKey(fmt.Sprintf("%s_AVG", sup.Name()), fmt.Sprintf("%d ms", rt/rc))
+			SetSubKey(fmt.Sprintf("%s_AVG", sup.Name()), fmt.Sprintf("%d ns", rt/rc))
 		if tm > max {
-			tms.SetSubKey(fmt.Sprintf("%s_MAX", sup.Name()), fmt.Sprintf("%d ms", tm))
+			tms.SetSubKey(fmt.Sprintf("%s_MAX", sup.Name()), fmt.Sprintf("%d ns", tm))
 		}
 		if min == 0 || tm < min {
-			tms.SetSubKey(fmt.Sprintf("%s_MIN", sup.Name()), fmt.Sprintf("%d ms", tm))
+			tms.SetSubKey(fmt.Sprintf("%s_MIN", sup.Name()), fmt.Sprintf("%d ns", tm))
 		}
 		assert.Nil(tms.Save(time.Hour * 12))
 	}()
