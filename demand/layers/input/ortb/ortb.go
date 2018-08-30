@@ -34,7 +34,7 @@ const demandPath = "/ortb/:token"
 
 var (
 	monitoringSuppliers = config.RegisterString("crane.rtb.monitor.suppliers", "clickyab,chavoosh", "comma separated suppliers name ")
-	deadline            = config.RegisterDuration("crane.rtb.deadline", time.Millisecond*150, "maximum waiting time for ad")
+	deadline            = config.RegisterDuration("crane.rtb.deadline", time.Millisecond*250, "maximum waiting time for ad")
 )
 var (
 	ortbWebSelector = []reducer.Filter{
@@ -126,14 +126,14 @@ func monitoring(tk time.Time, sup string) {
 			ps, _ := strconv.ParseInt(old.AllKeys()[fmt.Sprintf("%s_%d", ms, i)], 10, 64)
 			if ps > 0 && c > 0 {
 				if i == 10 {
-					current.SetSubKey(fmt.Sprintf("%03d0ms>", i), fmt.Sprintf("%3d%%  %d", (ps*100)/c, ps))
+					current.SetSubKey(fmt.Sprintf("%03d0ms>", i), fmt.Sprintf("%-3d%%  %d", (ps*100)/c, ps))
 					continue
 				}
-				current.SetSubKey(fmt.Sprintf(">%03d0ms>", i), fmt.Sprintf("%3d%%  %d", (ps*100)/c, ps))
+				current.SetSubKey(fmt.Sprintf(">%03d0ms>", i), fmt.Sprintf("%-3d%%  %d", (ps*100)/c, ps))
 				continue
 			}
 
-			current.SetSubKey(fmt.Sprintf(">%03dms>", i), fmt.Sprintf("%3d%%  %d", 0, 0))
+			current.SetSubKey(fmt.Sprintf(">%03d0ms>", i), fmt.Sprintf("%-3d%%  %d", 0, 0))
 
 		}
 		assert.Nil(current.Save(window * 100))
