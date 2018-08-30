@@ -66,53 +66,56 @@ func writesErrorStatus(w http.ResponseWriter, status int, detail string) {
 	_, _ = fmt.Fprint(w, detail)
 }
 func monitoring(tk time.Time, sup string) {
+
 	msup := strings.Split(monitoringSuppliers.String(), ",")
 	if len(msup) == 0 {
 		return
 	}
-	window := time.Second * 5
-	rms := kv.NewAEAVStore(time.Now().Truncate(window).Format("TRMS_060102150405"), window*10)
-	tm := time.Since(tk).Nanoseconds() / 1e6
-	max := rms.AllKeys()[fmt.Sprintf("X_%s", sup)]
-	min := rms.AllKeys()[fmt.Sprintf("M_%s", sup)]
-	rms.IncSubKey(fmt.Sprintf("T_%s", sup), tm)
-	rms.IncSubKey(fmt.Sprintf("C_%s", sup), 1)
 
-	tms := kv.NewEavStore(time.Now().Truncate(window).Format("TRMS_060102150405"))
+	window := time.Second * 5
+	ckey := time.Now().Truncate(window).Format("TRMS_060102150405")
+	okey := time.Now().Truncate(window).Add(window * -1).Format("TRMS_060102150405")
+
+	tm := time.Since(tk).Nanoseconds() / 1e6
+
+	rms := kv.NewAEAVStore(ckey, window*10)
+	max := rms.AllKeys()[fmt.Sprintf("%s_X", sup)]
+	min := rms.AllKeys()[fmt.Sprintf("%s_M", sup)]
+	rms.IncSubKey(fmt.Sprintf("%s_T", sup), tm)
+	rms.IncSubKey(fmt.Sprintf("%s_C", sup), 1)
+
+	tms := kv.NewEavStore(ckey)
 	update := false
 	if tm > max {
-		tms.SetSubKey(fmt.Sprintf("X_%s", sup), fmt.Sprintf("%d", tm+1))
+		tms.SetSubKey(fmt.Sprintf("%s_X", sup), fmt.Sprintf("%d", tm+1))
 		update = true
 	}
 	if min == 0 || tm < min {
-		tms.SetSubKey(fmt.Sprintf("M_%s", sup), fmt.Sprintf("%d", tm+1))
+		tms.SetSubKey(fmt.Sprintf("%s_M", sup), fmt.Sprintf("%d", tm+1))
 		update = true
 	}
 	if update {
 		assert.Nil(tms.Save(window * 10))
 	}
-	old := kv.NewEavStore(time.Now().Truncate(window).Add(window * -1).Format("TRMS_060102150405"))
-	if len(old.AllKeys()) == 0 {
-		return
-	}
+	old := kv.NewEavStore(okey)
 	current := kv.NewEavStore("RMQS")
-	if current.AllKeys()["DATE"] == time.Now().Truncate(window).Add(window*-1).Format("060102150405") {
+	if current.AllKeys()["DATE"] == okey {
 		return
 	}
-	current.SetSubKey("DATE", time.Now().Truncate(window).Add(window*-1).Format("060102150405"))
+	current.SetSubKey("DATE", okey)
 	for _, ms := range msup {
-		current.SetSubKey(fmt.Sprintf("MAX_%s", ms), old.AllKeys()[fmt.Sprintf("X_%s", ms)])
-		current.SetSubKey(fmt.Sprintf("MIN_%s", ms), old.AllKeys()[fmt.Sprintf("M_%s", ms)])
-		t, _ := strconv.ParseInt(old.AllKeys()[fmt.Sprintf("T_%s", ms)], 10, 64)
-		c, _ := strconv.ParseInt(old.AllKeys()[fmt.Sprintf("C_%s", ms)], 10, 64)
+		current.SetSubKey(fmt.Sprintf("%s_MAX", ms), old.AllKeys()[fmt.Sprintf("%s_X", ms)])
+		current.SetSubKey(fmt.Sprintf("%s_MIN", ms), old.AllKeys()[fmt.Sprintf("%s_M", ms)])
+		t, _ := strconv.ParseInt(old.AllKeys()[fmt.Sprintf("%s_T", ms)], 10, 64)
+		c, _ := strconv.ParseInt(old.AllKeys()[fmt.Sprintf("%s_C", ms)], 10, 64)
 
 		if t != 0 && c != 0 {
-			current.SetSubKey(fmt.Sprintf("AVG_%s", ms), fmt.Sprintf("%d ms", t/c))
-			current.SetSubKey(fmt.Sprintf("COUNT_%s", ms), old.AllKeys()[fmt.Sprintf("%d", c/5)])
+			current.SetSubKey(fmt.Sprintf("%s_AVG", ms), fmt.Sprintf("%d ms", t/c))
+			current.SetSubKey(fmt.Sprintf("%s_COUNT", ms), old.AllKeys()[fmt.Sprintf("%d P/S", c/5)])
 
 		}
 	}
-	assert.Nil(current.Save(window * 10))
+	assert.Nil(current.Save(window * 100))
 
 }
 
