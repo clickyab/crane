@@ -268,7 +268,7 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	assert.Nil(demand.Render(ctx, w, c))
+	assert.Nil(demand.Render(ctx, w, c, payload.ID))
 
 }
 
