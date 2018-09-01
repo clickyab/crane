@@ -2,7 +2,6 @@ package rabbitmq
 
 import (
 	"sync"
-	"time"
 
 	"github.com/clickyab/services/safe"
 	"github.com/sirupsen/logrus"
@@ -50,7 +49,6 @@ func newConnection() *ccn {
 					if e := cnn.amqp.Close(); e != nil {
 						logrus.Error(e)
 					}
-					time.Sleep(time.Second * 5)
 
 					cnn.amqp = c
 					c.NotifyClose(errChn)
