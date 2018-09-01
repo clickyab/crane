@@ -37,19 +37,19 @@ func newConnection() *ccn {
 	}, tryLimit.Duration())
 
 	go func() {
+		defer cnn.amqp.Close()
 		for {
 			err := <-errChn
 			cnn.Lock()
 
 			logrus.Error(err)
+			if err := cnn.amqp.Close(); err != nil {
+				logrus.Error(err)
+			}
+
 			safe.Try(func() error {
 				c, err := amqp.Dial(dsn.String())
-
 				if err == nil {
-					if e := cnn.amqp.Close(); e != nil {
-						logrus.Error(e)
-					}
-
 					cnn.amqp = c
 					c.NotifyClose(errChn)
 				}
