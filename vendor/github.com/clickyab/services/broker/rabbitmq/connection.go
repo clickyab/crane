@@ -1,21 +1,24 @@
 package rabbitmq
 
 import (
-	"github.com/streadway/amqp"
 	"sync"
+	"time"
+
 	"github.com/clickyab/services/safe"
 	"github.com/sirupsen/logrus"
-	)
+	"github.com/streadway/amqp"
+)
 
 type ccn struct {
 	amqp *amqp.Connection
 	sync.RWMutex
 }
- func (c ccn) Connection () *amqp.Connection {
- 	c.RWMutex.RLock()
- 	defer c.RWMutex.RUnlock()
- 	return c.amqp
- }
+
+func (c ccn) Connection() *amqp.Connection {
+	c.RWMutex.RLock()
+	defer c.RWMutex.RUnlock()
+	return c.amqp
+}
 
 func newConnection() *ccn {
 	var cnn *ccn
@@ -25,7 +28,7 @@ func newConnection() *ccn {
 		c, err := amqp.Dial(dsn.String())
 		if err == nil {
 			cnn = &ccn{
-				amqp: c,
+				amqp:    c,
 				RWMutex: sync.RWMutex{},
 			}
 			cnn.amqp.NotifyClose(errChn)
@@ -44,9 +47,11 @@ func newConnection() *ccn {
 				c, err := amqp.Dial(dsn.String())
 
 				if err == nil {
-					if e:= cnn.amqp.Close() ; e!=nil {
+					if e := cnn.amqp.Close(); e != nil {
 						logrus.Error(e)
 					}
+					time.Sleep(time.Second * 5)
+
 					cnn.amqp = c
 					c.NotifyClose(errChn)
 				}
