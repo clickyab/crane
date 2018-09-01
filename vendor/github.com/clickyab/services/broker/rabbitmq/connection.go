@@ -42,7 +42,7 @@ func newConnection() *ccn {
 			err := <-errChn
 			cnn.Lock()
 
-			logrus.Error(err)
+			logrus.Errorf("rabbit new connection: ", err)
 			if err := cnn.amqp.Close(); err != nil {
 				logrus.Error(err)
 			}
