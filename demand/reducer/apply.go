@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"clickyab.com/crane/demand/entity"
+	"github.com/clickyab/services/xlog"
 )
 
 // Filter is the interface to filter ads
@@ -24,23 +25,26 @@ func Apply(c context.Context, imp entity.Context, ads []entity.Creative, ff []Fi
 	var mads = make(map[int64]*filtered)
 	var res = make([]entity.Creative, 0)
 	fads := make(chan entity.Creative)
-	ctx, cl := context.WithCancel(c)
-	cfx, fl := context.WithCancel(context.Background())
+	fcl := make(chan string)
+	done := make(chan int)
 	dl := time.After(time.Millisecond * 60)
 
 	for _, f := range ff {
 		go func(f Filter) {
 			c := 0
+			var err error
 			for i := range ads {
-				if ferr := f.Check(imp, ads[i]); ferr == nil {
+				fe := f.Check(imp, ads[i])
+				if fe == nil {
 					c++
 					fads <- ads[i]
 				}
+				err = fe
 			}
 			if c == 0 {
-				cl()
+				fcl <- err.Error()
 			} else {
-				fl()
+				done <- 0
 			}
 		}(f)
 	}
@@ -50,11 +54,13 @@ func Apply(c context.Context, imp entity.Context, ads []entity.Creative, ff []Fi
 LOOP:
 	for {
 		select {
-		case <-ctx.Done():
+		case res := <-fcl:
+			xlog.Get(c).Debugf("Filter doesn't match: %s", res)
 			return nil
 		case <-dl:
+			xlog.Get(c).Debugf("Filter timeout")
 			return nil
-		case <-cfx.Done():
+		case <-done:
 			counter++
 			if len(ff) == counter {
 				break LOOP
