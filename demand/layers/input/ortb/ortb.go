@@ -161,7 +161,7 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 	payload := openrtb.BidRequest{}
 	dec := json.NewDecoder(r.Body)
 	if err := dec.Decode(&payload); err != nil {
-		xlog.GetWithError(ctx, err).Error("invalid request")
+		xlog.GetWithError(ctx, err).Error("invalid request from %s", sup.Name())
 		writesErrorStatus(w, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -193,7 +193,7 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := payload.Validate(); err != nil {
-		xlog.GetWithError(ctx, err).Error("invalid data")
+		xlog.GetWithError(ctx, err).Errorf("invalid data from %s. payload: %#v", sup.Name(), payload)
 		writesErrorStatus(w, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -201,7 +201,7 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 	publisher, selector, ps, prevent, err := handlePublisherSelector(payload, sup, prevent)
 
 	if err != nil {
-		e := fmt.Sprintf("publisher not supported : %s", ps)
+		e := fmt.Sprintf("publisher from %s not supported: %s. payload: %#v", sup.Name(), ps, payload)
 		writesErrorStatus(w, http.StatusBadRequest, e)
 		xlog.GetWithError(ctx, err).Debug(e)
 		return
@@ -227,7 +227,7 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 
 	if ua == "" || ip == "" {
 		err := fmt.Errorf("no ip/no ua")
-		xlog.GetWithError(ctx, err).Debug("invalid request")
+		xlog.GetWithError(ctx, err).Debugf("invalid request from %s payload: %#v", sup.Name(), payload)
 		writesErrorStatus(w, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -262,7 +262,7 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 
 	c, err := rtb.Select(ctx, selector, b...)
 	if err != nil {
-		xlog.GetWithError(ctx, err).Error("invalid request")
+		xlog.GetWithError(ctx, err).Errorf("invalid request from %s", sup.Name())
 		writesErrorStatus(w, http.StatusBadRequest, err.Error())
 		return
 	}
