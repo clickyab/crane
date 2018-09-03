@@ -4,13 +4,10 @@ import (
 	"context"
 	"fmt"
 	"sort"
-	"time"
 
 	"clickyab.com/crane/demand/capping"
 	"clickyab.com/crane/demand/entity"
 	"github.com/clickyab/services/assert"
-	"github.com/clickyab/services/kv"
-	"github.com/sirupsen/logrus"
 )
 
 func getSecondCPM(floorCPM float64, exceedFloor []entity.SelectedCreative) float64 {
@@ -155,8 +152,6 @@ func selectAds(_ context.Context, ctx entity.Context, ads []entity.Creative) {
 
 func selector(ctx entity.Context, ads []entity.Creative, seat entity.Seat, noVideo bool, selected map[int64]bool) (exceedFloor []entity.SelectedCreative, underFloor []entity.SelectedCreative) {
 	assert.True(seat.SoftCPM() >= seat.MinCPM())
-	iqs := kv.NewAEAVStore(fmt.Sprintf("DEQS_%s", time.Now().Truncate(time.Hour*24).Format("060102")), time.Hour*72)
-	iqs.IncSubKey(fmt.Sprintf("%s_%s_%s", ctx.Publisher().Supplier().Name(), time.Now().Truncate(time.Hour).Format("15"), "SELECT"), 1)
 	for _, creative := range ads {
 		if creative.Type() == entity.AdTypeVideo && noVideo {
 			continue
@@ -181,11 +176,6 @@ func selector(ctx entity.Context, ads []entity.Creative, seat entity.Seat, noVid
 				},
 			)
 		} else {
-			if ctx.Publisher().Supplier().Name() != "clickyab" {
-				logrus.Warnf("SELECT PRICE CTR: %f, CPM: %f, CPC: %f", ctr, cpm, cpc)
-				iqs := kv.NewAEAVStore(fmt.Sprintf("DEQS_%s", time.Now().Truncate(time.Hour*24).Format("060102")), time.Hour*72)
-				iqs.IncSubKey(fmt.Sprintf("%s_%s_%s", ctx.Publisher().Supplier().Name(), time.Now().Truncate(time.Hour).Format("15"), "PRICE"), 1)
-			}
 			underFloor = append(
 				underFloor,
 				adAndBid{
