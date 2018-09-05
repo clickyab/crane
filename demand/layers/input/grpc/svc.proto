@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package com.google.openrtb;
+
+
+import "ortb.proto";
+
+
+message oo{
+    BidRequest ddd =1 ;
+}
