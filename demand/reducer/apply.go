@@ -27,6 +27,7 @@ func Apply(c context.Context, imp entity.Context, ads []entity.Creative, ff []Fi
 	fads := make(chan entity.Creative)
 	fcl := make(chan string)
 	done := make(chan int)
+	next := make(chan bool)
 	dl := time.After(time.Millisecond * 60)
 
 	for _, f := range ff {
@@ -38,6 +39,9 @@ func Apply(c context.Context, imp entity.Context, ads []entity.Creative, ff []Fi
 				if fe == nil {
 					c++
 					fads <- ads[i]
+					if _, ok := <-next; !ok {
+						return
+					}
 				}
 				err = fe
 			}
@@ -56,9 +60,11 @@ LOOP:
 		select {
 		case res := <-fcl:
 			xlog.Get(c).Debugf("Filter doesn't match: %s", res)
+			close(next)
 			return nil
 		case <-dl:
 			xlog.Get(c).Debugf("Filter timeout")
+			close(next)
 			return nil
 		case <-done:
 			counter++
@@ -74,6 +80,7 @@ LOOP:
 				ad:      ad,
 				confirm: 1,
 			}
+			next <- true
 		}
 	}
 
