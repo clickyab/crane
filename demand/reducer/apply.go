@@ -72,6 +72,7 @@ LOOP:
 				break LOOP
 			}
 		case ad := <-fads:
+			next <- true
 			if v, ok := mads[ad.ID()]; ok {
 				v.confirm++
 				continue
@@ -80,7 +81,6 @@ LOOP:
 				ad:      ad,
 				confirm: 1,
 			}
-			next <- true
 		}
 	}
 
