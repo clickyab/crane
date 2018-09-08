@@ -10,8 +10,6 @@ import (
 
 	"time"
 
-	"math/rand"
-
 	"clickyab.com/crane/demand/builder"
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/demand/filter"
@@ -144,6 +142,8 @@ func writesErrorStatus(w http.ResponseWriter, status int, detail string) {
 //
 //}
 
+var rnd int64
+
 // openRTBInput is the route for rtb input layer
 func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 	ctx, _ := context.WithTimeout(ct, deadline.Duration())
@@ -168,7 +168,8 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 		writesErrorStatus(w, http.StatusBadRequest, err.Error())
 		return
 	}
-	if rand.Intn(100) > 95 {
+	rnd++
+	if rnd%50 == 0 {
 		logrus.Warn(sup.Name())
 		j, e := json.MarshalIndent(payload, " ", " ")
 		assert.Nil(e)
