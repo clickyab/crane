@@ -10,6 +10,8 @@ import (
 
 	"time"
 
+	"math/rand"
+
 	"clickyab.com/crane/demand/builder"
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/demand/filter"
@@ -165,7 +167,12 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 		writesErrorStatus(w, http.StatusBadRequest, err.Error())
 		return
 	}
-
+	if rand.Intn(100) > 99 {
+		fmt.Println(sup.Name())
+		j, e := json.MarshalIndent(payload, " ", " ")
+		assert.Nil(e)
+		fmt.Println(string(j))
+	}
 	// Known extensions are (currently) fat finger
 	var (
 		ext         = make(simpleMap)
