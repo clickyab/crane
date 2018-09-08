@@ -1,23 +1,20 @@
 package builder
 
 import (
+	"crypto/sha1"
 	"errors"
 	"fmt"
 	"net"
-
 	"net/http"
-
 	"strings"
+	"time"
 
 	"clickyab.com/crane/internal/cyos"
-
-	"crypto/sha1"
-
-	"time"
 
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/models/cell"
 	"clickyab.com/crane/models/ip2l"
+	grpc "clickyab.com/crane/openrtb"
 	"github.com/bsm/openrtb"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/config"
@@ -55,6 +52,31 @@ func SetCurrency(c string) ShowOptionSetter {
 func SetUnderfloor(c bool) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
 		o.underfloor = c
+		return o, nil
+	}
+}
+
+// SetGRPCIPLocation is the IP and location setter for context, also it extract the IP information
+func SetGRPCIPLocation(ip string, user *grpc.User, device *grpc.Device) ShowOptionSetter {
+	return func(o *Context) (*Context, error) {
+		ipv4 := net.ParseIP(ip)
+		if ipv4 == nil {
+			return nil, fmt.Errorf("invalid IP %s", ip)
+		}
+		o.ip = ipv4
+		var lat, lon float32
+		if device != nil && device.Geo != nil {
+			lat, lon = device.Geo.Lat, device.Geo.Lon
+
+		}
+		if lat == 0 && lon == 0 {
+			if user != nil && user.Geo != nil {
+				lat, lon = user.Geo.Lat, user.Geo.Lon
+			}
+		}
+
+		l := ip2l.GetProvinceISPByIP(ipv4, float64(lat), float64(lon))
+		o.location = l
 		return o, nil
 	}
 }
@@ -148,6 +170,28 @@ func SetProtocol(scheme entity.Protocol) ShowOptionSetter {
 func SetEventPage(ep string) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
 		o.eventPage = ep
+		return o, nil
+	}
+}
+
+// SetGRPCCategory set the capping mode
+func SetGRPCCategory(b *grpc.BidRequest) ShowOptionSetter {
+	return func(o *Context) (*Context, error) {
+		var category []entity.Category
+		if b.GetSite() != nil {
+			for _, v := range b.GetSite().GetCat() {
+				if len(v.String()) > 3 {
+					category = append(category, entity.Category(v.String()[3:]))
+				}
+			}
+		} else if b.GetApp() != nil {
+			for _, v := range b.GetApp().Cat {
+				if len(v.String()) > 3 {
+					category = append(category, entity.Category(v.String()[3:]))
+				}
+			}
+		}
+		o.cat = category
 		return o, nil
 	}
 }

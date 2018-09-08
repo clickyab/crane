@@ -206,8 +206,14 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 		writesErrorStatus(w, http.StatusBadRequest, err.Error())
 		return
 	}
-
-	publisher, selector, ps, prevent, err := handlePublisherSelector(payload, sup, prevent)
+	var domain, bundle string
+	if payload.Site != nil {
+		domain = payload.Site.Domain
+	}
+	if payload.App != nil {
+		bundle = payload.App.Bundle
+	}
+	publisher, selector, ps, prevent, err := handlePublisherSelector(domain, bundle, sup, prevent)
 
 	if err != nil {
 		e := fmt.Sprintf("publisher from %s not supported: %s. payload: %#v", sup.Name(), ps, payload)
@@ -284,7 +290,7 @@ func setPublisherCustomContext(payload openrtb.BidRequest, b []builder.ShowOptio
 	if payload.Site != nil {
 		b = append(b, builder.SetParent(payload.Site.Page, payload.Site.Ref))
 	}
-	if payload.App != nil {
+	if payload.App != nil && payload.Device != nil {
 		b = append(b, builder.SetConnType(payload.Device.ConnType))
 		b = append(b, builder.SetCarrier(payload.Device.Carrier))
 		b = append(b, builder.SetBrand(payload.Device.Model))
@@ -349,34 +355,27 @@ func seatDetail(req openrtb.BidRequest) ([]builder.DemandSeatData, bool) {
 	return seats, vast
 }
 
-func handlePublisherSelector(payload openrtb.BidRequest, sup entity.Supplier, prevent bool) (entity.Publisher, []reducer.Filter, string, bool, error) {
+func handlePublisherSelector(domain, bundle string, sup entity.Supplier, prevent bool) (entity.Publisher, []reducer.Filter, string, bool, error) {
 	var (
 		publisher entity.Publisher
 		selector  []reducer.Filter
 		ps        string
 		err       error
 	)
-	if payload.Site != nil {
-		if payload.Site.Domain == "" {
-			err = errors.New("website domain is empty")
-		} else {
-			ps = payload.Site.Domain
-			publisher, err = website.GetWebSiteOrFake(sup, payload.Site.Domain)
-			prevent = false // do not accept prevent default on web requestType
-			selector = ortbWebSelector
-		}
-	} else if payload.App != nil {
-		if payload.App.Bundle == "" {
-			err = errors.New("app bundle is empty")
-		} else {
-			ps = payload.App.Bundle
-			publisher, err = apps.GetAppOrFake(sup, payload.App.Bundle)
-			selector = ortbAppSelector
-		}
+	if domain != "" {
+		ps = domain
+		publisher, err = website.GetWebSiteOrFake(sup, domain)
+		prevent = false // do not accept prevent default on web requestType
+		selector = ortbWebSelector
+
+	} else if bundle != "" {
+		ps = bundle
+		publisher, err = apps.GetAppOrFake(sup, bundle)
+		selector = ortbAppSelector
 
 	} else {
 		ps = "None"
-		err = errors.New("not supported")
+		err = errors.New("publisher not supported")
 	}
 	return publisher, selector, ps, prevent, err
 }
