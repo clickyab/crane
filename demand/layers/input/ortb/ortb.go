@@ -27,6 +27,7 @@ import (
 	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/xlog"
 	"github.com/rs/xmux"
+	"github.com/sirupsen/logrus"
 )
 
 const demandPath = "/ortb/:token"
@@ -167,11 +168,11 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 		writesErrorStatus(w, http.StatusBadRequest, err.Error())
 		return
 	}
-	if rand.Intn(100) > 99 {
-		fmt.Println(sup.Name())
+	if rand.Intn(100) > 95 {
+		logrus.Warn(sup.Name())
 		j, e := json.MarshalIndent(payload, " ", " ")
 		assert.Nil(e)
-		fmt.Println(string(j))
+		logrus.Warn(string(j))
 	}
 	// Known extensions are (currently) fat finger
 	var (
