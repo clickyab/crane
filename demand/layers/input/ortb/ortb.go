@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
-
 	"time"
 
 	"clickyab.com/crane/demand/builder"
@@ -23,6 +22,7 @@ import (
 	"github.com/bsm/openrtb/native/request"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/config"
+	"github.com/clickyab/services/kv"
 	"github.com/clickyab/services/xlog"
 	"github.com/rs/xmux"
 	"github.com/sirupsen/logrus"
@@ -168,6 +168,7 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 		writesErrorStatus(w, http.StatusBadRequest, err.Error())
 		return
 	}
+
 	rnd++
 	if rnd%50 == 0 {
 		logrus.Warn(sup.Name())
@@ -228,6 +229,14 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 	if payload.Device != nil {
 		ua = strings.Trim(payload.Device.UA, "\n\t ")
 		ip = strings.Trim(payload.Device.IP, "\n\t ")
+	}
+	if kv.NewAEAVStore(fmt.Sprintf("%s_%s_%s", prefix, time.Now().Format(format), ip), 24*time.Hour).AllKeys()["C"] > dailyClickLimit.Int64() {
+		w.Header().Set("content-type", "application/json")
+		j := json.NewEncoder(w)
+		assert.Nil(j.Encode(openrtb.BidResponse{
+			ID: payload.ID,
+		}))
+		return
 	}
 	us := ""
 	if payload.User != nil {
