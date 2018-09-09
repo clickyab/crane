@@ -246,7 +246,7 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 	sh := fmt.Sprintf("%x", sha1.Sum([]byte(fmt.Sprintf("%s_%s_%s_%s", prefix, time.Now().Format(format), ip, ua))))
 	perHour, _ := strconv.ParseInt(kv.NewEavStore(sh).AllKeys()["C"], 10, 64)
 	if ip == "45.77.229.12" {
-		logrus.Warnf("locker: %s, %d", perHour)
+		logrus.Warnf("locker: %s, %d", sh, perHour)
 	}
 	if perHour > dailyClickLimit.Int64() {
 		w.Header().Set("content-type", "application/json")
