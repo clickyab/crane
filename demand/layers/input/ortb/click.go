@@ -2,11 +2,11 @@ package ortb
 
 import (
 	"context"
+	"crypto/sha1"
 	"fmt"
 	"net/http"
-	"time"
-
 	"strings"
+	"time"
 
 	"clickyab.com/crane/demand/builder"
 	"clickyab.com/crane/demand/entity"
@@ -44,7 +44,9 @@ func clickBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		// Duplicate click!
 		pl.Suspicious = 1
 	}
-	perDay := kv.NewAEAVStore(fmt.Sprintf("%s_%s_%s", prefix, time.Now().Format(format), pl.IP), time.Hour).IncSubKey("C", 1)
+
+	sh := fmt.Sprintf("%x", sha1.Sum([]byte(fmt.Sprintf("%s_%s_%s_%s", prefix, time.Now().Format(format), pl.IP, pl.UserAgent))))
+	perDay := kv.NewAEAVStore(sh, time.Hour).IncSubKey("C", 1)
 	if perDay > dailyClickLimit.Int64() {
 		pl.Suspicious = 96
 	}

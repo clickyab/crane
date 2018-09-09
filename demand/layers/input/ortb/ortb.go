@@ -2,6 +2,7 @@ package ortb
 
 import (
 	"context"
+	"crypto/sha1"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -231,16 +232,6 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 		ua = strings.Trim(payload.Device.UA, "\n\t ")
 		ip = strings.Trim(payload.Device.IP, "\n\t ")
 	}
-
-	perHour, _ := strconv.ParseInt(kv.NewEavStore(fmt.Sprintf("%s_%s_%s", prefix, time.Now().Format(format), ip)).AllKeys()["C"], 10, 64)
-	if perHour > dailyClickLimit.Int64() {
-		w.Header().Set("content-type", "application/json")
-		j := json.NewEncoder(w)
-		assert.Nil(j.Encode(openrtb.BidResponse{
-			ID: payload.ID,
-		}))
-		return
-	}
 	us := ""
 	if payload.User != nil {
 		us = payload.User.ID
@@ -250,6 +241,16 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 		err := fmt.Errorf("no ip/no ua")
 		xlog.GetWithError(ctx, err).Debugf("invalid request from %s payload: %#v", sup.Name(), payload)
 		writesErrorStatus(w, http.StatusBadRequest, err.Error())
+		return
+	}
+	sh := fmt.Sprintf("%x", sha1.Sum([]byte(fmt.Sprintf("%s_%s_%s_%s", prefix, time.Now().Format(format), ip, ua))))
+	perHour, _ := strconv.ParseInt(kv.NewEavStore(sh).AllKeys()["C"], 10, 64)
+	if perHour > dailyClickLimit.Int64() {
+		w.Header().Set("content-type", "application/json")
+		j := json.NewEncoder(w)
+		assert.Nil(j.Encode(openrtb.BidResponse{
+			ID: payload.ID,
+		}))
 		return
 	}
 
