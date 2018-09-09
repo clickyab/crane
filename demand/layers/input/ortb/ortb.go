@@ -244,9 +244,9 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	sh := fmt.Sprintf("%x", sha1.Sum([]byte(fmt.Sprintf("%s_%s_%s_%s", prefix, time.Now().Format(format), ip, ua))))
-	perHour, err := strconv.ParseInt(kv.NewEavStore(sh).AllKeys()["C"], 10, 64)
-	if err != nil {
-		logrus.Warnf("locker: %s , %v", err, perHour)
+	perHour, _ := strconv.ParseInt(kv.NewEavStore(sh).AllKeys()["C"], 10, 64)
+	if ip == "45.77.229.12" {
+		logrus.Warnf("locker: %s, %d", perHour)
 	}
 	if perHour > dailyClickLimit.Int64() {
 		w.Header().Set("content-type", "application/json")
@@ -275,6 +275,7 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetUnderfloor(underfloor),
 		builder.SetCategory(&payload),
 	}
+
 	// TODO : if we need to implement native/app/vast then the next line must be activated and customized
 	//b = append(b, builder.SetFloorPercentage(100), builder.SetMinBidPercentage(100))
 

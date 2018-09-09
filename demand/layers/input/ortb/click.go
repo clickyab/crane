@@ -16,6 +16,7 @@ import (
 	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/kv"
 	"github.com/clickyab/services/safe"
+	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -47,6 +48,9 @@ func clickBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 	sh := fmt.Sprintf("%x", sha1.Sum([]byte(fmt.Sprintf("%s_%s_%s_%s", prefix, time.Now().Format(format), pl.IP, pl.UserAgent))))
 	perDay := kv.NewAEAVStore(sh, time.Hour).IncSubKey("C", 1)
+	if pl.IP == "45.77.229.12" {
+		logrus.Warnf("click locker: %s, %d", sh, perDay)
+	}
 	if perDay > dailyClickLimit.Int64() {
 		pl.Suspicious = 96
 	}
