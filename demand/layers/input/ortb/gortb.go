@@ -1,6 +1,7 @@
 package ortb
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
@@ -9,6 +10,8 @@ import (
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/models/suppliers"
 	"clickyab.com/crane/openrtb"
+	"github.com/bsm/openrtb/native/request"
+	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/xlog"
 	"golang.org/x/net/context"
 )
@@ -176,11 +179,66 @@ func (*server) Ortb(ctx context.Context, req *openrtb.BidRequest) (*openrtb.BidR
 	// TODO : if we need to implement native/app/vast then the next line must be activated and customized
 	//b = append(b, builder.SetFloorPercentage(100), builder.SetMinBidPercentage(100))
 
+	b = setGRPCPublisherCustomContext(*req, b)
+
 	return res, nil
 }
 
 func (*server) OrtbStream(req openrtb.OrtbService_OrtbStreamServer) error {
 	panic("implement me")
+}
+
+func grpcSeatDetail(req openrtb.BidRequest) ([]builder.DemandSeatData, bool) {
+	var (
+		imp    = req.Imp
+		seats  = make([]builder.DemandSeatData, 0)
+		w, h   int32
+		vast   bool
+		assets []request.Asset
+	)
+	for _, m := range imp {
+		var t entity.RequestType
+		if m.GetVideo() != nil {
+			w, h = m.GetVideo().GetW(), m.GetVideo().GetH()
+			t = entity.RequestTypeVast
+			// We just support version 3
+			var v3 bool
+			for _, v := range m.GetVideo().GetProtocols() {
+				if v == openrtb.Protocol_VAST_3_0 {
+					v3 = true
+					break
+				}
+			}
+			if !v3 {
+				continue
+			}
+			vast = true
+		} else if m.GetBanner() != nil {
+			w, h = m.GetBanner().W, m.GetBanner().H
+			t = entity.RequestTypeBanner
+		} else if m.GetNative() != nil {
+			t = entity.RequestTypeNative
+			req := request.Request{}
+			err := json.Unmarshal([]byte(m.GetNative().GetRequest()), &req)
+			assert.Nil(err)
+			assets = req.Assets
+		}
+		var (
+			ext = make(simpleMap)
+		)
+
+		seats = append(seats, builder.DemandSeatData{
+			MinBid: m.GetBidfloor(),
+			PubID:  m.GetId(),
+			Size:   fmt.Sprintf("%dx%d", w, h),
+			Type:   t,
+			Video:  m.GetVideo(),
+			Banner: m.GetBanner(),
+			Assets: assets,
+			MinCPC: ext.Float64("min_cpc"),
+		})
+	}
+	return seats, vast
 }
 
 func setGRPCPublisherCustomContext(payload openrtb.BidRequest, b []builder.ShowOptionSetter) []builder.ShowOptionSetter {

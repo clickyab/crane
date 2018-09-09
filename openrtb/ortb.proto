@@ -94,19 +94,22 @@ message BidRequest {
 
     // Placeholder for exchange-specific extensions to OpenRTB.
     Ext ext = 19;
+
+
+    message Ext {
+        bool fat_finger = 1;
+        bool prevent =2;
+        bool underfloor =3;
+        Capping capping = 4;
+        repeated string strategy = 5;
+        bool tiny = 6;
+        string cid = 7;
+        string lac = 8;
+    }
     string Token = 20;
 
 }
 
-
-message Ext {
-    bool fat_finger = 1;
-    bool prevent =2;
-    bool underfloor =3;
-    Capping capping = 4;
-    repeated string strategy = 5;
-    bool tiny = 6;
-}
 
 enum Capping {
     Strict = 0;
@@ -253,11 +256,11 @@ message Device {
     Geo geo = 2;
     // Standard “Do Not Track” flag as set in the header by the
     // browser, where 0 = tracking is unrestricted, 1 = do not track.
-    bool dnt = 3;
+    int32 dnt = 3;
     // “Limit Ad Tracking” signal commercially endorsed (e.g., iOS,
     // Android), where 0 = tracking is unrestricted, 1 = tracking must
     // be limited per commercial guidelines.
-    bool lmt = 4;
+    int32 lmt = 4;
     // IPv4 address closest to device
     string ip = 5;
     // IP address closest to device as IPv6
@@ -549,6 +552,11 @@ message Imp {
     // An array of Metric object (Section 3.2.5).
     repeated Metric metric = 17;
 
+    Ext ext = 18;
+    message Ext {
+        float mincpc = 1;
+    }
+
 }
 
 // OpenRTB 2.1 compatibility.
@@ -680,6 +688,11 @@ message Video {
 
     // The event that causes playback to end.
     PlaybackCessationMode playbackend = 27;
+
+    Ext ext = 28;
+    message Ext {
+        float mincpc = 1;
+    }
 }
 
 // OpenRTB 2.0: The following table lists the options for the various

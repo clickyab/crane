@@ -3,20 +3,19 @@ package video
 import (
 	"context"
 	"fmt"
+	"math/rand"
 	"net/http"
 	"strconv"
-
 	"strings"
-
-	"math/rand"
 
 	website "clickyab.com/crane/models/clickyabwebsite"
 	"clickyab.com/crane/models/staticseat"
+	"clickyab.com/crane/openrtb"
 	"clickyab.com/crane/supplier/client"
 	"clickyab.com/crane/supplier/layers/entities"
 	"clickyab.com/crane/supplier/layers/internal/supplier"
 	"clickyab.com/crane/supplier/layers/output"
-	"github.com/bsm/openrtb"
+
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/framework"
@@ -148,43 +147,41 @@ func vast(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 
 	ua := user_agent.New(r.UserAgent())
-	mi := 0
-	if ua.Mobile() {
-		mi = 1
-	}
 
 	rIP := framework.RealIP(r)
 	rUserAgent := r.UserAgent()
 
 	bq := &openrtb.BidRequest{
-		ID: <-random.ID,
+		Id: <-random.ID,
 		User: &openrtb.User{
-			ID: vastUserIDGenerator(tid, rUserAgent, rIP),
+			Id: vastUserIDGenerator(tid, rUserAgent, rIP),
 		},
 		Imp: imps,
-		Site: &openrtb.Site{
-			Mobile: mi,
-			Page:   l,
-			Ref:    ref,
-			Inventory: openrtb.Inventory{
+		DistributionchannelOneof: &openrtb.BidRequest_Site{
+
+			Site: &openrtb.Site{
+				Mobile: ua.Mobile(),
+				Page:   l,
+				Ref:    ref,
 				Domain: pub.Name(),
 				Name:   pub.Name(),
-				ID:     fmt.Sprint(pub.ID()),
+				Id:     fmt.Sprint(pub.ID()),
 				Cat:    pub.Categories(),
 			},
 		},
 		Device: &openrtb.Device{
-			IP:  rIP,
-			DNT: dnt,
-			OS:  ua.OS(),
-			UA:  rUserAgent,
+			Ip:  rIP,
+			Dnt: int32(dnt),
+			Os:  ua.OS(),
+			Ua:  rUserAgent,
+		},
+		Ext: &openrtb.BidRequest_Ext{
+			Capping:    openrtb.Capping_Reset,
+			Underfloor: true,
 		},
 	}
 
 	var br = &openrtb.BidResponse{}
-
-	// better since the json is static :)
-	bq.Ext = []byte(`{"capping_mode": "reset","underfloor":true}`)
 
 	br, err = client.Call(ctx, method.String(), server.String(), bq)
 	if err != nil {
@@ -200,12 +197,14 @@ func vast(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 	for i := range finalStaticSeats {
 		seats[finalStaticSeats[i].key] = finalStaticSeats[i].seat[finalStaticSeats[i].key]
-		br.SeatBid = append(br.SeatBid, openrtb.SeatBid{
-			Bid: []openrtb.Bid{
+		br.Seatbid = append(br.Seatbid, &openrtb.BidResponse_SeatBid{
+			Bid: []*openrtb.BidResponse_SeatBid_Bid{
 				{
-					ID:       <-random.ID,
-					ImpID:    finalStaticSeats[i].key,
-					AdMarkup: finalStaticSeats[i].staticSeat.RTBMarkup(),
+					Id:    <-random.ID,
+					Impid: finalStaticSeats[i].key,
+					AdmOneof: &openrtb.BidResponse_SeatBid_Bid_Adm{
+						Adm: finalStaticSeats[i].staticSeat.RTBMarkup(),
+					},
 				},
 			},
 		})

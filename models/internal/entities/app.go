@@ -3,13 +3,13 @@ package entities
 import (
 	"context"
 	"database/sql"
-	"io"
-
-	"github.com/clickyab/services/kv"
-
 	"encoding/gob"
-
 	"fmt"
+	"io"
+	"strconv"
+
+	"clickyab.com/crane/openrtb"
+	"github.com/clickyab/services/kv"
 
 	"clickyab.com/crane/demand/entity"
 	"github.com/clickyab/services/mysql"
@@ -33,7 +33,9 @@ type App struct {
 	FCTR          [21]float64
 	CTRStat
 
-	att map[entity.PublisherAttributes]interface{} `db:"-"`
+	catComp bool
+	cat     []openrtb.ContentCategory                  `db:"-"`
+	att     map[entity.PublisherAttributes]interface{} `db:"-"`
 }
 
 // Attributes return publisher attributes
@@ -49,12 +51,21 @@ func (app *App) Attributes() map[entity.PublisherAttributes]interface{} {
 }
 
 // Categories return publisher categories
-func (app *App) Categories() []string {
-	var res = make([]string, 0)
-	for i := range app.AppCategories {
-		res = append(res, "IAB"+app.AppCategories[i])
+func (app *App) Categories() []openrtb.ContentCategory {
+	if app.catComp {
+		return app.cat
 	}
-	return res
+
+	var res = make([]openrtb.ContentCategory, 0)
+	for i := range app.AppCategories {
+		p, err := strconv.ParseInt(app.AppCategories[i], 10, 64)
+		if err != nil {
+			res = append(res, openrtb.ContentCategory(int32(p)))
+		}
+	}
+	app.cat = res
+	app.catComp = true
+	return app.cat
 }
 
 // Type return type of publisher (app or web)

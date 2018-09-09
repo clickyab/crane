@@ -2,22 +2,19 @@ package app
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
 
-	"encoding/json"
-
-	"errors"
-
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/models/clickyabapps"
+	"clickyab.com/crane/openrtb"
 	"clickyab.com/crane/supplier/client"
 	"clickyab.com/crane/supplier/layers/internal/supplier"
 	"clickyab.com/crane/supplier/layers/output"
-	"github.com/bsm/openrtb"
-	"github.com/clickyab/services/assert"
+
 	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/framework"
 	"github.com/clickyab/services/random"
@@ -30,23 +27,13 @@ var (
 	sup             = supplier.NewClickyab()
 	server          = config.RegisterString("crane.supplier.banner.url", "", "route for app")
 	method          = config.RegisterString("crane.supplier.app.method", "POST", "method for app request")
-	clickyabNetwork = map[string]networkConn{
-		"2G":   cellular2G,
-		"EDGE": cellular2G,
-		"GPRS": cellular2G,
-		"3G":   cellular3G,
-		"4G":   cellular4G,
+	clickyabNetwork = map[string]openrtb.ConnectionType{
+		"2G":   openrtb.ConnectionType_CELLULAT_NETWORK_2G,
+		"EDGE": openrtb.ConnectionType_CELLULAT_NETWORK_2G,
+		"GPRS": openrtb.ConnectionType_CELLULAT_NETWORK_2G,
+		"3G":   openrtb.ConnectionType_CELLULAT_NETWORK_3G,
+		"4G":   openrtb.ConnectionType_CELLULAT_NETWORK_4G,
 	}
-)
-
-type networkConn int
-
-const (
-	unknownNetwork = 0
-
-	cellular2G = 4
-	cellular3G = 5
-	cellular4G = 6
 )
 
 func getApp(ctx context.Context, w http.ResponseWriter, r *http.Request) {
@@ -62,52 +49,44 @@ func getApp(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	// calculate min cpc and insert in impression ext
-	impExt := map[string]interface{}{
-		"min_cpc": pub.MinCPC(string(entity.RequestTypeBanner)),
-	}
-	iExt, err := json.Marshal(impExt)
-	assert.Nil(err)
 
 	q := &openrtb.BidRequest{
-		ID: <-random.ID,
-		App: &openrtb.App{
-			Bundle: pub.Name(),
+		Id: <-random.ID,
+		DistributionchannelOneof: &openrtb.BidRequest_App{
+			App: &openrtb.App{
+				Bundle: pub.Name(),
+			},
 		},
-		Imp: []openrtb.Impression{
+		Imp: []*openrtb.Imp{
 			{
-				ID:     <-random.ID,
-				Secure: secure(r),
+				Id:     <-random.ID,
+				Secure: framework.Scheme(r) == "https",
 				Banner: &openrtb.Banner{
 					W:  width,
 					H:  height,
-					ID: <-random.ID,
+					Id: <-random.ID,
 				},
-				BidFloor: float64(pub.FloorCPM()),
-				Ext:      iExt,
+				Bidfloor: float64(pub.FloorCPM()),
+				Ext: &openrtb.Imp_Ext{
+					Mincpc: float32(pub.MinCPC(string(entity.RequestTypeBanner))),
+				},
 			},
 		},
 	}
-	ext := map[string]interface{}{
-		"cid":          r.URL.Query().Get("cid"),
-		"lac":          r.URL.Query().Get("lac"),
-		"capping_mode": "reset",
-		"underfloor":   true,
-		"tiny_mark":    false,
-	}
-	if _, ok := pub.Attributes()[entity.PAFatFinger]; ok {
-		ext["fat_finger"] = true
-	}
 	sdkVers, _ := strconv.ParseInt(r.URL.Query().Get("clickyabVersion"), 10, 0)
-	if sdkVers <= 4 {
-		// older version of sdk (pre 5) use a method to handle click which is not correct.
-		// this is a workaround for that
-		ext["prevent_default"] = true
+	ext := &openrtb.BidRequest_Ext{
+		Capping:    openrtb.Capping_Reset,
+		Underfloor: true,
+		Tiny:       false,
+		Cid:        r.URL.Query().Get("cid"),
+		Lac:        r.URL.Query().Get("lac"),
+		Prevent:    sdkVers <= 4,
 	}
 
-	j, err := json.Marshal(ext)
-	assert.Nil(err)
-	q.Ext = j
+	if _, ok := pub.Attributes()[entity.PAFatFinger]; ok {
+		ext.FatFinger = true
+	}
+	q.Ext = ext
 
 	allData(r, q)
 
@@ -126,7 +105,7 @@ func getApp(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 }
 
-func size(s string) (int, int, int, string, error) {
+func size(s string) (int32, int32, int32, string, error) {
 	switch strings.ToLower(s) {
 	case "banner":
 		return 8, 320, 50, "", nil
@@ -153,7 +132,7 @@ func allData(r *http.Request, o *openrtb.BidRequest) {
 	h, _ := strconv.Atoi(r.URL.Query().Get("screenHeight"))
 	w, _ := strconv.Atoi(r.URL.Query().Get("screenWidth"))
 	ppi, _ := strconv.Atoi(r.URL.Query().Get("screenDensity"))
-	lat, lon := 0.0, 0.0
+	var lat, lon = 0.0, 0.0
 	gps := strings.Split(r.URL.Query().Get("gps"), ",")
 
 	// 4 data for creating user id
@@ -168,54 +147,46 @@ func allData(r *http.Request, o *openrtb.BidRequest) {
 	}
 
 	o.Device = &openrtb.Device{
-		IP:       framework.RealIP(r),
-		OS:       ua.OS(),
-		DNT:      dnt,
-		Carrier:  r.URL.Query().Get("carrier"),
-		Language: r.URL.Query().Get("lang"),
-		H:        h,
-		W:        w,
-		MCCMNC:   fmt.Sprintf("%s-%s", r.URL.Query().Get("mcc"), r.URL.Query().Get("mnc")),
-		PPI:      ppi,
-		Model:    r.URL.Query().Get("brand"),
-		HwVer:    r.URL.Query().Get("model"),
-		OSVer:    r.URL.Query().Get("androidVersion"),
-		UA:       r.UserAgent(),
-		ConnType: int(getConnType(network)),
+		Ip:             framework.RealIP(r),
+		Os:             ua.OS(),
+		Dnt:            int32(dnt),
+		Carrier:        r.URL.Query().Get("carrier"),
+		Language:       r.URL.Query().Get("lang"),
+		H:              int32(h),
+		W:              int32(w),
+		Mccmnc:         fmt.Sprintf("%s-%s", r.URL.Query().Get("mcc"), r.URL.Query().Get("mnc")),
+		Ppi:            int32(ppi),
+		Model:          r.URL.Query().Get("brand"),
+		Hwv:            r.URL.Query().Get("model"),
+		Osv:            r.URL.Query().Get("androidVersion"),
+		Ua:             r.UserAgent(),
+		Connectiontype: getConnType(network),
 		Geo: &openrtb.Geo{
-			Lat: lat,
-			Lon: lon,
+			Lat: float32(lat),
+			Lon: float32(lon),
 		},
 	}
 
 	o.User = &openrtb.User{
-		ID: appUserIDGenerator(androidID, deviceID, operator, model),
+		Id: appUserIDGenerator(androidID, deviceID, operator, model),
 		Geo: &openrtb.Geo{
-			Lat: lat,
-			Lon: lon,
+			Lat: float32(lat),
+			Lon: float32(lon),
 		},
 	}
 
 }
 
 // getConnType convert clickyab network to openrtb
-func getConnType(network string) networkConn {
+func getConnType(network string) openrtb.ConnectionType {
 	val, ok := clickyabNetwork[network]
 	if ok {
 		return val
 	}
-	return unknownNetwork
+	return openrtb.ConnectionType_CELLULAT_NETWORK_UNKNOWN
 }
 
 // appUserIDGenerator create cop id for app
 func appUserIDGenerator(androidID, deviceID, operator, model string) string {
 	return simplehash.MD5(fmt.Sprintf("%s%s%s%s", androidID, deviceID, operator, model))
-}
-
-// secure check openrtb protocol (http/https)
-func secure(r *http.Request) openrtb.NumberOrString {
-	if framework.Scheme(r) == "https" {
-		return openrtb.NumberOrString(1)
-	}
-	return openrtb.NumberOrString(0)
 }

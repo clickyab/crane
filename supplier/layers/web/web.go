@@ -1,31 +1,22 @@
 package web
 
 import (
-	"context"
-	"encoding/json"
-	"net/http"
-
-	"strings"
-
-	"strconv"
-
-	"fmt"
-
-	"errors"
-
-	"math/rand"
-
-	"text/template"
-
 	"bytes"
+	"context"
+	"errors"
+	"fmt"
+	"math/rand"
+	"net/http"
+	"strconv"
+	"strings"
+	"text/template"
 
 	"clickyab.com/crane/demand/entity"
 	website "clickyab.com/crane/models/clickyabwebsite"
+	"clickyab.com/crane/openrtb"
 	"clickyab.com/crane/supplier/client"
 	"clickyab.com/crane/supplier/layers/internal/supplier"
 	"clickyab.com/crane/supplier/layers/output"
-	"github.com/bsm/openrtb"
-	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/framework"
 	"github.com/clickyab/services/random"
@@ -124,42 +115,40 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	rUserAgent := r.UserAgent()
 
 	bq := &openrtb.BidRequest{
-		ID: <-random.ID,
+		Id: fmt.Sprintf("cyl-%s", <-random.ID),
 		User: &openrtb.User{
-			ID: webUserIDGenerator(tid, rUserAgent, rIP),
+			Id: webUserIDGenerator(tid, rUserAgent, rIP),
 		},
 		Imp: imps,
-		Site: &openrtb.Site{
-			Mobile: mi,
-			Page:   l,
-			Ref:    ref,
-			Inventory: openrtb.Inventory{
+		DistributionchannelOneof: &openrtb.BidRequest_Site{
+			Site: &openrtb.Site{
+				Mobile: m,
+				Page:   l,
+				Ref:    ref,
 				Domain: pub.Name(),
 				Name:   pub.Name(),
-				ID:     fmt.Sprint(pub.ID()),
+				Id:     fmt.Sprint(pub.ID()),
 				Cat:    pub.Categories(),
 			},
 		},
 		Device: &openrtb.Device{
-			IP:  rIP,
-			DNT: dnt,
-			OS:  ua.OS(),
-			UA:  rUserAgent,
+			Ip:  rIP,
+			Dnt: int32(dnt),
+			Os:  ua.OS(),
+			Ua:  rUserAgent,
+		},
+		Ext: &openrtb.BidRequest_Ext{
+			Underfloor: true,
+			Capping:    openrtb.Capping_Reset,
+			FatFinger: func() bool {
+				if _, ok := pub.Attributes()[entity.PAFatFinger]; ok && m {
+					return true
+				}
+				return false
+			}(),
 		},
 	}
 
-	// better since the json is static :)
-	ext := map[string]interface{}{
-		"capping_mode": "reset",
-		"underfloor":   true,
-	}
-	// fat finger is allowed only on mobile
-	if _, ok := pub.Attributes()[entity.PAFatFinger]; ok && m {
-		ext["fat_finger"] = true
-	}
-	j, err := json.Marshal(ext)
-	assert.Nil(err)
-	bq.Ext = j
 	br, err := client.Call(ctx, method.String(), server.String(), bq)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -168,17 +157,17 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if len(br.SeatBid) > 0 && mi == 1 && rand.Int63n(100) <= showT.Int64() {
+	if len(br.GetSeatbid()) > 0 && mi == 1 && rand.Int63n(100) <= showT.Int64() {
 		buf := &bytes.Buffer{}
 		_ = templ.Execute(buf, struct {
-			W, H   int
+			W, H   int32
 			Markup string
 		}{
-			W:      br.SeatBid[0].Bid[0].W,
-			H:      br.SeatBid[0].Bid[0].H,
-			Markup: br.SeatBid[0].Bid[0].AdMarkup,
+			W:      br.GetSeatbid()[0].GetBid()[0].GetW(),
+			H:      br.GetSeatbid()[0].GetBid()[0].GetH(),
+			Markup: br.GetSeatbid()[0].GetBid()[0].GetAdm(),
 		})
-		br.SeatBid[0].Bid[0].AdMarkup = buf.String()
+		br.GetSeatbid()[0].GetBid()[0].GetAdm() = buf.String()
 	}
 
 	if output.RenderBanner(ctx, w, br, extra) != nil {
@@ -187,20 +176,15 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func exSlot(ctx context.Context, s string, l int, r *http.Request, pub entity.Publisher, extra string) ([]openrtb.Impression, error) {
-	sec := secure(r)
-	res := make([]openrtb.Impression, 0)
+func exSlot(ctx context.Context, s string, l int, r *http.Request, pub entity.Publisher, extra string) ([]*openrtb.Imp, error) {
+	sec := framework.Scheme(r) == "https"
+	res := make([]*openrtb.Imp, 0)
 	ts := strings.Split(s, ",")
 	if len(ts) != l {
 		xlog.Get(ctx).Debug("len of impression does not match with request")
 		return nil, errors.New("len of impression does not match with request")
 	}
-	// calculate min cpc and insert in impression ext
-	impExt := map[string]interface{}{
-		"min_cpc": pub.MinCPC(string(entity.RequestTypeBanner)),
-	}
-	iExt, err := json.Marshal(impExt)
-	assert.Nil(err)
+
 	for _, v := range ts {
 		tv := strings.Split(v, ":")
 
@@ -222,30 +206,34 @@ func exSlot(ctx context.Context, s string, l int, r *http.Request, pub entity.Pu
 			return nil, errors.New("wrong size")
 		}
 
-		res = append(res, openrtb.Impression{
-			ID:     tv[0],
+		res = append(res, &openrtb.Imp{
+			Id:     tv[0],
 			Secure: sec,
 			Banner: &openrtb.Banner{
-				ID: tv[0],
-				H:  h,
-				W:  w,
+				Id: tv[0],
+				H:  int32(h),
+				W:  int32(w),
 			},
-			Ext:      iExt,
-			BidFloor: float64(pub.FloorCPM()),
+			Ext: &openrtb.Imp_Ext{
+				Mincpc: float32(pub.MinCPC(string(entity.RequestTypeBanner))),
+			},
+			Bidfloor: float64(pub.FloorCPM()),
 		})
 
 	}
 	if extra != "" {
-		res = append(res, openrtb.Impression{
-			ID:     extra,
+		res = append(res, &openrtb.Imp{
+			Id:     extra,
 			Secure: sec,
 			Banner: &openrtb.Banner{
-				ID: extra,
+				Id: extra,
 				H:  50,
 				W:  320,
 			},
-			BidFloor: float64(pub.FloorCPM()),
-			Ext:      iExt,
+			Bidfloor: float64(pub.FloorCPM()),
+			Ext: &openrtb.Imp_Ext{
+				Mincpc: float32(pub.MinCPC(string(entity.RequestTypeBanner))),
+			},
 		})
 	}
 	return res, nil
@@ -254,12 +242,4 @@ func exSlot(ctx context.Context, s string, l int, r *http.Request, pub entity.Pu
 // webUserIDGenerator create userID for web request
 func webUserIDGenerator(tid, ua, ip string) string {
 	return simplehash.MD5(fmt.Sprintf("%s%s%s", tid, ua, ip))
-}
-
-// secure check openrtb protocol (http/https)
-func secure(r *http.Request) openrtb.NumberOrString {
-	if framework.Scheme(r) == "https" {
-		return openrtb.NumberOrString(1)
-	}
-	return openrtb.NumberOrString(0)
 }

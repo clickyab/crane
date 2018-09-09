@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"clickyab.com/crane/demand/entity"
+	"clickyab.com/crane/openrtb"
 )
 
 // Context is the app Context
@@ -22,7 +23,7 @@ type Context struct {
 	tid       string
 	publisher entity.Publisher
 	seats     []entity.Seat
-	cat       []entity.Category
+	cat       []openrtb.ContentCategory
 	protocol  entity.Protocol
 	user      entity.User
 	currency  string

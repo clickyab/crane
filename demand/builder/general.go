@@ -9,13 +9,12 @@ import (
 	"strings"
 	"time"
 
-	"clickyab.com/crane/internal/cyos"
-
 	"clickyab.com/crane/demand/entity"
+	"clickyab.com/crane/internal/cyos"
 	"clickyab.com/crane/models/cell"
 	"clickyab.com/crane/models/ip2l"
+	"clickyab.com/crane/openrtb"
 	grpc "clickyab.com/crane/openrtb"
-	"github.com/bsm/openrtb"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/config"
 	"github.com/mssola/user_agent"
@@ -56,8 +55,8 @@ func SetUnderfloor(c bool) ShowOptionSetter {
 	}
 }
 
-// SetGRPCIPLocation is the IP and location setter for context, also it extract the IP information
-func SetGRPCIPLocation(ip string, user *grpc.User, device *grpc.Device) ShowOptionSetter {
+// SetIPLocation is the IP and location setter for context, also it extract the IP information
+func SetIPLocation(ip string, user *grpc.User, device *grpc.Device) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
 		ipv4 := net.ParseIP(ip)
 		if ipv4 == nil {
@@ -76,31 +75,6 @@ func SetGRPCIPLocation(ip string, user *grpc.User, device *grpc.Device) ShowOpti
 		}
 
 		l := ip2l.GetProvinceISPByIP(ipv4, float64(lat), float64(lon))
-		o.location = l
-		return o, nil
-	}
-}
-
-// SetIPLocation is the IP and location setter for context, also it extract the IP information
-func SetIPLocation(ip string, user *openrtb.User, device *openrtb.Device) ShowOptionSetter {
-	return func(o *Context) (*Context, error) {
-		ipv4 := net.ParseIP(ip)
-		if ipv4 == nil {
-			return nil, fmt.Errorf("invalid IP %s", ip)
-		}
-		o.ip = ipv4
-		var lat, lon float64
-		if device != nil && device.Geo != nil {
-			lat, lon = device.Geo.Lat, device.Geo.Lon
-
-		}
-		if lat == 0 && lon == 0 {
-			if user != nil && user.Geo != nil {
-				lat, lon = user.Geo.Lat, user.Geo.Lon
-			}
-		}
-
-		l := ip2l.GetProvinceISPByIP(ipv4, lat, lon)
 		o.location = l
 		return o, nil
 	}
@@ -174,46 +148,14 @@ func SetEventPage(ep string) ShowOptionSetter {
 	}
 }
 
-// SetGRPCCategory set the capping mode
-func SetGRPCCategory(b *grpc.BidRequest) ShowOptionSetter {
-	return func(o *Context) (*Context, error) {
-		var category []entity.Category
-		if b.GetSite() != nil {
-			for _, v := range b.GetSite().GetCat() {
-				if len(v.String()) > 3 {
-					category = append(category, entity.Category(v.String()[3:]))
-				}
-			}
-		} else if b.GetApp() != nil {
-			for _, v := range b.GetApp().Cat {
-				if len(v.String()) > 3 {
-					category = append(category, entity.Category(v.String()[3:]))
-				}
-			}
-		}
-		o.cat = category
-		return o, nil
-	}
-}
-
 // SetCategory set the capping mode
 func SetCategory(b *openrtb.BidRequest) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
-		var category []entity.Category
-		if b.Site != nil {
-			for _, v := range b.Site.Cat {
-				if len(v) > 3 {
-					category = append(category, entity.Category(v[3:]))
-				}
-			}
-		} else if b.App != nil {
-			for _, v := range b.App.Cat {
-				if len(v) > 3 {
-					category = append(category, entity.Category(v[3:]))
-				}
-			}
+		if b.GetSite() != nil {
+			o.cat = b.GetSite().GetCat()
+			return o, nil
 		}
-		o.cat = category
+		o.cat = b.GetApp().GetCat()
 		return o, nil
 	}
 }

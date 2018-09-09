@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
-
 	"time"
 
 	"clickyab.com/crane/demand/builder"
@@ -19,8 +18,9 @@ import (
 	"clickyab.com/crane/models/apps"
 	"clickyab.com/crane/models/suppliers"
 	"clickyab.com/crane/models/website"
-	"github.com/bsm/openrtb"
+	"clickyab.com/crane/openrtb"
 	"github.com/bsm/openrtb/native/request"
+
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/xlog"
@@ -149,9 +149,9 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 	ctx, _ := context.WithTimeout(ct, deadline.Duration())
 
 	//tk := time.Now()
-
 	token := xmux.Param(ctx, "token")
 	sup, err := suppliers.GetSupplierByToken(token)
+
 	//defer monitoring(tk, sup.Name())
 
 	if err != nil {
@@ -160,10 +160,9 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 		writesErrorStatus(w, http.StatusNotFound, e)
 		return
 	}
-
-	payload := openrtb.BidRequest{}
+	payload := &openrtb.BidRequest{}
 	dec := json.NewDecoder(r.Body)
-	if err := dec.Decode(&payload); err != nil {
+	if err := dec.Decode(payload); err != nil {
 		xlog.GetWithError(ctx, err).Error("invalid request from %s", sup.Name())
 		writesErrorStatus(w, http.StatusBadRequest, err.Error())
 		return
@@ -180,8 +179,7 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 		ext         = make(simpleMap)
 		cappingMode = entity.CappingStrict
 	)
-	// If this is not a valid json, just pass by.
-	_ = json.Unmarshal(payload.Ext, &ext)
+
 	fatFinger, _ := ext.Bool("fat_finger")
 	prevent, _ := ext.Bool("prevent_default")
 	underfloor, _ := ext.Bool("underfloor")
@@ -201,17 +199,17 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 		cappingMode = entity.CappingReset
 	}
 
-	if err := payload.Validate(); err != nil {
+	if err := validate(payload); err != nil {
 		xlog.GetWithError(ctx, err).Errorf("invalid data from %s. payload: %#v", sup.Name(), payload)
 		writesErrorStatus(w, http.StatusBadRequest, err.Error())
 		return
 	}
 	var domain, bundle string
-	if payload.Site != nil {
-		domain = payload.Site.Domain
+	if payload.GetSite() != nil {
+		domain = payload.GetSite().GetDomain()
 	}
-	if payload.App != nil {
-		bundle = payload.App.Bundle
+	if payload.GetApp() != nil {
+		bundle = payload.GetApp().Bundle
 	}
 	publisher, selector, ps, prevent, err := handlePublisherSelector(domain, bundle, sup, prevent)
 
@@ -223,7 +221,7 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 	proto := entity.HTTP
 	for i := range payload.Imp {
-		if payload.Imp[i].Secure != 0 {
+		if payload.Imp[i].Secure {
 			proto = entity.HTTPS
 			break
 		}
@@ -231,13 +229,13 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 
 	ua := ""
 	ip := ""
-	if payload.Device != nil {
-		ua = strings.Trim(payload.Device.UA, "\n\t ")
-		ip = strings.Trim(payload.Device.IP, "\n\t ")
+	if payload.GetDevice() != nil {
+		ua = strings.Trim(payload.GetDevice().GetUa(), "\n\t ")
+		ip = strings.Trim(payload.GetDevice().GetIp(), "\n\t ")
 	}
 	us := ""
-	if payload.User != nil {
-		us = payload.User.ID
+	if payload.GetUser() != nil {
+		us = payload.User.GetId()
 	}
 
 	if ua == "" || ip == "" {

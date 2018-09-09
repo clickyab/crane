@@ -6,6 +6,7 @@ package mock_entity
 
 import (
 	entity "clickyab.com/crane/demand/entity"
+	openrtb "clickyab.com/crane/openrtb"
 	gomock "github.com/golang/mock/gomock"
 	net "net"
 	url "net/url"
@@ -964,9 +965,9 @@ func (mr *MockPublisherMockRecorder) CTR(arg0 interface{}) *gomock.Call {
 }
 
 // Categories mocks base method
-func (m *MockPublisher) Categories() []string {
+func (m *MockPublisher) Categories() []openrtb.ContentCategory {
 	ret := m.ctrl.Call(m, "Categories")
-	ret0, _ := ret[0].([]string)
+	ret0, _ := ret[0].([]openrtb.ContentCategory)
 	return ret0
 }
 

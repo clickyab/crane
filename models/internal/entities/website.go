@@ -6,8 +6,10 @@ import (
 	"encoding/gob"
 	"fmt"
 	"io"
+	"strconv"
 
 	"clickyab.com/crane/demand/entity"
+	"clickyab.com/crane/openrtb"
 	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/kv"
 	"github.com/clickyab/services/mysql"
@@ -35,6 +37,9 @@ type Website struct {
 	CTRStat
 	Supp entity.Supplier `db:"-"`
 	FCTR [21]float64
+
+	cat     []openrtb.ContentCategory
+	catComp bool
 
 	att map[entity.PublisherAttributes]interface{}
 }
@@ -123,12 +128,21 @@ func (w *Website) Supplier() entity.Supplier {
 }
 
 // Categories return publisher categories
-func (w *Website) Categories() []string {
-	var res = make([]string, 0)
-	for i := range w.WCategories {
-		res = append(res, "IAB"+w.WCategories[i])
+func (w *Website) Categories() []openrtb.ContentCategory {
+	if w.catComp {
+		return w.cat
 	}
-	return res
+
+	var res = make([]openrtb.ContentCategory, 0)
+	for i := range w.WCategories {
+		p, err := strconv.ParseInt(w.WCategories[i], 10, 64)
+		if err != nil {
+			res = append(res, openrtb.ContentCategory(int32(p)))
+		}
+	}
+	w.cat = res
+	w.catComp = true
+	return w.cat
 }
 
 // WebsiteLoaderGen load all confirmed website
