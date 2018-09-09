@@ -44,7 +44,7 @@ func clickBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		// Duplicate click!
 		pl.Suspicious = 1
 	}
-	perDay := kv.NewAEAVStore(fmt.Sprintf("%s_%s_%s", prefix, time.Now().Format(format), pl.IP), 24*time.Hour).IncSubKey("C", 1)
+	perDay := kv.NewAEAVStore(fmt.Sprintf("%s_%s_%s", prefix, time.Now().Format(format), pl.IP), time.Hour).IncSubKey("C", 1)
 	if perDay > dailyClickLimit.Int64() {
 		pl.Suspicious = 96
 	}

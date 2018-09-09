@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -230,7 +231,9 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 		ua = strings.Trim(payload.Device.UA, "\n\t ")
 		ip = strings.Trim(payload.Device.IP, "\n\t ")
 	}
-	if kv.NewAEAVStore(fmt.Sprintf("%s_%s_%s", prefix, time.Now().Format(format), ip), 24*time.Hour).AllKeys()["C"] > dailyClickLimit.Int64() {
+
+	perHour, _ := strconv.ParseInt(kv.NewEavStore(fmt.Sprintf("%s_%s_%s", prefix, time.Now().Format(format), ip)).AllKeys()["C"], 10, 64)
+	if perHour > dailyClickLimit.Int64() {
 		w.Header().Set("content-type", "application/json")
 		j := json.NewEncoder(w)
 		assert.Nil(j.Encode(openrtb.BidResponse{
