@@ -6,6 +6,7 @@ import (
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/demand/filter"
 	"clickyab.com/crane/demand/reducer"
+	"clickyab.com/crane/openrtb"
 )
 
 type mixer struct {
@@ -34,7 +35,7 @@ func Mix(fn func(adid int64, err []string), f ...reducer.Filter) reducer.Filter 
 }
 
 func filterWebBuilder(desktop, province bool, os string, isp,
-	whitelist, blacklist bool, cat []string) []reducer.Filter {
+	whitelist, blacklist bool, cat []openrtb.ContentCategory) []reducer.Filter {
 	f := make([]reducer.Filter, 0)
 
 	f = append(f, &filter.Strategy{})
@@ -63,7 +64,7 @@ func filterWebBuilder(desktop, province bool, os string, isp,
 }
 
 func filterAppBuilder(province bool, latlon, carrier, appBrand string, isp, whitelist, blacklist bool,
-	cat []string,
+	cat []openrtb.ContentCategory,
 ) []reducer.Filter {
 
 	f := make([]reducer.Filter, 0)

@@ -5,7 +5,7 @@ import (
 
 	"clickyab.com/crane/demand/builder/internal/filters"
 	"clickyab.com/crane/demand/entity"
-	"github.com/bsm/openrtb/native/request"
+	"clickyab.com/crane/openrtb"
 )
 
 type nativeSeat struct {
@@ -14,62 +14,62 @@ type nativeSeat struct {
 	filters []entity.Filter
 }
 
-func assetToFilterFunc(a []request.Asset) []entity.Filter {
+func assetToFilterFunc(a []*openrtb.NativeRequest_Asset) []entity.Filter {
 	var res []entity.Filter
 	for i := range a {
 		f := entity.Filter{
-			ID:       a[i].ID,
-			Required: a[i].Required != 0,
+			ID:       a[i].GetId(),
+			Required: a[i].GetRequired(),
 		}
-		if a[i].Image != nil {
+		if a[i].GetImg() != nil {
 			f.Type = entity.AssetTypeImage
-			f.SubType = int(a[i].Image.TypeID)
-			if a[i].Image.Width > 0 {
-				f.Extra = append(f.Extra, filters.ExactWidth(a[i].Image.Width))
+			f.SubType = int(a[i].GetImg().Type)
+			if a[i].GetImg().GetW() > 0 {
+				f.Extra = append(f.Extra, filters.ExactWidth(a[i].GetImg().GetW()))
 			}
-			if a[i].Image.Height > 0 {
-				f.Extra = append(f.Extra, filters.ExactHeight(a[i].Image.Height))
-			}
-
-			if a[i].Image.WidthMin > 0 {
-				f.Extra = append(f.Extra, filters.MinWidth(a[i].Image.WidthMin))
-			}
-			if a[i].Image.HeightMin > 0 {
-				f.Extra = append(f.Extra, filters.MinHeight(a[i].Image.HeightMin))
+			if a[i].GetImg().GetH() > 0 {
+				f.Extra = append(f.Extra, filters.ExactHeight(a[i].GetImg().GetH()))
 			}
 
-			if len(a[i].Image.Mimes) > 0 {
-				f.Extra = append(f.Extra, filters.ContainMimeType(a[i].Image.Mimes...))
+			if a[i].GetImg().GetWmin() > 0 {
+				f.Extra = append(f.Extra, filters.MinWidth(a[i].GetImg().GetWmin()))
+			}
+			if a[i].GetImg().GetHmin() > 0 {
+				f.Extra = append(f.Extra, filters.MinHeight(a[i].GetImg().GetHmin()))
 			}
 
-		} else if a[i].Title != nil {
+			if len(a[i].GetImg().GetMimes()) > 0 {
+				f.Extra = append(f.Extra, filters.ContainMimeType(a[i].GetImg().GetMimes()...))
+			}
+
+		} else if a[i].GetTitle() != nil {
 			f.Type = entity.AssetTypeText
 			f.SubType = entity.AssetTypeTextSubTypeTitle
-			if a[i].Title.Length > 0 {
-				f.Extra = append(f.Extra, filters.MaxLen(a[i].Title.Length))
+			if a[i].GetTitle().GetLen() > 0 {
+				f.Extra = append(f.Extra, filters.MaxLen(a[i].GetTitle().GetLen()))
 			}
-		} else if a[i].Data != nil {
+		} else if a[i].GetData() != nil {
 			f.Type = entity.AssetTypeText
-			f.SubType = int(a[i].Data.TypeID)
-			if a[i].Data.Length > 0 {
-				f.Extra = append(f.Extra, filters.MaxLen(a[i].Data.Length))
+			f.SubType = int(a[i].GetData().GetType())
+			if a[i].GetData().GetLen() > 0 {
+				f.Extra = append(f.Extra, filters.MaxLen(a[i].GetData().GetLen()))
 			}
 
-		} else if a[i].Video != nil {
+		} else if a[i].GetVideo() != nil {
 			f.Type = entity.AssetTypeVideo
 			f.SubType = entity.AssetTypeVideoSubTypeMain
-			if len(a[i].Video.Mimes) > 0 {
-				f.Extra = append(f.Extra, filters.ContainMimeType(a[i].Video.Mimes...))
+			if len(a[i].GetVideo().Mimes) > 0 {
+				f.Extra = append(f.Extra, filters.ContainMimeType(a[i].GetVideo().Mimes...))
 			}
-			if a[i].Video.MinDuration > 0 {
-				f.Extra = append(f.Extra, filters.MinDuration(a[i].Video.MinDuration))
+			if a[i].GetVideo().GetMinduration() > 0 {
+				f.Extra = append(f.Extra, filters.MinDuration(a[i].GetVideo().GetMinduration()))
 			}
-			if a[i].Video.MaxDuration > 0 {
-				f.Extra = append(f.Extra, filters.MaxDuration(a[i].Video.MaxDuration))
+			if a[i].GetVideo().GetMaxduration() > 0 {
+				f.Extra = append(f.Extra, filters.MaxDuration(a[i].GetVideo().GetMaxduration()))
 			}
 
-			if len(a[i].Video.Protocols) > 0 {
-				f.Extra = append(f.Extra, filters.VastProtocol(a[i].Video.Protocols...))
+			if len(a[i].GetVideo().Protocols) > 0 {
+				f.Extra = append(f.Extra, filters.VastProtocol(a[i].GetVideo().GetProtocols()...))
 			}
 		}
 		res = append(res, f)

@@ -19,7 +19,6 @@ import (
 	"clickyab.com/crane/models/suppliers"
 	"clickyab.com/crane/models/website"
 	"clickyab.com/crane/openrtb"
-	"github.com/bsm/openrtb/native/request"
 
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/config"
@@ -261,7 +260,7 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetPreventDefault(prevent),
 		builder.SetCappingMode(cappingMode),
 		builder.SetUnderfloor(underfloor),
-		builder.SetCategory(&payload),
+		builder.SetCategory(payload),
 	}
 	// TODO : if we need to implement native/app/vast then the next line must be activated and customized
 	//b = append(b, builder.SetFloorPercentage(100), builder.SetMinBidPercentage(100))
@@ -280,74 +279,67 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	assert.Nil(demand.Render(ctx, w, c, payload.ID))
+	assert.Nil(demand.Render(ctx, w, c, payload.Id))
 
 }
 
-func setPublisherCustomContext(payload openrtb.BidRequest, b []builder.ShowOptionSetter) []builder.ShowOptionSetter {
-	if payload.Site != nil {
-		b = append(b, builder.SetParent(payload.Site.Page, payload.Site.Ref))
+func setPublisherCustomContext(payload *openrtb.BidRequest, b []builder.ShowOptionSetter) []builder.ShowOptionSetter {
+	if payload.GetSite() != nil {
+		b = append(b, builder.SetParent(payload.GetSite().GetPage(), payload.GetSite().GetRef()))
 	}
-	if payload.App != nil && payload.Device != nil {
-		b = append(b, builder.SetConnType(payload.Device.ConnType))
-		b = append(b, builder.SetCarrier(payload.Device.Carrier))
-		b = append(b, builder.SetBrand(payload.Device.Model))
+	if payload.GetApp() != nil && payload.GetDevice() != nil {
+		b = append(b, builder.SetConnType(payload.GetDevice().GetConnectiontype()))
+		b = append(b, builder.SetCarrier(payload.GetDevice().GetCarrier()))
+		b = append(b, builder.SetBrand(payload.GetDevice().GetModel()))
 	}
 	return b
 }
 
-func intInArray(v int, all ...int) bool {
-	for i := range all {
-		if v == all[i] {
-			return true
-		}
-	}
-
-	return false
-}
-
-func seatDetail(req openrtb.BidRequest) ([]builder.DemandSeatData, bool) {
+func seatDetail(req *openrtb.BidRequest) ([]builder.DemandSeatData, bool) {
 	var (
 		imp    = req.Imp
 		seats  = make([]builder.DemandSeatData, 0)
-		w, h   int
+		w, h   int32
 		vast   bool
-		assets []request.Asset
+		assets []*openrtb.NativeRequest_Asset
 	)
 	for i := range imp {
 		var t entity.RequestType
-		if imp[i].Video != nil {
+		if imp[i].GetVideo() != nil {
 			w, h = imp[i].Video.W, imp[i].Video.H
 			t = entity.RequestTypeVast
 			// We just support version 3
-			if !intInArray(3, append(imp[i].Video.Protocols, imp[i].Video.Protocol)...) {
+			ver := false
+			for _, pc := range imp[i].Video.Protocols {
+				if pc == openrtb.Protocol_VAST_3_0 {
+					ver = true
+				}
+			}
+			if !ver {
 				continue
 			}
-			vast = true
-		} else if imp[i].Banner != nil {
-			w, h = imp[i].Banner.W, imp[i].Banner.H
+		} else if imp[i].GetBanner() != nil {
+			w, h = imp[i].GetBanner().W, imp[i].GetBanner().H
 			t = entity.RequestTypeBanner
-		} else if imp[i].Native != nil {
+		} else if imp[i].GetNative() != nil {
 			t = entity.RequestTypeNative
-			req := request.Request{}
-			err := json.Unmarshal(imp[i].Native.Request, &req)
-			assert.Nil(err)
-			assets = req.Assets
+			assets = imp[i].GetNative().GetRequestNative().GetAssets()
 		}
-		var (
-			ext = make(simpleMap)
-		)
-		// If this is not a valid json, just pass by.
-		_ = json.Unmarshal(imp[i].Ext, &ext)
+
 		seats = append(seats, builder.DemandSeatData{
-			MinBid: imp[i].BidFloor,
-			PubID:  imp[i].ID,
+			MinBid: imp[i].GetBidfloor(),
+			PubID:  imp[i].Id,
 			Size:   fmt.Sprintf("%dx%d", w, h),
 			Type:   t,
-			Video:  imp[i].Video,
+			Video:  imp[i].GetVideo(),
 			Banner: imp[i].Banner,
 			Assets: assets,
-			MinCPC: ext.Float64("min_cpc"),
+			MinCPC: func() float64 {
+				if ex := imp[i].GetExt(); ex != nil {
+					return ex.Mincpc
+				}
+				return 0
+			}(),
 		})
 	}
 	return seats, vast

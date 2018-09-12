@@ -12,9 +12,9 @@ type Seat interface {
 	// ReservedHash of slot
 	ReservedHash() string
 	// Width return width of seat
-	Width() int
+	Width() int32
 	// Height return height of seat
-	Height() int
+	Height() int32
 	// Size return the clickyab size
 	Size() int
 	// Bid return winner bid

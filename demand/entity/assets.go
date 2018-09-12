@@ -61,19 +61,15 @@ const (
 
 // Asset is a structure to handle single asset inside creative
 type Asset struct {
-	Type    AssetType `json:"t"`
-	SubType int       `json:"st"`
-	// if asset support width and height
-	Width  int `json:"w,omitempty"`
-	Height int `json:"h,omitempty"`
-	// if asset support len
-	Len int `json:"l,omitempty"`
-	// MimeType is the mime-type checker
-	MimeType string `json:"mt"`
-	// Duration is only for videos
-	Duration int `json:"d,omitempty"`
-	// Data is the actual data inside this asset
-	Data string `json:"data"`
+	Type     AssetType `json:"t"`
+	SubType  int       `json:"st"`
+	Width    int32     `json:"w,omitempty"` // if asset support width and height
+	Height   int32     `json:"h,omitempty"`
+	Len      int32     `json:"l,omitempty"` // if asset support len
+	MimeType string    `json:"mt"`          // MimeType is the mime-type checker
+	Duration int32     `json:"d,omitempty"` // Duration is only for videos
+	Data     string    `json:"data"`        // Data is the actual data inside this asset
+
 }
 
 // AssetFilter is a callback function to filter asset
@@ -81,7 +77,7 @@ type AssetFilter func(*Asset) bool
 
 // Filter is a full filter of one asset
 type Filter struct {
-	ID       int
+	ID       int32
 	Type     AssetType
 	SubType  int
 	Required bool

@@ -1,5 +1,9 @@
 package entity
 
+import (
+	"clickyab.com/crane/openrtb"
+)
+
 // InputType is demand
 type InputType string
 
@@ -60,7 +64,7 @@ type Context interface {
 	// Slots is the slot for this request
 	Seats() []Seat
 	// Category returns category obviously
-	Category() []Category
+	Category() []openrtb.ContentCategory
 	// User return user data
 	User() User
 	// Tiny means that the logo of clickyab should be shown (true) or not

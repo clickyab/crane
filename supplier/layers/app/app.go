@@ -68,7 +68,7 @@ func getApp(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 				},
 				Bidfloor: float64(pub.FloorCPM()),
 				Ext: &openrtb.Imp_Ext{
-					Mincpc: float32(pub.MinCPC(string(entity.RequestTypeBanner))),
+					Mincpc: pub.MinCPC(string(entity.RequestTypeBanner)),
 				},
 			},
 		},

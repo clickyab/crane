@@ -167,7 +167,9 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 			H:      br.GetSeatbid()[0].GetBid()[0].GetH(),
 			Markup: br.GetSeatbid()[0].GetBid()[0].GetAdm(),
 		})
-		br.GetSeatbid()[0].GetBid()[0].GetAdm() = buf.String()
+		br.GetSeatbid()[0].GetBid()[0].AdmOneof = &openrtb.BidResponse_SeatBid_Bid_Adm{
+			Adm: buf.String(),
+		}
 	}
 
 	if output.RenderBanner(ctx, w, br, extra) != nil {
@@ -215,7 +217,7 @@ func exSlot(ctx context.Context, s string, l int, r *http.Request, pub entity.Pu
 				W:  int32(w),
 			},
 			Ext: &openrtb.Imp_Ext{
-				Mincpc: float32(pub.MinCPC(string(entity.RequestTypeBanner))),
+				Mincpc: pub.MinCPC(string(entity.RequestTypeBanner)),
 			},
 			Bidfloor: float64(pub.FloorCPM()),
 		})
@@ -232,7 +234,7 @@ func exSlot(ctx context.Context, s string, l int, r *http.Request, pub entity.Pu
 			},
 			Bidfloor: float64(pub.FloorCPM()),
 			Ext: &openrtb.Imp_Ext{
-				Mincpc: float32(pub.MinCPC(string(entity.RequestTypeBanner))),
+				Mincpc: pub.MinCPC(string(entity.RequestTypeBanner)),
 			},
 		})
 	}

@@ -1,9 +1,12 @@
 package filters
 
-import "clickyab.com/crane/demand/entity"
+import (
+	"clickyab.com/crane/demand/entity"
+	"clickyab.com/crane/openrtb"
+)
 
 // MinWidth return a minimum width checker
-func MinWidth(m int) entity.AssetFilter {
+func MinWidth(m int32) entity.AssetFilter {
 	return func(a *entity.Asset) bool {
 		if a.Type != entity.AssetTypeImage {
 			return false
@@ -13,7 +16,7 @@ func MinWidth(m int) entity.AssetFilter {
 }
 
 // MinHeight return a minimum height checker
-func MinHeight(m int) entity.AssetFilter {
+func MinHeight(m int32) entity.AssetFilter {
 	return func(a *entity.Asset) bool {
 		if a.Type != entity.AssetTypeImage {
 			return false
@@ -23,7 +26,7 @@ func MinHeight(m int) entity.AssetFilter {
 }
 
 // ExactWidth return an exact width checker
-func ExactWidth(m int) entity.AssetFilter {
+func ExactWidth(m int32) entity.AssetFilter {
 	return func(a *entity.Asset) bool {
 		if a.Type != entity.AssetTypeImage {
 			return false
@@ -33,7 +36,7 @@ func ExactWidth(m int) entity.AssetFilter {
 }
 
 // ExactHeight return an exact height checker
-func ExactHeight(m int) entity.AssetFilter {
+func ExactHeight(m int32) entity.AssetFilter {
 	return func(a *entity.Asset) bool {
 		if a.Type != entity.AssetTypeImage {
 			return false
@@ -43,7 +46,7 @@ func ExactHeight(m int) entity.AssetFilter {
 }
 
 // MaxLen return a max length checker (string)
-func MaxLen(m int) entity.AssetFilter {
+func MaxLen(m int32) entity.AssetFilter {
 	return func(a *entity.Asset) bool {
 		if a.Type != entity.AssetTypeText {
 			return false
@@ -65,7 +68,7 @@ func ContainMimeType(t ...string) entity.AssetFilter {
 }
 
 // MaxDuration for videos
-func MaxDuration(d int) entity.AssetFilter {
+func MaxDuration(d int32) entity.AssetFilter {
 	return func(a *entity.Asset) bool {
 		if a.Type != entity.AssetTypeVideo {
 			return false
@@ -76,7 +79,7 @@ func MaxDuration(d int) entity.AssetFilter {
 }
 
 // MinDuration for videos
-func MinDuration(d int) entity.AssetFilter {
+func MinDuration(d int32) entity.AssetFilter {
 	return func(a *entity.Asset) bool {
 		if a.Type != entity.AssetTypeVideo {
 			return false
@@ -87,13 +90,13 @@ func MinDuration(d int) entity.AssetFilter {
 }
 
 // VastProtocol check for vast 2/3
-func VastProtocol(d ...int) entity.AssetFilter {
+func VastProtocol(d ...openrtb.Protocol) entity.AssetFilter {
 	return func(a *entity.Asset) bool {
 		if a.Type != entity.AssetTypeVideo {
 			return false
 		}
 		for i := range d {
-			if d[i] == 3 {
+			if d[i] == openrtb.Protocol_VAST_3_0 {
 				return true
 			}
 		}

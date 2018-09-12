@@ -190,15 +190,15 @@ func extractAssets(in ad) []entity.Asset {
 				MimeType: in.FMimeType.String,
 				Type:     entity.AssetTypeImage,
 				SubType:  entity.AssetTypeImageSubTypeMain,
-				Width:    int(width),
-				Height:   int(height),
+				Width:    int32(width),
+				Height:   int32(height),
 				Data:     in.FAdImg.String,
 			},
 			{
 				MimeType: "text/html",
 				Type:     entity.AssetTypeText,
 				SubType:  entity.AssetTypeTextSubTypeTitle,
-				Len:      utf8.RuneCountInString(txt),
+				Len:      int32(utf8.RuneCountInString(txt)),
 				Data:     txt,
 			},
 		}

@@ -2,7 +2,6 @@ package builder
 
 import (
 	"net"
-
 	"time"
 
 	"clickyab.com/crane/demand/entity"
@@ -48,7 +47,7 @@ type Context struct {
 
 	brandName,
 	carrierName string
-	connectionType int // 2g 3g ,...
+	connectionType openrtb.ConnectionType // 2g 3g ,...
 
 	fatFinger bool
 	// Just in application, for older sdk, we need to add prevent default on clicks
@@ -61,7 +60,7 @@ type Context struct {
 }
 
 // ConnectionType return connection type 2g,3g,4g,...
-func (c *Context) ConnectionType() int {
+func (c *Context) ConnectionType() openrtb.ConnectionType {
 	return c.connectionType
 }
 
@@ -223,7 +222,7 @@ func (c *Context) Seats() []entity.Seat {
 }
 
 // Category return the request categories
-func (c *Context) Category() []entity.Category {
+func (c *Context) Category() []openrtb.ContentCategory {
 	return c.cat
 }
 

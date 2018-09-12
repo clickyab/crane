@@ -10,7 +10,6 @@ import (
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/models/suppliers"
 	"clickyab.com/crane/openrtb"
-	"github.com/bsm/openrtb/native/request"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/xlog"
 	"golang.org/x/net/context"
@@ -162,7 +161,7 @@ func (*server) Ortb(ctx context.Context, req *openrtb.BidRequest) (*openrtb.BidR
 		builder.SetTimestamp(),
 		builder.SetTargetHost(sup.ShowDomain()),
 		builder.SetOSUserAgent(ua),
-		builder.SetGRPCIPLocation(ip, req.GetUser(), req.GetDevice()),
+		builder.SetIPLocation(ip, req.GetUser(), req.GetDevice()),
 		builder.SetPublisher(pub),
 		builder.SetProtocol(proto),
 		builder.SetTID(us, ip, ua),
@@ -174,7 +173,7 @@ func (*server) Ortb(ctx context.Context, req *openrtb.BidRequest) (*openrtb.BidR
 		builder.SetPreventDefault(prevent),
 		builder.SetCappingMode(capping),
 		builder.SetUnderfloor(underfloor),
-		builder.SetGRPCCategory(req),
+		builder.SetCategory(req),
 	}
 	// TODO : if we need to implement native/app/vast then the next line must be activated and customized
 	//b = append(b, builder.SetFloorPercentage(100), builder.SetMinBidPercentage(100))
@@ -194,7 +193,7 @@ func grpcSeatDetail(req openrtb.BidRequest) ([]builder.DemandSeatData, bool) {
 		seats  = make([]builder.DemandSeatData, 0)
 		w, h   int32
 		vast   bool
-		assets []request.Asset
+		assets []*openrtb.NativeRequest_Asset
 	)
 	for _, m := range imp {
 		var t entity.RequestType
@@ -218,7 +217,7 @@ func grpcSeatDetail(req openrtb.BidRequest) ([]builder.DemandSeatData, bool) {
 			t = entity.RequestTypeBanner
 		} else if m.GetNative() != nil {
 			t = entity.RequestTypeNative
-			req := request.Request{}
+			req := &openrtb.NativeRequest{}
 			err := json.Unmarshal([]byte(m.GetNative().GetRequest()), &req)
 			assert.Nil(err)
 			assets = req.Assets
@@ -246,7 +245,7 @@ func setGRPCPublisherCustomContext(payload openrtb.BidRequest, b []builder.ShowO
 		b = append(b, builder.SetParent(payload.GetSite().GetPage(), payload.GetSite().GetRef()))
 	}
 	if payload.GetApp() != nil {
-		b = append(b, builder.SetConnType(int(payload.GetDevice().GetConnectiontype())))
+		b = append(b, builder.SetConnType(payload.GetDevice().GetConnectiontype()))
 		b = append(b, builder.SetCarrier(payload.Device.Carrier))
 		b = append(b, builder.SetBrand(payload.Device.Model))
 	}

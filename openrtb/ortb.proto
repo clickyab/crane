@@ -554,7 +554,7 @@ message Imp {
 
     Ext ext = 18;
     message Ext {
-        float mincpc = 1;
+        double mincpc = 1;
     }
 
 }

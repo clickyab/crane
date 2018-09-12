@@ -53,7 +53,7 @@ func getImps(r *http.Request, count int, pub entity.Publisher, image bool) []*op
 				RequestOneof: &openrtb.Native_RequestNative{},
 			},
 			Ext: &openrtb.Imp_Ext{
-				Mincpc: float32(pub.MinCPC(string(entity.RequestTypeNative))),
+				Mincpc: pub.MinCPC(string(entity.RequestTypeNative)),
 			},
 		}
 		res = append(res, imp)

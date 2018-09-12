@@ -305,7 +305,7 @@ func SetCarrier(v string) ShowOptionSetter {
 }
 
 // SetConnType is set network  2g,3g,...
-func SetConnType(v int) ShowOptionSetter {
+func SetConnType(v openrtb.ConnectionType) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
 		o.connectionType = v
 		return o, nil
