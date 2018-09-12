@@ -8,7 +8,6 @@ import (
 	"io"
 	"strconv"
 	"time"
-
 	"unicode/utf8"
 
 	"clickyab.com/crane/demand/entity"
@@ -26,16 +25,16 @@ var (
 )
 
 type ad struct {
-	FID                      int64                  `db:"ad_id"`
+	FID                      int32                  `db:"ad_id"`
 	FType                    int                    `db:"ad_type"`
 	FCPM                     int64                  `db:"cpm"`
-	FCampaignFrequency       int                    `db:"cp_frequency"`
-	FCTR                     float64                `db:"ctr"`
+	FCampaignFrequency       int32                  `db:"cp_frequency"`
+	FCTR                     float32                `db:"ctr"`
 	FCaCTR                   sql.NullFloat64        `db:"ca_ctr"`
-	FCampaignMaxBid          int64                  `db:"cp_maxbid"`
-	FCampaignID              int64                  `db:"cp_id"`
+	FCampaignMaxBid          int32                  `db:"cp_maxbid"`
+	FCampaignID              int32                  `db:"cp_id"`
 	FCampaignName            sql.NullString         `db:"cp_name"`
-	FAdSize                  int                    `db:"ad_size"`
+	FAdSize                  int32                  `db:"ad_size"`
 	FUserID                  int64                  `db:"u_id"`
 	FAdName                  sql.NullString         `db:"ad_name"`
 	FAdURL                   sql.NullString         `db:"ad_url"`
@@ -59,7 +58,7 @@ type ad struct {
 	FUserBalance             string                 `db:"u_balance"`
 	FIsCrm                   int                    `db:"is_crm"`
 	FCpLock                  int                    `db:"cp_lock"`
-	FCampaignAdID            int64                  `db:"ca_id"`
+	FCampaignAdID            int32                  `db:"ca_id"`
 	CampaignType             int                    `db:"cp_type"`
 	CampaignBillingType      sql.NullString         `db:"cp_billing_type"`
 	CampaignNetwork          int                    `db:"cp_network"`
@@ -253,7 +252,7 @@ func AdLoader(_ context.Context) (map[string]kv.Serializable, error) {
 	ads := make(map[string]kv.Serializable)
 	for i := range res {
 		if res[i].FCaCTR.Valid {
-			res[i].FCTR = res[i].FCaCTR.Float64
+			res[i].FCTR = float32(res[i].FCaCTR.Float64)
 		} else {
 			res[i].FCTR = -1
 		}
@@ -265,7 +264,7 @@ func AdLoader(_ context.Context) (map[string]kv.Serializable, error) {
 }
 
 // GetAd return a single ad
-func GetAd(adID int64) (entity.Creative, error) {
+func GetAd(adID int32) (entity.Creative, error) {
 	query := `SELECT
 		A.ad_id, C.u_id, ad_name, ad_url,ad_code, ad_title, ad_body, ad_img, ad_status,ad_size,
 	 ad_reject_reason, CA.ca_ctr , ad_conv, ad_time, ad_type, ad_mainText, ad_defineText,
@@ -296,7 +295,7 @@ func GetAd(adID int64) (entity.Creative, error) {
 		return nil, err
 	}
 	if res.FCaCTR.Valid {
-		res.FCTR = res.FCaCTR.Float64
+		res.FCTR = float32(res.FCaCTR.Float64)
 	} else {
 		res.FCTR = -1
 	}
@@ -318,7 +317,7 @@ func (a *Advertise) Assets() []entity.Asset {
 }
 
 // MaxBID is the max bid of campaign
-func (a *Advertise) MaxBID() int64 {
+func (a *Advertise) MaxBID() int32 {
 	return a.FCampaignMaxBid
 }
 
@@ -328,12 +327,12 @@ func (a *Advertise) Target() entity.Target {
 }
 
 // CampaignAdID return campaign_ad primary
-func (a *Advertise) CampaignAdID() int64 {
+func (a *Advertise) CampaignAdID() int32 {
 	return a.ad.FCampaignAdID
 }
 
 // Size return the size of ad
-func (a *Advertise) Size() int {
+func (a *Advertise) Size() int32 {
 	return a.ad.FAdSize
 }
 
@@ -350,7 +349,7 @@ func (a *Advertise) Decode(r io.Reader) error {
 }
 
 // ID the ad id
-func (a *Advertise) ID() int64 {
+func (a *Advertise) ID() int32 {
 	return a.FID
 }
 
@@ -368,12 +367,12 @@ func (a *Advertise) Campaign() entity.Campaign {
 }
 
 // AdCTR return the calculated ad ctr
-func (a *Advertise) AdCTR() float64 {
+func (a *Advertise) AdCTR() float32 {
 	return a.FCTR
 }
 
 // Width is the width of ad
-func (a *Advertise) Width() int {
+func (a *Advertise) Width() int32 {
 	if a.size == nil {
 		a.size = sizes[a.FAdSize]
 	}
@@ -381,7 +380,7 @@ func (a *Advertise) Width() int {
 }
 
 // Height is the height of ad
-func (a *Advertise) Height() int {
+func (a *Advertise) Height() int32 {
 	if a.size == nil {
 		a.size = sizes[a.FAdSize]
 	}
@@ -441,21 +440,21 @@ bigLoop:
 }
 
 // Duration is the duration of this creative, if had a meaning. for example it has measning in vast
-func (a *Advertise) Duration() int {
-	duration := defaultDuration.Int()
+func (a *Advertise) Duration() int32 {
+	duration := int32(defaultDuration.Int())
 	if a.FAdAttribute == nil {
 		return duration
 	}
 	d := a.FAdAttribute["duration"]
 
-	var di int
+	var di int32
 	switch t := d.(type) {
 	case int:
-		di = t
+		di = int32(t)
 	case int64:
-		di = int(t)
+		di = int32(t)
 	case float64:
-		di = int(t)
+		di = int32(t)
 	default:
 		di = 0
 	}

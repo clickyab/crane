@@ -30,7 +30,7 @@ type App struct {
 	AppToken      string                 `db:"app_token"`
 	AppMinCPC     mysql.GenericJSONField `db:"app_min_cpc"`
 	Supp          entity.Supplier
-	FCTR          [21]float64
+	FCTR          [21]float32
 	CTRStat
 
 	catComp bool
@@ -114,7 +114,7 @@ func (app *App) Supplier() entity.Supplier {
 }
 
 // CTR return ctr of app per size
-func (app *App) CTR(size int) float64 {
+func (app *App) CTR(size int32) float32 {
 	if app.FCTR[size] == 0 {
 		app.FCTR[size] = -1
 	}
@@ -155,7 +155,7 @@ func AppLoaderGen(name bool) func(ctx context.Context) (map[string]kv.Serializab
 			}
 
 			for i := range res {
-				res[i].FCTR = [21]float64{}
+				res[i].FCTR = [21]float32{}
 				res[i].FCTR[1] = calc(res[i].Impression1, res[i].Click1)
 				res[i].FCTR[2] = calc(res[i].Impression2, res[i].Click2)
 				res[i].FCTR[3] = calc(res[i].Impression3, res[i].Click3)
@@ -221,9 +221,9 @@ func (app *App) totalImp() (res int64) {
 }
 
 // MinCPC return min cpc for this app
-func (app *App) MinCPC(adType string) float64 {
+func (app *App) MinCPC(adType string) float32 {
 	if val, ok := app.AppMinCPC[adType]; ok {
-		if x, ok := val.(float64); ok {
+		if x, ok := val.(float32); ok {
 			return x
 		}
 	}

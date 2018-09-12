@@ -3,9 +3,8 @@ package capping
 import (
 	"fmt"
 	"strconv"
-	"time"
-
 	"strings"
+	"time"
 
 	"clickyab.com/crane/demand/entity"
 	"github.com/clickyab/services/config"
@@ -63,7 +62,7 @@ func ApplyCapping(mode entity.CappingMode, copID string, ads []entity.SelectedCr
 }
 
 func strictCappingMode(copID string, ads []entity.SelectedCreative, ep string) []entity.SelectedCreative {
-	var selected = make(map[int64]bool)
+	var selected = make(map[int32]bool)
 
 	// evenet page is an old hack to handle ads in same page in multiple request. maybe we should retire it
 	// TODO : remove event page after 31 March 2018 if there is no need for it
@@ -71,7 +70,7 @@ func strictCappingMode(copID string, ads []entity.SelectedCreative, ep string) [
 		s := kv.NewDistributedSet(ep)
 		for _, v := range s.Members() {
 			vInt, _ := strconv.ParseInt(v, 10, 0)
-			selected[vInt] = true
+			selected[int32(vInt)] = true
 		}
 
 	}
@@ -87,7 +86,7 @@ func strictCappingMode(copID string, ads []entity.SelectedCreative, ep string) [
 			ads[i].ID(),
 		)
 
-		view := results[key]
+		view := int32(results[key])
 		n := float64(view) / float64(ads[i].Campaign().Frequency())
 		if n <= 1 && !selected[ads[i].ID()] {
 			passed := ads[i]
@@ -98,7 +97,7 @@ func strictCappingMode(copID string, ads []entity.SelectedCreative, ep string) [
 				entity.CappingStrict,
 				copID,
 			)
-			capp.IncView(ads[i].ID(), int(view), false)
+			capp.IncView(ads[i].ID(), view, false)
 			passed.SetCapping(capp)
 			resp = append(resp, passed)
 		}
@@ -109,7 +108,7 @@ func strictCappingMode(copID string, ads []entity.SelectedCreative, ep string) [
 
 // GetCapping try to get capping for current ad
 func resetCappingMode(copID string, ads []entity.SelectedCreative, ep string) []entity.SelectedCreative {
-	var selected = make(map[int64]bool)
+	var selected = make(map[int32]bool)
 	// evenet page is an old hack to handle ads in same page in multiple request. maybe we should retire it
 	// TODO : remove event page after 31 March 2018 if there is no need for it
 	if ep != "" {
@@ -117,17 +116,17 @@ func resetCappingMode(copID string, ads []entity.SelectedCreative, ep string) []
 
 		for _, v := range s.Members() {
 			vInt, _ := strconv.ParseInt(v, 10, 0)
-			selected[vInt] = true
+			selected[int32(vInt)] = true
 		}
 
 	}
 	c := newContext()
 	ck := kv.NewAEAVStore(getCappingKey(entity.CappingReset, copID), dailyCapExpire.Duration())
 	results := ck.AllKeys()
-	has := make(map[int]int)
-	done := make(map[int][]struct {
+	has := make(map[int32]int32)
+	done := make(map[int32][]struct {
 		Key  string
-		View int64
+		View int32
 		entity.SelectedCreative
 	})
 	resp := make([]entity.SelectedCreative, 0, len(ads))
@@ -143,7 +142,7 @@ func resetCappingMode(copID string, ads []entity.SelectedCreative, ep string) []
 			ads[i].ID(),
 		)
 
-		view := results[key]
+		view := int32(results[key])
 		n := float64(view) / float64(ads[i].Campaign().Frequency())
 		if n < 1 && !selected[ads[i].ID()] {
 			capp := NewCapping(
@@ -153,7 +152,7 @@ func resetCappingMode(copID string, ads []entity.SelectedCreative, ep string) []
 				entity.CappingReset,
 				copID,
 			)
-			capp.IncView(ads[i].ID(), int(view), false)
+			capp.IncView(ads[i].ID(), view, false)
 			ads[i].SetCapping(capp)
 			resp = append(resp, ads[i])
 			has[size] = has[size] + 1
@@ -161,7 +160,7 @@ func resetCappingMode(copID string, ads []entity.SelectedCreative, ep string) []
 			// capping is passed
 			done[size] = append(done[size], struct {
 				Key  string
-				View int64
+				View int32
 				entity.SelectedCreative
 			}{
 				Key:              key,
@@ -185,7 +184,7 @@ func resetCappingMode(copID string, ads []entity.SelectedCreative, ep string) []
 				entity.CappingReset,
 				copID,
 			)
-			capp.IncView(done[size][i].ID(), int(done[size][i].View), false)
+			capp.IncView(done[size][i].ID(), done[size][i].View, false)
 			sizedCap[i] = done[size][i].Key
 			done[size][i].SetCapping(capp)
 			resp = append(resp, done[size][i].SelectedCreative)

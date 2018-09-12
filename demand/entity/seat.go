@@ -16,7 +16,7 @@ type Seat interface {
 	// Height return height of seat
 	Height() int32
 	// Size return the clickyab size
-	Size() int
+	Size() int32
 	// Bid return winner bid
 	Bid() float64
 	// CPM return the cpm of this seat (after winner and bid is set)
@@ -32,7 +32,7 @@ type Seat interface {
 	// WinRequest is the win request url for this advertise
 	WinNoticeRequest() *url.URL
 	// CTR return current ctr for this size in publisher
-	CTR() float64
+	CTR() float32
 	// Type of seat
 	Type() InputType
 	// RequestType of seat
@@ -50,11 +50,11 @@ type Seat interface {
 	// only accept video/mp4 but another seat in same imp accept image/jpeg then we can not use normal filters
 	Acceptable(Creative) bool
 	// MinCPC return min cpc of seat
-	MinCPC() float64
+	MinCPC() float32
 	// The minimum CPM allowed by this, HARD FLOOR, after share calculation
-	MinCPM() float64
+	MinCPM() float32
 	// Soft minimum. lower than this means no sec biding. must not be lower than min cpm
-	SoftCPM() float64
+	SoftCPM() float32
 }
 
 // VastSeat is a seat with vast compatibility

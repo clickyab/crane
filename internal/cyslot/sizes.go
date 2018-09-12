@@ -11,7 +11,7 @@ type size struct {
 
 var (
 	// Sizes contain all allowed size
-	sizesModel = map[int]*size{
+	sizesModel = map[int32]*size{
 		1:  {Width: 120, Height: 600},
 		2:  {Width: 160, Height: 600},
 		3:  {Width: 300, Height: 250},
@@ -67,7 +67,7 @@ func GetSize(size string) (int32, error) {
 }
 
 // GetSizeByNum return the size (order: width, height)
-func GetSizeByNum(num int) (int32, int32) {
+func GetSizeByNum(num int32) (int32, int32) {
 	if v, ok := sizesModel[num]; ok {
 		return v.Width, v.Height
 	}

@@ -2,7 +2,6 @@ package entities
 
 import (
 	"database/sql"
-
 	"strconv"
 
 	"clickyab.com/crane/demand/entity"
@@ -13,13 +12,13 @@ import (
 type Click struct {
 	reservedHash string
 	winnerBid    float64
-	adID         int64
+	adID         int32
 	webSiteID    sql.NullInt64
 	appID        sql.NullInt64
-	campaignID   int64
-	campaignAdID int64
+	campaignID   int32
+	campaignAdID int32
 	slotID       int64
-	slotAdID     int64
+	slotAdID     int32
 	copID        string
 	impID        int64
 	tv           bool
@@ -32,7 +31,7 @@ type Click struct {
 	time         int64
 	date         string
 	supplier     string
-	adSize       int
+	adSize       int32
 	typ          entity.InputType
 }
 

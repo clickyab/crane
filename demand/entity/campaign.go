@@ -55,11 +55,11 @@ func (s Strategy) Valid() bool {
 // Campaign is the single campaign in system
 type Campaign interface {
 	// ID return the campaign id
-	ID() int64
+	ID() int32
 	// Name is the campaign name
 	Name() string
 	// Make sure the result is >= 1
-	Frequency() int
+	Frequency() int32
 	//BlackListPublisher shows publishers in blacklist
 	BlackListPublisher() []string
 	//BlackListPublisher shows publishers in blacklist

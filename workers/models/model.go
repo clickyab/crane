@@ -9,8 +9,8 @@ import (
 
 // Seat is model for show and click job
 type Seat struct {
-	AdID         int64              `json:"ad"`
-	AdSize       int                `json:"size"`
+	AdID         int32              `json:"ad"`
+	AdSize       int32              `json:"size"`
 	SlotPublicID string             `json:"slot"`
 	ReserveHash  string             `json:"rh"`
 	WinnerBID    float64            `json:"wb"`

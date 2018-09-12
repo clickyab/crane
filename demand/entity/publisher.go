@@ -40,13 +40,13 @@ type Publisher interface {
 	// Supplier return the exchange object for this publisher
 	Supplier() Supplier
 	// CTR returns ctr of a slot with specific size
-	CTR(int) float64
+	CTR(int32) float32
 	// Type return type of this publisher
 	Type() PublisherType
 	// Attributes si any other attributes that is not generally required for other part of the system
 	Attributes() map[PublisherAttributes]interface{}
 	// MinCPC return min cpc based on ad type
-	MinCPC(string) float64
+	MinCPC(string) float32
 	// Categories return categories
 	Categories() []openrtb.ContentCategory
 }

@@ -86,9 +86,9 @@ func (mr *MockContextMockRecorder) Carrier() *gomock.Call {
 }
 
 // Category mocks base method
-func (m *MockContext) Category() []entity.Category {
+func (m *MockContext) Category() []openrtb.ContentCategory {
 	ret := m.ctrl.Call(m, "Category")
-	ret0, _ := ret[0].([]entity.Category)
+	ret0, _ := ret[0].([]openrtb.ContentCategory)
 	return ret0
 }
 
@@ -445,9 +445,9 @@ func (m *MockCreative) EXPECT() *MockCreativeMockRecorder {
 }
 
 // AdCTR mocks base method
-func (m *MockCreative) AdCTR() float64 {
+func (m *MockCreative) AdCTR() float32 {
 	ret := m.ctrl.Call(m, "AdCTR")
-	ret0, _ := ret[0].(float64)
+	ret0, _ := ret[0].(float32)
 	return ret0
 }
 
@@ -510,9 +510,9 @@ func (mr *MockCreativeMockRecorder) Campaign() *gomock.Call {
 }
 
 // CampaignAdID mocks base method
-func (m *MockCreative) CampaignAdID() int64 {
+func (m *MockCreative) CampaignAdID() int32 {
 	ret := m.ctrl.Call(m, "CampaignAdID")
-	ret0, _ := ret[0].(int64)
+	ret0, _ := ret[0].(int32)
 	return ret0
 }
 
@@ -534,9 +534,9 @@ func (mr *MockCreativeMockRecorder) Capping() *gomock.Call {
 }
 
 // Duration mocks base method
-func (m *MockCreative) Duration() int {
+func (m *MockCreative) Duration() int32 {
 	ret := m.ctrl.Call(m, "Duration")
-	ret0, _ := ret[0].(int)
+	ret0, _ := ret[0].(int32)
 	return ret0
 }
 
@@ -546,9 +546,9 @@ func (mr *MockCreativeMockRecorder) Duration() *gomock.Call {
 }
 
 // Height mocks base method
-func (m *MockCreative) Height() int {
+func (m *MockCreative) Height() int32 {
 	ret := m.ctrl.Call(m, "Height")
-	ret0, _ := ret[0].(int)
+	ret0, _ := ret[0].(int32)
 	return ret0
 }
 
@@ -558,9 +558,9 @@ func (mr *MockCreativeMockRecorder) Height() *gomock.Call {
 }
 
 // ID mocks base method
-func (m *MockCreative) ID() int64 {
+func (m *MockCreative) ID() int32 {
 	ret := m.ctrl.Call(m, "ID")
-	ret0, _ := ret[0].(int64)
+	ret0, _ := ret[0].(int32)
 	return ret0
 }
 
@@ -570,9 +570,9 @@ func (mr *MockCreativeMockRecorder) ID() *gomock.Call {
 }
 
 // MaxBID mocks base method
-func (m *MockCreative) MaxBID() int64 {
+func (m *MockCreative) MaxBID() int32 {
 	ret := m.ctrl.Call(m, "MaxBID")
-	ret0, _ := ret[0].(int64)
+	ret0, _ := ret[0].(int32)
 	return ret0
 }
 
@@ -616,9 +616,9 @@ func (mr *MockCreativeMockRecorder) SetCapping(arg0 interface{}) *gomock.Call {
 }
 
 // Size mocks base method
-func (m *MockCreative) Size() int {
+func (m *MockCreative) Size() int32 {
 	ret := m.ctrl.Call(m, "Size")
-	ret0, _ := ret[0].(int)
+	ret0, _ := ret[0].(int32)
 	return ret0
 }
 
@@ -664,9 +664,9 @@ func (mr *MockCreativeMockRecorder) Type() *gomock.Call {
 }
 
 // Width mocks base method
-func (m *MockCreative) Width() int {
+func (m *MockCreative) Width() int32 {
 	ret := m.ctrl.Call(m, "Width")
-	ret0, _ := ret[0].(int)
+	ret0, _ := ret[0].(int32)
 	return ret0
 }
 
@@ -783,9 +783,9 @@ func (mr *MockCampaignMockRecorder) Country() *gomock.Call {
 }
 
 // Frequency mocks base method
-func (m *MockCampaign) Frequency() int {
+func (m *MockCampaign) Frequency() int32 {
 	ret := m.ctrl.Call(m, "Frequency")
-	ret0, _ := ret[0].(int)
+	ret0, _ := ret[0].(int32)
 	return ret0
 }
 
@@ -807,9 +807,9 @@ func (mr *MockCampaignMockRecorder) Hoods() *gomock.Call {
 }
 
 // ID mocks base method
-func (m *MockCampaign) ID() int64 {
+func (m *MockCampaign) ID() int32 {
 	ret := m.ctrl.Call(m, "ID")
-	ret0, _ := ret[0].(int64)
+	ret0, _ := ret[0].(int32)
 	return ret0
 }
 
@@ -953,9 +953,9 @@ func (mr *MockPublisherMockRecorder) Attributes() *gomock.Call {
 }
 
 // CTR mocks base method
-func (m *MockPublisher) CTR(arg0 int) float64 {
+func (m *MockPublisher) CTR(arg0 int32) float32 {
 	ret := m.ctrl.Call(m, "CTR", arg0)
-	ret0, _ := ret[0].(float64)
+	ret0, _ := ret[0].(float32)
 	return ret0
 }
 
@@ -1013,9 +1013,9 @@ func (mr *MockPublisherMockRecorder) MinBid() *gomock.Call {
 }
 
 // MinCPC mocks base method
-func (m *MockPublisher) MinCPC(arg0 string) float64 {
+func (m *MockPublisher) MinCPC(arg0 string) float32 {
 	ret := m.ctrl.Call(m, "MinCPC", arg0)
-	ret0, _ := ret[0].(float64)
+	ret0, _ := ret[0].(float32)
 	return ret0
 }
 
@@ -1084,9 +1084,9 @@ func (m *MockSelectedCreative) EXPECT() *MockSelectedCreativeMockRecorder {
 }
 
 // AdCTR mocks base method
-func (m *MockSelectedCreative) AdCTR() float64 {
+func (m *MockSelectedCreative) AdCTR() float32 {
 	ret := m.ctrl.Call(m, "AdCTR")
-	ret0, _ := ret[0].(float64)
+	ret0, _ := ret[0].(float32)
 	return ret0
 }
 
@@ -1137,9 +1137,9 @@ func (mr *MockSelectedCreativeMockRecorder) Attributes() *gomock.Call {
 }
 
 // CalculatedCPC mocks base method
-func (m *MockSelectedCreative) CalculatedCPC() float64 {
+func (m *MockSelectedCreative) CalculatedCPC() float32 {
 	ret := m.ctrl.Call(m, "CalculatedCPC")
-	ret0, _ := ret[0].(float64)
+	ret0, _ := ret[0].(float32)
 	return ret0
 }
 
@@ -1149,9 +1149,9 @@ func (mr *MockSelectedCreativeMockRecorder) CalculatedCPC() *gomock.Call {
 }
 
 // CalculatedCPM mocks base method
-func (m *MockSelectedCreative) CalculatedCPM() float64 {
+func (m *MockSelectedCreative) CalculatedCPM() float32 {
 	ret := m.ctrl.Call(m, "CalculatedCPM")
-	ret0, _ := ret[0].(float64)
+	ret0, _ := ret[0].(float32)
 	return ret0
 }
 
@@ -1161,9 +1161,9 @@ func (mr *MockSelectedCreativeMockRecorder) CalculatedCPM() *gomock.Call {
 }
 
 // CalculatedCTR mocks base method
-func (m *MockSelectedCreative) CalculatedCTR() float64 {
+func (m *MockSelectedCreative) CalculatedCTR() float32 {
 	ret := m.ctrl.Call(m, "CalculatedCTR")
-	ret0, _ := ret[0].(float64)
+	ret0, _ := ret[0].(float32)
 	return ret0
 }
 
@@ -1185,9 +1185,9 @@ func (mr *MockSelectedCreativeMockRecorder) Campaign() *gomock.Call {
 }
 
 // CampaignAdID mocks base method
-func (m *MockSelectedCreative) CampaignAdID() int64 {
+func (m *MockSelectedCreative) CampaignAdID() int32 {
 	ret := m.ctrl.Call(m, "CampaignAdID")
-	ret0, _ := ret[0].(int64)
+	ret0, _ := ret[0].(int32)
 	return ret0
 }
 
@@ -1209,9 +1209,9 @@ func (mr *MockSelectedCreativeMockRecorder) Capping() *gomock.Call {
 }
 
 // Duration mocks base method
-func (m *MockSelectedCreative) Duration() int {
+func (m *MockSelectedCreative) Duration() int32 {
 	ret := m.ctrl.Call(m, "Duration")
-	ret0, _ := ret[0].(int)
+	ret0, _ := ret[0].(int32)
 	return ret0
 }
 
@@ -1221,9 +1221,9 @@ func (mr *MockSelectedCreativeMockRecorder) Duration() *gomock.Call {
 }
 
 // Height mocks base method
-func (m *MockSelectedCreative) Height() int {
+func (m *MockSelectedCreative) Height() int32 {
 	ret := m.ctrl.Call(m, "Height")
-	ret0, _ := ret[0].(int)
+	ret0, _ := ret[0].(int32)
 	return ret0
 }
 
@@ -1233,9 +1233,9 @@ func (mr *MockSelectedCreativeMockRecorder) Height() *gomock.Call {
 }
 
 // ID mocks base method
-func (m *MockSelectedCreative) ID() int64 {
+func (m *MockSelectedCreative) ID() int32 {
 	ret := m.ctrl.Call(m, "ID")
-	ret0, _ := ret[0].(int64)
+	ret0, _ := ret[0].(int32)
 	return ret0
 }
 
@@ -1257,9 +1257,9 @@ func (mr *MockSelectedCreativeMockRecorder) IsSecBid() *gomock.Call {
 }
 
 // MaxBID mocks base method
-func (m *MockSelectedCreative) MaxBID() int64 {
+func (m *MockSelectedCreative) MaxBID() int32 {
 	ret := m.ctrl.Call(m, "MaxBID")
-	ret0, _ := ret[0].(int64)
+	ret0, _ := ret[0].(int32)
 	return ret0
 }
 
@@ -1303,9 +1303,9 @@ func (mr *MockSelectedCreativeMockRecorder) SetCapping(arg0 interface{}) *gomock
 }
 
 // Size mocks base method
-func (m *MockSelectedCreative) Size() int {
+func (m *MockSelectedCreative) Size() int32 {
 	ret := m.ctrl.Call(m, "Size")
-	ret0, _ := ret[0].(int)
+	ret0, _ := ret[0].(int32)
 	return ret0
 }
 
@@ -1351,9 +1351,9 @@ func (mr *MockSelectedCreativeMockRecorder) Type() *gomock.Call {
 }
 
 // Width mocks base method
-func (m *MockSelectedCreative) Width() int {
+func (m *MockSelectedCreative) Width() int32 {
 	ret := m.ctrl.Call(m, "Width")
-	ret0, _ := ret[0].(int)
+	ret0, _ := ret[0].(int32)
 	return ret0
 }
 
@@ -1493,9 +1493,9 @@ func (mr *MockSeatMockRecorder) CPM() *gomock.Call {
 }
 
 // CTR mocks base method
-func (m *MockSeat) CTR() float64 {
+func (m *MockSeat) CTR() float32 {
 	ret := m.ctrl.Call(m, "CTR")
-	ret0, _ := ret[0].(float64)
+	ret0, _ := ret[0].(float32)
 	return ret0
 }
 
@@ -1529,9 +1529,9 @@ func (mr *MockSeatMockRecorder) FatFinger() *gomock.Call {
 }
 
 // Height mocks base method
-func (m *MockSeat) Height() int {
+func (m *MockSeat) Height() int32 {
 	ret := m.ctrl.Call(m, "Height")
-	ret0, _ := ret[0].(int)
+	ret0, _ := ret[0].(int32)
 	return ret0
 }
 
@@ -1577,9 +1577,9 @@ func (mr *MockSeatMockRecorder) MinBid() *gomock.Call {
 }
 
 // MinCPC mocks base method
-func (m *MockSeat) MinCPC() float64 {
+func (m *MockSeat) MinCPC() float32 {
 	ret := m.ctrl.Call(m, "MinCPC")
-	ret0, _ := ret[0].(float64)
+	ret0, _ := ret[0].(float32)
 	return ret0
 }
 
@@ -1589,9 +1589,9 @@ func (mr *MockSeatMockRecorder) MinCPC() *gomock.Call {
 }
 
 // MinCPM mocks base method
-func (m *MockSeat) MinCPM() float64 {
+func (m *MockSeat) MinCPM() float32 {
 	ret := m.ctrl.Call(m, "MinCPM")
-	ret0, _ := ret[0].(float64)
+	ret0, _ := ret[0].(float32)
 	return ret0
 }
 
@@ -1647,9 +1647,9 @@ func (mr *MockSeatMockRecorder) SetWinnerAdvertise(arg0, arg1, arg2 interface{})
 }
 
 // Size mocks base method
-func (m *MockSeat) Size() int {
+func (m *MockSeat) Size() int32 {
 	ret := m.ctrl.Call(m, "Size")
-	ret0, _ := ret[0].(int)
+	ret0, _ := ret[0].(int32)
 	return ret0
 }
 
@@ -1659,9 +1659,9 @@ func (mr *MockSeatMockRecorder) Size() *gomock.Call {
 }
 
 // SoftCPM mocks base method
-func (m *MockSeat) SoftCPM() float64 {
+func (m *MockSeat) SoftCPM() float32 {
 	ret := m.ctrl.Call(m, "SoftCPM")
-	ret0, _ := ret[0].(float64)
+	ret0, _ := ret[0].(float32)
 	return ret0
 }
 
@@ -1695,9 +1695,9 @@ func (mr *MockSeatMockRecorder) Type() *gomock.Call {
 }
 
 // Width mocks base method
-func (m *MockSeat) Width() int {
+func (m *MockSeat) Width() int32 {
 	ret := m.ctrl.Call(m, "Width")
-	ret0, _ := ret[0].(int)
+	ret0, _ := ret[0].(int32)
 	return ret0
 }
 
@@ -1766,9 +1766,9 @@ func (mr *MockSupplierMockRecorder) AllowCreate() *gomock.Call {
 }
 
 // DefaultCTR mocks base method
-func (m *MockSupplier) DefaultCTR(arg0, arg1 string) float64 {
+func (m *MockSupplier) DefaultCTR(arg0, arg1 string) float32 {
 	ret := m.ctrl.Call(m, "DefaultCTR", arg0, arg1)
-	ret0, _ := ret[0].(float64)
+	ret0, _ := ret[0].(float32)
 	return ret0
 }
 

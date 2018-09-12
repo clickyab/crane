@@ -19,8 +19,8 @@ var (
 type DemandSeatData struct {
 	PubID  string
 	Size   string
-	MinBid float64
-	MinCPC float64
+	MinBid float32
+	MinCPC float32
 	Type   entity.RequestType
 	Video  *openrtb.Video
 	Banner *openrtb.Banner
@@ -36,8 +36,8 @@ func coalesce(v ...int32) int32 {
 	return 0
 }
 
-func incShare(sup entity.Supplier, price float64) float64 {
-	return (price * float64(sup.Share())) / 100
+func incShare(sup entity.Supplier, price float32) float32 {
+	return (price * float32(sup.Share())) / 100
 }
 
 func decShare(sup entity.Supplier, price float64) float64 {
@@ -57,7 +57,7 @@ func SetDemandSeats(sd ...DemandSeatData) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
 		for i := range sd {
 			var (
-				size int
+				size int32
 				err  error
 			)
 			linear := false
@@ -79,7 +79,7 @@ func SetDemandSeats(sd ...DemandSeatData) ShowOptionSetter {
 
 			minCPC := sd[i].MinCPC
 			if minCPC == 0 {
-				minCPC = float64(o.publisher.Supplier().SoftFloorCPC(fmt.Sprint(sd[i].Type), fmt.Sprint(o.publisher.Type())))
+				minCPC = float32(o.publisher.Supplier().SoftFloorCPC(fmt.Sprint(sd[i].Type), fmt.Sprint(o.publisher.Type())))
 			}
 			seat := seat{
 				context:     o,
@@ -90,8 +90,8 @@ func SetDemandSeats(sd ...DemandSeatData) ShowOptionSetter {
 				rate:        o.rate,
 				requestType: sd[i].Type,
 				minCPC:      minCPC,
-				softCPM:     float64(o.Publisher().Supplier().SoftFloorCPM(fmt.Sprint(sd[i].Type), fmt.Sprint(o.Publisher().Type()))),
-				minCPM:      float64(incShare(o.Publisher().Supplier(), sd[i].MinBid)),
+				softCPM:     float32(o.Publisher().Supplier().SoftFloorCPM(fmt.Sprint(sd[i].Type), fmt.Sprint(o.Publisher().Type()))),
+				minCPM:      float32(incShare(o.Publisher().Supplier(), sd[i].MinBid)),
 			}
 
 			if seat.softCPM < seat.minCPM {

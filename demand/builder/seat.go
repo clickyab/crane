@@ -35,17 +35,17 @@ type seat struct {
 	imp   *url.URL
 	win   *url.URL
 
-	size     int
+	size     int32
 	publicID string
 
 	rate float64
 
-	ctr float64
+	ctr float32
 
-	minBid  float64
-	minCPC  float64
-	softCPM float64
-	minCPM  float64
+	minBid  float32
+	minCPC  float32
+	softCPM float32
+	minCPM  float32
 
 	impTime time.Time
 	scpm    float64
@@ -78,21 +78,21 @@ func (s *seat) CPM() float64 {
 // MinBid return the current minimum bid, apply the min bid percentage and
 // rate.
 func (s *seat) MinBid() int64 {
-	return int64(math.Ceil((s.minBid * s.rate / 100) * float64(s.context.MinBIDPercentage())))
+	return int64(math.Ceil((float64(s.minBid) * s.rate / 100) * float64(s.context.MinBIDPercentage())))
 }
 
-func (s *seat) CTR() float64 {
+func (s *seat) CTR() float32 {
 
 	return s.ctr
 }
 
-func (s *seat) Width() int {
+func (s *seat) Width() int32 {
 	w, _ := cyslot.GetSizeByNum(s.size)
 	return w
 
 }
 
-func (s *seat) Height() int {
+func (s *seat) Height() int32 {
 	_, h := cyslot.GetSizeByNum(s.size)
 	return h
 }
@@ -112,7 +112,7 @@ func (s *seat) ReservedHash() string {
 	return s.reserveHash
 }
 
-func (s *seat) Size() int {
+func (s *seat) Size() int32 {
 	return s.size
 }
 
@@ -320,16 +320,16 @@ func (s *seat) Acceptable(advertise entity.Creative) bool {
 }
 
 // MinCPC return min cpc
-func (s *seat) MinCPC() float64 {
+func (s *seat) MinCPC() float32 {
 	return s.minCPC
 }
 
 // MinCPM return min cpm
-func (s *seat) MinCPM() float64 {
+func (s *seat) MinCPM() float32 {
 	return s.minCPM
 }
 
 // SoftCPM is the soft lower cpm
-func (s *seat) SoftCPM() float64 {
+func (s *seat) SoftCPM() float32 {
 	return s.softCPM
 }
