@@ -16,7 +16,6 @@ import (
 	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/kv"
 	"github.com/clickyab/services/safe"
-	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -116,9 +115,6 @@ func replaceParameters(url, domain, campaign, impID, ip string) string {
 	)
 
 	url = r.Replace(url)
-	if strings.Contains(url, "imp") || strings.Contains(url, "click") {
-		logrus.Warnf("conv: campaign: %s, domain: %s, impid: %s,  %s", campaign, domain, impID, url)
-	}
 	return `<html><head><title>` + url +
 		`</title><meta name="robots" content="nofollow"/></head><body onload="document.location.replace('` + url +
 		`')"><script>window.setTimeout( function() { window.location.href = '` + url + `' }, 3000 );</script></body></html>`
