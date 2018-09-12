@@ -105,6 +105,8 @@ func replaceParameters(url, domain, campaign, impID, ip string) string {
 		domain,
 		"{campaign}",
 		campaign,
+		"{click_id}",
+		impID,
 		"{imp_id}",
 		impID,
 		"{ip}",
