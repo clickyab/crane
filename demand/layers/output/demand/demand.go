@@ -165,7 +165,9 @@ func vastMarkup(ctx entity.Context, s entity.VastSeat) *openrtb.BidResponse_Seat
 						Name:    "3rdAd",
 					},
 					AdTitle: cdata(s.WinnerAdvertise().Campaign().Name()),
-					Pricing: "${AUCTION_PRICE}",
+					Pricing: &vast.Pricing{
+						Value: "${AUCTION_PRICE}",
+					},
 					Creatives: []vast.Creative{
 						cv,
 					},
