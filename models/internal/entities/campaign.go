@@ -93,7 +93,7 @@ func (c *Campaign) ConnectionType() []int {
 }
 
 // ID campaign id
-func (c *Campaign) ID() int64 {
+func (c *Campaign) ID() int32 {
 	return c.FCampaignID
 }
 
@@ -105,9 +105,9 @@ func (c *Campaign) Name() string {
 var minFrequency = config.RegisterInt("crane.models.min_frequency", 2, "min frequency for campaign")
 
 // Frequency campaign frequency
-func (c *Campaign) Frequency() int {
+func (c *Campaign) Frequency() int32 {
 	if c.FCampaignFrequency <= 0 {
-		c.FCampaignFrequency = minFrequency.Int()
+		c.FCampaignFrequency = int32(minFrequency.Int())
 	}
 	return c.FCampaignFrequency
 }

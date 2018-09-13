@@ -1,15 +1,13 @@
 package output
 
 import (
+	"context"
 	"html/template"
-
 	"io"
-
 	"math/rand"
 
-	"context"
+	"clickyab.com/crane/openrtb"
 
-	"github.com/bsm/openrtb"
 	"github.com/clickyab/services/config"
 )
 
@@ -224,17 +222,18 @@ type inappContext struct {
 }
 
 // RenderApp will render single ad for app
-func RenderApp(ctx context.Context, w io.Writer, res *openrtb.BidResponse, full string, sdk int64, size int) error {
+func RenderApp(ctx context.Context, w io.Writer, res *openrtb.BidResponse, full string, sdk int64, size int32) error {
 	closeClass := "largeclose"
 	if size == 8 {
 		closeClass = "close"
 	}
 	var noAd bool
 	var adMarkup string
-	if len(res.SeatBid) == 0 || len(res.SeatBid[0].Bid) == 0 {
+
+	if len(res.Seatbid) == 0 || len(res.Seatbid[0].Bid) == 0 {
 		noAd = true
 	} else {
-		adMarkup = res.SeatBid[0].Bid[0].AdMarkup
+		adMarkup = res.Seatbid[0].Bid[0].GetAdm()
 	}
 	return inappTemplate.Execute(w, inappContext{
 		ExtraStyle:    "",

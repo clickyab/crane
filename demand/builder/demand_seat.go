@@ -5,8 +5,8 @@ import (
 
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/internal/cyslot"
-	"github.com/bsm/openrtb"
-	"github.com/bsm/openrtb/native/request"
+	"clickyab.com/crane/openrtb"
+
 	"github.com/clickyab/services/config"
 )
 
@@ -24,10 +24,10 @@ type DemandSeatData struct {
 	Type   entity.RequestType
 	Video  *openrtb.Video
 	Banner *openrtb.Banner
-	Assets []request.Asset
+	Assets []*openrtb.NativeRequest_Asset
 }
 
-func coalesce(v ...int) int {
+func coalesce(v ...int32) int32 {
 	for i := range v {
 		if v[i] > 0 {
 			return v[i]
@@ -57,7 +57,7 @@ func SetDemandSeats(sd ...DemandSeatData) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
 		for i := range sd {
 			var (
-				size int
+				size int32
 				err  error
 			)
 			linear := false
@@ -105,7 +105,7 @@ func SetDemandSeats(sd ...DemandSeatData) ShowOptionSetter {
 				o.seats = append(o.seats, &vastSeat{
 					seat:      seat,
 					linear:    linear,
-					skipAfter: coalesce(sd[i].Video.SkipMin, vastLinearDefaultSkip.Int()),
+					skipAfter: coalesce(sd[i].Video.GetSkipmin(), int32(vastLinearDefaultSkip.Int())),
 				})
 			} else if sd[i].Type == entity.RequestTypeNative {
 				seat.requestType = entity.RequestTypeNative

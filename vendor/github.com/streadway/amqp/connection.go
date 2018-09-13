@@ -25,8 +25,10 @@ const (
 	defaultConnectionTimeout = 30 * time.Second
 	defaultProduct           = "https://github.com/streadway/amqp"
 	defaultVersion           = "β"
-	defaultChannelMax        = maxChannelMax
-	defaultLocale            = "en_US"
+	// Safer default that makes channel leaks a lot easier to spot
+	// before they create operational headaches. See https://github.com/rabbitmq/rabbitmq-server/issues/1593.
+	defaultChannelMax = (2 << 10) - 1
+	defaultLocale     = "en_US"
 )
 
 // Config is used in DialConfig and Open to specify the desired tuning
@@ -71,7 +73,7 @@ type Config struct {
 
 // Connection manages the serialization and deserialization of frames from IO
 // and dispatches the frames to the appropriate channel.  All RPC methods and
-// asyncronous Publishing, Delivery, Ack, Nack and Return messages are
+// asynchronous Publishing, Delivery, Ack, Nack and Return messages are
 // multiplexed on this channel.  There must always be active receivers for
 // every asynchronous message on this connection.
 type Connection struct {
@@ -256,7 +258,7 @@ func (c *Connection) ConnectionState() tls.ConnectionState {
 
 /*
 NotifyClose registers a listener for close events either initiated by an error
-accompaning a connection.close method or by a normal shutdown.
+accompanying a connection.close method or by a normal shutdown.
 
 On normal shutdowns, the chan will be closed.
 

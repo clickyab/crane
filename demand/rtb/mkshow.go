@@ -12,20 +12,20 @@ import (
 
 func getSecondCPM(floorCPM float64, exceedFloor []entity.SelectedCreative) float64 {
 	if !exceedFloor[0].IsSecBid() {
-		return float64(exceedFloor[0].CalculatedCPM())
+		return exceedFloor[0].CalculatedCPM()
 	}
 
 	if len(exceedFloor) > 1 &&
 		exceedFloor[1].IsSecBid() &&
 		!exceedFloor[1].Capping().Selected() &&
 		exceedFloor[1].CalculatedCPM()+10 <= exceedFloor[0].CalculatedCPM() {
-		return float64(exceedFloor[1].CalculatedCPM() + 10)
+		return exceedFloor[1].CalculatedCPM() + 10
 	}
 
 	return floorCPM
 }
 
-func defaultCTR(seatType entity.RequestType, pub entity.PublisherType, sup entity.Supplier) float64 {
+func defaultCTR(seatType entity.RequestType, pub entity.PublisherType, sup entity.Supplier) float32 {
 	return sup.DefaultCTR(fmt.Sprint(seatType), fmt.Sprint(pub))
 }
 
@@ -40,17 +40,17 @@ func doBid(ad entity.Creative, slot entity.Seat, minCPM, minCPC float64, pub ent
 		//get ctr based on the creative and seat type native app / native web / vast web ...
 		adCtr = defaultCTR(slot.RequestType(), pub.Type(), pub.Supplier())
 	}
-	ctr := (adCtr*float64(adCTREffect.Int()) + slotCtr*float64(slotCTREffect.Int())) / float64(100)
+	ctr := float64(adCtr*float32(adCTREffect.Int())+slotCtr*float32(slotCTREffect.Int())) / float64(100)
 	var cpc, cpm float64
 	var exceed bool
 	if ad.Campaign().Strategy() == entity.StrategyCPC {
 		cpm = float64(ad.MaxBID()) * ctr * 10.0
 		cpc = float64(ad.MaxBID())
-		exceed = float64(cpc) >= minCPC
+		exceed = cpc >= minCPC
 	} else {
 		cpm = float64(ad.MaxBID())
 		cpc = float64(ad.MaxBID()) / (ctr * 10.0)
-		exceed = float64(cpm) >= minCPM
+		exceed = cpm >= minCPM
 	}
 
 	return ctr, cpm, cpc, exceed
@@ -86,7 +86,7 @@ func internalSelect(
 	ads []entity.Creative,
 ) {
 	var noVideo bool                 // once set, never unset it again
-	selected := make(map[int64]bool) // all ad selected in this session, to make sure they are not repeated
+	selected := make(map[int32]bool) // all ad selected in this session, to make sure they are not repeated
 
 	for _, seat := range ctx.Seats() {
 		exceedFloor, underFloor := selector(ctx, ads, seat, noVideo, selected)
@@ -134,8 +134,9 @@ func internalSelect(
 		}
 	}
 }
-
 func fixPrice(strategy entity.Strategy, cpc, cpm, minCPC, minCPM float64) (float64, float64) {
+	fmt.Errorf("timeout")
+
 	if strategy == entity.StrategyCPC && cpc < minCPC {
 		return minCPC, cpm
 	}
@@ -150,7 +151,7 @@ func selectAds(_ context.Context, ctx entity.Context, ads []entity.Creative) {
 	internalSelect(ctx, ads)
 }
 
-func selector(ctx entity.Context, ads []entity.Creative, seat entity.Seat, noVideo bool, selected map[int64]bool) (exceedFloor []entity.SelectedCreative, underFloor []entity.SelectedCreative) {
+func selector(ctx entity.Context, ads []entity.Creative, seat entity.Seat, noVideo bool, selected map[int32]bool) (exceedFloor []entity.SelectedCreative, underFloor []entity.SelectedCreative) {
 	assert.True(seat.SoftCPM() >= seat.MinCPM())
 	for _, creative := range ads {
 		if creative.Type() == entity.AdTypeVideo && noVideo {
