@@ -10,7 +10,7 @@ import (
 	"github.com/clickyab/services/assert"
 )
 
-func getSecondCPM(floorCPM float32, exceedFloor []entity.SelectedCreative) float32 {
+func getSecondCPM(floorCPM float64, exceedFloor []entity.SelectedCreative) float64 {
 	if !exceedFloor[0].IsSecBid() {
 		return exceedFloor[0].CalculatedCPM()
 	}
@@ -29,7 +29,7 @@ func defaultCTR(seatType entity.RequestType, pub entity.PublisherType, sup entit
 	return sup.DefaultCTR(fmt.Sprint(seatType), fmt.Sprint(pub))
 }
 
-func doBid(ad entity.Creative, slot entity.Seat, minCPM, minCPC float64, pub entity.Publisher) (float32, float32, float32, bool) {
+func doBid(ad entity.Creative, slot entity.Seat, minCPM, minCPC float64, pub entity.Publisher) (float64, float64, float64, bool) {
 	slotCtr := slot.CTR()
 	if slot.CTR() < 0 {
 		//get ctr based on the creative and seat type native app / native web / vast web ...
@@ -40,17 +40,17 @@ func doBid(ad entity.Creative, slot entity.Seat, minCPM, minCPC float64, pub ent
 		//get ctr based on the creative and seat type native app / native web / vast web ...
 		adCtr = defaultCTR(slot.RequestType(), pub.Type(), pub.Supplier())
 	}
-	ctr := (adCtr*float32(adCTREffect.Int()) + slotCtr*float32(slotCTREffect.Int())) / float32(100)
-	var cpc, cpm float32
+	ctr := float64(adCtr*float32(adCTREffect.Int())+slotCtr*float32(slotCTREffect.Int())) / float64(100)
+	var cpc, cpm float64
 	var exceed bool
 	if ad.Campaign().Strategy() == entity.StrategyCPC {
-		cpm = float32(ad.MaxBID()) * ctr * 10.0
-		cpc = float32(ad.MaxBID())
-		exceed = float64(cpc) >= minCPC
+		cpm = float64(ad.MaxBID()) * ctr * 10.0
+		cpc = float64(ad.MaxBID())
+		exceed = cpc >= minCPC
 	} else {
-		cpm = float32(ad.MaxBID())
-		cpc = float32(ad.MaxBID()) / (ctr * 10.0)
-		exceed = float64(cpm) >= minCPM
+		cpm = float64(ad.MaxBID())
+		cpc = float64(ad.MaxBID()) / (ctr * 10.0)
+		exceed = cpm >= minCPM
 	}
 
 	return ctr, cpm, cpc, exceed
@@ -58,21 +58,21 @@ func doBid(ad entity.Creative, slot entity.Seat, minCPM, minCPC float64, pub ent
 
 type adAndBid struct {
 	entity.Creative
-	ctr    float32
-	cpm    float32
-	cpc    float32
+	ctr    float64
+	cpm    float64
+	cpc    float64
 	secBid bool
 }
 
-func (aab adAndBid) CalculatedCPC() float32 {
+func (aab adAndBid) CalculatedCPC() float64 {
 	return aab.cpc
 }
 
-func (aab adAndBid) CalculatedCTR() float32 {
+func (aab adAndBid) CalculatedCTR() float64 {
 	return aab.ctr
 }
 
-func (aab adAndBid) CalculatedCPM() float32 {
+func (aab adAndBid) CalculatedCPM() float64 {
 	return aab.cpm
 }
 
@@ -134,8 +134,9 @@ func internalSelect(
 		}
 	}
 }
+func fixPrice(strategy entity.Strategy, cpc, cpm, minCPC, minCPM float64) (float64, float64) {
+	fmt.Errorf("timeout")
 
-func fixPrice(strategy entity.Strategy, cpc, cpm, minCPC, minCPM float32) (float32, float32) {
 	if strategy == entity.StrategyCPC && cpc < minCPC {
 		return minCPC, cpm
 	}

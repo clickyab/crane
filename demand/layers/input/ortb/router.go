@@ -33,11 +33,11 @@ type payloadData struct {
 	TID          string
 	Ref          string
 	Parent       string
-	AdID         int64
+	AdID         int32
 	Ad           entity.Creative
 	Supplier     entity.Supplier
 	Publisher    entity.Publisher
-	Bid          float32
+	Bid          float64
 	PublicID     string
 	Suspicious   int
 	UserAgent    string
@@ -113,7 +113,8 @@ func extractor(ctx context.Context, r *http.Request) (*payloadData, error) {
 	if err != nil {
 		return nil, fmt.Errorf("can not find publisher")
 	}
-	pl.AdID, _ = strconv.ParseInt(m["aid"], 10, 64)
+	aid, _ := strconv.ParseInt(m["aid"], 10, 64)
+	pl.AdID = int32(aid)
 	pl.Ad, err = ads.GetAd(pl.AdID)
 	if err != nil {
 		return nil, err
@@ -127,7 +128,7 @@ func extractor(ctx context.Context, r *http.Request) (*payloadData, error) {
 	if err != nil {
 		return nil, fmt.Errorf("invalid bid %s", m["bid"])
 	}
-	pl.Bid = float32(tb)
+	pl.Bid = tb
 	pl.Suspicious, _ = strconv.Atoi(m["susp"])
 
 	pl.UserAgent, pl.IP = r.UserAgent(), framework.RealIP(r)

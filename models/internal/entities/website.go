@@ -228,9 +228,9 @@ func (w *Website) Decode(r io.Reader) error {
 }
 
 // MinCPC return min cpc for this site
-func (w *Website) MinCPC(adType string) float32 {
+func (w *Website) MinCPC(adType string) float64 {
 	if val, ok := w.WMinCPC[adType]; ok {
-		if x, ok := val.(float32); ok {
+		if x, ok := val.(float64); ok {
 			return x
 		}
 	}

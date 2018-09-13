@@ -42,10 +42,10 @@ type seat struct {
 
 	ctr float32
 
-	minBid  float32
-	minCPC  float32
-	softCPM float32
-	minCPM  float32
+	minBid  float64
+	minCPC  float64
+	softCPM float64
+	minCPM  float64
 
 	impTime time.Time
 	scpm    float64
@@ -320,16 +320,16 @@ func (s *seat) Acceptable(advertise entity.Creative) bool {
 }
 
 // MinCPC return min cpc
-func (s *seat) MinCPC() float32 {
+func (s *seat) MinCPC() float64 {
 	return s.minCPC
 }
 
 // MinCPM return min cpm
-func (s *seat) MinCPM() float32 {
+func (s *seat) MinCPM() float64 {
 	return s.minCPM
 }
 
 // SoftCPM is the soft lower cpm
-func (s *seat) SoftCPM() float32 {
+func (s *seat) SoftCPM() float64 {
 	return s.softCPM
 }

@@ -18,7 +18,7 @@ func (fp *fakepub) Categories() []openrtb.ContentCategory {
 	panic("implement me")
 }
 
-func (fp *fakepub) MinCPC(string) float32 {
+func (fp *fakepub) MinCPC(string) float64 {
 	panic("implement me")
 }
 

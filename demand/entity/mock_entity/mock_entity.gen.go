@@ -1137,9 +1137,9 @@ func (mr *MockSelectedCreativeMockRecorder) Attributes() *gomock.Call {
 }
 
 // CalculatedCPC mocks base method
-func (m *MockSelectedCreative) CalculatedCPC() float32 {
+func (m *MockSelectedCreative) CalculatedCPC() float64 {
 	ret := m.ctrl.Call(m, "CalculatedCPC")
-	ret0, _ := ret[0].(float32)
+	ret0, _ := ret[0].(float64)
 	return ret0
 }
 
@@ -1149,9 +1149,9 @@ func (mr *MockSelectedCreativeMockRecorder) CalculatedCPC() *gomock.Call {
 }
 
 // CalculatedCPM mocks base method
-func (m *MockSelectedCreative) CalculatedCPM() float32 {
+func (m *MockSelectedCreative) CalculatedCPM() float64 {
 	ret := m.ctrl.Call(m, "CalculatedCPM")
-	ret0, _ := ret[0].(float32)
+	ret0, _ := ret[0].(float64)
 	return ret0
 }
 
@@ -1161,9 +1161,9 @@ func (mr *MockSelectedCreativeMockRecorder) CalculatedCPM() *gomock.Call {
 }
 
 // CalculatedCTR mocks base method
-func (m *MockSelectedCreative) CalculatedCTR() float32 {
+func (m *MockSelectedCreative) CalculatedCTR() float64 {
 	ret := m.ctrl.Call(m, "CalculatedCTR")
-	ret0, _ := ret[0].(float32)
+	ret0, _ := ret[0].(float64)
 	return ret0
 }
 
@@ -1577,9 +1577,9 @@ func (mr *MockSeatMockRecorder) MinBid() *gomock.Call {
 }
 
 // MinCPC mocks base method
-func (m *MockSeat) MinCPC() float32 {
+func (m *MockSeat) MinCPC() float64 {
 	ret := m.ctrl.Call(m, "MinCPC")
-	ret0, _ := ret[0].(float32)
+	ret0, _ := ret[0].(float64)
 	return ret0
 }
 
@@ -1589,9 +1589,9 @@ func (mr *MockSeatMockRecorder) MinCPC() *gomock.Call {
 }
 
 // MinCPM mocks base method
-func (m *MockSeat) MinCPM() float32 {
+func (m *MockSeat) MinCPM() float64 {
 	ret := m.ctrl.Call(m, "MinCPM")
-	ret0, _ := ret[0].(float32)
+	ret0, _ := ret[0].(float64)
 	return ret0
 }
 
@@ -1659,9 +1659,9 @@ func (mr *MockSeatMockRecorder) Size() *gomock.Call {
 }
 
 // SoftCPM mocks base method
-func (m *MockSeat) SoftCPM() float32 {
+func (m *MockSeat) SoftCPM() float64 {
 	ret := m.ctrl.Call(m, "SoftCPM")
-	ret0, _ := ret[0].(float32)
+	ret0, _ := ret[0].(float64)
 	return ret0
 }
 

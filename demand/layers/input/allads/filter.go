@@ -11,7 +11,7 @@ import (
 
 type mixer struct {
 	f  []reducer.Filter
-	fn func(int64, []string)
+	fn func(int32, []string)
 }
 
 func (m mixer) Check(c entity.Context, a entity.Creative) error {
@@ -30,7 +30,7 @@ func (m mixer) Check(c entity.Context, a entity.Creative) error {
 
 // Mix try to mix multiple filter to single function so there is no need to
 // call Apply more than once
-func Mix(fn func(adid int64, err []string), f ...reducer.Filter) reducer.Filter {
+func Mix(fn func(adid int32, err []string), f ...reducer.Filter) reducer.Filter {
 	return &mixer{f: f, fn: fn}
 }
 

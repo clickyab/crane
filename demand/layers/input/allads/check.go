@@ -74,11 +74,11 @@ func allAdHandler(c context.Context, w http.ResponseWriter, r *http.Request) {
 	whitelist := r.URL.Query().Get("whitelist") == "t"
 
 	var cat []openrtb.ContentCategory
-	if r.URL.Query().Get("cat") != "" {
-		for t := range strings.Split(r.URL.Query().Get("cat"), ",") {
-
-		}
-	}
+	//if r.URL.Query().Get("cat") != "" {
+	//	for t := range strings.Split(r.URL.Query().Get("cat"), ",") {
+	//
+	//	}
+	//}
 
 	ua := r.URL.Query().Get("ua")
 	if ua == "" {
@@ -101,7 +101,7 @@ func allAdHandler(c context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 
 	// filtered ads with errors
-	fe := make(map[int64][]string)
+	fe := make(map[int32][]string)
 
 	var ou *openrtb.User
 	if latLon != "" {
@@ -136,8 +136,8 @@ func allAdHandler(c context.Context, w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	ctr := -1.
-	var iSize int
+	ctr := float32(-1.)
+	var iSize int32
 	if size != "" {
 		iSize, err = cyslot.GetSize(size)
 		if err != nil {
@@ -215,7 +215,7 @@ func applyPublisherFilter(bq *openrtb.BidRequest, target string, sup entity.Supp
 	return publisher, selector, err
 }
 
-func internalSelect(c context.Context, ctx *builder.Context, seat entity.Seat, filteredAds []entity.Creative, fe map[int64][]string) response {
+func internalSelect(c context.Context, ctx *builder.Context, seat entity.Seat, filteredAds []entity.Creative, fe map[int32][]string) response {
 	fAds := make([]responseAds, 0)
 	for id, ers := range fe {
 		a, err := ads.GetAd(id)

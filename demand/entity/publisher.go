@@ -46,7 +46,7 @@ type Publisher interface {
 	// Attributes si any other attributes that is not generally required for other part of the system
 	Attributes() map[PublisherAttributes]interface{}
 	// MinCPC return min cpc based on ad type
-	MinCPC(string) float32
+	MinCPC(string) float64
 	// Categories return categories
 	Categories() []openrtb.ContentCategory
 }

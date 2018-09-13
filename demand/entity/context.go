@@ -84,7 +84,7 @@ type Context interface {
 	// Rate return ratio currency conversion to IRR
 	Rate() float64
 	// ConnectionType return network for app 2g,3g,4g,...
-	ConnectionType() int
+	ConnectionType() openrtb.ConnectionType
 	// Carrier return carrier for app
 	Carrier() string
 	// Brand return brand for app

@@ -12,11 +12,11 @@ import (
 type seat struct {
 	mimes   []string
 	rq      entity.RequestType
-	ctr     float64
+	ctr     float32
 	minBid  float64
 	context entity.Context
 	rate    float64
-	size    int
+	size    int32
 }
 
 func (s *seat) PublicID() string {
@@ -27,15 +27,15 @@ func (s *seat) ReservedHash() string {
 	panic("implement me")
 }
 
-func (s *seat) Width() int {
+func (s *seat) Width() int32 {
 	panic("implement me")
 }
 
-func (s *seat) Height() int {
+func (s *seat) Height() int32 {
 	panic("implement me")
 }
 
-func (s *seat) Size() int {
+func (s *seat) Size() int32 {
 	panic("implement me")
 }
 
@@ -67,7 +67,7 @@ func (s *seat) WinNoticeRequest() *url.URL {
 	panic("implement me")
 }
 
-func (s *seat) CTR() float64 {
+func (s *seat) CTR() float32 {
 	return s.ctr
 }
 

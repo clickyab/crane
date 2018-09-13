@@ -169,7 +169,7 @@ func getImps(r *http.Request, pub entity.Publisher, s map[string]output.Seat, re
 					openrtb.Protocol_VAST_3_0,
 				}, // Only supporting version 3
 				Ext: &openrtb.Video_Ext{
-					Mincpc: float32(pub.MinCPC(string(entity.RequestTypeVast))),
+					Mincpc: pub.MinCPC(string(entity.RequestTypeVast)),
 				},
 			},
 			Bidfloor: float64(pub.FloorCPM()),

@@ -221,9 +221,9 @@ func (app *App) totalImp() (res int64) {
 }
 
 // MinCPC return min cpc for this app
-func (app *App) MinCPC(adType string) float32 {
+func (app *App) MinCPC(adType string) float64 {
 	if val, ok := app.AppMinCPC[adType]; ok {
-		if x, ok := val.(float32); ok {
+		if x, ok := val.(float64); ok {
 			return x
 		}
 	}

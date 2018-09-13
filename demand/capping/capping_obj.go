@@ -93,6 +93,6 @@ func (c *capping) Selected() bool {
 }
 
 // StoreCapping try to store a capping object
-func StoreCapping(mode entity.CappingMode, copID string, adID int64) int64 {
+func StoreCapping(mode entity.CappingMode, copID string, adID int32) int64 {
 	return kv.NewAEAVStore(getCappingKey(mode, copID), dailyCapExpire.Duration()).IncSubKey(fmt.Sprintf("%s_%d", adKey, adID), 1)
 }

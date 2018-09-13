@@ -66,8 +66,8 @@ type Creative interface {
 // sometimes I hate the Go type system
 type SelectedCreative interface {
 	Creative
-	CalculatedCTR() float32
-	CalculatedCPM() float32
-	CalculatedCPC() float32
+	CalculatedCTR() float64
+	CalculatedCPM() float64
+	CalculatedCPC() float64
 	IsSecBid() bool
 }

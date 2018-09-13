@@ -50,11 +50,11 @@ type Seat interface {
 	// only accept video/mp4 but another seat in same imp accept image/jpeg then we can not use normal filters
 	Acceptable(Creative) bool
 	// MinCPC return min cpc of seat
-	MinCPC() float32
+	MinCPC() float64
 	// The minimum CPM allowed by this, HARD FLOOR, after share calculation
-	MinCPM() float32
+	MinCPM() float64
 	// Soft minimum. lower than this means no sec biding. must not be lower than min cpm
-	SoftCPM() float32
+	SoftCPM() float64
 }
 
 // VastSeat is a seat with vast compatibility
