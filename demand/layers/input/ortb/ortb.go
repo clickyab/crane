@@ -20,8 +20,8 @@ import (
 	"clickyab.com/crane/models/apps"
 	"clickyab.com/crane/models/suppliers"
 	"clickyab.com/crane/models/website"
-	"github.com/bsm/openrtb"
-	"github.com/bsm/openrtb/native/request"
+	"clickyab.com/crane/openrtb"
+
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/kv"
@@ -151,9 +151,9 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 	ctx, _ := context.WithTimeout(ct, deadline.Duration())
 
 	//tk := time.Now()
-
 	token := xmux.Param(ctx, "token")
 	sup, err := suppliers.GetSupplierByToken(token)
+
 	//defer monitoring(tk, sup.Name())
 
 	if err != nil {
@@ -162,11 +162,10 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 		writesErrorStatus(w, http.StatusNotFound, e)
 		return
 	}
-
-	payload := openrtb.BidRequest{}
+	payload := &openrtb.BidRequest{}
 	dec := json.NewDecoder(r.Body)
-	if err := dec.Decode(&payload); err != nil {
-		xlog.GetWithError(ctx, err).Error("invalid request from %s", sup.Name())
+	if err := dec.Decode(payload); err != nil {
+		xlog.GetWithError(ctx, err).Errorf("invalid request from %s", sup.Name())
 		writesErrorStatus(w, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -183,8 +182,7 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 		ext         = make(simpleMap)
 		cappingMode = entity.CappingStrict
 	)
-	// If this is not a valid json, just pass by.
-	_ = json.Unmarshal(payload.Ext, &ext)
+
 	fatFinger, _ := ext.Bool("fat_finger")
 	prevent, _ := ext.Bool("prevent_default")
 	underfloor, _ := ext.Bool("underfloor")
@@ -204,13 +202,19 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 		cappingMode = entity.CappingReset
 	}
 
-	if err := payload.Validate(); err != nil {
+	if err := validate(payload); err != nil {
 		xlog.GetWithError(ctx, err).Errorf("invalid data from %s. payload: %#v", sup.Name(), payload)
 		writesErrorStatus(w, http.StatusBadRequest, err.Error())
 		return
 	}
-
-	publisher, selector, ps, prevent, err := handlePublisherSelector(payload, sup, prevent)
+	var domain, bundle string
+	if payload.GetSite() != nil {
+		domain = payload.GetSite().GetDomain()
+	}
+	if payload.GetApp() != nil {
+		bundle = payload.GetApp().Bundle
+	}
+	publisher, selector, ps, prevent, err := handlePublisherSelector(domain, bundle, sup, prevent)
 
 	if err != nil {
 		e := fmt.Sprintf("publisher from %s not supported: %s. payload: %#v", sup.Name(), ps, payload)
@@ -220,7 +224,7 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 	proto := entity.HTTP
 	for i := range payload.Imp {
-		if payload.Imp[i].Secure != 0 {
+		if payload.Imp[i].Secure == 1 {
 			proto = entity.HTTPS
 			break
 		}
@@ -228,13 +232,13 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 
 	ua := ""
 	ip := ""
-	if payload.Device != nil {
-		ua = strings.Trim(payload.Device.UA, "\n\t ")
-		ip = strings.Trim(payload.Device.IP, "\n\t ")
+	if payload.GetDevice() != nil {
+		ua = strings.Trim(payload.GetDevice().GetUa(), "\n\t ")
+		ip = strings.Trim(payload.GetDevice().GetIp(), "\n\t ")
 	}
 	us := ""
-	if payload.User != nil {
-		us = payload.User.ID
+	if payload.GetUser() != nil {
+		us = payload.User.GetId()
 	}
 
 	if ua == "" || ip == "" {
@@ -249,7 +253,7 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("content-type", "application/json")
 		j := json.NewEncoder(w)
 		assert.Nil(j.Encode(openrtb.BidResponse{
-			ID: payload.ID,
+			Id: payload.Id,
 		}))
 		return
 	}
@@ -270,7 +274,7 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetPreventDefault(prevent),
 		builder.SetCappingMode(cappingMode),
 		builder.SetUnderfloor(underfloor),
-		builder.SetCategory(&payload),
+		builder.SetCategory(payload),
 	}
 
 	// TODO : if we need to implement native/app/vast then the next line must be activated and customized
@@ -290,107 +294,93 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	assert.Nil(demand.Render(ctx, w, c, payload.ID))
+	assert.Nil(demand.Render(ctx, w, c, payload.Id))
 
 }
 
-func setPublisherCustomContext(payload openrtb.BidRequest, b []builder.ShowOptionSetter) []builder.ShowOptionSetter {
-	if payload.Site != nil {
-		b = append(b, builder.SetParent(payload.Site.Page, payload.Site.Ref))
+func setPublisherCustomContext(payload *openrtb.BidRequest, b []builder.ShowOptionSetter) []builder.ShowOptionSetter {
+	if payload.GetSite() != nil {
+		b = append(b, builder.SetParent(payload.GetSite().GetPage(), payload.GetSite().GetRef()))
 	}
-	if payload.App != nil {
-		b = append(b, builder.SetConnType(payload.Device.ConnType))
-		b = append(b, builder.SetCarrier(payload.Device.Carrier))
-		b = append(b, builder.SetBrand(payload.Device.Model))
+	if payload.GetApp() != nil && payload.GetDevice() != nil {
+		b = append(b, builder.SetConnType(payload.GetDevice().GetConnectiontype()))
+		b = append(b, builder.SetCarrier(payload.GetDevice().GetCarrier()))
+		b = append(b, builder.SetBrand(payload.GetDevice().GetModel()))
 	}
 	return b
 }
 
-func intInArray(v int, all ...int) bool {
-	for i := range all {
-		if v == all[i] {
-			return true
-		}
-	}
-
-	return false
-}
-
-func seatDetail(req openrtb.BidRequest) ([]builder.DemandSeatData, bool) {
+func seatDetail(req *openrtb.BidRequest) ([]builder.DemandSeatData, bool) {
 	var (
 		imp    = req.Imp
 		seats  = make([]builder.DemandSeatData, 0)
-		w, h   int
+		w, h   int32
 		vast   bool
-		assets []request.Asset
+		assets []*openrtb.NativeRequest_Asset
 	)
 	for i := range imp {
 		var t entity.RequestType
-		if imp[i].Video != nil {
+		if imp[i].GetVideo() != nil {
 			w, h = imp[i].Video.W, imp[i].Video.H
 			t = entity.RequestTypeVast
 			// We just support version 3
-			if !intInArray(3, append(imp[i].Video.Protocols, imp[i].Video.Protocol)...) {
+			ver := false
+			for _, pc := range imp[i].Video.Protocols {
+				if pc == openrtb.Protocol_VASTX3X0 {
+					ver = true
+				}
+			}
+			if !ver {
 				continue
 			}
-			vast = true
-		} else if imp[i].Banner != nil {
-			w, h = imp[i].Banner.W, imp[i].Banner.H
+		} else if imp[i].GetBanner() != nil {
+			w, h = imp[i].GetBanner().W, imp[i].GetBanner().H
 			t = entity.RequestTypeBanner
-		} else if imp[i].Native != nil {
+		} else if imp[i].GetNative() != nil {
 			t = entity.RequestTypeNative
-			req := request.Request{}
-			err := json.Unmarshal(imp[i].Native.Request, &req)
-			assert.Nil(err)
-			assets = req.Assets
+			assets = imp[i].GetNative().GetRequestXnative().GetAssets()
 		}
-		var (
-			ext = make(simpleMap)
-		)
-		// If this is not a valid json, just pass by.
-		_ = json.Unmarshal(imp[i].Ext, &ext)
+
 		seats = append(seats, builder.DemandSeatData{
-			MinBid: imp[i].BidFloor,
-			PubID:  imp[i].ID,
+			MinBid: imp[i].GetBidfloor(),
+			PubID:  imp[i].Id,
 			Size:   fmt.Sprintf("%dx%d", w, h),
 			Type:   t,
-			Video:  imp[i].Video,
+			Video:  imp[i].GetVideo(),
 			Banner: imp[i].Banner,
 			Assets: assets,
-			MinCPC: ext.Float64("min_cpc"),
+			MinCPC: func() float64 {
+				if ex := imp[i].GetExt(); ex != nil {
+					return ex.Mincpc
+				}
+				return 0
+			}(),
 		})
 	}
 	return seats, vast
 }
 
-func handlePublisherSelector(payload openrtb.BidRequest, sup entity.Supplier, prevent bool) (entity.Publisher, []reducer.Filter, string, bool, error) {
+func handlePublisherSelector(domain, bundle string, sup entity.Supplier, prevent bool) (entity.Publisher, []reducer.Filter, string, bool, error) {
 	var (
 		publisher entity.Publisher
 		selector  []reducer.Filter
 		ps        string
 		err       error
 	)
-	if payload.Site != nil {
-		if payload.Site.Domain == "" {
-			err = errors.New("website domain is empty")
-		} else {
-			ps = payload.Site.Domain
-			publisher, err = website.GetWebSiteOrFake(sup, payload.Site.Domain)
-			prevent = false // do not accept prevent default on web requestType
-			selector = ortbWebSelector
-		}
-	} else if payload.App != nil {
-		if payload.App.Bundle == "" {
-			err = errors.New("app bundle is empty")
-		} else {
-			ps = payload.App.Bundle
-			publisher, err = apps.GetAppOrFake(sup, payload.App.Bundle)
-			selector = ortbAppSelector
-		}
+	if domain != "" {
+		ps = domain
+		publisher, err = website.GetWebSiteOrFake(sup, domain)
+		prevent = false // do not accept prevent default on web requestType
+		selector = ortbWebSelector
+
+	} else if bundle != "" {
+		ps = bundle
+		publisher, err = apps.GetAppOrFake(sup, bundle)
+		selector = ortbAppSelector
 
 	} else {
 		ps = "None"
-		err = errors.New("not supported")
+		err = errors.New("publisher not supported")
 	}
 	return publisher, selector, ps, prevent, err
 }

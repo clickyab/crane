@@ -26,14 +26,14 @@ type controller struct {
 
 type payloadData struct {
 	ReserveHash  string
-	Size         int
+	Size         int32
 	Type         entity.InputType
 	requestType  entity.RequestType
 	PubType      entity.PublisherType
 	TID          string
 	Ref          string
 	Parent       string
-	AdID         int64
+	AdID         int32
 	Ad           entity.Creative
 	Supplier     entity.Supplier
 	Publisher    entity.Publisher
@@ -113,20 +113,24 @@ func extractor(ctx context.Context, r *http.Request) (*payloadData, error) {
 	if err != nil {
 		return nil, fmt.Errorf("can not find publisher")
 	}
-	pl.AdID, _ = strconv.ParseInt(m["aid"], 10, 64)
+	aid, _ := strconv.ParseInt(m["aid"], 10, 64)
+	pl.AdID = int32(aid)
 	pl.Ad, err = ads.GetAd(pl.AdID)
 	if err != nil {
 		return nil, err
 	}
-	pl.Size, err = strconv.Atoi(xmux.Param(ctx, "size"))
+	ts, err := strconv.Atoi(xmux.Param(ctx, "size"))
 	if err != nil {
 		return nil, fmt.Errorf("invalid size %s", m["size"])
 	}
-	pl.Bid, err = strconv.ParseFloat(m["bid"], 64)
+	pl.Size = int32(ts)
+	tb, err := strconv.ParseFloat(m["bid"], 64)
 	if err != nil {
 		return nil, fmt.Errorf("invalid bid %s", m["bid"])
 	}
+	pl.Bid = tb
 	pl.Suspicious, _ = strconv.Atoi(m["susp"])
+
 	pl.UserAgent, pl.IP = r.UserAgent(), framework.RealIP(r)
 	mode := 0
 	if pl.Publisher.Type() == entity.PublisherTypeApp {

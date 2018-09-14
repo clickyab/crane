@@ -1,11 +1,9 @@
 package rtb
 
 import (
-	"testing"
-
 	"fmt"
-
 	"math/rand"
+	"testing"
 
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/demand/entity/mock_entity"
@@ -197,7 +195,7 @@ type sample struct {
 	winner  entity.Creative
 }
 
-var default_floor_cpm = map[string]int64{"web_vast": 2000,
+var default_floor_cpm = map[string]int32{"web_vast": 2000,
 	"web_banner": 2000,
 	"web_native": 2000,
 	"app_vast":   2000,
@@ -223,7 +221,7 @@ func contextMaker(minbid int64, winner entity.Creative, underfloor bool, strateg
 	seat.EXPECT().MinCPM().Return(float64(0)).AnyTimes()
 	seat.EXPECT().SoftCPM().Return(float64(0)).AnyTimes()
 	seat.EXPECT().Acceptable(gomock.Any()).Return(true).AnyTimes()
-	seat.EXPECT().CTR().Return(.1).AnyTimes()
+	seat.EXPECT().CTR().Return(float32(.1)).AnyTimes()
 	if winner == nil {
 		seat.EXPECT().WinnerAdvertise().Return(nil).AnyTimes()
 	}
@@ -260,9 +258,9 @@ func contextMaker(minbid int64, winner entity.Creative, underfloor bool, strateg
 	return ctx
 }
 
-func creativeMaker(maxbid int64, ctr float64, strategy entity.Strategy, c *gomock.Controller) entity.Creative {
+func creativeMaker(maxbid int32, ctr float32, strategy entity.Strategy, c *gomock.Controller) entity.Creative {
 
-	rnd := rand.Int63()
+	rnd := rand.Int31()
 	ad := mock_entity.NewMockCreative(c)
 	ad.EXPECT().ID().Return(rnd).AnyTimes()
 	ad.EXPECT().MaxBID().Return(maxbid).AnyTimes()
@@ -275,7 +273,7 @@ func creativeMaker(maxbid int64, ctr float64, strategy entity.Strategy, c *gomoc
 	campaign := mock_entity.NewMockCampaign(c)
 	campaign.EXPECT().ID().Return(rnd + 1).AnyTimes()
 	campaign.EXPECT().Strategy().Return(strategy).AnyTimes()
-	campaign.EXPECT().Frequency().Return(10).AnyTimes()
+	campaign.EXPECT().Frequency().Return(int32(10)).AnyTimes()
 	ad.EXPECT().Campaign().Return(campaign).AnyTimes()
 	return ad
 }

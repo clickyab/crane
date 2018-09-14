@@ -91,6 +91,9 @@ func clickBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 }
 
 func replaceParameters(url, domain, campaign, impID, ip string) string {
+
+	/// http://example.com/sdfgds/?asghar={imp_id}
+
 	r := strings.NewReplacer(
 		"[app]",
 		domain,
@@ -107,6 +110,8 @@ func replaceParameters(url, domain, campaign, impID, ip string) string {
 		"{click_id}",
 		impID,
 		"{imp_id}",
+		impID,
+		"{click_id}",
 		impID,
 		"{ip}",
 		ip,

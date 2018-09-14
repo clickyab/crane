@@ -4,13 +4,11 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"net/http"
 
-	"fmt"
-
-	"io/ioutil"
-
-	"github.com/bsm/openrtb"
+	"clickyab.com/crane/openrtb"
 	"github.com/clickyab/services/xlog"
 )
 

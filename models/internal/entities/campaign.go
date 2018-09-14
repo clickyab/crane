@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"clickyab.com/crane/demand/entity"
+	"clickyab.com/crane/openrtb"
 	"github.com/clickyab/services/config"
 )
 
@@ -26,7 +27,7 @@ const (
 // Campaign implement entity advertise interface
 type Campaign struct {
 	ad
-	category       []entity.Category
+	category       []openrtb.ContentCategory
 	strategy       entity.Strategy
 	connectionType []int
 }
@@ -93,7 +94,7 @@ func (c *Campaign) ConnectionType() []int {
 }
 
 // ID campaign id
-func (c *Campaign) ID() int64 {
+func (c *Campaign) ID() int32 {
 	return c.FCampaignID
 }
 
@@ -105,9 +106,9 @@ func (c *Campaign) Name() string {
 var minFrequency = config.RegisterInt("crane.models.min_frequency", 2, "min frequency for campaign")
 
 // Frequency campaign frequency
-func (c *Campaign) Frequency() int {
+func (c *Campaign) Frequency() int32 {
 	if c.FCampaignFrequency <= 0 {
-		c.FCampaignFrequency = minFrequency.Int()
+		c.FCampaignFrequency = int32(minFrequency.Int())
 	}
 	return c.FCampaignFrequency
 }
@@ -145,16 +146,19 @@ func (c *Campaign) LatLon() (bool, float64, float64, float64) {
 }
 
 // Category allowed category
-func (c *Campaign) Category() []entity.Category {
+func (c *Campaign) Category() []openrtb.ContentCategory {
 	if c.category != nil {
 		return c.category
 	}
-	c.category = make([]entity.Category, 0)
+	c.category = make([]openrtb.ContentCategory, 0)
 	if !c.CampaignBillingType.Valid {
 		return c.category
 	}
 	for _, v := range c.CampaignCat.Array() {
-		c.category = append(c.category, entity.Category(v))
+		r, ok := openrtb.ContentCategory_value["IAB"+strings.Replace(v, "-", "S", -1)]
+		if ok {
+			c.category = append(c.category, openrtb.ContentCategory(r))
+		}
 	}
 	return c.category
 }

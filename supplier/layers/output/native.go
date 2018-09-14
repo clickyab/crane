@@ -3,13 +3,12 @@ package output
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"strings"
 
-	"encoding/json"
-
-	"github.com/bsm/openrtb"
+	"clickyab.com/crane/openrtb"
 	"github.com/bsm/openrtb/native/response"
 )
 
@@ -24,13 +23,13 @@ type nativeResp struct {
 func RenderNative(_ context.Context, resp *openrtb.BidResponse, tpl *template.Template) ([]byte, error) {
 	var res []nativeResp
 
-	for i := range resp.SeatBid {
-		AllBid := resp.SeatBid[i].Bid
+	for i := range resp.GetSeatbid() {
+		AllBid := resp.GetSeatbid()[i].GetBid()
 		if len(AllBid) < 1 {
 			continue
 		}
 		bid := AllBid[0]
-		markup := strings.Replace(bid.AdMarkup, "${AUCTION_PRICE}", fmt.Sprint(bid.Price), -1)
+		markup := strings.Replace(bid.GetAdm(), "${AUCTION_PRICE}", fmt.Sprint(bid.Price), -1)
 		bs := response.Response{}
 		err := json.Unmarshal([]byte(markup), &bs)
 		if err != nil {

@@ -24,7 +24,7 @@ type Supplier interface {
 	SoftFloorCPC(string, string) int64
 	// DefaultCTR for this supplier by request sub type and publisher type
 	// example : web banner,web vast, app native , ...
-	DefaultCTR(string, string) float64
+	DefaultCTR(string, string) float32
 	// TinyMark means we can add our mark to it
 	TinyMark() bool
 	// TinyLogo will be the url to the logo (ex: //clickyab.com/tiny.png)

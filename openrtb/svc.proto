@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package openrtb;
+
+
+import  "ortb.proto";
+
+message Token {
+    string token = 1;
+}
+
+
+service OrtbService {
+    rpc Ortb(BidRequest) returns (BidResponse) {};
+    rpc OrtbStream(stream BidRequest) returns (stream BidResponse) {};
+}

@@ -9,15 +9,15 @@ type response struct {
 }
 
 type responseAds struct {
-	ID            int64          `json:"id"`
-	CampaignID    int64          `json:"campaign_id"`
-	MaxBid        int64          `json:"max_bid"`
+	ID            int32          `json:"id"`
+	CampaignID    int32          `json:"campaign_id"`
+	MaxBid        int32          `json:"max_bid"`
 	Errors        []string       `json:"errors,omitempty"`
 	CampaignName  string         `json:"campaign_name,omitempty"`
 	Type          entity.AdType  `json:"type,omitempty"`
 	TargetURL     string         `json:"target_url,omitempty"`
-	Size          int            `json:"size,omitempty"`
-	Frequency     int            `json:"frequency,omitempty"`
+	Size          int32          `json:"size,omitempty"`
+	Frequency     int32          `json:"frequency,omitempty"`
 	CalculatedCPC float64        `json:"calculated_cpc,omitempty"`
 	CalculatedCPM float64        `json:"calculated_cpm,omitempty"`
 	CalculatedCTR float64        `json:"calculated_ctr,omitempty"`
