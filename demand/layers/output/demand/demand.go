@@ -3,18 +3,15 @@ package demand
 import (
 	"context"
 	"encoding/json"
+	"encoding/xml"
 	"fmt"
 	"net/http"
-
-	"encoding/xml"
-
 	"net/url"
-
 	"strings"
 
+	"clickyab.com/crane/openrtb"
+
 	"clickyab.com/crane/demand/entity"
-	"github.com/bsm/openrtb"
-	"github.com/bsm/openrtb/native/response"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/version"
 	"github.com/rs/vast"
@@ -28,71 +25,86 @@ func cdata(in string) vast.CDATAString {
 	}
 }
 
-func nativeMarkup(ctx entity.Context, s entity.NativeSeat) *openrtb.Bid {
-	v := response.Response{
-		Link: response.Link{
-			URL: s.ClickURL().String(),
+func nativeMarkup(ctx entity.Context, s entity.NativeSeat) *openrtb.BidResponse_SeatBid {
+	v := &openrtb.NativeResponse{
+		Link: &openrtb.NativeResponse_Link{
+			Url: s.ClickURL().String(),
 		},
-		ImpTrackers: []string{s.ImpressionURL().String()},
 		Ver:         "1.1",
+		Imptrackers: []string{s.ImpressionURL().String()},
 	}
+
 	for _, f := range s.Filters() {
 		// TODO : Decide for duplicate assets per type :/
 		a := s.WinnerAdvertise().Asset(f.Type, f.SubType, f.Extra...)
 		if len(a) > 0 {
-			req := 0
-			if f.Required {
-				req = 1
+
+			as := &openrtb.NativeResponse_Asset{
+				Id: f.ID,
+				Required: func() int32 {
+					if f.Required {
+						return 1
+					}
+					return 0
+				}(),
 			}
-			as := response.Asset{
-				ID:       f.ID,
-				Required: req,
-			}
+
 			if f.Type == entity.AssetTypeImage {
 				src := a[0].Data
 				if ctx.Protocol() == entity.HTTPS {
 					src = strings.Replace(src, "http://", "https://", -1)
 				}
-				as.Image = &response.Image{
-					URL:    src,
-					Height: a[0].Height,
-					Width:  a[0].Width,
+				as.AssetXoneof = &openrtb.NativeResponse_Asset_Img{
+					Img: &openrtb.NativeResponse_Asset_Image{
+						Url: src,
+						H:   a[0].Height,
+						W:   a[0].Width,
+					},
 				}
 			} else if f.Type == entity.AssetTypeVideo {
 				// TODO : support for video VASTTAG
-				as.Video = &response.Video{}
+				as.AssetXoneof = &openrtb.NativeResponse_Asset_Video_{}
 			} else if f.Type == entity.AssetTypeText && f.SubType == entity.AssetTypeTextSubTypeTitle {
-				as.Title = &response.Title{
-					Text: a[0].Data,
+				as.AssetXoneof = &openrtb.NativeResponse_Asset_Title_{
+					Title: &openrtb.NativeResponse_Asset_Title{
+						Text: a[0].Data,
+						Len:  int32(len(a[0].Data)),
+					},
 				}
 			} else if f.Type == entity.AssetTypeText {
-				as.Data = &response.Data{
-					Value: a[0].Data,
+				as.AssetXoneof = &openrtb.NativeResponse_Asset_Data_{
+					Data: &openrtb.NativeResponse_Asset_Data{
+						Value: a[0].Data,
+					},
 				}
 			}
 			if f.Required {
-				assert.True(as.Data != nil || as.Video != nil || as.Image != nil || as.Title != nil)
+				assert.True(as.AssetXoneof != nil)
 			}
 			v.Assets = append(v.Assets, as)
 		}
 	}
+	return &openrtb.BidResponse_SeatBid{
+		Bid: []*openrtb.BidResponse_SeatBid_Bid{
+			{
 
-	res, err := json.Marshal(v)
-	assert.Nil(err)
-	return &openrtb.Bid{
-		ID:         s.ReservedHash(),
-		ImpID:      s.PublicID(),
-		AdMarkup:   string(res),
-		AdID:       fmt.Sprint(s.WinnerAdvertise().ID()),
-		H:          s.Height(),
-		W:          s.Width(),
-		Price:      s.CPM() / ctx.Rate(),
-		CampaignID: openrtb.StringOrNumber(fmt.Sprint(s.WinnerAdvertise().Campaign().ID())),
-		//NURL:       s.WinNoticeRequest().String(),
+				Id:    s.ReservedHash(),
+				Impid: s.PublicID(),
+				AdmXoneof: &openrtb.BidResponse_SeatBid_Bid_AdmXnative{
+					AdmXnative: v,
+				},
+				Adid:  fmt.Sprint(s.WinnerAdvertise().ID()),
+				H:     int32(s.Height()),
+				W:     int32(s.Width()),
+				Price: s.CPM() / ctx.Rate(),
+				Cid:   fmt.Sprint(s.WinnerAdvertise().Campaign().ID()),
+				// Nurl: s.WinNoticeRequest().String(),
+			},
+		},
 	}
 }
 
-func vastMarkup(ctx entity.Context, s entity.VastSeat) *openrtb.Bid {
+func vastMarkup(ctx entity.Context, s entity.VastSeat) *openrtb.BidResponse_SeatBid {
 	cv := vast.Creative{
 		ID:   s.ReservedHash(),
 		AdID: fmt.Sprint(s.WinnerAdvertise().ID()),
@@ -118,8 +130,8 @@ func vastMarkup(ctx entity.Context, s entity.VastSeat) *openrtb.Bid {
 
 			MediaFiles: []vast.MediaFile{
 				{
-					Height:   s.Height(),
-					Width:    s.Width(),
+					Height:   int(s.Height()),
+					Width:    int(s.Width()),
 					Type:     s.WinnerAdvertise().MimeType(),
 					URI:      src,
 					Delivery: "streaming",
@@ -159,7 +171,9 @@ func vastMarkup(ctx entity.Context, s entity.VastSeat) *openrtb.Bid {
 						Name:    "3rdAd",
 					},
 					AdTitle: cdata(s.WinnerAdvertise().Campaign().Name()),
-					Pricing: "${AUCTION_PRICE}",
+					Pricing: &vast.Pricing{
+						Value: "${AUCTION_PRICE}",
+					},
 					Creatives: []vast.Creative{
 						cv,
 					},
@@ -173,16 +187,22 @@ func vastMarkup(ctx entity.Context, s entity.VastSeat) *openrtb.Bid {
 
 	res, err := xml.MarshalIndent(v, "", "  ")
 	assert.Nil(err)
-	return &openrtb.Bid{
-		ID:         s.ReservedHash(),
-		ImpID:      s.PublicID(),
-		AdMarkup:   string(res),
-		AdID:       fmt.Sprint(s.WinnerAdvertise().ID()),
-		H:          s.Height(),
-		W:          s.Width(),
-		Price:      s.CPM() / ctx.Rate(),
-		CampaignID: openrtb.StringOrNumber(fmt.Sprint(s.WinnerAdvertise().Campaign().ID())),
-		//NURL:       s.WinNoticeRequest().String(),
+	return &openrtb.BidResponse_SeatBid{
+		Bid: []*openrtb.BidResponse_SeatBid_Bid{
+			{
+				Id:    s.ReservedHash(),
+				Impid: s.PublicID(),
+				AdmXoneof: &openrtb.BidResponse_SeatBid_Bid_Adm{
+					Adm: string(res),
+				},
+				Adid:  fmt.Sprint(s.WinnerAdvertise().ID()),
+				H:     s.Height(),
+				W:     s.Width(),
+				Price: s.CPM() / ctx.Rate(),
+				Cid:   fmt.Sprint(s.WinnerAdvertise().Campaign().ID()),
+				// Nurl:       s.WinNoticeRequest().String(),
+			},
+		},
 	}
 }
 
@@ -194,7 +214,7 @@ const bannerMarkupWithoutIframe = `
         </a>
     </div>`
 
-func bannerMarkup(ctx entity.Context, s entity.Seat) *openrtb.Bid {
+func bannerMarkup(ctx entity.Context, s entity.Seat) *openrtb.BidResponse_SeatBid {
 	adMarkup := fmt.Sprintf(
 		`<iframe src="%s&scpm=${AUCTION_PRICE}" width="%d" height="%d" frameborder="0"  scrolling="no" style="max-width:100%%"></iframe>`,
 		s.ImpressionURL().String(),
@@ -205,29 +225,36 @@ func bannerMarkup(ctx entity.Context, s entity.Seat) *openrtb.Bid {
 	if ctx.BannerMarkup() {
 		adMarkup = fmt.Sprintf(bannerMarkupWithoutIframe, s.ClickURL().String(), s.WinnerAdvertise().Media(), s.ImpressionURL().String())
 	}
-	return &openrtb.Bid{
-		ID:         s.ReservedHash(),
-		ImpID:      s.PublicID(),
-		AdMarkup:   adMarkup,
-		AdID:       fmt.Sprint(s.WinnerAdvertise().ID()),
-		CreativeID: fmt.Sprint(s.WinnerAdvertise().ID()),
-		H:          s.Height(),
-		W:          s.Width(),
-		Price:      s.CPM() / ctx.Rate(),
-		CampaignID: openrtb.StringOrNumber(fmt.Sprint(s.WinnerAdvertise().Campaign().ID())),
+	return &openrtb.BidResponse_SeatBid{
+		Bid: []*openrtb.BidResponse_SeatBid_Bid{
+			{
+				Id:    s.ReservedHash(),
+				Impid: s.PublicID(),
+				AdmXoneof: &openrtb.BidResponse_SeatBid_Bid_Adm{
+					Adm: adMarkup,
+				},
+				Adid:  fmt.Sprint(s.WinnerAdvertise().ID()),
+				Crid:  fmt.Sprint(s.WinnerAdvertise().ID()),
+				H:     s.Height(),
+				W:     s.Width(),
+				Price: s.CPM() / ctx.Rate(),
+				Cid:   fmt.Sprint(s.WinnerAdvertise().Campaign().ID()),
+			},
+		},
 	}
+
 }
 
 // Render write open-rtb bid-response to writer
 func Render(_ context.Context, w http.ResponseWriter, ctx entity.Context, rid string) error {
-	var r []openrtb.SeatBid
+	var r []*openrtb.BidResponse_SeatBid
 	w.Header().Set("crane-version", fmt.Sprint(vs.Count))
 	for _, v := range ctx.Seats() {
 		// What if we have no ad for them?
 		if v.WinnerAdvertise() == nil {
 			continue
 		}
-		var bid *openrtb.Bid
+		var bid *openrtb.BidResponse_SeatBid
 		switch v.RequestType() {
 		case entity.RequestTypeBanner:
 			bid = bannerMarkup(ctx, v)
@@ -238,15 +265,15 @@ func Render(_ context.Context, w http.ResponseWriter, ctx entity.Context, rid st
 		}
 
 		if bid != nil {
-			r = append(r, openrtb.SeatBid{Bid: []openrtb.Bid{*bid}})
+			r = append(r, bid)
 		}
 	}
 
 	w.Header().Set("content-type", "application/json")
 	j := json.NewEncoder(w)
 	return j.Encode(openrtb.BidResponse{
-		Currency: ctx.Currency(),
-		ID:       rid,
-		SeatBid:  r,
+		Id:      rid,
+		Cur:     ctx.Currency(),
+		Seatbid: r,
 	})
 }

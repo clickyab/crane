@@ -38,7 +38,7 @@ func applyCapp(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		capping.StoreCapping(cp, userID, adIDInt)
+		capping.StoreCapping(cp, userID, int32(adIDInt))
 	}
 
 	w.WriteHeader(http.StatusOK)

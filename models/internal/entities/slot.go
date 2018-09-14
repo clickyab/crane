@@ -4,7 +4,7 @@ package entities
 // Normal Insert
 
 // FindSlotAd insert into slot to slots_ads table
-func FindSlotAd(sid, adid int64) (int64, error) {
+func FindSlotAd(sid int64, adid int32) (int64, error) {
 	m := NewManager().GetRDbMap()
 	slaID, err := m.SelectInt(`SELECT slot_id FROM slots_ads where slot_id=? AND ad_id=? `, sid, adid)
 	if err == nil && slaID != 0 {
@@ -27,7 +27,7 @@ sla_id=LAST_INSERT_ID(sla_id)`
 }
 
 // FindWebSlotID return slot id for given public-id, slot-size
-func FindWebSlotID(pid string, wid int64, s int) (int64, error) {
+func FindWebSlotID(pid string, wid int64, s int32) (int64, error) {
 	m := NewManager().GetRDbMap()
 	// The pubilc is correct. typo is in database
 	slID, err := m.SelectInt(`SELECT slot_id FROM slots where slot_pubilc_id=? AND w_id=? `, pid, wid)
@@ -47,7 +47,7 @@ slot_id=LAST_INSERT_ID(slot_id)`
 }
 
 // FindAppSlotID return slot id for given public-id, slot-size
-func FindAppSlotID(pid string, appid int64, s int) (int64, error) {
+func FindAppSlotID(pid string, appid int64, s int32) (int64, error) {
 	m := NewManager().GetRDbMap()
 	// The pubilc is correct. typo is in database
 	slID, err := m.SelectInt(`SELECT slot_id FROM slots where slot_pubilc_id=? AND app_id=? `, pid, appid)

@@ -86,8 +86,8 @@ var bannerTemplate = template.Must(template.New("banner_template").Parse(bannerT
 // bannerData is the single ad id
 type bannerData struct {
 	Link           string
-	Width          int
-	Height         int
+	Width          int32
+	Height         int32
 	Src            string
 	Tiny           bool
 	TinyLogo       string

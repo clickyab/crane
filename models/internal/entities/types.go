@@ -8,11 +8,11 @@ import (
 
 type size struct {
 	Width,
-	Height int
+	Height int32
 }
 
 var (
-	sizes = map[int]*size{
+	sizes = map[int32]*size{
 		1:  {Width: 120, Height: 600},
 		2:  {Width: 160, Height: 600},
 		3:  {Width: 300, Height: 250},

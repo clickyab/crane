@@ -41,7 +41,7 @@ func (s *dummy) DefaultMinBid() int64 {
 func (s *dummy) Strategy() entity.Strategy {
 	panic("implement dummy Strategy not valid")
 }
-func (s *dummy) DefaultCTR(string, string) float64 {
+func (s *dummy) DefaultCTR(string, string) float32 {
 	panic("implement dummy DefaultCTR not valid")
 }
 

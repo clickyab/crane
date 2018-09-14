@@ -7,10 +7,10 @@ import (
 	"strconv"
 
 	website "clickyab.com/crane/models/clickyabwebsite"
+	"clickyab.com/crane/openrtb"
 	"clickyab.com/crane/supplier/client"
 	"clickyab.com/crane/supplier/layers/internal/supplier"
 	"clickyab.com/crane/supplier/layers/output"
-	"github.com/bsm/openrtb"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/framework"
@@ -89,37 +89,40 @@ func getNative(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 	ua := user_agent.New(useragent)
 
-	mi := 0
-	if ua.Mobile() {
-		mi = 1
-	}
-
 	bq := &openrtb.BidRequest{
-		ID: <-random.ID,
+		Id: fmt.Sprintf("cly-%s", <-random.ID),
 		User: &openrtb.User{
-			ID: nativeUserIDGenerator(tid, useragent, ip),
+			Id: nativeUserIDGenerator(tid, useragent, ip),
 		},
 		Imp: getImps(r, targetCount, pub, tpl.Image),
-		Site: &openrtb.Site{
-			Page:   parent,
-			Ref:    ref,
-			Mobile: mi,
-			Inventory: openrtb.Inventory{
+		DistributionchannelXoneof: &openrtb.BidRequest_Site{
+			Site: &openrtb.Site{
+				Page: parent,
+				Ref:  ref,
+				Mobile: func() int32 {
+					if ua.Mobile() {
+						return 1
+					}
+					return 0
+				}(),
 				Domain: pub.Name(),
 				Name:   pub.Name(),
-				ID:     fmt.Sprint(pub.ID()),
+				Id:     fmt.Sprint(pub.ID()),
 				Cat:    pub.Categories(),
 			},
 		},
 		Device: &openrtb.Device{
-			IP:  ip,
-			OS:  ua.OS(),
-			UA:  useragent,
-			DNT: dnt,
+			Ip:  ip,
+			Os:  ua.OS(),
+			Ua:  useragent,
+			Dnt: int32(dnt),
+		},
+		Ext: &openrtb.BidRequest_Ext{
+			Capping:    openrtb.Capping_Reset,
+			Underfloor: true,
 		},
 	}
 
-	bq.Ext = []byte(`{"capping_mode": "reset", "underfloor": true}`)
 	br, err := client.Call(ctx, method.String(), server.String(), bq)
 	if err != nil {
 		// TODO send proper message
@@ -127,13 +130,13 @@ func getNative(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	targetCount = getTargetCount(len(br.SeatBid), tpl.Counts...)
+	targetCount = getTargetCount(len(br.GetSeatbid()), tpl.Counts...)
 
 	if targetCount == 0 {
 		w.WriteHeader(http.StatusNoContent)
 		return
 	}
-	br.SeatBid = br.SeatBid[:targetCount] // drop unwanted count
+	br.Seatbid = br.Seatbid[:targetCount] // drop unwanted count
 	result, err := output.RenderNative(ctx, br, tpl.Template)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)

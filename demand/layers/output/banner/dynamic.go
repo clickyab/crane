@@ -12,7 +12,7 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
-var dynTemplate = map[int]*template.Template{}
+var dynTemplate = map[int32]*template.Template{}
 
 const additional = `<style>
 html, body, div, span, applet, object, iframe,
@@ -2095,7 +2095,7 @@ type dynamicAttribute struct {
 	LivePriceBannerPickerSelector   string `mapstructure:"live_price_banner_picker_selector"`
 }
 
-func getTemplate(size int) *template.Template {
+func getTemplate(size int32) *template.Template {
 	r.RLock()
 	defer r.RUnlock()
 	res, ok := dynTemplate[size]
@@ -2121,6 +2121,6 @@ func init() {
 	r.Lock()
 	defer r.Unlock()
 	for i := range dynamic1 {
-		dynTemplate[i] = template.Must(template.New(fmt.Sprintf("template_%d", i)).Parse(strings.Replace(dynamic1[i], "<style>", additional, 1)))
+		dynTemplate[int32(i)] = template.Must(template.New(fmt.Sprintf("template_%d", i)).Parse(strings.Replace(dynamic1[i], "<style>", additional, 1)))
 	}
 }

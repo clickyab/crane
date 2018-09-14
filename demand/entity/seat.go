@@ -12,11 +12,11 @@ type Seat interface {
 	// ReservedHash of slot
 	ReservedHash() string
 	// Width return width of seat
-	Width() int
+	Width() int32
 	// Height return height of seat
-	Height() int
+	Height() int32
 	// Size return the clickyab size
-	Size() int
+	Size() int32
 	// Bid return winner bid
 	Bid() float64
 	// CPM return the cpm of this seat (after winner and bid is set)
@@ -32,7 +32,7 @@ type Seat interface {
 	// WinRequest is the win request url for this advertise
 	WinNoticeRequest() *url.URL
 	// CTR return current ctr for this size in publisher
-	CTR() float64
+	CTR() float32
 	// Type of seat
 	Type() InputType
 	// RequestType of seat

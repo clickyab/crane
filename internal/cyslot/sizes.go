@@ -6,12 +6,12 @@ import (
 
 type size struct {
 	Width,
-	Height int
+	Height int32
 }
 
 var (
 	// Sizes contain all allowed size
-	sizesModel = map[int]*size{
+	sizesModel = map[int32]*size{
 		1:  {Width: 120, Height: 600},
 		2:  {Width: 160, Height: 600},
 		3:  {Width: 300, Height: 250},
@@ -34,7 +34,7 @@ var (
 	}
 )
 
-var sizes = map[string]int{
+var sizes = map[string]int32{
 	"120x600":  1,
 	"160x600":  2,
 	"300x250":  3,
@@ -54,10 +54,10 @@ var sizes = map[string]int{
 	"128x128":  18,
 }
 
-var videoSize = []int{3, 4, 9, 16, 14}
+var videoSize = []int32{3, 4, 9, 16, 14}
 
 // GetSize return the size of a banner in clickyab std
-func GetSize(size string) (int, error) {
+func GetSize(size string) (int32, error) {
 	s, ok := sizes[size]
 	if ok {
 		return s, nil
@@ -67,7 +67,7 @@ func GetSize(size string) (int, error) {
 }
 
 // GetSizeByNum return the size (order: width, height)
-func GetSizeByNum(num int) (int, int) {
+func GetSizeByNum(num int32) (int32, int32) {
 	if v, ok := sizesModel[num]; ok {
 		return v.Width, v.Height
 	}
@@ -76,6 +76,6 @@ func GetSizeByNum(num int) (int, int) {
 }
 
 // GetVideoSize return the sizes available for vast
-func GetVideoSize() []int {
+func GetVideoSize() []int32 {
 	return videoSize
 }

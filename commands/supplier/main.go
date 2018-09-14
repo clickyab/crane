@@ -9,6 +9,7 @@ import (
 	_ "clickyab.com/crane/supplier/layers/output/statics"
 	_ "clickyab.com/crane/supplier/layers/video"
 	_ "clickyab.com/crane/supplier/layers/web"
+
 	// CORS is required for supplier
 	_ "clickyab.com/crane/models/staticseat"
 	_ "clickyab.com/crane/supplier/middleware/cors"

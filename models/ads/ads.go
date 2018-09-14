@@ -29,7 +29,7 @@ func GetAds() []entity.Creative {
 }
 
 // GetAd try to get advertise based on its id
-func GetAd(adID int64) (entity.Creative, error) {
+func GetAd(adID int32) (entity.Creative, error) {
 	ad, err := ads.Get(fmt.Sprint(adID), &entities.Advertise{})
 	if err != nil {
 		x, err := entities.GetAd(adID)
