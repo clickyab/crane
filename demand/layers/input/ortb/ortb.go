@@ -21,6 +21,8 @@ import (
 	"clickyab.com/crane/models/suppliers"
 	"clickyab.com/crane/models/website"
 	"clickyab.com/crane/openrtb"
+	"github.com/davecgh/go-spew/spew"
+	"github.com/golang/protobuf/jsonpb"
 
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/config"
@@ -163,43 +165,40 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	payload := &openrtb.BidRequest{}
-	dec := json.NewDecoder(r.Body)
-	if err := dec.Decode(payload); err != nil {
+
+	err = jsonpb.Unmarshal(r.Body, payload)
+	defer assert.Nil(r.Body.Close())
+	//dec := json.NewDecoder(r.Body)
+	//if err := dec.Decode(payload);
+	if err != nil {
 		xlog.GetWithError(ctx, err).Errorf("invalid request from %s", sup.Name())
 		writesErrorStatus(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	rnd++
-	if rnd%50 == 0 {
+	if rnd%1000 == 0 {
 		logrus.Warn(sup.Name())
-		j, e := json.MarshalIndent(payload, " ", " ")
+		logrus.Warn(spew.Sprintf("%+v", payload))
+		j := jsonpb.Marshaler{}
+		s, e := j.MarshalToString(payload)
 		assert.Nil(e)
-		logrus.Warn(string(j))
+		logrus.Warn(s)
 	}
-	// Known extensions are (currently) fat finger
-	var (
-		ext         = make(simpleMap)
-		cappingMode = entity.CappingStrict
-	)
-
-	fatFinger, _ := ext.Bool("fat_finger")
-	prevent, _ := ext.Bool("prevent_default")
-	underfloor, _ := ext.Bool("underfloor")
-	capping, _ := ext.String("capping_mode")
+	var fatFinger,
+		prevent,
+		underfloor bool
+	var capping = openrtb.Capping_Strict
 	var strategy []string
-	sts, _ := ext.String("strategy")
-	if st := strings.Trim(sts, "\t \n"); st != "" {
-		strategy = strings.Split(st, ",")
-	}
-	tiny, ok := ext.Bool("tiny_mark")
-	if !ok {
-		tiny = sup.TinyMark()
-	}
+	var tiny = sup.TinyMark()
 
-	// Currently not supporting no cap (this is intentional)
-	if capping == "reset" {
-		cappingMode = entity.CappingReset
+	if payload.Ext != nil {
+		fatFinger = payload.Ext.GetFatXfinger()
+		prevent = payload.Ext.GetPrevent()
+		underfloor = payload.Ext.GetUnderfloor()
+		capping = payload.Ext.GetCapping()
+		strategy = payload.Ext.GetStrategy()
+		tiny = payload.Ext.GetTiny()
 	}
 
 	if err := validate(payload); err != nil {
@@ -209,15 +208,16 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 	var domain, bundle string
 	if payload.GetSite() != nil {
+
 		domain = payload.GetSite().GetDomain()
 	}
 	if payload.GetApp() != nil {
-		bundle = payload.GetApp().Bundle
+		bundle = payload.GetApp().GetBundle()
 	}
 	publisher, selector, ps, prevent, err := handlePublisherSelector(domain, bundle, sup, prevent)
 
 	if err != nil {
-		e := fmt.Sprintf("publisher from %s not supported: %s. payload: %#v", sup.Name(), ps, payload)
+		e := fmt.Sprintf("publisher from %s, %s, %s, not supported: %s. payload: %#v", sup.Name(), ps, payload)
 		writesErrorStatus(w, http.StatusBadRequest, e)
 		xlog.GetWithError(ctx, err).Debug(e)
 		return
@@ -272,7 +272,7 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetStrategy(strategy, sup),
 		builder.SetRate(float64(sup.Rate())),
 		builder.SetPreventDefault(prevent),
-		builder.SetCappingMode(cappingMode),
+		builder.SetCappingMode(entity.CappingMode(capping)),
 		builder.SetUnderfloor(underfloor),
 		builder.SetCategory(payload),
 	}

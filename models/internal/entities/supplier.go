@@ -72,11 +72,11 @@ func (s Supplier) SoftFloorCPM(adType string, pubType string) int64 {
 }
 
 // DefaultCTR get ctr by ad type and publisher type
-func (s Supplier) DefaultCTR(adType string, pubType string) float64 {
+func (s Supplier) DefaultCTR(adType string, pubType string) float32 {
 	key := fmt.Sprintf("%s_%s", pubType, adType)
 	if val, ok := s.FDefaultCTR[key]; ok {
 		if x, ok := val.(float64); ok {
-			return x
+			return float32(x)
 		}
 	}
 	panic("[BUG]supplier not support proper default ctr")

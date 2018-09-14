@@ -1,9 +1,8 @@
 language: go
 dist: trusty
 go:
-  - 1.7
   - 1.8
-  - tip
+  - 1.9
 before_install:
   - go get -v github.com/smartystreets/goconvey
   - go get -v github.com/axw/gocov/gocov

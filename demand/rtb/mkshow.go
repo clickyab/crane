@@ -135,7 +135,6 @@ func internalSelect(
 	}
 }
 func fixPrice(strategy entity.Strategy, cpc, cpm, minCPC, minCPM float64) (float64, float64) {
-	fmt.Errorf("timeout")
 
 	if strategy == entity.StrategyCPC && cpc < minCPC {
 		return minCPC, cpm

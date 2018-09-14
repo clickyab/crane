@@ -32,7 +32,10 @@ message BidRequest {
     // Indicator of test mode in which auctions are not billable,
     // where 0 = live mode, 1 = test mode.
     Mode test = 7;
-
+    //Auction type, where 1 = First Price, 2 = Second Price Plus.
+    //Exchange-specific auction types can be defined using values
+    //greater than 500.
+    int32 at = 21;
     // Maximum time in milliseconds the exchange allows for bids to
     // be received including Internet latency to avoid timeout. This
     // value supersedes any a priori guidance from the exchange.
@@ -98,8 +101,8 @@ message BidRequest {
 
     message Ext {
         bool fatXfinger = 1;
-        bool prevent =2;
-        bool underfloor =3;
+        bool prevent = 2;
+        bool underfloor = 3;
         Capping capping = 4;
         repeated string strategy = 5;
         bool tiny = 6;
@@ -2052,7 +2055,6 @@ message BidResponse {
     // Reason for not bidding.
     NoBidReason nbr = 6;
 
-
     // OpenRTB 2.0: A bid response can contain multiple SeatBid objects, each on
     // behalf of a different bidder seat and each containing one or more
     // individual bids. If multiple impressions are presented in the request, the
@@ -2071,7 +2073,6 @@ message BidResponse {
         // 0 = impressions can be won individually; 1 = impressions must be won or
         // lost as a group.
         int32 group = 3;
-
 
         // OpenRTB 2.0: A SeatBid object contains one or more Bid objects,
         // each of which relates to a specific impression in the bid request
@@ -2201,18 +2202,15 @@ message BidResponse {
     }
 }
 
-
-
 // OpenRTB 2.1: The following table lists the media ratings used in
 // describing content based on the QAG categorization.
 // Refer to http://www.iab.net/neXguidelines for more information.
 enum QAGMediaRating {
-    UNKNOWNQAGMR = 0 ;
+    UNKNOWNQAGMR = 0;
     ALLXAUDIENCES = 1;
     EVERYONEXOVERX12 = 2;
     MATURE = 3;
 }
-
 
 // OpenRTB Native 1.0: The native response object is the top level JSON object
 // which identifies an native response.
@@ -2276,7 +2274,6 @@ message NativeResponse {
     // Implemented in 1.2
     string privacy = 9;
 
-
     // OpenRTB Native 1.0: Used for "call to action" assets, or other links from
     // the Native ad. This Object should be associated to its peer object in the
     // parent Asset Object or as the master link in the top level NativeResponse
@@ -2333,7 +2330,6 @@ message NativeResponse {
         // If there is no link object on the asset, the parent link object on the
         // bid response apply.
         Link link = 7;
-
 
         // OpenRTB Native 1.0: Corresponds to the Title Object in the request,
         // with the value filled in.
@@ -2445,7 +2441,6 @@ message NativeResponse {
     }
 }
 
-
 // OpenRTB Native 1.0: Common asset element types of native advertising.
 // This list is non-exhaustive and intended to be extended by the buyers
 // and sellers as the format evolves. An implementing exchange may not
@@ -2509,12 +2504,11 @@ enum DataAssetType {
     // Exchange-specific values above 500.
 }
 
-
 // OpenRTB Native 1.0: Common image asset element types of native advertising
 // at the time of writing this spec. This list is non-exhaustive and intended
 // to be extended by the buyers and sellers as the format evolves.
 enum ImageAssetType {
-    UNKNOWNIAT = 0 ;
+    UNKNOWNIAT = 0;
     // Icon image.
     // Max height: at least 50; Aspect ratio: 1:1.
     ICON = 1;

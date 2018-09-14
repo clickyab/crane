@@ -3,13 +3,13 @@ package client
 import (
 	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 
 	"clickyab.com/crane/openrtb"
 	"github.com/clickyab/services/xlog"
+	"github.com/golang/protobuf/jsonpb"
 )
 
 // Call an openrtp end point
@@ -18,12 +18,13 @@ func Call(ctx context.Context, method, url string, pl *openrtb.BidRequest) (*ope
 	if len(pl.Imp) == 0 {
 		return bid, nil
 	}
-	d, err := json.Marshal(pl)
+	m := jsonpb.Marshaler{}
+	buf := &bytes.Buffer{}
+	err := m.Marshal(buf, pl)
 	if err != nil {
 		xlog.GetWithError(ctx, err).Debug("marshal failed")
 		return nil, err
 	}
-	buf := bytes.NewReader(d)
 	r, err := http.NewRequest(method, url, buf)
 	if err != nil {
 		xlog.GetWithError(ctx, err).Debug("request create failed")
@@ -46,7 +47,7 @@ func Call(ctx context.Context, method, url string, pl *openrtb.BidRequest) (*ope
 		return nil, err
 	}
 
-	err = json.NewDecoder(resp.Body).Decode(bid)
+	err = jsonpb.Unmarshal(resp.Body, bid)
 	if err != nil {
 		xlog.GetWithError(ctx, err).Debug("decode failed")
 		return nil, err

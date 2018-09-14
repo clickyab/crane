@@ -1,6 +1,8 @@
 // Package vast implements IAB VAST 3.0 specification http://www.iab.net/media/file/VASTv3.0.pdf
 package vast
 
+import "encoding/xml"
+
 // VAST is the root <VAST> tag
 type VAST struct {
 	// The version of the VAST spec (should be either "2.0" or "3.0")
@@ -71,12 +73,12 @@ type InLine struct {
 	// Provides a value that represents a price that can be used by real-time bidding
 	// (RTB) systems. VAST is not designed to handle RTB since other methods exist,
 	// but this element is offered for custom solutions if needed.
-	Pricing string `xml:",omitempty"`
+	Pricing *Pricing `xml:",omitempty"`
 	// XML node for custom extensions, as defined by the ad server. When used, a
 	// custom element should be nested under <Extensions> to help separate custom
 	// XML elements from VAST elements. The following example includes a custom
 	// xml element within the Extensions element.
-	Extensions []Extension `xml:"Extensions>Extension,omitempty"`
+	Extensions *[]Extension `xml:"Extensions>Extension,omitempty"`
 }
 
 // Impression is a URI that directs the video player to a tracking resource file that
@@ -154,6 +156,8 @@ type Creative struct {
 	CompanionAds *CompanionAds `xml:",omitempty"`
 	// If defined, defines non linear creatives
 	NonLinearAds *NonLinearAds `xml:",omitempty"`
+	// If present, provides a VAST 4.x universal ad id
+	UniversalAdID *UniversalAdID `xml:"UniversalAdId,omitempty"`
 	// When an API framework is needed to execute creative, a
 	// <CreativeExtensions> element can be added under the <Creative>. This
 	// extension can be used to load an executable creative with or without using
@@ -165,7 +169,7 @@ type Creative struct {
 	// of VAST.
 	// The nested <CreativeExtension> includes an attribute for type, which
 	// specifies the MIME type needed to execute the extension.
-	CreativeExtensions []Extension `xml:"CreativeExtensions>CreativeExtension,omitempty"`
+	CreativeExtensions *[]Extension `xml:"CreativeExtensions>CreativeExtension,omitempty"`
 }
 
 // CompanionAds contains companions creatives
@@ -194,7 +198,7 @@ type CreativeWrapper struct {
 	AdID string `xml:"AdID,attr,omitempty"`
 	// If present, defines a linear creative
 	Linear *LinearWrapper `xml:",omitempty"`
-	// If defined, defins companions creatives
+	// If defined, defines companions creatives
 	CompanionAds *CompanionAdsWrapper `xml:"CompanionAds,omitempty"`
 	// If defined, defines non linear creatives
 	NonLinearAds *NonLinearAdsWrapper `xml:"NonLinearAds,omitempty"`
@@ -235,7 +239,7 @@ type Linear struct {
 	// Duration in standard time format, hh:mm:ss
 	Duration       Duration
 	AdParameters   *AdParameters `xml:",omitempty"`
-	Icons          []Icon
+	Icons          *Icons
 	TrackingEvents []Tracking   `xml:"TrackingEvents>Tracking,omitempty"`
 	VideoClicks    *VideoClicks `xml:",omitempty"`
 	MediaFiles     []MediaFile  `xml:"MediaFiles>MediaFile,omitempty"`
@@ -243,7 +247,7 @@ type Linear struct {
 
 // LinearWrapper defines a wrapped linear creative
 type LinearWrapper struct {
-	Icons          []Icon
+	Icons          *Icons
 	TrackingEvents []Tracking   `xml:"TrackingEvents>Tracking,omitempty"`
 	VideoClicks    *VideoClicks `xml:",omitempty"`
 }
@@ -253,17 +257,17 @@ type Companion struct {
 	// Optional identifier
 	ID string `xml:"id,attr,omitempty"`
 	// Pixel dimensions of companion slot.
-	Width int `xml:"width,attr"`
+	Width int `xml:"width,attr,omitempty"`
 	// Pixel dimensions of companion slot.
-	Height int `xml:"height,attr"`
+	Height int `xml:"height,attr,omitempty"`
 	// Pixel dimensions of the companion asset.
-	AssetWidth int `xml:"assetWidth,attr"`
+	AssetWidth int `xml:"assetWidth,attr,omitempty"`
 	// Pixel dimensions of the companion asset.
-	AssetHeight int `xml:"assetHeight,attr"`
+	AssetHeight int `xml:"assetHeight,attr,omitempty"`
 	// Pixel dimensions of expanding companion ad when in expanded state.
-	ExpandedWidth int `xml:"expandedWidth,attr"`
+	ExpandedWidth int `xml:"expandedWidth,attr,omitempty"`
 	// Pixel dimensions of expanding companion ad when in expanded state.
-	ExpandeHeight int `xml:"expandedHeight,attr"`
+	ExpandedHeight int `xml:"expandedHeight,attr,omitempty"`
 	// The apiFramework defines the method to use for communication with the companion.
 	APIFramework string `xml:"apiFramework,attr,omitempty"`
 	// Used to match companion creative to publisher placement areas on the page.
@@ -303,7 +307,7 @@ type CompanionWrapper struct {
 	// Pixel dimensions of expanding companion ad when in expanded state.
 	ExpandedWidth int `xml:"expandedWidth,attr"`
 	// Pixel dimensions of expanding companion ad when in expanded state.
-	ExpandeHeight int `xml:"expandedHeight,attr"`
+	ExpandedHeight int `xml:"expandedHeight,attr"`
 	// The apiFramework defines the method to use for communication with the companion.
 	APIFramework string `xml:"apiFramework,attr,omitempty"`
 	// Used to match companion creative to publisher placement areas on the page.
@@ -339,7 +343,7 @@ type NonLinear struct {
 	// Pixel dimensions of expanding nonlinear ad when in expanded state.
 	ExpandedWidth int `xml:"expandedWidth,attr"`
 	// Pixel dimensions of expanding nonlinear ad when in expanded state.
-	ExpandeHeight int `xml:"expandedHeight,attr"`
+	ExpandedHeight int `xml:"expandedHeight,attr"`
 	// Whether it is acceptable to scale the image.
 	Scalable bool `xml:"scalable,attr,omitempty"`
 	// Whether the ad must have its aspect ratio maintained when scales.
@@ -374,7 +378,7 @@ type NonLinearWrapper struct {
 	// Pixel dimensions of expanding nonlinear ad when in expanded state.
 	ExpandedWidth int `xml:"expandedWidth,attr"`
 	// Pixel dimensions of expanding nonlinear ad when in expanded state.
-	ExpandeHeight int `xml:"expandedHeight,attr"`
+	ExpandedHeight int `xml:"expandedHeight,attr"`
 	// Whether it is acceptable to scale the image.
 	Scalable bool `xml:"scalable,attr,omitempty"`
 	// Whether the ad must have its aspect ratio maintained when scales.
@@ -388,6 +392,11 @@ type NonLinearWrapper struct {
 	TrackingEvents []Tracking `xml:"TrackingEvents>Tracking,omitempty"`
 	// URLs to ping when user clicks on the the non-linear ad.
 	NonLinearClickTracking []CDATAString `xml:",omitempty"`
+}
+
+type Icons struct {
+	XMLName xml.Name `xml:"Icons,omitempty"`
+	Icon    []Icon   `xml:"Icon,omitempty"`
 }
 
 // Icon represents advertising industry initiatives like AdChoices.
@@ -508,4 +517,11 @@ type MediaFile struct {
 	// placed in key/value pairs on the asset request).
 	APIFramework string `xml:"apiFramework,attr,omitempty"`
 	URI          string `xml:",cdata"`
+}
+
+// UniversalAdID describes a VAST 4.x universal ad id.
+type UniversalAdID struct {
+	IDRegistry string `xml:"idRegistry,attr"`
+	IDValue    string `xml:"idValue,attr"`
+	ID         string `xml:",cdata"`
 }

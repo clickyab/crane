@@ -125,7 +125,8 @@ func getNative(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 	br, err := client.Call(ctx, method.String(), server.String(), bq)
 	if err != nil {
-		// TODO send proper message
+		xlog.GetWithError(ctx, err).Debugf("Demand: %v ", err)
+
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}

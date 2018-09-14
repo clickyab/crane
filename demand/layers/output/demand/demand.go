@@ -2,7 +2,6 @@ package demand
 
 import (
 	"context"
-	"encoding/json"
 	"encoding/xml"
 	"fmt"
 	"net/http"
@@ -10,6 +9,7 @@ import (
 	"strings"
 
 	"clickyab.com/crane/openrtb"
+	"github.com/golang/protobuf/jsonpb"
 
 	"clickyab.com/crane/demand/entity"
 	"github.com/clickyab/services/assert"
@@ -270,8 +270,8 @@ func Render(_ context.Context, w http.ResponseWriter, ctx entity.Context, rid st
 	}
 
 	w.Header().Set("content-type", "application/json")
-	j := json.NewEncoder(w)
-	return j.Encode(openrtb.BidResponse{
+	j := jsonpb.Marshaler{}
+	return j.Marshal(w, &openrtb.BidResponse{
 		Id:      rid,
 		Cur:     ctx.Currency(),
 		Seatbid: r,

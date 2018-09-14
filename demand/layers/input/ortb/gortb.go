@@ -26,7 +26,7 @@ import (
 var (
 	ErrInvalidReqNoID        = errors.New("openrtb: request ID missing")
 	ErrInvalidReqNoImps      = errors.New("openrtb: request has no impressions")
-	ErrInvalidReqMultiInv    = errors.New("openrtb: request has multiple inventory sources") // has site and app
+	ErrInvalidReqMultiInv    = errors.New("openrtb: request has no inventory sources") // has site and app
 	ErrInvalidImpNoID        = errors.New("openrtb: impression ID missing")
 	ErrInvalidImpMultiAssets = errors.New("openrtb: impression has multiple assets") // at least two out of Banner, Video, Native
 
@@ -72,9 +72,8 @@ func validate(req *openrtb.BidRequest) error {
 	} else if req.Imp == nil {
 		return ErrInvalidReqNoImps
 
-	} else if req.GetApp() == nil && req.GetSite() == nil {
-		return ErrInvalidReqMultiInv
 	}
+
 	for _, imp := range req.GetImp() {
 		if imp.GetId() == "" {
 			return ErrInvalidImpNoID
