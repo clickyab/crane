@@ -9,6 +9,7 @@ import (
 
 	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/safe"
+	"github.com/davecgh/go-spew/spew"
 
 	"github.com/sirupsen/logrus"
 )
@@ -89,7 +90,7 @@ func (reporter) Recover(err error, stack []byte, extra ...interface{}) {
 		}
 		at = append(at, attachment{
 			Title: fmt.Sprintf("%T", extra[i]),
-			Text:  fmt.Sprintf("%+v", extra[i]),
+			Text:  spew.Sprintf("%+v", extra[i]),
 		})
 	}
 
