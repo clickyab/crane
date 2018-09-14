@@ -6,7 +6,7 @@ import (
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/demand/filter"
 	"clickyab.com/crane/demand/reducer"
-	"clickyab.com/crane/openrtb"
+	"clickyab.com/crane/openrtb/v2.5"
 )
 
 type mixer struct {

@@ -2,13 +2,11 @@ package entities
 
 import (
 	"context"
-	"fmt"
-	"time"
-
 	"database/sql/driver"
-
 	"encoding/gob"
+	"fmt"
 	"io"
+	"time"
 
 	"github.com/clickyab/services/array"
 	"github.com/clickyab/services/gettext/t9e"
@@ -20,7 +18,6 @@ import (
 type StaticSeatType string
 
 const (
-
 	// NativeStaticSeatType native ad type
 	NativeStaticSeatType StaticSeatType = "native"
 	// BannerStaticSeatType banner ad type

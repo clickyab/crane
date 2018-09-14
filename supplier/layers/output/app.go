@@ -6,7 +6,7 @@ import (
 	"io"
 	"math/rand"
 
-	"clickyab.com/crane/openrtb"
+	"clickyab.com/crane/openrtb/v2.5"
 
 	"github.com/clickyab/services/config"
 )

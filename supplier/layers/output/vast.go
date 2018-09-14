@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"clickyab.com/crane/openrtb"
+	"clickyab.com/crane/openrtb/v2.5"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/random"
 	"github.com/clickyab/services/xlog"

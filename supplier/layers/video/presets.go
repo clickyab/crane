@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"clickyab.com/crane/demand/entity"
-	"clickyab.com/crane/openrtb"
+	"clickyab.com/crane/openrtb/v2.5"
 	"clickyab.com/crane/supplier/layers/output"
 	"github.com/clickyab/services/array"
 	"github.com/clickyab/services/assert"

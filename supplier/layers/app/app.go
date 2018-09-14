@@ -10,12 +10,11 @@ import (
 
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/models/clickyabapps"
-	"clickyab.com/crane/openrtb"
+	"clickyab.com/crane/openrtb/v2.5"
 	"clickyab.com/crane/supplier/client"
 	"clickyab.com/crane/supplier/layers/internal/supplier"
 	"clickyab.com/crane/supplier/layers/output"
 
-	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/framework"
 	"github.com/clickyab/services/random"
 	"github.com/clickyab/services/simplehash"
@@ -25,14 +24,12 @@ import (
 
 var (
 	sup             = supplier.NewClickyab()
-	server          = config.RegisterString("crane.supplier.banner.url", "", "route for app")
-	method          = config.RegisterString("crane.supplier.app.method", "POST", "method for app request")
 	clickyabNetwork = map[string]openrtb.ConnectionType{
-		"2G":   openrtb.ConnectionType_CELLULATXNETWORKX2G,
-		"EDGE": openrtb.ConnectionType_CELLULATXNETWORKX2G,
-		"GPRS": openrtb.ConnectionType_CELLULATXNETWORKX2G,
-		"3G":   openrtb.ConnectionType_CELLULATXNETWORKX3G,
-		"4G":   openrtb.ConnectionType_CELLULATXNETWORKX4G,
+		"2G":   openrtb.ConnectionType_CELLULAT_NETWORK_2G,
+		"EDGE": openrtb.ConnectionType_CELLULAT_NETWORK_2G,
+		"GPRS": openrtb.ConnectionType_CELLULAT_NETWORK_2G,
+		"3G":   openrtb.ConnectionType_CELLULAT_NETWORK_3G,
+		"4G":   openrtb.ConnectionType_CELLULAT_NETWORK_4G,
 	}
 )
 
@@ -52,7 +49,7 @@ func getApp(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 	q := &openrtb.BidRequest{
 		Id: <-random.ID,
-		DistributionchannelXoneof: &openrtb.BidRequest_App{
+		DistributionchannelOneof: &openrtb.BidRequest_App{
 			App: &openrtb.App{
 				Bundle: pub.Name(),
 			},
@@ -89,13 +86,13 @@ func getApp(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 
 	if _, ok := pub.Attributes()[entity.PAFatFinger]; ok {
-		ext.FatXfinger = true
+		ext.FatFinger = true
 	}
 	q.Ext = ext
 
 	allData(r, q)
 
-	res, err := client.Call(ctx, method.String(), server.String(), q)
+	res, err := client.Call(ctx, q)
 	if err != nil {
 		xlog.GetWithError(ctx, err).Debugf("call failed")
 		w.WriteHeader(http.StatusBadRequest)
@@ -188,7 +185,7 @@ func getConnType(network string) openrtb.ConnectionType {
 	if ok {
 		return val
 	}
-	return openrtb.ConnectionType_CELLULATXNETWORKXUNKNOWN
+	return openrtb.ConnectionType_CELLULAT_NETWORK_UNKNOWN
 }
 
 // appUserIDGenerator create cop id for app

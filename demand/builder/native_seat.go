@@ -5,7 +5,7 @@ import (
 
 	"clickyab.com/crane/demand/builder/internal/filters"
 	"clickyab.com/crane/demand/entity"
-	"clickyab.com/crane/openrtb"
+	"clickyab.com/crane/openrtb/v2.5"
 )
 
 type nativeSeat struct {

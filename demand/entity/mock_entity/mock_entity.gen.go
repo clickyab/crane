@@ -6,7 +6,7 @@ package mock_entity
 
 import (
 	entity "clickyab.com/crane/demand/entity"
-	openrtb "clickyab.com/crane/openrtb"
+	v2_5 "clickyab.com/crane/openrtb/v2.5"
 	gomock "github.com/golang/mock/gomock"
 	net "net"
 	url "net/url"
@@ -86,9 +86,9 @@ func (mr *MockContextMockRecorder) Carrier() *gomock.Call {
 }
 
 // Category mocks base method
-func (m *MockContext) Category() []openrtb.ContentCategory {
+func (m *MockContext) Category() []v2_5.ContentCategory {
 	ret := m.ctrl.Call(m, "Category")
-	ret0, _ := ret[0].([]openrtb.ContentCategory)
+	ret0, _ := ret[0].([]v2_5.ContentCategory)
 	return ret0
 }
 
@@ -98,9 +98,9 @@ func (mr *MockContextMockRecorder) Category() *gomock.Call {
 }
 
 // ConnectionType mocks base method
-func (m *MockContext) ConnectionType() openrtb.ConnectionType {
+func (m *MockContext) ConnectionType() v2_5.ConnectionType {
 	ret := m.ctrl.Call(m, "ConnectionType")
-	ret0, _ := ret[0].(openrtb.ConnectionType)
+	ret0, _ := ret[0].(v2_5.ConnectionType)
 	return ret0
 }
 
@@ -747,9 +747,9 @@ func (mr *MockCampaignMockRecorder) BlackListPublisher() *gomock.Call {
 }
 
 // Category mocks base method
-func (m *MockCampaign) Category() []openrtb.ContentCategory {
+func (m *MockCampaign) Category() []v2_5.ContentCategory {
 	ret := m.ctrl.Call(m, "Category")
-	ret0, _ := ret[0].([]openrtb.ContentCategory)
+	ret0, _ := ret[0].([]v2_5.ContentCategory)
 	return ret0
 }
 
@@ -965,9 +965,9 @@ func (mr *MockPublisherMockRecorder) CTR(arg0 interface{}) *gomock.Call {
 }
 
 // Categories mocks base method
-func (m *MockPublisher) Categories() []openrtb.ContentCategory {
+func (m *MockPublisher) Categories() []v2_5.ContentCategory {
 	ret := m.ctrl.Call(m, "Categories")
-	ret0, _ := ret[0].([]openrtb.ContentCategory)
+	ret0, _ := ret[0].([]v2_5.ContentCategory)
 	return ret0
 }
 

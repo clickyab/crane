@@ -1,9 +1,8 @@
 package staticseat
 
 import (
-	"time"
-
 	"context"
+	"time"
 
 	"clickyab.com/crane/models/internal/entities"
 	"github.com/clickyab/services/config"

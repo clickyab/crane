@@ -16,7 +16,7 @@ import (
 	"clickyab.com/crane/models/apps"
 	"clickyab.com/crane/models/suppliers"
 	"clickyab.com/crane/models/website"
-	"clickyab.com/crane/openrtb"
+	"clickyab.com/crane/openrtb/v2.5"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/framework"
 	"github.com/clickyab/services/random"
@@ -191,7 +191,7 @@ func applyPublisherFilter(bq *openrtb.BidRequest, target string, sup entity.Supp
 		if err != nil {
 			return nil, nil, errors.New("publisher err")
 		}
-		bq.DistributionchannelXoneof = &openrtb.BidRequest_Site{
+		bq.DistributionchannelOneof = &openrtb.BidRequest_Site{
 			Site: &openrtb.Site{
 				Cat: cat,
 			},
@@ -202,7 +202,7 @@ func applyPublisherFilter(bq *openrtb.BidRequest, target string, sup entity.Supp
 		if err != nil {
 			return nil, nil, errors.New("publisher err")
 		}
-		bq.DistributionchannelXoneof = &openrtb.BidRequest_App{
+		bq.DistributionchannelOneof = &openrtb.BidRequest_App{
 			App: &openrtb.App{
 				Cat: cat,
 			},

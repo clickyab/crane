@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 package openrtb;
+option go_package = "clickyab.com/crane/openrtb/v2.5;openrtb";
 
 
 import  "ortb.proto";

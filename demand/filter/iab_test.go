@@ -5,7 +5,7 @@ import (
 
 	"clickyab.com/crane/demand/entity/mock_entity"
 	"clickyab.com/crane/demand/filter"
-	"clickyab.com/crane/openrtb"
+	"clickyab.com/crane/openrtb/v2.5"
 	"github.com/golang/mock/gomock"
 	. "github.com/smartystreets/goconvey/convey"
 )

@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package openrtb;
-
+option go_package = "clickyab.com/crane/openrtb/v2.5;openrtb";
 
 message BidRequest {
     // Unique ID of the bid request, provided by the exchange.
@@ -12,7 +12,7 @@ message BidRequest {
     // At least 1 Imp object is required.
     repeated Imp imp = 2;
 
-    oneof distributionchannelXoneof {
+    oneof distributionchannel_oneof {
         // Details via a Site object (Section 3.2.6) about the publisher's website.
         // Only applicable and recommended for websites.
         Site site = 3;
@@ -100,7 +100,7 @@ message BidRequest {
 
 
     message Ext {
-        bool fatXfinger = 1;
+        bool fat_finger = 1;
         bool prevent = 2;
         bool underfloor = 3;
         Capping capping = 4;
@@ -302,7 +302,7 @@ message Device {
     string carrier = 21;
     // Mobile carrier as the concatenated MCC-MNC code (e.g.,
     //“310-005” identifies Verizon Wireless CDMA in the USA).
-    // Refer to https://en.wikipedia.org/wiki/MobileXcountryXcode
+    // Refer to https://en.wikipedia.org/wiki/Mobile_country_code
     // for further examples. Note that the dash between the MCC
     // and MNC parts is required to remove parsing ambiguity.
     string mccmnc = 22;
@@ -390,10 +390,10 @@ enum ConnectionType {
     UNKNOWNCT = 0;
     EHTERNET = 1;
     WIFI = 2;
-    CELLULATXNETWORKXUNKNOWN = 3;
-    CELLULATXNETWORKX2G = 4;
-    CELLULATXNETWORKX3G = 5;
-    CELLULATXNETWORKX4G = 6;
+    CELLULAT_NETWORK_UNKNOWN = 3;
+    CELLULAT_NETWORK_2G = 4;
+    CELLULAT_NETWORK_3G = 5;
+    CELLULAT_NETWORK_4G = 6;
 }
 
 // The following table lists the type of device from which the impression originated.
@@ -404,13 +404,13 @@ enum ConnectionType {
 enum DeviceType {
 
     UNKNOWNDT = 0;
-    MOBILEXTABLET = 1;
-    PERSONALXCOMPUTER = 2;
-    CONNECTEDXTV = 3;
+    MOBILE_TABLET = 1;
+    PERSONAL_COMPUTER = 2;
+    CONNECTED_TV = 3;
     PHONE = 4;
     TABLET = 5;
-    CONNECTEDXDEVICE = 6;
-    SETXTOPXBOX = 7;
+    CONNECTED_DEVICE = 6;
+    SET_TOP_BOX = 7;
 
 
 }
@@ -720,14 +720,14 @@ enum PlaybackCessationMode {
     UNKNOWN = 0;
 
     // On Video Completion or when Terminated by User
-    COMPLETIONXORXUSER = 1;
+    COMPLETION_OR_USER = 1;
 
     // On Leaving Viewport or when Terminated by User
-    LEAVINGXORXUSER = 2;
+    LEAVING_OR_USER = 2;
 
     // On Leaving Viewport Continues as a Floating/Slider Unit until
     // Video Completion or when Terminated by User
-    LEAVINGXCONTINUESXORXUSER = 3;
+    LEAVING_CONTINUES_OR_USER = 3;
 }
 
 // OpenRTB 2.5: The following table lists the various types of video placements
@@ -735,26 +735,26 @@ enum PlaybackCessationMode {
 enum VideoPlacementType {
     // The video placement is not defined.
     // Default value.
-    UNDEFINEDXVIDEOXPLACEMENT = 0;
+    UNDEFINED_VIDEO_PLACEMENT = 0;
 
     // Played before, during or after the streaming video content
     // that the consumer has requested.
     // E.G.: Pre-roll, Mid-roll, Post-roll.
-    INXSTREAMXPLACEMENT = 1;
+    IN_STREAM_PLACEMENT = 1;
 
     // Exists within a web banner that leverages the banner space
     // to deliver a video experience as opposed to another static
     // or rich media format.
     // The format relies on the existence of display ad inventory
     // on the page for its delivery.
-    INXBANNERXPLACEMENT = 2;
+    IN_BANNER_PLACEMENT = 2;
 
     // Loads and plays dynamically between paragraphs of editorial content;
     // existing as a standalone branded message.
-    INXARTICLEXPLACEMENT = 3;
+    IN_ARTICLE_PLACEMENT = 3;
 
     // In-Feed - Found in content, social, or product feeds.
-    INXFEEDXPLACEMENT = 4;
+    IN_FEED_PLACEMENT = 4;
 
     // Interstitial/Slider/Floating.
     // Covers the entire or a portion of screen area,
@@ -762,7 +762,7 @@ enum VideoPlacementType {
     // (i.e. cannot be scrolled out of view).
     // Note that a full-screen interstitial (e.g., in mobile)
     // can be distinguished from a floating/slider unit by the imp.instl field.
-    FLOATINGXPLACEMENT = 5;
+    FLOATING_PLACEMENT = 5;
 }
 
 // OpenRTB 2.1: The following table lists the options for the
@@ -775,7 +775,7 @@ enum CompanionType {
 
     HTML = 2;
 
-    COMPANIONXIFRAME = 3;
+    COMPANION_IFRAME = 3;
 }
 
 // OpenRTB 2.0: The following table is a list of API frameworks supported
@@ -810,26 +810,26 @@ enum APIFramework {
 enum AdPosition {
     UNKNOWNADP = 0;
 
-    ABOVEXTHEXFOLD = 1;
+    ABOVE_THE_FOLD = 1;
 
     // May or may not be immediately visible depending on screen size and
     // resolution.
     // @deprecated
-    DEPRECATEDXLIKELYXBELOWXTHEXFOLD = 2;
+    DEPRECATED_LIKELY_BELOW_THE_FOLD = 2;
 
-    BELOWXTHEXFOLD = 3;
+    BELOW_THE_FOLD = 3;
 
-    // [OpenRTB->AdX: SlotVisibility.ABOVEXTHEXFOLD]
+    // [OpenRTB->AdX: SlotVisibility.ABOVE_THE_FOLD]
     HEADER = 4;
 
-    // [OpenRTB->AdX: SlotVisibility.ABOVEXTHEXFOLD]
+    // [OpenRTB->AdX: SlotVisibility.ABOVE_THE_FOLD]
     FOOTER = 5;
 
-    // [OpenRTB->AdX: SlotVisibility.ABOVEXTHEXFOLD]
+    // [OpenRTB->AdX: SlotVisibility.ABOVE_THE_FOLD]
     SIDEBAR = 6;
 
-    // [OpenRTB->AdX: SlotVisibility.ABOVEXTHEXFOLD]
-    ADXPOSITIONXFULLSCREEN = 7;
+    // [OpenRTB->AdX: SlotVisibility.ABOVE_THE_FOLD]
+    AD_POSITION_FULLSCREEN = 7;
 }
 
 // OpenRTB 2.0: The following table lists the various options for the
@@ -847,30 +847,30 @@ enum ContentDeliveryMethod {
 enum CreativeAttribute {
     // invalid OpenRTB value
     UNKNOWNCA = 0;
-    AUDIOXAUTOXPLAY = 1;
-    AUDIOXUSERXINITIATED = 2;
-    EXPANDABLEXAUTOMATIC = 3;
-    EXPANDABLEXCLICKXINITIATED = 4;
+    AUDIO_AUTO_PLAY = 1;
+    AUDIO_USER_INITIATED = 2;
+    EXPANDABLE_AUTOMATIC = 3;
+    EXPANDABLE_CLICK_INITIATED = 4;
 
-    EXPANDABLEXROLLOVERXINITIATED = 5;
+    EXPANDABLE_ROLLOVER_INITIATED = 5;
 
-    VIDEOXINXBANNERXAUTOXPLAY = 6;
+    VIDEO_IN_BANNER_AUTO_PLAY = 6;
 
-    VIDEOXINXBANNERXUSERXINITIATED = 7;
+    VIDEO_IN_BANNER_USER_INITIATED = 7;
 
     POP = 8; // Pop (e.g., Over, Under, or upon Exit).
-    PROVOCATIVEXORXSUGGESTIVE = 9;
+    PROVOCATIVE_OR_SUGGESTIVE = 9;
 
     // Defined as "Shaky, Flashing, Flickering, Extreme Animation, Smileys".
     ANNOYING = 10;
 
     SURVEYS = 11;
-    TEXTXONLY = 12;
-    USERXINTERACTIVE = 13; // Eg, embedded games.
+    TEXT_ONLY = 12;
+    USER_INTERACTIVE = 13; // Eg, embedded games.
 
-    WINDOWSXDIALOGXORXALERTXSTYLE = 14;
-    HASXAUDIOXONXOFFXBUTTON = 15;
-    ADXCANXBEXSKIPPED = 16;
+    WINDOWS_DIALOG_OR_ALERT_STYLE = 14;
+    HAS_AUDIO_ON_OFF_BUTTON = 15;
+    AD_CAN_BE_SKIPPED = 16;
 
     FLASH = 17;
 }
@@ -880,22 +880,22 @@ enum PlaybackMethod {
     // invalid OpenRTB value
     UNKNOWNPM = 0;
     // Initiates on Page Load with Sound On.
-    AUTOXPLAYXSOUNDXON = 1;
+    AUTO_PLAY_SOUND_ON = 1;
 
     // Initiates on Page Load with Sound Off by Default.
-    AUTOXPLAYXSOUNDXOFF = 2;
+    AUTO_PLAY_SOUND_OFF = 2;
 
     // Initiates on Click with Sound On.
-    CLICKXTOXPLAY = 3;
+    CLICK_TO_PLAY = 3;
 
     // Initiates on Mouse-Over with Sound On.
-    MOUSEXOVER = 4;
+    MOUSE_OVER = 4;
 
     // Initiates on Entering Viewport with Sound On.
-    ENTERXSOUNDXON = 5;
+    ENTER_SOUND_ON = 5;
 
     // Initiates on Entering Viewport with Sound Off by Default.
-    ENTERXSOUNDXOFF = 6;
+    ENTER_SOUND_OFF = 6;
 }
 
 // OpenRTB 2.0: The following table indicates the options for video
@@ -918,7 +918,7 @@ enum VideoLinearity {
     // invalid OpenRTB value
     UNKNOWNVL = 0;
     LINEAR = 1; // Linear/In-stream
-    NONXLINEAR = 2; // Non-linear/Overlay
+    NON_LINEAR = 2; // Non-linear/Overlay
 }
 
 // OpenRTB 2.0: This object represents the most general type of
@@ -1019,7 +1019,7 @@ enum ExpandableDirection {
 
     DOWN = 4;
 
-    EXPANDABLEXFULLSCREEN = 5;
+    EXPANDABLE_FULLSCREEN = 5;
 }
 
 // OpenRTB 2.0: types of ads that can be accepted by the exchange unless
@@ -1028,11 +1028,11 @@ enum BannerAdType {
     // invalid OpenRTB value
     UNKNOWNBADT = 0;
     // "Usually mobile".
-    XHTMLXTEXTXAD = 1;
+    XHTML_TEXT_AD = 1;
     // "Usually mobile".
-    XHTMLXBANNERXAD = 2;
+    XHTML_BANNER_AD = 2;
     // Javascript must be valid XHTML (ie, script tags included).
-    JAVASCRIPTXAD = 3;
+    JAVASCRIPT_AD = 3;
     // Iframe.
     IFRAME = 4;
 }
@@ -1149,10 +1149,10 @@ message Audio {
 // modes, typically for audio.
 enum VolumeNormalizationMode {
     NONE = 0;
-    AVERAGEXVOLUME = 1;
-    PEAKXVOLUME = 2;
+    AVERAGE_VOLUME = 1;
+    PEAK_VOLUME = 2;
     LOUDNESS = 3;
-    CUSTOMXVOLUME = 4;
+    CUSTOM_VOLUME = 4;
 }
 
 // OpenRTB 2.4: The following table lists the types of feeds,
@@ -1160,7 +1160,7 @@ enum VolumeNormalizationMode {
 enum FeedType {
     // invalid OpenRTB value
     UNKNOWNFT = 0;
-    MUSICXSERVICE = 1;
+    MUSIC_SERVICE = 1;
     BROADCAST = 2;
     PODCAST = 3;
 }
@@ -1184,16 +1184,16 @@ enum FeedType {
 // and/or Video objects, respectively. However, any given bid for the
 // impression must conform to one of the offered types.
 message Native {
-    oneof requestXoneof {
+    oneof request_oneof {
         // Request payload complying with the Native Ad Specification.
-        // Exactly one of {request, requestXnative} should be used;
+        // Exactly one of {request, request_native} should be used;
         // this is the OpenRTB-compliant field for JSON serialization.
         string request = 1;
 
         // Request payload complying with the Native Ad Specification.
-        // Exactly one of {request, requestXnative} should be used;
+        // Exactly one of {request, request_native} should be used;
         // this is an alternate field preferred for Protobuf serialization.
-        NativeRequest requestXnative = 50;
+        NativeRequest request_native = 50;
     }
 
     // Version of the Native Ad Specification to which request complies.
@@ -1217,10 +1217,10 @@ enum PlacementType {
     UNKNOWNPT = 0;
     // In the feed of content - for example as an item inside the organic
     // feed/grid/listing/carousel.
-    INXFEED = 1;
+    IN_FEED = 1;
     // In the atomic unit of the content - IE in the article page
     // or single image page.
-    ATOMICXUNIT = 2;
+    ATOMIC_UNIT = 2;
     // Outside the core content - for example in the ads section on the
     // right rail, as a banner-style placement near the content, etc.
     OUTSIDE = 3;
@@ -1308,7 +1308,7 @@ message NativeRequest {
         int32 required = 2;
 
         // RECOMMENDED by the OpenRTB Native specification.
-        oneof assetXoneof {
+        oneof asset_oneof {
             // Title object for title assets.
             Title title = 3;
 
@@ -1431,20 +1431,20 @@ message NativeRequest {
     // type of 1, only context subtypes that start with 1 are valid).
     enum ContextSubtype {
         UNKNOWNCST = 0;
-        CONTENTXGENERALXORXMIXED = 10;
-        CONTENTXARTICLE = 11;
-        CONTENTXVIDEO = 12;
-        CONTENTXAUDIO = 13;
-        CONTENTXIMAGE = 14;
-        CONTENTXUSERXGENERATED = 15;
+        CONTENT_GENERAL_OR_MIXED = 10;
+        CONTENT_ARTICLE = 11;
+        CONTENT_VIDEO = 12;
+        CONTENT_AUDIO = 13;
+        CONTENT_IMAGE = 14;
+        CONTENT_USER_GENERATED = 15;
 
-        SOCIALXGENERAL = 20;
-        SOCIALXEMAIL = 21;
-        SOCIALXCHATXIM = 22;
+        SOCIAL_GENERAL = 20;
+        SOCIAL_EMAIL = 21;
+        SOCIAL_CHAT_IM = 22;
 
-        PRODUCTXSELLING = 30;
-        PRODUCTXMARKETPLACE = 31;
-        PRODUCTXREVIEW = 32;
+        PRODUCT_SELLING = 30;
+        PRODUCT_MARKETPLACE = 31;
+        PRODUCT_REVIEW = 32;
     }
 
     // OpenRTB Native 1.1: The context in which the ad appears - what type
@@ -1491,14 +1491,14 @@ enum EventType {
     IMPRESSION = 1;
 
     // Visible impression using MRC definition at 50% in view for 1 second.
-    VIEWABLEXMRCX50 = 2;
+    VIEWABLE_MRCX50 = 2;
 
     // 100% in view for 1 second (ie GroupM standard).
-    VIEWABLEXMRCX100 = 3;
+    VIEWABLE_MRCX100 = 3;
 
     // Visible impression for video using MRC definition at 50% in view
     // for 2 seconds.
-    VIEWABLEXVIDEOX50 = 4;
+    VIEWABLE_VIDEOX50 = 4;
 
     // Exchange-specific values above 500.
 }
@@ -1525,7 +1525,7 @@ message Pmp {
     // Indicator of auction eligibility to seats named in the Direct Deals
     // object, where 0 = all bids are accepted, 1 = bids are restricted to
     // the deals specified and the terms thereof.
-    int32 privateXauction = 1;
+    int32 private_auction = 1;
 
     // Array of Deal (Section 3.2.18) objects that convey the specific deals
     // applicable to this impression.
@@ -1598,11 +1598,11 @@ message Deal {
 
 enum AuctionType {
     DEFAULT = 0;
-    FIRSTXPRICE = 1;
+    FIRST_PRICE = 1;
 
-    SECONDXPRICE = 2;
+    SECOND_PRICE = 2;
 
-    FIXEDXPRICE = 3;
+    FIXED_PRICE = 3;
 }
 
 // OpenRTB 2.0: The following list represents the IAB's contextual taxonomy for
@@ -2010,17 +2010,17 @@ enum ContentCategory {
 // OpenRTB 2.2: The following table lists the options for a bidder to signal
 // the exchange as to why it did not offer a bid for the impression.
 enum NoBidReason {
-    UNKNOWNXERROR = 0;
-    TECHNICALXERROR = 1;
-    INVALIDXREQUEST = 2;
-    KNOWNXWEBXSPIDER = 3;
-    SUSPECTEDXNONHUMANXTRAFFIC = 4;
-    CLOUDXDATACENTERXPROXYIP = 5;
-    UNSUPPORTEDXDEVICE = 6;
-    BLOCKEDXPUBLISHER = 7;
-    UNMATCHEDXUSER = 8;
-    DAILYXREADERXCAP = 9;
-    DAILYXDOMAINXCAP = 10;
+    UNKNOWN_ERROR = 0;
+    TECHNICAL_ERROR = 1;
+    INVALID_REQUEST = 2;
+    KNOWN_WEB_SPIDER = 3;
+    SUSPECTED_NONHUMAN_TRAFFIC = 4;
+    CLOUD_DATACENTER_PROXYIP = 5;
+    UNSUPPORTED_DEVICE = 6;
+    BLOCKED_PUBLISHER = 7;
+    UNMATCHED_USER = 8;
+    DAILY_READER_CAP = 9;
+    DAILY_DOMAIN_CAP = 10;
 }
 
 // OpenRTB 2.0: This object is the top-level bid response object (i.e., the
@@ -2101,17 +2101,17 @@ message BidResponse {
             // of serving ad markup.
             string nurl = 5;
 
-            oneof admXoneof {
+            oneof adm_oneof {
                 // Optional means of conveying ad markup in case the bid wins;
                 // supersedes the win notice if markup is included in both.
-                // For native ad bids, exactly one of {adm, admXnative} should be used;
+                // For native ad bids, exactly one of {adm, adm_native} should be used;
                 // this is the OpenRTB-compliant field for JSON serialization.
                 string adm = 6;
 
                 // Native ad response.
-                // For native ad bids, exactly one of {adm, admXnative} should be used;
+                // For native ad bids, exactly one of {adm, adm_native} should be used;
                 // this is the field used for Protobuf serialization.
-                NativeResponse admXnative = 50;
+                NativeResponse adm_native = 50;
             }
 
             // Advertiser domain for block list checking (e.g., "ford.com"). This can
@@ -2204,11 +2204,11 @@ message BidResponse {
 
 // OpenRTB 2.1: The following table lists the media ratings used in
 // describing content based on the QAG categorization.
-// Refer to http://www.iab.net/neXguidelines for more information.
+// Refer to http://www.iab.net/ne_guidelines for more information.
 enum QAGMediaRating {
     UNKNOWNQAGMR = 0;
-    ALLXAUDIENCES = 1;
-    EVERYONEXOVERX12 = 2;
+    ALL_AUDIENCES = 1;
+    EVERYONE_OVERX12 = 2;
     MATURE = 3;
 }
 
@@ -2309,7 +2309,7 @@ message NativeResponse {
         int32 required = 2;
 
         // RECOMMENDED by the OpenRTB Native specification.
-        oneof assetXoneof {
+        oneof asset_oneof {
             // Title object for title assets.
             Title title = 3;
 
@@ -2354,7 +2354,7 @@ message NativeResponse {
         // such as Icons, Main Image, etc.
         // It is recommended that if assetsurl/dcourl is being used rather than
         // embbedded assets, that an image of each recommended aspect ratio
-        // (per ImageType enum) be provided for image type 3 (MAINXIMAGE).
+        // (per ImageType enum) be provided for image type 3 (MAIN_IMAGE).
         message Image {
             // The type of image element being submitted from the ImageType enum.
             // REQUIRED for assetsurl or dcourl responses,

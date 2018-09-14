@@ -3,7 +3,6 @@ package ortb
 import (
 	"context"
 	"crypto/sha1"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -20,14 +19,13 @@ import (
 	"clickyab.com/crane/models/apps"
 	"clickyab.com/crane/models/suppliers"
 	"clickyab.com/crane/models/website"
-	"clickyab.com/crane/openrtb"
-	"github.com/davecgh/go-spew/spew"
-	"github.com/golang/protobuf/jsonpb"
-
+	"clickyab.com/crane/openrtb/v2.5"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/kv"
+	"github.com/clickyab/services/version"
 	"github.com/clickyab/services/xlog"
+	"github.com/golang/protobuf/jsonpb"
 	"github.com/rs/xmux"
 	"github.com/sirupsen/logrus"
 )
@@ -147,6 +145,7 @@ func writesErrorStatus(w http.ResponseWriter, status int, detail string) {
 //}
 
 var rnd int64
+var samplerate = config.RegisterInt("crane.demand.input.sample", 10000, "")
 
 // openRTBInput is the route for rtb input layer
 func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
@@ -168,8 +167,6 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 
 	err = jsonpb.Unmarshal(r.Body, payload)
 	defer assert.Nil(r.Body.Close())
-	//dec := json.NewDecoder(r.Body)
-	//if err := dec.Decode(payload);
 	if err != nil {
 		xlog.GetWithError(ctx, err).Errorf("invalid request from %s", sup.Name())
 		writesErrorStatus(w, http.StatusBadRequest, err.Error())
@@ -177,9 +174,8 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 
 	rnd++
-	if rnd%1000 == 0 {
+	if rnd%samplerate.Int64() == 0 {
 		logrus.Warn(sup.Name())
-		logrus.Warn(spew.Sprintf("%+v", payload))
 		j := jsonpb.Marshaler{}
 		s, e := j.MarshalToString(payload)
 		assert.Nil(e)
@@ -193,7 +189,7 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 	var tiny = sup.TinyMark()
 
 	if payload.Ext != nil {
-		fatFinger = payload.Ext.GetFatXfinger()
+		fatFinger = payload.Ext.GetFatFinger()
 		prevent = payload.Ext.GetPrevent()
 		underfloor = payload.Ext.GetUnderfloor()
 		capping = payload.Ext.GetCapping()
@@ -217,7 +213,7 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 	publisher, selector, ps, prevent, err := handlePublisherSelector(domain, bundle, sup, prevent)
 
 	if err != nil {
-		e := fmt.Sprintf("publisher from %s, %s, %s, not supported: %s. payload: %#v", sup.Name(), ps, payload)
+		e := fmt.Sprintf("publisher from %s,  not supported: %s. payload: %#v", sup.Name(), ps, payload)
 		writesErrorStatus(w, http.StatusBadRequest, e)
 		xlog.GetWithError(ctx, err).Debug(e)
 		return
@@ -251,8 +247,8 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 	perHour, _ := strconv.ParseInt(kv.NewEavStore(sh).AllKeys()["C"], 10, 64)
 	if perHour > dailyClickLimit.Int64() {
 		w.Header().Set("content-type", "application/json")
-		j := json.NewEncoder(w)
-		assert.Nil(j.Encode(openrtb.BidResponse{
+		j := jsonpb.Marshaler{}
+		assert.Nil(j.Marshal(w, &openrtb.BidResponse{
 			Id: payload.Id,
 		}))
 		return
@@ -294,9 +290,15 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	assert.Nil(demand.Render(ctx, w, c, payload.Id))
-
+	res, err := demand.Render(ctx, c, payload.Id)
+	w.Header().Set("crane-version", fmt.Sprint(vs.Count))
+	w.Header().Set("content-type", "application/json")
+	assert.Nil(err)
+	j := jsonpb.Marshaler{}
+	assert.Nil(j.Marshal(w, res))
 }
+
+var vs = version.GetVersion()
 
 func setPublisherCustomContext(payload *openrtb.BidRequest, b []builder.ShowOptionSetter) []builder.ShowOptionSetter {
 	if payload.GetSite() != nil {
@@ -338,7 +340,7 @@ func seatDetail(req *openrtb.BidRequest) ([]builder.DemandSeatData, bool) {
 			t = entity.RequestTypeBanner
 		} else if imp[i].GetNative() != nil {
 			t = entity.RequestTypeNative
-			assets = imp[i].GetNative().GetRequestXnative().GetAssets()
+			assets = imp[i].GetNative().GetRequestNative().GetAssets()
 		}
 
 		seats = append(seats, builder.DemandSeatData{

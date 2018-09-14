@@ -4,12 +4,9 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"html/template"
-	"strings"
 
-	"clickyab.com/crane/openrtb"
-	"github.com/bsm/openrtb/native/response"
+	"clickyab.com/crane/openrtb/v2.5"
 )
 
 type nativeResp struct {
@@ -29,22 +26,16 @@ func RenderNative(_ context.Context, resp *openrtb.BidResponse, tpl *template.Te
 			continue
 		}
 		bid := AllBid[0]
-		markup := strings.Replace(bid.GetAdm(), "${AUCTION_PRICE}", fmt.Sprint(bid.Price), -1)
-		bs := response.Response{}
-		err := json.Unmarshal([]byte(markup), &bs)
-		if err != nil {
-			continue
-		}
 		d := nativeResp{
-			Impression: bs.ImpTrackers[0],
-			Click:      bs.Link.URL,
+			Impression: bid.GetAdmNative().Imptrackers[0],
+			Click:      bid.GetAdmNative().Link.Url,
 		}
-		for i := range bs.Assets {
-			if bs.Assets[i].ID == 1 {
-				d.Title = bs.Assets[i].Title.Text
+		for i := range bid.GetAdmNative().GetAssets() {
+			if bid.GetAdmNative().GetAssets()[i].Id == 1 {
+				d.Title = bid.GetAdmNative().GetAssets()[i].GetTitle().Text
 			}
-			if bs.Assets[i].ID == 2 {
-				d.Image = bs.Assets[i].Image.URL
+			if bid.GetAdmNative().GetAssets()[i].Id == 2 {
+				d.Image = bid.GetAdmNative().GetAssets()[i].GetImg().Url
 			}
 		}
 		res = append(res, d)

@@ -4,16 +4,14 @@ import (
 	"context"
 	"encoding/xml"
 	"fmt"
-	"net/http"
 	"net/url"
 	"strings"
 
-	"clickyab.com/crane/openrtb"
-	"github.com/golang/protobuf/jsonpb"
+	"clickyab.com/crane/openrtb/v2.5"
+	"github.com/clickyab/services/version"
 
 	"clickyab.com/crane/demand/entity"
 	"github.com/clickyab/services/assert"
-	"github.com/clickyab/services/version"
 	"github.com/rs/vast"
 )
 
@@ -54,7 +52,7 @@ func nativeMarkup(ctx entity.Context, s entity.NativeSeat) *openrtb.BidResponse_
 				if ctx.Protocol() == entity.HTTPS {
 					src = strings.Replace(src, "http://", "https://", -1)
 				}
-				as.AssetXoneof = &openrtb.NativeResponse_Asset_Img{
+				as.AssetOneof = &openrtb.NativeResponse_Asset_Img{
 					Img: &openrtb.NativeResponse_Asset_Image{
 						Url: src,
 						H:   a[0].Height,
@@ -63,23 +61,23 @@ func nativeMarkup(ctx entity.Context, s entity.NativeSeat) *openrtb.BidResponse_
 				}
 			} else if f.Type == entity.AssetTypeVideo {
 				// TODO : support for video VASTTAG
-				as.AssetXoneof = &openrtb.NativeResponse_Asset_Video_{}
+				as.AssetOneof = &openrtb.NativeResponse_Asset_Video_{}
 			} else if f.Type == entity.AssetTypeText && f.SubType == entity.AssetTypeTextSubTypeTitle {
-				as.AssetXoneof = &openrtb.NativeResponse_Asset_Title_{
+				as.AssetOneof = &openrtb.NativeResponse_Asset_Title_{
 					Title: &openrtb.NativeResponse_Asset_Title{
 						Text: a[0].Data,
 						Len:  int32(len(a[0].Data)),
 					},
 				}
 			} else if f.Type == entity.AssetTypeText {
-				as.AssetXoneof = &openrtb.NativeResponse_Asset_Data_{
+				as.AssetOneof = &openrtb.NativeResponse_Asset_Data_{
 					Data: &openrtb.NativeResponse_Asset_Data{
 						Value: a[0].Data,
 					},
 				}
 			}
 			if f.Required {
-				assert.True(as.AssetXoneof != nil)
+				assert.True(as.AssetOneof != nil)
 			}
 			v.Assets = append(v.Assets, as)
 		}
@@ -90,8 +88,8 @@ func nativeMarkup(ctx entity.Context, s entity.NativeSeat) *openrtb.BidResponse_
 
 				Id:    s.ReservedHash(),
 				Impid: s.PublicID(),
-				AdmXoneof: &openrtb.BidResponse_SeatBid_Bid_AdmXnative{
-					AdmXnative: v,
+				AdmOneof: &openrtb.BidResponse_SeatBid_Bid_AdmNative{
+					AdmNative: v,
 				},
 				Adid:  fmt.Sprint(s.WinnerAdvertise().ID()),
 				H:     int32(s.Height()),
@@ -192,7 +190,7 @@ func vastMarkup(ctx entity.Context, s entity.VastSeat) *openrtb.BidResponse_Seat
 			{
 				Id:    s.ReservedHash(),
 				Impid: s.PublicID(),
-				AdmXoneof: &openrtb.BidResponse_SeatBid_Bid_Adm{
+				AdmOneof: &openrtb.BidResponse_SeatBid_Bid_Adm{
 					Adm: string(res),
 				},
 				Adid:  fmt.Sprint(s.WinnerAdvertise().ID()),
@@ -230,7 +228,7 @@ func bannerMarkup(ctx entity.Context, s entity.Seat) *openrtb.BidResponse_SeatBi
 			{
 				Id:    s.ReservedHash(),
 				Impid: s.PublicID(),
-				AdmXoneof: &openrtb.BidResponse_SeatBid_Bid_Adm{
+				AdmOneof: &openrtb.BidResponse_SeatBid_Bid_Adm{
 					Adm: adMarkup,
 				},
 				Adid:  fmt.Sprint(s.WinnerAdvertise().ID()),
@@ -246,9 +244,8 @@ func bannerMarkup(ctx entity.Context, s entity.Seat) *openrtb.BidResponse_SeatBi
 }
 
 // Render write open-rtb bid-response to writer
-func Render(_ context.Context, w http.ResponseWriter, ctx entity.Context, rid string) error {
+func Render(_ context.Context, ctx entity.Context, rid string) (*openrtb.BidResponse, error) {
 	var r []*openrtb.BidResponse_SeatBid
-	w.Header().Set("crane-version", fmt.Sprint(vs.Count))
 	for _, v := range ctx.Seats() {
 		// What if we have no ad for them?
 		if v.WinnerAdvertise() == nil {
@@ -269,11 +266,9 @@ func Render(_ context.Context, w http.ResponseWriter, ctx entity.Context, rid st
 		}
 	}
 
-	w.Header().Set("content-type", "application/json")
-	j := jsonpb.Marshaler{}
-	return j.Marshal(w, &openrtb.BidResponse{
+	return &openrtb.BidResponse{
 		Id:      rid,
 		Cur:     ctx.Currency(),
 		Seatbid: r,
-	})
+	}, nil
 }

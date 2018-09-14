@@ -10,25 +10,18 @@ import (
 
 	website "clickyab.com/crane/models/clickyabwebsite"
 	"clickyab.com/crane/models/staticseat"
-	"clickyab.com/crane/openrtb"
+	"clickyab.com/crane/openrtb/v2.5"
 	"clickyab.com/crane/supplier/client"
 	"clickyab.com/crane/supplier/layers/entities"
 	"clickyab.com/crane/supplier/layers/internal/supplier"
 	"clickyab.com/crane/supplier/layers/output"
 
 	"github.com/clickyab/services/assert"
-	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/framework"
 	"github.com/clickyab/services/random"
 	"github.com/clickyab/services/simplehash"
 	"github.com/clickyab/services/xlog"
 	"github.com/mssola/user_agent"
-)
-
-var (
-	// XXX : currently, there is no need to change the endpoints per type, but if you need it, do it :) its not a rule or something.
-	server = config.RegisterString("crane.supplier.banner.url", "", "route for banner")
-	method = config.RegisterString("crane.supplier.banner.method", "POST", "method for banner request")
 )
 
 func writesErrorStatus(w http.ResponseWriter, status int, detail string) {
@@ -157,7 +150,7 @@ func vast(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 			Id: vastUserIDGenerator(tid, rUserAgent, rIP),
 		},
 		Imp: imps,
-		DistributionchannelXoneof: &openrtb.BidRequest_Site{
+		DistributionchannelOneof: &openrtb.BidRequest_Site{
 
 			Site: &openrtb.Site{
 				Mobile: func() int32 {
@@ -188,7 +181,7 @@ func vast(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 	var br = &openrtb.BidResponse{}
 
-	br, err = client.Call(ctx, method.String(), server.String(), bq)
+	br, err = client.Call(ctx, bq)
 	if err != nil {
 		if len(finalStaticSeats) > 0 {
 			br = &openrtb.BidResponse{}
@@ -207,7 +200,7 @@ func vast(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 				{
 					Id:    <-random.ID,
 					Impid: finalStaticSeats[i].key,
-					AdmXoneof: &openrtb.BidResponse_SeatBid_Bid_Adm{
+					AdmOneof: &openrtb.BidResponse_SeatBid_Bid_Adm{
 						Adm: finalStaticSeats[i].staticSeat.RTBMarkup(),
 					},
 				},

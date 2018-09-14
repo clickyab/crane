@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strings"
 
-	"clickyab.com/crane/openrtb"
+	"clickyab.com/crane/openrtb/v2.5"
 )
 
 // RenderBanner try to render to suitable json

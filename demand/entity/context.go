@@ -1,7 +1,7 @@
 package entity
 
 import (
-	"clickyab.com/crane/openrtb"
+	"clickyab.com/crane/openrtb/v2.5"
 )
 
 // InputType is demand

@@ -3,7 +3,7 @@ package entity
 import (
 	"strings"
 
-	"clickyab.com/crane/openrtb"
+	"clickyab.com/crane/openrtb/v2.5"
 )
 
 // Target is the target of this campaign

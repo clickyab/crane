@@ -7,7 +7,7 @@ import (
 	"strconv"
 
 	website "clickyab.com/crane/models/clickyabwebsite"
-	"clickyab.com/crane/openrtb"
+	"clickyab.com/crane/openrtb/v2.5"
 	"clickyab.com/crane/supplier/client"
 	"clickyab.com/crane/supplier/layers/internal/supplier"
 	"clickyab.com/crane/supplier/layers/output"
@@ -23,8 +23,6 @@ import (
 var (
 	nativeMaxCount    = config.RegisterInt("crane.supplier.native.max_count", 12, "")
 	nativeMaxTitleLen = config.RegisterInt("crane.supplier.native.title,len", 50, "")
-	server            = config.RegisterString("crane.supplier.banner.url", "", "route for banner")
-	method            = config.RegisterString("crane.supplier.banner.method", "POST", "method for banner request")
 	defaultTemplate   = config.RegisterString("crane.supplier.native.default.template", "grid4x", "")
 )
 
@@ -91,11 +89,12 @@ func getNative(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 	bq := &openrtb.BidRequest{
 		Id: fmt.Sprintf("cly-%s", <-random.ID),
+
 		User: &openrtb.User{
 			Id: nativeUserIDGenerator(tid, useragent, ip),
 		},
 		Imp: getImps(r, targetCount, pub, tpl.Image),
-		DistributionchannelXoneof: &openrtb.BidRequest_Site{
+		DistributionchannelOneof: &openrtb.BidRequest_Site{
 			Site: &openrtb.Site{
 				Page: parent,
 				Ref:  ref,
@@ -123,7 +122,7 @@ func getNative(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
-	br, err := client.Call(ctx, method.String(), server.String(), bq)
+	br, err := client.Call(ctx, bq)
 	if err != nil {
 		xlog.GetWithError(ctx, err).Debugf("Demand: %v ", err)
 

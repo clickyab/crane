@@ -13,7 +13,7 @@ import (
 
 	"clickyab.com/crane/demand/entity"
 	website "clickyab.com/crane/models/clickyabwebsite"
-	"clickyab.com/crane/openrtb"
+	"clickyab.com/crane/openrtb/v2.5"
 	"clickyab.com/crane/supplier/client"
 	"clickyab.com/crane/supplier/layers/internal/supplier"
 	"clickyab.com/crane/supplier/layers/output"
@@ -26,9 +26,7 @@ import (
 )
 
 var (
-	server = config.RegisterString("crane.supplier.banner.url", "", "route for banner")
-	method = config.RegisterString("crane.supplier.banner.method", "POST", "method for banner request")
-	showT  = config.RegisterInt64("crane.supplier.showt", 2, "chance of showt")
+	showT = config.RegisterInt64("crane.supplier.showt", 2, "chance of showt")
 
 	templ *template.Template
 )
@@ -120,7 +118,7 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 			Id: webUserIDGenerator(tid, rUserAgent, rIP),
 		},
 		Imp: imps,
-		DistributionchannelXoneof: &openrtb.BidRequest_Site{
+		DistributionchannelOneof: &openrtb.BidRequest_Site{
 			Site: &openrtb.Site{
 				Mobile: func() int32 {
 					if m {
@@ -145,7 +143,7 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		Ext: &openrtb.BidRequest_Ext{
 			Underfloor: true,
 			Capping:    openrtb.Capping_Reset,
-			FatXfinger: func() bool {
+			FatFinger: func() bool {
 				if _, ok := pub.Attributes()[entity.PAFatFinger]; ok && m {
 					return true
 				}
@@ -154,7 +152,7 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
-	br, err := client.Call(ctx, method.String(), server.String(), bq)
+	br, err := client.Call(ctx, bq)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		xlog.GetWithError(ctx, err).Debug("error in call demand server")
@@ -172,7 +170,7 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 			H:      br.GetSeatbid()[0].GetBid()[0].GetH(),
 			Markup: br.GetSeatbid()[0].GetBid()[0].GetAdm(),
 		})
-		br.GetSeatbid()[0].GetBid()[0].AdmXoneof = &openrtb.BidResponse_SeatBid_Bid_Adm{
+		br.GetSeatbid()[0].GetBid()[0].AdmOneof = &openrtb.BidResponse_SeatBid_Bid_Adm{
 			Adm: buf.String(),
 		}
 	}
