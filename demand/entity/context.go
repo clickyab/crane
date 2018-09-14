@@ -36,7 +36,7 @@ func (r RequestType) String() string {
 }
 
 // CappingMode decide how to handle capping
-type CappingMode int
+type CappingMode int32
 
 // Validate capping modes
 func (c CappingMode) Validate() bool {

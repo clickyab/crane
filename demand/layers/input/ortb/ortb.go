@@ -177,29 +177,20 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 		assert.Nil(e)
 		logrus.Warn(string(j))
 	}
-	// Known extensions are (currently) fat finger
-	var (
-		ext         = make(simpleMap)
-		cappingMode = entity.CappingStrict
-	)
-
-	fatFinger, _ := ext.Bool("fat_finger")
-	prevent, _ := ext.Bool("prevent_default")
-	underfloor, _ := ext.Bool("underfloor")
-	capping, _ := ext.String("capping_mode")
+	var fatFinger,
+		prevent,
+		underfloor bool
+	var capping = openrtb.Capping_Strict
 	var strategy []string
-	sts, _ := ext.String("strategy")
-	if st := strings.Trim(sts, "\t \n"); st != "" {
-		strategy = strings.Split(st, ",")
-	}
-	tiny, ok := ext.Bool("tiny_mark")
-	if !ok {
-		tiny = sup.TinyMark()
-	}
+	var tiny = sup.TinyMark()
 
-	// Currently not supporting no cap (this is intentional)
-	if capping == "reset" {
-		cappingMode = entity.CappingReset
+	if payload.Ext != nil {
+		fatFinger = payload.Ext.GetFatXfinger()
+		prevent = payload.Ext.GetPrevent()
+		underfloor = payload.Ext.GetUnderfloor()
+		capping = payload.Ext.GetCapping()
+		strategy = payload.Ext.GetStrategy()
+		tiny = payload.Ext.GetTiny()
 	}
 
 	if err := validate(payload); err != nil {
@@ -272,7 +263,7 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetStrategy(strategy, sup),
 		builder.SetRate(float64(sup.Rate())),
 		builder.SetPreventDefault(prevent),
-		builder.SetCappingMode(cappingMode),
+		builder.SetCappingMode(entity.CappingMode(capping)),
 		builder.SetUnderfloor(underfloor),
 		builder.SetCategory(payload),
 	}
