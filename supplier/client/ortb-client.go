@@ -62,6 +62,7 @@ func UnaryCall(ctx context.Context, pl *openrtb.BidRequest) (*openrtb.BidRespons
 		return nil, err
 	}
 	client := openrtb.NewOrtbServiceClient(conn)
+	pl.Token = "forbidden"
 	return client.Ortb(ctx, pl)
 }
 

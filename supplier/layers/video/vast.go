@@ -15,8 +15,6 @@ import (
 	"clickyab.com/crane/supplier/layers/entities"
 	"clickyab.com/crane/supplier/layers/internal/supplier"
 	"clickyab.com/crane/supplier/layers/output"
-	"github.com/clickyab/services/config"
-
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/framework"
 	"github.com/clickyab/services/random"
@@ -26,7 +24,7 @@ import (
 )
 
 // XXX : currently, there is no need to change the endpoints per type, but if you need it, do it :) its not a rule or something.
-var server = config.RegisterString("crane.supplier.banner.url", "", "route for banner")
+//var server = config.RegisterString("crane.supplier.banner.url", "", "route for banner")
 
 func writesErrorStatus(w http.ResponseWriter, status int, detail string) {
 	assert.False(status == http.StatusOK)
@@ -185,7 +183,8 @@ func vast(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 	var br = &openrtb.BidResponse{}
 
-	br, err = client.Call(ctx, server.String(), bq)
+	//br, err = client.Call(ctx, server.String(), bq)
+	br, err = client.StreamCall(ctx, bq)
 	if err != nil {
 		if len(finalStaticSeats) > 0 {
 			br = &openrtb.BidResponse{}

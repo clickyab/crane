@@ -61,7 +61,8 @@ var sizesModel = map[int]*size{
 	18: {Width: 128, Height: 128},
 }
 var sup = supplier.NewClickyab()
-var server = config.RegisterString("crane.supplier.banner.url", "", "route for banner")
+
+//var server = config.RegisterString("crane.supplier.banner.url", "", "route for banner")
 
 //	d		: domain
 //	l		: location
@@ -155,7 +156,8 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
-	br, err := client.Call(ctx, server.String(), bq)
+	//br, err := client.Call(ctx, server.String(), bq)
+	br, err := client.StreamCall(ctx, bq)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		xlog.GetWithError(ctx, err).Debug("error in call demand server")

@@ -21,7 +21,7 @@ import (
 )
 
 var (
-	server            = config.RegisterString("crane.supplier.banner.url", "", "route for banner")
+	//server            = config.RegisterString("crane.supplier.banner.url", "", "route for banner")
 	nativeMaxCount    = config.RegisterInt("crane.supplier.native.max_count", 12, "")
 	nativeMaxTitleLen = config.RegisterInt("crane.supplier.native.title,len", 50, "")
 	defaultTemplate   = config.RegisterString("crane.supplier.native.default.template", "grid4x", "")
@@ -90,7 +90,6 @@ func getNative(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 		return
 	}
-
 	ua := user_agent.New(useragent)
 
 	bq := &openrtb.BidRequest{
@@ -128,7 +127,9 @@ func getNative(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
-	br, err := client.Call(ctx, server.String(), bq)
+	//br, err := client.Call(ctx, server.String(), bq)
+	br, err := client.StreamCall(ctx, bq)
+
 	if err != nil {
 		xlog.GetWithError(ctx, err).Debugf("Demand: %v ", err)
 

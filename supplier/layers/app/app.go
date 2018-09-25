@@ -14,8 +14,6 @@ import (
 	"clickyab.com/crane/supplier/client"
 	"clickyab.com/crane/supplier/layers/internal/supplier"
 	"clickyab.com/crane/supplier/layers/output"
-	"github.com/clickyab/services/config"
-
 	"github.com/clickyab/services/framework"
 	"github.com/clickyab/services/random"
 	"github.com/clickyab/services/simplehash"
@@ -24,7 +22,7 @@ import (
 )
 
 var (
-	server          = config.RegisterString("crane.supplier.banner.url", "", "route for app")
+	//server          = config.RegisterString("crane.supplier.banner.url", "", "route for app")
 	sup             = supplier.NewClickyab()
 	clickyabNetwork = map[string]openrtb.ConnectionType{
 		"2G":   openrtb.ConnectionType_CELLULAT_NETWORK_2G,
@@ -97,7 +95,8 @@ func getApp(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 	allData(r, q)
 
-	res, err := client.Call(ctx, server.String(), q)
+	//res, err := client.Call(ctx, server.String(), q)
+	res, err := client.StreamCall(ctx, q)
 	if err != nil {
 		xlog.GetWithError(ctx, err).Debugf("call failed")
 		w.WriteHeader(http.StatusBadRequest)
