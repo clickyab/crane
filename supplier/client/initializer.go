@@ -109,8 +109,6 @@ func (*initClient) Initialize(ctx context.Context) {
 			safe.GoRoutine(ctx, func() {
 				for {
 					rq := <-RequestChannel
-
-					rq.BidRequest.Token = token.String()
 					lock.Lock()
 					inprogress[rq.BidRequest.Id] = rq
 					lock.Unlock()

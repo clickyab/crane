@@ -15,6 +15,11 @@ import (
 
 // Call an openrtp end point
 func Call(ctx context.Context, url string, pl *openrtb.BidRequest) (*openrtb.BidResponse, error) {
+	return UnaryCall(ctx, pl)
+}
+
+// RestCall an openrtp end point
+func RestCall(ctx context.Context, url string, pl *openrtb.BidRequest) (*openrtb.BidResponse, error) {
 	bid := &openrtb.BidResponse{}
 	if len(pl.Imp) == 0 {
 		return bid, nil
@@ -62,7 +67,7 @@ func UnaryCall(ctx context.Context, pl *openrtb.BidRequest) (*openrtb.BidRespons
 		return nil, err
 	}
 	client := openrtb.NewOrtbServiceClient(conn)
-	pl.Token = "forbidden"
+	pl.Token = token.String()
 	return client.Ortb(ctx, pl)
 }
 
@@ -71,6 +76,8 @@ func StreamCall(ctx context.Context, pl *openrtb.BidRequest) (*openrtb.BidRespon
 	ct, cl := context.WithTimeout(ctx, timeout.Duration())
 	defer cl()
 	res := make(chan *openrtb.BidResponse)
+	pl.Token = token.String()
+
 	RequestChannel <- &StreamRequest{
 		BidRequest: pl,
 		Response:   res,
