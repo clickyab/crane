@@ -1,24 +1,20 @@
 package builder
 
 import (
+	"crypto/sha1"
 	"errors"
 	"fmt"
 	"net"
-
 	"net/http"
-
 	"strings"
-
-	"clickyab.com/crane/internal/cyos"
-
-	"crypto/sha1"
-
 	"time"
 
 	"clickyab.com/crane/demand/entity"
+	"clickyab.com/crane/internal/cyos"
 	"clickyab.com/crane/models/cell"
 	"clickyab.com/crane/models/ip2l"
-	"github.com/bsm/openrtb"
+	"clickyab.com/crane/openrtb/v2.5"
+	grpc "clickyab.com/crane/openrtb/v2.5"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/config"
 	"github.com/mssola/user_agent"
@@ -60,14 +56,14 @@ func SetUnderfloor(c bool) ShowOptionSetter {
 }
 
 // SetIPLocation is the IP and location setter for context, also it extract the IP information
-func SetIPLocation(ip string, user *openrtb.User, device *openrtb.Device) ShowOptionSetter {
+func SetIPLocation(ip string, user *grpc.User, device *grpc.Device) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
 		ipv4 := net.ParseIP(ip)
 		if ipv4 == nil {
 			return nil, fmt.Errorf("invalid IP %s", ip)
 		}
 		o.ip = ipv4
-		var lat, lon float64
+		var lat, lon float32
 		if device != nil && device.Geo != nil {
 			lat, lon = device.Geo.Lat, device.Geo.Lon
 
@@ -78,7 +74,7 @@ func SetIPLocation(ip string, user *openrtb.User, device *openrtb.Device) ShowOp
 			}
 		}
 
-		l := ip2l.GetProvinceISPByIP(ipv4, lat, lon)
+		l := ip2l.GetProvinceISPByIP(ipv4, float64(lat), float64(lon))
 		o.location = l
 		return o, nil
 	}
@@ -155,21 +151,11 @@ func SetEventPage(ep string) ShowOptionSetter {
 // SetCategory set the capping mode
 func SetCategory(b *openrtb.BidRequest) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
-		var category []entity.Category
-		if b.Site != nil {
-			for _, v := range b.Site.Cat {
-				if len(v) > 3 {
-					category = append(category, entity.Category(v[3:]))
-				}
-			}
-		} else if b.App != nil {
-			for _, v := range b.App.Cat {
-				if len(v) > 3 {
-					category = append(category, entity.Category(v[3:]))
-				}
-			}
+		if b.GetSite() != nil {
+			o.cat = b.GetSite().GetCat()
+			return o, nil
 		}
-		o.cat = category
+		o.cat = b.GetApp().GetCat()
 		return o, nil
 	}
 }
@@ -319,7 +305,7 @@ func SetCarrier(v string) ShowOptionSetter {
 }
 
 // SetConnType is set network  2g,3g,...
-func SetConnType(v int) ShowOptionSetter {
+func SetConnType(v openrtb.ConnectionType) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
 		o.connectionType = v
 		return o, nil

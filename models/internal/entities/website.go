@@ -6,8 +6,10 @@ import (
 	"encoding/gob"
 	"fmt"
 	"io"
+	"strconv"
 
 	"clickyab.com/crane/demand/entity"
+	"clickyab.com/crane/openrtb/v2.5"
 	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/kv"
 	"github.com/clickyab/services/mysql"
@@ -34,7 +36,10 @@ type Website struct {
 	WMinCPC     mysql.GenericJSONField `db:"w_min_cpc"`
 	CTRStat
 	Supp entity.Supplier `db:"-"`
-	FCTR [21]float64
+	FCTR [21]float32
+
+	cat     []openrtb.ContentCategory
+	catComp bool
 
 	att map[entity.PublisherAttributes]interface{}
 }
@@ -59,7 +64,7 @@ func (w *Website) Type() entity.PublisherType {
 }
 
 // CTR return the ctr based on size of this website
-func (w *Website) CTR(size int) float64 {
+func (w *Website) CTR(size int32) float32 {
 	if w.FCTR[size] == 0 {
 		w.FCTR[size] = -1
 	}
@@ -123,12 +128,21 @@ func (w *Website) Supplier() entity.Supplier {
 }
 
 // Categories return publisher categories
-func (w *Website) Categories() []string {
-	var res = make([]string, 0)
-	for i := range w.WCategories {
-		res = append(res, "IAB"+w.WCategories[i])
+func (w *Website) Categories() []openrtb.ContentCategory {
+	if w.catComp {
+		return w.cat
 	}
-	return res
+
+	var res = make([]openrtb.ContentCategory, 0)
+	for i := range w.WCategories {
+		p, err := strconv.ParseInt(w.WCategories[i], 10, 64)
+		if err != nil {
+			res = append(res, openrtb.ContentCategory(int32(p)))
+		}
+	}
+	w.cat = res
+	w.catComp = true
+	return w.cat
 }
 
 // WebsiteLoaderGen load all confirmed website
@@ -165,7 +179,7 @@ func WebsiteLoaderGen(name bool) func(ctx context.Context) (map[string]kv.Serial
 			}
 
 			for i := range res {
-				res[i].FCTR = [21]float64{}
+				res[i].FCTR = [21]float32{}
 				res[i].FCTR[1] = calc(res[i].Impression1, res[i].Click1)
 				res[i].FCTR[2] = calc(res[i].Impression2, res[i].Click2)
 				res[i].FCTR[3] = calc(res[i].Impression3, res[i].Click3)

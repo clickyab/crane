@@ -3,13 +3,13 @@ package entities
 import (
 	"context"
 	"database/sql"
-	"io"
-
-	"github.com/clickyab/services/kv"
-
 	"encoding/gob"
-
 	"fmt"
+	"io"
+	"strconv"
+
+	"clickyab.com/crane/openrtb/v2.5"
+	"github.com/clickyab/services/kv"
 
 	"clickyab.com/crane/demand/entity"
 	"github.com/clickyab/services/mysql"
@@ -30,10 +30,12 @@ type App struct {
 	AppToken      string                 `db:"app_token"`
 	AppMinCPC     mysql.GenericJSONField `db:"app_min_cpc"`
 	Supp          entity.Supplier
-	FCTR          [21]float64
+	FCTR          [21]float32
 	CTRStat
 
-	att map[entity.PublisherAttributes]interface{} `db:"-"`
+	catComp bool
+	cat     []openrtb.ContentCategory                  `db:"-"`
+	att     map[entity.PublisherAttributes]interface{} `db:"-"`
 }
 
 // Attributes return publisher attributes
@@ -49,12 +51,21 @@ func (app *App) Attributes() map[entity.PublisherAttributes]interface{} {
 }
 
 // Categories return publisher categories
-func (app *App) Categories() []string {
-	var res = make([]string, 0)
-	for i := range app.AppCategories {
-		res = append(res, "IAB"+app.AppCategories[i])
+func (app *App) Categories() []openrtb.ContentCategory {
+	if app.catComp {
+		return app.cat
 	}
-	return res
+
+	var res = make([]openrtb.ContentCategory, 0)
+	for i := range app.AppCategories {
+		p, err := strconv.ParseInt(app.AppCategories[i], 10, 64)
+		if err != nil {
+			res = append(res, openrtb.ContentCategory(int32(p)))
+		}
+	}
+	app.cat = res
+	app.catComp = true
+	return app.cat
 }
 
 // Type return type of publisher (app or web)
@@ -103,7 +114,7 @@ func (app *App) Supplier() entity.Supplier {
 }
 
 // CTR return ctr of app per size
-func (app *App) CTR(size int) float64 {
+func (app *App) CTR(size int32) float32 {
 	if app.FCTR[size] == 0 {
 		app.FCTR[size] = -1
 	}
@@ -144,7 +155,7 @@ func AppLoaderGen(name bool) func(ctx context.Context) (map[string]kv.Serializab
 			}
 
 			for i := range res {
-				res[i].FCTR = [21]float64{}
+				res[i].FCTR = [21]float32{}
 				res[i].FCTR[1] = calc(res[i].Impression1, res[i].Click1)
 				res[i].FCTR[2] = calc(res[i].Impression2, res[i].Click2)
 				res[i].FCTR[3] = calc(res[i].Impression3, res[i].Click3)

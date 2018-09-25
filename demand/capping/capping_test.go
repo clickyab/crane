@@ -43,12 +43,12 @@ func creatives(ct *gomock.Controller) []entity.SelectedCreative {
 	for i := 0; i < 100; i++ {
 		cr := mock_entity.NewMockSelectedCreative(ct)
 		cp := mock_entity.NewMockCampaign(ct)
-		cp.EXPECT().Frequency().Return(2).AnyTimes()
-		cp.EXPECT().ID().Return(int64(i)).AnyTimes()
+		cp.EXPECT().Frequency().Return(int32(2)).AnyTimes()
+		cp.EXPECT().ID().Return(int32(i)).AnyTimes()
 
 		cr.EXPECT().Campaign().Return(cp).AnyTimes()
-		cr.EXPECT().Size().Return(1).AnyTimes()
-		cr.EXPECT().ID().Return(int64(i)).AnyTimes()
+		cr.EXPECT().Size().Return(int32(1)).AnyTimes()
+		cr.EXPECT().ID().Return(int32(i)).AnyTimes()
 		cr.EXPECT().SetCapping(gomock.Any()).Do(func(b entity.Capping) {
 			cr.EXPECT().Capping().Return(b).AnyTimes()
 		}).AnyTimes()
@@ -160,7 +160,7 @@ func TestApplyCapping(t *testing.T) {
 				So(x.Capping().View(), ShouldEqual, 3)
 			}
 
-			var views = 0
+			var views int32 = 0
 			for i := range s {
 				views += s[i].Capping().View()
 			}

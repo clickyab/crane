@@ -1,16 +1,14 @@
 package video
 
 import (
-	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
 
-	"fmt"
-
 	"clickyab.com/crane/demand/entity"
+	"clickyab.com/crane/openrtb/v2.5"
 	"clickyab.com/crane/supplier/layers/output"
-	"github.com/bsm/openrtb"
 	"github.com/clickyab/services/array"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/config"
@@ -113,7 +111,7 @@ func getSlots(l string) map[string]output.Seat {
 	panic("what? " + p)
 }
 
-func getMimes(requsted ...string) []string {
+func getMimes(requested ...string) []string {
 	var (
 		res   []string
 		mimes []string
@@ -124,8 +122,8 @@ func getMimes(requsted ...string) []string {
 		}
 	}
 
-	for i := range requsted {
-		n := strings.Trim(requsted[i], "\n\t ")
+	for i := range requested {
+		n := strings.Trim(requested[i], "\n\t ")
 		if n != "" && array.StringInArray(n, mimes...) {
 			res = append(res, n)
 		}
@@ -139,11 +137,11 @@ func getMimes(requsted ...string) []string {
 
 // the first map is just an array of map, the key is the start value (from the seat) but the returning map is a bit
 // tricky, the key is the id, so we can identify each slot in response
-func getImps(r *http.Request, pub entity.Publisher, s map[string]output.Seat, requestedMime ...string) ([]openrtb.Impression, map[string]output.Seat) {
+func getImps(r *http.Request, pub entity.Publisher, s map[string]output.Seat, requestedMime ...string) ([]*openrtb.Imp, map[string]output.Seat) {
 	var (
-		res   []openrtb.Impression
+		res   []*openrtb.Imp
 		times = make(map[string]output.Seat)
-		sec   = secure(r)
+		sec   = framework.Scheme(r) == "https"
 		mimes = getMimes(requestedMime...)
 	)
 
@@ -151,46 +149,39 @@ func getImps(r *http.Request, pub entity.Publisher, s map[string]output.Seat, re
 
 	assert.True(len(mimes) > 0)
 
-	// calculate min cpc and insert in impression ext
-	impExt := map[string]interface{}{
-		"min_cpc": pub.MinCPC(string(entity.RequestTypeVast)),
-	}
-	iExt, err := json.Marshal(impExt)
-	assert.Nil(err)
-
 	for i := range s {
-		li := 0
+		li := openrtb.VideoLinearity_UNKNOWNVL
 		if s[i].Type == linear {
-			li = 1
+			li = openrtb.VideoLinearity_LINEAR
 		}
 		times[baseID+s[i].IDExtra] = s[i]
-		imp := openrtb.Impression{
-			ID:     baseID + s[i].IDExtra,
-			Secure: sec,
+		imp := &openrtb.Imp{
+			Id: baseID + s[i].IDExtra,
+			Secure: func() int32 {
+				if sec {
+					return 1
+				}
+				return 0
+			}(),
 			Video: &openrtb.Video{
-				SkipMin:     s[i].Skip,
-				SkipAfter:   s[i].Skip,
-				MinDuration: s[i].Skip,
-				MaxDuration: maxDuration.Int(),
+				Skipmin:     int32(s[i].Skip),
+				Skipafter:   int32(s[i].Skip),
+				Minduration: int32(s[i].Skip),
+				Maxduration: int32(maxDuration.Int()),
 				Mimes:       mimes,
 				Linearity:   li,
-				Protocols:   []int{3}, // Only supporting version 3
-				Protocol:    3,
-				Ext:         iExt,
+				Protocols: []openrtb.Protocol{
+					openrtb.Protocol_VASTX3X0,
+				}, // Only supporting version 3
+				Ext: &openrtb.Video_Ext{
+					Mincpc: pub.MinCPC(string(entity.RequestTypeVast)),
+				},
 			},
-			BidFloor: float64(pub.FloorCPM()),
+			Bidfloor: float64(pub.FloorCPM()),
 		}
 
 		res = append(res, imp)
 	}
 
 	return res, times
-}
-
-// secure check openrtb protocol (http/https)
-func secure(r *http.Request) openrtb.NumberOrString {
-	if framework.Scheme(r) == "https" {
-		return openrtb.NumberOrString(1)
-	}
-	return openrtb.NumberOrString(0)
 }

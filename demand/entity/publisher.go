@@ -1,5 +1,9 @@
 package entity
 
+import (
+	"clickyab.com/crane/openrtb/v2.5"
+)
+
 // PublisherType is the type of publisher
 type PublisherType string
 
@@ -36,7 +40,7 @@ type Publisher interface {
 	// Supplier return the exchange object for this publisher
 	Supplier() Supplier
 	// CTR returns ctr of a slot with specific size
-	CTR(int) float64
+	CTR(int32) float32
 	// Type return type of this publisher
 	Type() PublisherType
 	// Attributes si any other attributes that is not generally required for other part of the system
@@ -44,5 +48,5 @@ type Publisher interface {
 	// MinCPC return min cpc based on ad type
 	MinCPC(string) float64
 	// Categories return categories
-	Categories() []string
+	Categories() []openrtb.ContentCategory
 }

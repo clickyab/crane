@@ -3,9 +3,9 @@ package filter_test
 import (
 	"testing"
 
-	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/demand/entity/mock_entity"
 	"clickyab.com/crane/demand/filter"
+	"clickyab.com/crane/openrtb/v2.5"
 	"github.com/golang/mock/gomock"
 	. "github.com/smartystreets/goconvey/convey"
 )
@@ -20,40 +20,48 @@ func TestCategory_Check(t *testing.T) {
 		creative.EXPECT().Campaign().Return(campaign).AnyTimes()
 
 		Convey("campaign category is empty", func() {
-			campaign.EXPECT().Category().Return(make([]entity.Category, 0)).AnyTimes()
+			campaign.EXPECT().Category().Return(make([]openrtb.ContentCategory, 0)).AnyTimes()
 			So(catSt.Check(context, creative), ShouldBeNil)
 		})
 
 		Convey("campaign category is not empty but request cat is empty", func() {
-			campCat := makeCat("1", "1-5")
+			campCat := []openrtb.ContentCategory{
+				openrtb.ContentCategory_IAB1,
+				openrtb.ContentCategory_IAB1S5,
+			}
 			campaign.EXPECT().Category().Return(campCat).AnyTimes()
-			context.EXPECT().Category().Return(make([]entity.Category, 0)).AnyTimes()
+			context.EXPECT().Category().Return(make([]openrtb.ContentCategory, 0)).AnyTimes()
 			So(catSt.Check(context, creative), ShouldNotBeNil)
 		})
 
 		Convey("neither is empty but did'nt match", func() {
-			contextCat := makeCat("1", "1-5")
-			campCat := makeCat("2", "3-5", "6")
+			contextCat := []openrtb.ContentCategory{
+				openrtb.ContentCategory_IAB1,
+				openrtb.ContentCategory_IAB1S5,
+			}
+			campCat := []openrtb.ContentCategory{
+				openrtb.ContentCategory_IAB2,
+				openrtb.ContentCategory_IAB3S5,
+				openrtb.ContentCategory_IAB6,
+			}
 			campaign.EXPECT().Category().Return(campCat).AnyTimes()
 			context.EXPECT().Category().Return(contextCat).AnyTimes()
 			So(catSt.Check(context, creative), ShouldNotBeNil)
 		})
 
 		Convey("neither is empty but they match", func() {
-			contextCat := makeCat("1", "1-5")
-			campCat := makeCat("2", "3-5", "6", "1-5")
+			contextCat := []openrtb.ContentCategory{
+				openrtb.ContentCategory_IAB1,
+				openrtb.ContentCategory_IAB1S5,
+			}
+			campCat := []openrtb.ContentCategory{
+				openrtb.ContentCategory_IAB1,
+				openrtb.ContentCategory_IAB6,
+			}
 			campaign.EXPECT().Category().Return(campCat).AnyTimes()
 			context.EXPECT().Category().Return(contextCat).AnyTimes()
 			So(catSt.Check(context, creative), ShouldBeNil)
 		})
 
 	})
-}
-
-func makeCat(cat ...string) []entity.Category {
-	var res = make([]entity.Category, 0)
-	for i := range cat {
-		res = append(res, entity.Category(cat[i]))
-	}
-	return res
 }

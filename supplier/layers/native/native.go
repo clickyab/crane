@@ -7,10 +7,10 @@ import (
 	"strconv"
 
 	website "clickyab.com/crane/models/clickyabwebsite"
+	"clickyab.com/crane/openrtb/v2.5"
 	"clickyab.com/crane/supplier/client"
 	"clickyab.com/crane/supplier/layers/internal/supplier"
 	"clickyab.com/crane/supplier/layers/output"
-	"github.com/bsm/openrtb"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/framework"
@@ -21,10 +21,9 @@ import (
 )
 
 var (
+	server            = config.RegisterString("crane.supplier.banner.url", "", "route for banner")
 	nativeMaxCount    = config.RegisterInt("crane.supplier.native.max_count", 12, "")
 	nativeMaxTitleLen = config.RegisterInt("crane.supplier.native.title,len", 50, "")
-	server            = config.RegisterString("crane.supplier.banner.url", "", "route for banner")
-	method            = config.RegisterString("crane.supplier.banner.method", "POST", "method for banner request")
 	defaultTemplate   = config.RegisterString("crane.supplier.native.default.template", "grid4x", "")
 )
 
@@ -52,8 +51,9 @@ func getNative(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	pubID := r.URL.Query().Get("i")
 	pub, err := website.GetWebSite(sup, pubID)
 	if err != nil {
-		xlog.GetWithError(ctx, err).Debug("no website")
+		xlog.GetWithError(ctx, err).Debugf("no website: %v", pubID)
 		w.WriteHeader(http.StatusBadRequest)
+		w.Header().Add("cly-error", fmt.Sprintf("no website: %v", pubID))
 		return
 	}
 	dnt, _ := strconv.Atoi(r.Header.Get("DNT"))
@@ -73,6 +73,8 @@ func getNative(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	if err != nil || count < 1 {
 		xlog.GetWithError(ctx, err).Debug("wrong count")
 		w.WriteHeader(http.StatusBadRequest)
+		w.Header().Add("cly-error", fmt.Sprintf("wrong count"))
+
 		return
 	}
 
@@ -84,56 +86,63 @@ func getNative(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	if targetCount == 0 {
 		xlog.GetWithError(ctx, err).Debug("wrong count (during target count calculation)")
 		w.WriteHeader(http.StatusBadRequest)
+		w.Header().Add("cly-error", fmt.Sprintf("wrong count (during target count calculation)"))
+
 		return
 	}
 
 	ua := user_agent.New(useragent)
 
-	mi := 0
-	if ua.Mobile() {
-		mi = 1
-	}
-
 	bq := &openrtb.BidRequest{
-		ID: <-random.ID,
+		Id: fmt.Sprintf("cly-%s", <-random.ID),
+
 		User: &openrtb.User{
-			ID: nativeUserIDGenerator(tid, useragent, ip),
+			Id: nativeUserIDGenerator(tid, useragent, ip),
 		},
 		Imp: getImps(r, targetCount, pub, tpl.Image),
-		Site: &openrtb.Site{
-			Page:   parent,
-			Ref:    ref,
-			Mobile: mi,
-			Inventory: openrtb.Inventory{
+		DistributionchannelOneof: &openrtb.BidRequest_Site{
+			Site: &openrtb.Site{
+				Page: parent,
+				Ref:  ref,
+				Mobile: func() int32 {
+					if ua.Mobile() {
+						return 1
+					}
+					return 0
+				}(),
 				Domain: pub.Name(),
 				Name:   pub.Name(),
-				ID:     fmt.Sprint(pub.ID()),
+				Id:     fmt.Sprint(pub.ID()),
 				Cat:    pub.Categories(),
 			},
 		},
 		Device: &openrtb.Device{
-			IP:  ip,
-			OS:  ua.OS(),
-			UA:  useragent,
-			DNT: dnt,
+			Ip:  ip,
+			Os:  ua.OS(),
+			Ua:  useragent,
+			Dnt: int32(dnt),
+		},
+		Ext: &openrtb.BidRequest_Ext{
+			Capping:    openrtb.Capping_Reset,
+			Underfloor: true,
 		},
 	}
 
-	bq.Ext = []byte(`{"capping_mode": "reset", "underfloor": true}`)
-	br, err := client.Call(ctx, method.String(), server.String(), bq)
+	br, err := client.Call(ctx, server.String(), bq)
 	if err != nil {
-		// TODO send proper message
+		xlog.GetWithError(ctx, err).Debugf("Demand: %v ", err)
+
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	targetCount = getTargetCount(len(br.SeatBid), tpl.Counts...)
+	targetCount = getTargetCount(len(br.GetSeatbid()), tpl.Counts...)
 
 	if targetCount == 0 {
 		w.WriteHeader(http.StatusNoContent)
 		return
 	}
-	br.SeatBid = br.SeatBid[:targetCount] // drop unwanted count
+	br.Seatbid = br.Seatbid[:targetCount] // drop unwanted count
 	result, err := output.RenderNative(ctx, br, tpl.Template)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)

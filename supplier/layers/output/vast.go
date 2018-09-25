@@ -2,17 +2,13 @@ package output
 
 import (
 	"context"
-
 	"encoding/xml"
-
 	"fmt"
+	"net/http"
 	"strings"
-
 	"time"
 
-	"net/http"
-
-	"github.com/bsm/openrtb"
+	"clickyab.com/crane/openrtb/v2.5"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/random"
 	"github.com/clickyab/services/xlog"
@@ -68,18 +64,18 @@ func RenderVMAP(ctx context.Context, w http.ResponseWriter, resp *openrtb.BidRes
 
 	breaks := make(map[string]*vast.VAST)
 
-	for i := range resp.SeatBid {
-		AllBid := resp.SeatBid[i].Bid
+	for i := range resp.GetSeatbid() {
+		AllBid := resp.GetSeatbid()[i].Bid
 		if len(AllBid) < 1 {
 			continue
 		}
 		bid := AllBid[0]
-		markup := strings.Replace(bid.AdMarkup, "${AUCTION_PRICE}", fmt.Sprint(bid.Price), -1)
+		markup := strings.Replace(bid.GetAdm(), "${AUCTION_PRICE}", fmt.Sprint(bid.Price), -1)
 		vs, err := getVast(markup)
 		if err != nil {
 			xlog.GetWithError(ctx, err).Error("fail decoding vast from ad-markup")
 		}
-		breaks[bid.ImpID] = vs
+		breaks[bid.GetImpid()] = vs
 	}
 
 	for i := range seats {

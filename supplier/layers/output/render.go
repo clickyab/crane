@@ -2,26 +2,24 @@ package output
 
 import (
 	"context"
-	"net/http"
-
 	"encoding/json"
-
 	"fmt"
+	"net/http"
 	"strings"
 
-	"github.com/bsm/openrtb"
+	"clickyab.com/crane/openrtb/v2.5"
 )
 
 // RenderBanner try to render to suitable json
-func RenderBanner(ctx context.Context, w http.ResponseWriter, resp *openrtb.BidResponse, extra string) error {
+func RenderBanner(_ context.Context, w http.ResponseWriter, resp *openrtb.BidResponse, extra string) error {
 	final := make(map[string]string)
-	for i := range resp.SeatBid {
-		if len(resp.SeatBid[i].Bid) == 0 {
+	for i := range resp.GetSeatbid() {
+		if len(resp.GetSeatbid()[i].GetBid()) == 0 {
 			continue
 		}
-		slotID := resp.SeatBid[i].Bid[0].ImpID
-		markup := resp.SeatBid[i].Bid[0].AdMarkup
-		price := resp.SeatBid[i].Bid[0].Price
+		slotID := resp.GetSeatbid()[i].GetBid()[0].GetImpid()
+		markup := resp.GetSeatbid()[i].GetBid()[0].GetAdm()
+		price := resp.GetSeatbid()[i].GetBid()[0].Price
 		if slotID == extra {
 			slotID = "m"
 		}

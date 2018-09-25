@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package openrtb;
+option go_package = "clickyab.com/crane/openrtb/v2.5;openrtb";
+
+
+import  "ortb.proto";
+
+message Token {
+    string token = 1;
+}
+
+
+service OrtbService {
+    rpc Ortb(BidRequest) returns (BidResponse) {};
+    rpc OrtbStream(stream BidRequest) returns (stream BidResponse) {};
+}

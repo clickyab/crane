@@ -2,7 +2,6 @@ package reducer
 
 import (
 	"context"
-
 	"time"
 
 	"clickyab.com/crane/demand/entity"
@@ -22,7 +21,7 @@ type filtered struct {
 // Apply get the data and then call filter on each of them concurrently, the
 // result is the accepted items
 func Apply(c context.Context, imp entity.Context, ads []entity.Creative, ff []Filter) []entity.Creative {
-	var mads = make(map[int64]*filtered)
+	var mads = make(map[int32]*filtered)
 	var res = make([]entity.Creative, 0)
 	fads := make(chan entity.Creative)
 	fcl := make(chan string)

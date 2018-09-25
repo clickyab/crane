@@ -11,8 +11,8 @@ import (
 type vastSeat struct {
 	seat
 	linear    bool
-	duration  int
-	skipAfter int
+	duration  int32
+	skipAfter int32
 }
 
 // Linear is only usable in vast subsystem!

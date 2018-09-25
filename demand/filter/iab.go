@@ -19,8 +19,10 @@ func (*Category) Check(c entity.Context, in entity.Creative) error {
 	for _, v := range c.Category() {
 		f[string(v)] = true
 	}
+
 	for _, v := range in.Campaign().Category() {
 		if f[string(v)] {
+
 			return nil
 		}
 	}

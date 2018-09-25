@@ -1,6 +1,9 @@
 package entities
 
-import "clickyab.com/crane/demand/entity"
+import (
+	"clickyab.com/crane/demand/entity"
+	"clickyab.com/crane/openrtb/v2.5"
+)
 
 type fakepub struct {
 	name  string
@@ -11,7 +14,7 @@ type fakepub struct {
 }
 
 // Categories return publisher categories
-func (fp *fakepub) Categories() []string {
+func (fp *fakepub) Categories() []openrtb.ContentCategory {
 	panic("implement me")
 }
 
@@ -52,7 +55,7 @@ func (fp *fakepub) Supplier() entity.Supplier {
 	return fp.s
 }
 
-func (fp *fakepub) CTR(int) float64 {
+func (fp *fakepub) CTR(int32) float32 {
 	return -1
 }
 

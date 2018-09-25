@@ -4,7 +4,6 @@ import (
 	"html/template"
 	"io"
 	"math/rand"
-
 	"strings"
 
 	"clickyab.com/crane/demand/entity"
@@ -131,8 +130,8 @@ type videoData struct {
 	Link     string
 	Src      string
 	Tiny     bool
-	Width    int
-	Height   int
+	Width    int32
+	Height   int32
 	Rand     int
 	TinyURL  string
 	TinyLogo string

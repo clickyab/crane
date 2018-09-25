@@ -16,7 +16,7 @@ import (
 	"clickyab.com/crane/models/apps"
 	"clickyab.com/crane/models/suppliers"
 	"clickyab.com/crane/models/website"
-	"github.com/bsm/openrtb"
+	"clickyab.com/crane/openrtb/v2.5"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/framework"
 	"github.com/clickyab/services/random"
@@ -73,10 +73,12 @@ func allAdHandler(c context.Context, w http.ResponseWriter, r *http.Request) {
 	blacklist := r.URL.Query().Get("blacklist") == "t"
 	whitelist := r.URL.Query().Get("whitelist") == "t"
 
-	var cat []string
-	if r.URL.Query().Get("cat") != "" {
-		cat = strings.Split(r.URL.Query().Get("cat"), ",")
-	}
+	var cat []openrtb.ContentCategory
+	//if r.URL.Query().Get("cat") != "" {
+	//	for t := range strings.Split(r.URL.Query().Get("cat"), ",") {
+	//
+	//	}
+	//}
 
 	ua := r.URL.Query().Get("ua")
 	if ua == "" {
@@ -99,7 +101,7 @@ func allAdHandler(c context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 
 	// filtered ads with errors
-	fe := make(map[int64][]string)
+	fe := make(map[int32][]string)
 
 	var ou *openrtb.User
 	if latLon != "" {
@@ -122,8 +124,8 @@ func allAdHandler(c context.Context, w http.ResponseWriter, r *http.Request) {
 			}
 			ou = &openrtb.User{
 				Geo: &openrtb.Geo{
-					Lat: lat,
-					Lon: lon,
+					Lat: float32(lat),
+					Lon: float32(lon),
 				},
 			}
 		} else {
@@ -134,8 +136,8 @@ func allAdHandler(c context.Context, w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	ctr := -1.
-	var iSize int
+	ctr := float32(-1.)
+	var iSize int32
 	if size != "" {
 		iSize, err = cyslot.GetSize(size)
 		if err != nil {
@@ -151,7 +153,7 @@ func allAdHandler(c context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 
 	bq.User = &openrtb.User{
-		ID: <-random.ID,
+		Id: <-random.ID,
 	}
 
 	ctx, err := builder.NewContext(makeBuilder(carrier, ua, percentage, ip, ou, publisher, sup, bq)...)
@@ -176,7 +178,9 @@ func allAdHandler(c context.Context, w http.ResponseWriter, r *http.Request) {
 	framework.JSON(w, http.StatusOK, internalSelect(c, ctx, seat, filteredAds, fe))
 }
 
-func applyPublisherFilter(bq *openrtb.BidRequest, target string, sup entity.Supplier, pub, os, latLon, carrier, brand string, cat []string, desktop, province, isp, whitelist, blacklist bool) (entity.Publisher, []reducer.Filter, error) {
+func applyPublisherFilter(bq *openrtb.BidRequest, target string, sup entity.Supplier,
+	pub, os, latLon, carrier, brand string, cat []openrtb.ContentCategory,
+	desktop, province, isp, whitelist, blacklist bool) (entity.Publisher, []reducer.Filter, error) {
 	var (
 		publisher entity.Publisher
 		selector  []reducer.Filter
@@ -187,8 +191,8 @@ func applyPublisherFilter(bq *openrtb.BidRequest, target string, sup entity.Supp
 		if err != nil {
 			return nil, nil, errors.New("publisher err")
 		}
-		bq.Site = &openrtb.Site{
-			Inventory: openrtb.Inventory{
+		bq.DistributionchannelOneof = &openrtb.BidRequest_Site{
+			Site: &openrtb.Site{
 				Cat: cat,
 			},
 		}
@@ -198,11 +202,12 @@ func applyPublisherFilter(bq *openrtb.BidRequest, target string, sup entity.Supp
 		if err != nil {
 			return nil, nil, errors.New("publisher err")
 		}
-		bq.App = &openrtb.App{
-			Inventory: openrtb.Inventory{
+		bq.DistributionchannelOneof = &openrtb.BidRequest_App{
+			App: &openrtb.App{
 				Cat: cat,
 			},
 		}
+
 		selector = filterAppBuilder(province, latLon, carrier, brand, isp, whitelist, blacklist, cat)
 	} else {
 		return nil, nil, errors.New("target invalid")
@@ -210,7 +215,7 @@ func applyPublisherFilter(bq *openrtb.BidRequest, target string, sup entity.Supp
 	return publisher, selector, err
 }
 
-func internalSelect(c context.Context, ctx *builder.Context, seat entity.Seat, filteredAds []entity.Creative, fe map[int64][]string) response {
+func internalSelect(c context.Context, ctx *builder.Context, seat entity.Seat, filteredAds []entity.Creative, fe map[int32][]string) response {
 	fAds := make([]responseAds, 0)
 	for id, ers := range fe {
 		a, err := ads.GetAd(id)

@@ -1,6 +1,10 @@
 package entity
 
-import "strings"
+import (
+	"strings"
+
+	"clickyab.com/crane/openrtb/v2.5"
+)
 
 // Target is the target of this campaign
 type Target int
@@ -55,11 +59,11 @@ func (s Strategy) Valid() bool {
 // Campaign is the single campaign in system
 type Campaign interface {
 	// ID return the campaign id
-	ID() int64
+	ID() int32
 	// Name is the campaign name
 	Name() string
 	// Make sure the result is >= 1
-	Frequency() int
+	Frequency() int32
 	//BlackListPublisher shows publishers in blacklist
 	BlackListPublisher() []string
 	//BlackListPublisher shows publishers in blacklist
@@ -77,7 +81,7 @@ type Campaign interface {
 	//LatLon return LanLon and radius to accept ad
 	LatLon() (bool, float64, float64, float64)
 	// Category return the category of this campaign
-	Category() []Category
+	Category() []openrtb.ContentCategory
 	// WebMobile campaign web mobile on or off
 	// @deprecated in favor of attributes TODO : remove this
 	WebMobile() bool

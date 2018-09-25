@@ -1,5 +1,9 @@
 package entity
 
+import (
+	"clickyab.com/crane/openrtb/v2.5"
+)
+
 // InputType is demand
 type InputType string
 
@@ -32,7 +36,7 @@ func (r RequestType) String() string {
 }
 
 // CappingMode decide how to handle capping
-type CappingMode int
+type CappingMode int32
 
 // Validate capping modes
 func (c CappingMode) Validate() bool {
@@ -60,7 +64,7 @@ type Context interface {
 	// Slots is the slot for this request
 	Seats() []Seat
 	// Category returns category obviously
-	Category() []Category
+	Category() []openrtb.ContentCategory
 	// User return user data
 	User() User
 	// Tiny means that the logo of clickyab should be shown (true) or not
@@ -80,7 +84,7 @@ type Context interface {
 	// Rate return ratio currency conversion to IRR
 	Rate() float64
 	// ConnectionType return network for app 2g,3g,4g,...
-	ConnectionType() int
+	ConnectionType() openrtb.ConnectionType
 	// Carrier return carrier for app
 	Carrier() string
 	// Brand return brand for app
