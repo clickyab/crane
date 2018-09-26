@@ -27,6 +27,12 @@ func UnaryCall(ctx context.Context, pl *openrtb.BidRequest) (*openrtb.BidRespons
 	}
 	defer creads.Clone()
 	conn, err := grpc.Dial(secureSever.String(), grpc.WithTransportCredentials(creads))
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		_ = conn.Close()
+	}()
 	client := openrtb.NewOrtbServiceClient(conn)
 	return client.Ortb(ctx, pl)
 }

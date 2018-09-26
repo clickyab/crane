@@ -9,13 +9,25 @@ import (
 	"net/http"
 
 	"clickyab.com/crane/openrtb/v2.5"
+	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/xlog"
 	"google.golang.org/grpc"
 )
 
+var demand = config.RegisterString("crane.supplier.client.mode", "unary", "")
+
 // Call an openrtp end point
 func Call(ctx context.Context, url string, pl *openrtb.BidRequest) (*openrtb.BidResponse, error) {
-	return UnaryCall(ctx, pl)
+	switch demand.String() {
+	case "unary":
+		return UnaryCall(ctx, pl)
+	case "stream":
+		return StreamCall(ctx, pl)
+	case "rest":
+		return RestCall(ctx, url, pl)
+	default:
+		return RestCall(ctx, url, pl)
+	}
 }
 
 // RestCall an openrtp end point
@@ -66,6 +78,9 @@ func UnaryCall(ctx context.Context, pl *openrtb.BidRequest) (*openrtb.BidRespons
 	if err != nil {
 		return nil, err
 	}
+	defer func() {
+		_ = conn.Close()
+	}()
 	client := openrtb.NewOrtbServiceClient(conn)
 	pl.Token = token.String()
 	return client.Ortb(ctx, pl)
