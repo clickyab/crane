@@ -29,7 +29,7 @@ func init() {
 }
 
 var token = config.RegisterString("clickyab.token", "", "")
-var timeout = config.RegisterDuration("clickyab.timeout", time.Millisecond*150, "maximum timeout")
+var timeout = config.RegisterDuration("clickyab.timeout", time.Millisecond*2500, "maximum timeout")
 
 // openRTBInput is the route for rtb input layer
 //func openRTBInputStream(ct context.Context, w http.ResponseWriter, r *http.Request) {

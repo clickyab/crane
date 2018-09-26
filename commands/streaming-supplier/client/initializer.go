@@ -5,13 +5,14 @@ import (
 
 	"clickyab.com/crane/openrtb/v2.5"
 	"github.com/clickyab/services/config"
+	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 )
 
 var (
 	//connection  = config.RegisterInt("clickyab.stream.connection", 40, "")
-	secureSever = config.RegisterString("clickyab.stream.address", "", "")
+	secureSever = config.RegisterString("clickyab.stream.address", "stream.clickyab.com:30100", "")
 	cert        = config.RegisterString("clickyab.cert", "", "")
 	// RequestChannel for stream
 	//RequestChannel = make(chan *StreamRequest, 10000)
@@ -23,7 +24,7 @@ var (
 func UnaryCall(ctx context.Context, pl *openrtb.BidRequest) (*openrtb.BidResponse, error) {
 	creads, err := credentials.NewClientTLSFromFile(cert.String(), "")
 	if err != nil {
-		return nil, err
+		logrus.Fatal("certificate is not valid")
 	}
 	defer creads.Clone()
 	conn, err := grpc.Dial(secureSever.String(), grpc.WithTransportCredentials(creads))

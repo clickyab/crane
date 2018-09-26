@@ -1,6 +1,8 @@
 package main
 
 import (
+	"os"
+
 	"clickyab.com/crane/commands"
 
 	// CORS is required for supplier
@@ -12,6 +14,12 @@ import (
 )
 
 func main() {
+
+	if _, err := os.Stat(os.Getenv("CRN_CLICKYAB_CERT")); os.IsNotExist(err) {
+		logrus.Fatal(`certificate not found!
+export CRN_CLICKYAB_CERT=/absolute/path/to/cert/file`)
+
+	}
 
 	config.Initialize(commands.Organization, commands.AppName, commands.Prefix, config.NewDescriptiveLayer())
 
