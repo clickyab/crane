@@ -27,7 +27,7 @@ var (
 		14: {Width: 250, Height: 250},
 		15: {Width: 300, Height: 1050},
 		16: {Width: 320, Height: 480},
-		17: {Width: 48, Height: 320},
+		17: {Width: 480, Height: 320},
 		18: {Width: 128, Height: 128},
 		19: {Width: 800, Height: 440}, // This last entry is here for vast.
 		20: {Width: 0, Height: 0},     // This last entry is here for native.
