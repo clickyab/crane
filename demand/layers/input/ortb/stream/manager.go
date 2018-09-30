@@ -101,7 +101,7 @@ func init() {
 
 type server struct{}
 
-func (*server) OrtbStream(b openrtb.OrtbService_OrtbStreamServer) error {
+func (s *server) OrtbStream(b openrtb.OrtbService_OrtbStreamServer) error {
 	for {
 		r, err := b.Recv()
 		if err == io.EOF {
@@ -115,7 +115,7 @@ func (*server) OrtbStream(b openrtb.OrtbService_OrtbStreamServer) error {
 
 		res, err := ortb.GrpcHandler(b.Context(), r)
 		if err != nil {
-			logrus.Debugf("handller: %s", r.Id)
+			logrus.Debugf("handler: %s, %v", r.Id, err)
 			res = &openrtb.BidResponse{
 				Id: r.GetId(),
 			}

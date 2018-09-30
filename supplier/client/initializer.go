@@ -1,9 +1,8 @@
 package client
 
 import (
+	"container/ring"
 	"context"
-	"fmt"
-	"io"
 	"net/http"
 	"sync"
 	"time"
@@ -14,6 +13,7 @@ import (
 	"github.com/clickyab/services/safe"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 )
 
 type initRestClient struct {
@@ -21,7 +21,7 @@ type initRestClient struct {
 
 var (
 	httpClient *http.Client
-	maxIdle    = config.RegisterInt("crane.supplier.max_idle_connection", 30, "maximum idle connection count")
+	maxIdle    = config.RegisterInt("crane.supplier.max_idle_connection", 30, "maximum idle concurrentConnections count")
 )
 
 func (*initRestClient) Initialize(context.Context) {
@@ -38,13 +38,14 @@ func init() {
 }
 
 var (
-	connection    = config.RegisterInt("crane.supplier.stream.connection", 40, "")
-	insecureSever = config.RegisterString("crane.supplier.stream.address", "crane-stream:9001", "")
-	token         = config.RegisterString("crane.supplier.demand.token", "forbidden", "")
-	timeout       = config.RegisterDuration("crane.supplier.timeout", time.Millisecond*150, "maximum timeout")
+	concurrentConnections = config.RegisterInt("crane.supplier.stream.concurrentConnections", 40, "")
+	insecureSever         = config.RegisterString("crane.supplier.stream.address", "crane-stream:9001", "")
+	token                 = config.RegisterString("crane.supplier.demand.token", "forbidden", "")
+	timeout               = config.RegisterDuration("crane.supplier.timeout", time.Millisecond*150, "maximum timeout")
 	// RequestChannel for stream
 	RequestChannel = make(chan *StreamRequest, 100000)
 	lock           = sync.RWMutex{}
+	connections    *ring.Ring
 )
 
 // StreamRequest for stream
@@ -54,99 +55,124 @@ type StreamRequest struct {
 	Response   chan<- *openrtb.BidResponse
 }
 
-type initClient struct{}
+type initClient struct {
+	server string
+	cert   string
+}
 
 var inprogress = make(map[string]*StreamRequest)
 
-func (*initClient) Initialize(ctx context.Context) {
-	//safe.Try(func() error {
-	//	for {
-	//		if conn == nil && client == nil {
-	//			time.Sleep(time.Second)
-	//			continue
-	//		}
-	//		break
-	//	}
-	//	if st := conn.GetState(); st != connectivity.Idle &&
-	//		st != connectivity.Connecting &&
-	//		st != connectivity.Ready {
-	//		connlock.Lock()
-	//		defer connlock.Unlock()
-	//		var err error
-	//		conn, err = grpc.Dial(insecureSever.String(), grpc.WithInsecure())
-	//		if err != nil {
-	//			return err
-	//		}
-	//		client = openrtb.NewOrtbServiceClient(conn)
-	//	}
-	//	return fmt.Errorf("next round")
-	//
-	//}, time.Millisecond*100)
-	//safe.GoRoutine(ctx, func() {
-	//	connlock.Lock()
-	//	defer connlock.Unlock()
-	//	var err error
-	//	conn, err = grpc.Dial(insecureSever.String(), grpc.WithInsecure())
-	//	assert.Nil(err)
-	//	client = openrtb.NewOrtbServiceClient(conn)
-	//	<-ctx.Done()
-	//})
+type connection struct {
+	connection *grpc.ClientConn
+	client     openrtb.OrtbServiceClient
+	sync.RWMutex
+}
 
-	for i := 0; i < connection.Int(); i++ {
-		safe.Try(func() error {
-			var cerr = make(chan error)
-			conn, err := grpc.Dial(insecureSever.String(), grpc.WithInsecure())
-			if err != nil {
-				return err
-			}
-			defer func() { _ = conn.Close() }()
-			client := openrtb.NewOrtbServiceClient(conn)
-			cl, err := client.OrtbStream(ctx)
-			if err != nil {
-				return err
-			}
-			defer func() { _ = cl.CloseSend() }()
-			safe.GoRoutine(ctx, func() {
-				for {
-					rq := <-RequestChannel
-					lock.Lock()
-					inprogress[rq.BidRequest.Id] = rq
-					lock.Unlock()
+func (c connection) Get() openrtb.OrtbServiceClient {
+	c.RLock()
+	defer c.RUnlock()
+	return c.client
+}
 
-					err := cl.Send(rq.BidRequest)
-					if err != nil {
-						cerr <- fmt.Errorf("stream send: %v", err)
-					}
-				}
-			})
-			safe.GoRoutine(ctx, func() {
-				for {
-					rs, err := cl.Recv()
-					if err == io.EOF {
-						continue
-					}
-					if err != nil {
-						cerr <- fmt.Errorf("stream recv: %v", err)
-					}
-					lock.RLock()
-					if or, ok := inprogress[rs.Id]; ok {
-						or.Response <- rs
-					}
-					lock.RUnlock()
-				}
-			})
-			select {
-			case err := <-cerr:
-				logrus.Error(err)
-				return err
-			case <-ctx.Done():
-				return nil
-			}
-		}, time.Nanosecond)
+func newConnection(ctx context.Context, server, cert string) (*connection, error) {
+	c := &connection{
+		connection: nil,
+		client:     nil,
+		RWMutex:    sync.RWMutex{},
 	}
+	var conn *grpc.ClientConn
+	var err error
+	var cread credentials.TransportCredentials
+	if cert == "" {
+		conn, err = grpc.Dial(server, grpc.WithInsecure())
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		cread, err = credentials.NewClientTLSFromFile(cert, "")
+		if err != nil {
+			return nil, err
+		}
+		conn, err = grpc.Dial(server, grpc.WithTransportCredentials(cread))
+		if err != nil {
+			return nil, err
+		}
+	}
+	client := openrtb.NewOrtbServiceClient(conn)
+
+	c.connection = conn
+	c.client = client
+
+	safe.GoRoutine(ctx, func() {
+		for {
+			if !conn.WaitForStateChange(ctx, conn.GetState()) {
+				_ = conn.Close()
+				return
+			}
+			c.Lock()
+			st := conn.GetState().String()
+			switch {
+			case st == "TRANSIENT_FAILURE" || st == "SHUTDOWN" || st == "Invalid-State":
+				logrus.Debugf("connection closed: %s", st)
+				_ = conn.Close()
+				safe.Try(func() error {
+					if cert == "" {
+						conn, err = grpc.Dial(server, grpc.WithInsecure())
+						if err != nil {
+							logrus.Debugf("grpc dial error: %s", err)
+							return nil
+						}
+					} else {
+						conn, err = grpc.Dial(server, grpc.WithTransportCredentials(cread))
+						if err != nil {
+							logrus.Debugf("grpc dial error: %s", err)
+						}
+					}
+					client := openrtb.NewOrtbServiceClient(conn)
+					c.connection = conn
+					c.client = client
+					return nil
+				}, time.Millisecond)
+			case st == "IDLE" || st == "READY" || st == "CONNECTING":
+				logrus.Debugf("connection closed: %s", st)
+			}
+			c.Unlock()
+		}
+	})
+	return c, nil
+}
+
+func (ic *initClient) Initialize(ctx context.Context) {
+	connections = ring.New(concurrentConnections.Int())
+	for i := 0; i < concurrentConnections.Int(); i++ {
+		safe.Try(func() error {
+			conn, err := newConnection(ctx, ic.server, ic.cert)
+			if err != nil {
+				logrus.Debug(err)
+				return err
+			}
+			connections.Next().Value = conn
+			return nil
+		}, time.Second)
+	}
+
+	safe.GoRoutine(ctx, func() {
+		for {
+			rq := <-RequestChannel
+			conn := connections.Next().Value.(*connection)
+			res, err := conn.Get().Ortb(rq.Context, rq.BidRequest)
+			if err != nil {
+				rq.Response <- nil
+				continue
+			}
+			rq.Response <- res
+		}
+	})
 
 }
 
 func init() {
-	initializer.Register(&initClient{}, 100)
+	initializer.Register(&initClient{
+		server: insecureSever.String(),
+	}, 100)
 }

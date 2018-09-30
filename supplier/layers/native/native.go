@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	website "clickyab.com/crane/models/clickyabwebsite"
 	"clickyab.com/crane/openrtb/v2.5"
@@ -47,7 +48,9 @@ var (
 // parent		:parent
 // count		:number of impression
 // handle supplier native route
-func getNative(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+func getNative(ct context.Context, w http.ResponseWriter, r *http.Request) {
+	ctx, cl := context.WithTimeout(ct, time.Second)
+	defer cl()
 	pubID := r.URL.Query().Get("i")
 	pub, err := website.GetWebSite(sup, pubID)
 	if err != nil {

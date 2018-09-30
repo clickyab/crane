@@ -8,7 +8,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"clickyab.com/crane/openrtb/v2.5"
+	openrtb "clickyab.com/crane/openrtb/v2.5"
 	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/xlog"
 	"google.golang.org/grpc"
