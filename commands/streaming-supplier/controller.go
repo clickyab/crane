@@ -67,6 +67,7 @@ var timeout = config.RegisterDuration("clickyab.timeout", time.Millisecond*1000,
 //	}
 //
 //}
+var demand = config.RegisterString("clickyab.demand.url", "supplier.clickyab.com/api/ortb/", "")
 
 // openRTBInput is the route for rtb input layer
 func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
@@ -87,7 +88,7 @@ func openRTBInput(ct context.Context, w http.ResponseWriter, r *http.Request) {
 	rc := make(chan *openrtb.BidResponse)
 
 	safe.GoRoutine(ctx, func() {
-		res, err := client.Call(ctx, "", payload)
+		res, err := client.Call(ctx, demand.String()+token.String(), payload)
 		if err != nil {
 			rc <- nil
 			return
