@@ -8,10 +8,9 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	openrtb "clickyab.com/crane/openrtb/v2.5"
+	"clickyab.com/crane/openrtb/v2.5"
 	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/xlog"
-	"google.golang.org/grpc"
 )
 
 var demand = config.RegisterString("crane.supplier.client.mode", "managed", "")
@@ -21,8 +20,6 @@ func Call(ctx context.Context, url string, pl *openrtb.BidRequest) (*openrtb.Bid
 	switch demand.String() {
 	case "managed":
 		return managed(ctx, pl)
-	case "unary":
-		return UnaryCall(ctx, pl)
 	case "stream":
 		return StreamCall(ctx, pl)
 	case "rest":
@@ -90,20 +87,6 @@ func managed(ctx context.Context, pl *openrtb.BidRequest) (*openrtb.BidResponse,
 		}
 		return rs, nil
 	}
-}
-
-// UnaryCall an openrtp end point
-func UnaryCall(ctx context.Context, pl *openrtb.BidRequest) (*openrtb.BidResponse, error) {
-	conn, err := grpc.Dial(insecureSever.String(), grpc.WithInsecure())
-	if err != nil {
-		return nil, err
-	}
-	defer func() {
-		_ = conn.Close()
-	}()
-	client := openrtb.NewOrtbServiceClient(conn)
-	pl.Token = token.String()
-	return client.Ortb(ctx, pl)
 }
 
 // StreamCall an openrtp end point

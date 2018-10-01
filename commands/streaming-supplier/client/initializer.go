@@ -20,6 +20,8 @@ var (
 	//connection  = config.RegisterInt("clickyab.stream.connection", 40, "")
 	secureSever = config.RegisterString("clickyab.stream.address", "stream.clickyab.com:30100", "")
 	cert        = config.RegisterString("clickyab.cert", "", "")
+	token       = config.RegisterString("clickyab.token", "", "")
+
 	// RequestChannel for stream
 	//RequestChannel = make(chan *StreamRequest, 10000)
 
@@ -49,8 +51,6 @@ func init() {
 
 var (
 	concurrentConnections = config.RegisterInt("crane.supplier.stream.concurrentConnections", 40, "")
-	insecureSever         = config.RegisterString("crane.supplier.stream.address", "crane-stream:9001", "")
-	token                 = config.RegisterString("crane.supplier.demand.token", "forbidden", "")
 	timeout               = config.RegisterDuration("crane.supplier.timeout", time.Millisecond*550, "maximum timeout")
 	// RequestChannel for stream
 	RequestChannel = make(chan *StreamRequest, 100000)
@@ -66,10 +66,7 @@ type StreamRequest struct {
 }
 
 // initClient
-type initClient struct {
-	server string
-	cert   string
-}
+type initClient struct{}
 
 var inprogress = make(map[string]*StreamRequest)
 
@@ -145,7 +142,7 @@ func newConnection(ctx context.Context, server, cert string) (*connection, error
 					return nil
 				}, time.Millisecond)
 			case st == "IDLE" || st == "READY" || st == "CONNECTING":
-				logrus.Debugf("connection closed: %s", st)
+				logrus.Debugf("connection status: %s", st)
 			}
 			c.Unlock()
 		}
@@ -157,7 +154,7 @@ func (ic *initClient) Initialize(ctx context.Context) {
 	connections = ring.New(concurrentConnections.Int())
 	for i := 0; i < concurrentConnections.Int(); i++ {
 		safe.Try(func() error {
-			conn, err := newConnection(ctx, ic.server, ic.cert)
+			conn, err := newConnection(ctx, secureSever.String(), cert.String())
 			if err != nil {
 				logrus.Debug(err)
 				return err
@@ -184,8 +181,5 @@ func (ic *initClient) Initialize(ctx context.Context) {
 }
 
 func init() {
-	initializer.Register(&initClient{
-		server: secureSever.String(),
-		cert:   cert.String(),
-	}, 100)
+	initializer.Register(&initClient{}, 100)
 }
