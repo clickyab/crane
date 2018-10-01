@@ -51,7 +51,7 @@ var (
 	concurrentConnections = config.RegisterInt("crane.supplier.stream.concurrentConnections", 40, "")
 	insecureSever         = config.RegisterString("crane.supplier.stream.address", "crane-stream:9001", "")
 	token                 = config.RegisterString("crane.supplier.demand.token", "forbidden", "")
-	timeout               = config.RegisterDuration("crane.supplier.timeout", time.Millisecond*150, "maximum timeout")
+	timeout               = config.RegisterDuration("crane.supplier.timeout", time.Millisecond*550, "maximum timeout")
 	// RequestChannel for stream
 	RequestChannel = make(chan *StreamRequest, 100000)
 	lock           = sync.RWMutex{}
@@ -171,6 +171,7 @@ func (ic *initClient) Initialize(ctx context.Context) {
 		for {
 			rq := <-RequestChannel
 			conn := connections.Next().Value.(*connection)
+			rq.BidRequest.Token = token.String()
 			res, err := conn.Get().Ortb(rq.Context, rq.BidRequest)
 			if err != nil {
 				rq.Response <- nil

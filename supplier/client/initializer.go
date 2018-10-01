@@ -160,6 +160,8 @@ func (ic *initClient) Initialize(ctx context.Context) {
 		for {
 			rq := <-RequestChannel
 			conn := connections.Next().Value.(*connection)
+			rq.BidRequest.Token = token.String()
+
 			res, err := conn.Get().Ortb(rq.Context, rq.BidRequest)
 			if err != nil {
 				rq.Response <- nil
