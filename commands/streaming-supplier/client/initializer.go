@@ -53,7 +53,7 @@ var (
 	concurrentConnections = config.RegisterInt("crane.supplier.stream.concurrentConnections", 40, "")
 	timeout               = config.RegisterDuration("crane.supplier.timeout", time.Millisecond*550, "maximum timeout")
 	// RequestChannel for stream
-	RequestChannel = make(chan *StreamRequest, 100000)
+	RequestChannel = make(chan *StreamRequest)
 	lock           = sync.RWMutex{}
 	connections    *ring.Ring
 )
