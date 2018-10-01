@@ -181,5 +181,5 @@ func (ic *initClient) Initialize(ctx context.Context) {
 }
 
 func init() {
-	initializer.Register(&initClient{}, 100)
+	initializer.Register(&initClient{}, 1)
 }

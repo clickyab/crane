@@ -21,6 +21,12 @@ export CRN_CLICKYAB_CERT=/absolute/path/to/cert/file`)
 
 	}
 
+	if "" == os.Getenv("CRN_CLICKYAB_TOKEN") {
+		logrus.Fatal(`token not found!
+export CRN_CLICKYAB_TOKEN="YOURTOKEN"`)
+
+	}
+
 	config.Initialize(commands.Organization, commands.AppName, commands.Prefix, config.NewDescriptiveLayer())
 
 	assert.True(config.GetString("services.framework.controller.mount_point") == "", "do not set end point for this app")
