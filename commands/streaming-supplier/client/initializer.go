@@ -167,22 +167,22 @@ func (ic *initClient) Initialize(ctx context.Context) {
 	safe.GoRoutine(ctx, func() {
 		for {
 			rq := <-RequestChannel
-			var conn *connection
-			var ok bool
-			for {
-				conn, ok = connections.Next().Value.(*connection)
-				if ok {
-					break
+			go func(s StreamRequest) {
+				var conn *connection
+				var ok bool
+				for {
+					conn, ok = connections.Next().Value.(*connection)
+					if ok {
+						break
+					}
 				}
-			}
-
-			rq.BidRequest.Token = token.String()
-			res, err := conn.Get().Ortb(rq.Context, rq.BidRequest)
-			if err != nil {
-				rq.Response <- nil
-				continue
-			}
-			rq.Response <- res
+				s.BidRequest.Token = token.String()
+				res, err := conn.Get().Ortb(rq.Context, rq.BidRequest)
+				if err != nil {
+					s.Response <- nil
+				}
+				s.Response <- res
+			}(*rq)
 		}
 	})
 

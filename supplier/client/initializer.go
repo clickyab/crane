@@ -44,7 +44,7 @@ var (
 	token                 = config.RegisterString("crane.supplier.demand.token", "forbidden", "")
 	timeout               = config.RegisterDuration("crane.supplier.timeout", time.Millisecond*150, "maximum timeout")
 	// RequestChannel for stream
-	RequestChannel = make(chan *StreamRequest, 100000)
+	RequestChannel = make(chan *StreamRequest)
 	lock           = sync.RWMutex{}
 	connections    *ring.Ring
 )
@@ -161,15 +161,16 @@ func (ic *initClient) Initialize(ctx context.Context) {
 	safe.GoRoutine(ctx, func() {
 		for {
 			rq := <-RequestChannel
-			conn := connections.Next().Value.(*connection)
-			rq.BidRequest.Token = token.String()
+			go func(s StreamRequest) {
+				conn := connections.Next().Value.(*connection)
+				s.BidRequest.Token = token.String()
+				res, err := conn.Get().Ortb(rq.Context, rq.BidRequest)
+				if err != nil {
+					s.Response <- nil
+				}
+				s.Response <- res
+			}(*rq)
 
-			res, err := conn.Get().Ortb(rq.Context, rq.BidRequest)
-			if err != nil {
-				rq.Response <- nil
-				continue
-			}
-			rq.Response <- res
 		}
 	})
 
