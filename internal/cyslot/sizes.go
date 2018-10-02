@@ -31,6 +31,7 @@ var (
 		18: {Width: 128, Height: 128},
 		19: {Width: 800, Height: 440}, // This last entry is here for vast.
 		20: {Width: 0, Height: 0},     // This last entry is here for native.
+		21: {Width: 1200, Height: 627},
 	}
 )
 
@@ -52,6 +53,7 @@ var sizes = map[string]int32{
 	"320x480":  16,
 	"48x320":   17,
 	"128x128":  18,
+	"1200x627": 21,
 }
 
 var videoSize = []int32{3, 4, 9, 16, 14}
