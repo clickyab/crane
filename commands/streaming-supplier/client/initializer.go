@@ -13,6 +13,7 @@ import (
 	"github.com/clickyab/services/safe"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/balancer/roundrobin"
 	"google.golang.org/grpc/credentials"
 )
 
@@ -92,7 +93,7 @@ func newConnection(ctx context.Context, server, cert string) (*connection, error
 	var err error
 	var cread credentials.TransportCredentials
 	if cert == "" {
-		conn, err = grpc.Dial(server, grpc.WithInsecure())
+		conn, err = grpc.Dial(server, grpc.WithInsecure(), grpc.WithBalancerName(roundrobin.Name))
 		if err != nil {
 			return nil, err
 		}
@@ -101,7 +102,7 @@ func newConnection(ctx context.Context, server, cert string) (*connection, error
 		if err != nil {
 			return nil, err
 		}
-		conn, err = grpc.Dial(server, grpc.WithTransportCredentials(cread))
+		conn, err = grpc.Dial(server, grpc.WithTransportCredentials(cread), grpc.WithBalancerName(roundrobin.Name))
 		if err != nil {
 			return nil, err
 		}
@@ -125,13 +126,13 @@ func newConnection(ctx context.Context, server, cert string) (*connection, error
 				_ = conn.Close()
 				safe.Try(func() error {
 					if cert == "" {
-						conn, err = grpc.Dial(server, grpc.WithInsecure())
+						conn, err = grpc.Dial(server, grpc.WithInsecure(), grpc.WithBalancerName(roundrobin.Name))
 						if err != nil {
 							logrus.Debugf("grpc dial error: %s", err)
 							return nil
 						}
 					} else {
-						conn, err = grpc.Dial(server, grpc.WithTransportCredentials(cread))
+						conn, err = grpc.Dial(server, grpc.WithTransportCredentials(cread), grpc.WithBalancerName(roundrobin.Name))
 						if err != nil {
 							logrus.Debugf("grpc dial error: %s", err)
 						}

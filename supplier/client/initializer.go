@@ -119,13 +119,13 @@ func newConnection(ctx context.Context, server, cert string) (*connection, error
 				_ = conn.Close()
 				safe.Try(func() error {
 					if cert == "" {
-						conn, err = grpc.Dial(server, grpc.WithInsecure())
+						conn, err = grpc.Dial(server, grpc.WithInsecure(), grpc.WithBalancerName(roundrobin.Name))
 						if err != nil {
 							logrus.Debugf("grpc dial error: %s", err)
 							return nil
 						}
 					} else {
-						conn, err = grpc.Dial(server, grpc.WithTransportCredentials(cread))
+						conn, err = grpc.Dial(server, grpc.WithTransportCredentials(cread), grpc.WithBalancerName(roundrobin.Name))
 						if err != nil {
 							logrus.Debugf("grpc dial error: %s", err)
 						}
@@ -162,7 +162,14 @@ func (ic *initClient) Initialize(ctx context.Context) {
 		for {
 			rq := <-RequestChannel
 			go func(s StreamRequest) {
-				conn := connections.Next().Value.(*connection)
+				var conn *connection
+				var ok bool
+				for {
+					conn, ok = connections.Next().Value.(*connection)
+					if ok {
+						break
+					}
+				}
 				s.BidRequest.Token = token.String()
 				res, err := conn.Get().Ortb(rq.Context, rq.BidRequest)
 				if err != nil {
