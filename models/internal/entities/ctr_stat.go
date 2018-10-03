@@ -24,6 +24,7 @@ type CTRStat struct {
 	Impression18 sql.NullInt64 `db:"imp18"`
 	Impression19 sql.NullInt64 `db:"imp19"`
 	Impression20 sql.NullInt64 `db:"imp20"`
+	Impression21 sql.NullInt64 `db:"imp21"`
 
 	Click1  sql.NullInt64 `db:"click1"`
 	Click2  sql.NullInt64 `db:"click2"`
@@ -45,4 +46,5 @@ type CTRStat struct {
 	Click18 sql.NullInt64 `db:"click18"`
 	Click19 sql.NullInt64 `db:"click19"`
 	Click20 sql.NullInt64 `db:"click20"`
+	Click21 sql.NullInt64 `db:"click21"`
 }

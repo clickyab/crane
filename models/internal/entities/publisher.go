@@ -99,7 +99,7 @@ func FindOrAddWebsite(sup entity.Supplier, domain string, pid int64) (entity.Pub
 	tw := Website{
 		WSupplier: sup.Name(),
 		WDomain:   domain,
-		FCTR:      [21]float32{},
+		FCTR:      [22]float32{},
 		Status:    1,
 		Supp:      sup,
 		WFloorCpm: sql.NullInt64{Valid: false},
@@ -182,7 +182,7 @@ VALUES (?,?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE
 	tw := App{
 		AppSupplier: sup.Name(),
 		AppPackage:  appPackage,
-		FCTR:        [21]float32{},
+		FCTR:        [22]float32{},
 		Status:      1,
 		Supp:        sup,
 		AppFloorCpm: sql.NullInt64{Valid: false},

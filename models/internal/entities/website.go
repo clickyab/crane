@@ -36,7 +36,7 @@ type Website struct {
 	WMinCPC     mysql.GenericJSONField `db:"w_min_cpc"`
 	CTRStat
 	Supp entity.Supplier `db:"-"`
-	FCTR [21]float32
+	FCTR [22]float32
 
 	cat     []openrtb.ContentCategory
 	catComp bool
@@ -94,7 +94,8 @@ func (w *Website) totalImp() (res int64) {
 		w.Impression17.Int64 +
 		w.Impression18.Int64 +
 		w.Impression19.Int64 +
-		w.Impression20.Int64
+		w.Impression20.Int64 +
+		w.Impression21.Int64
 }
 
 // ID return the website id
@@ -161,11 +162,11 @@ func WebsiteLoaderGen(name bool) func(ctx context.Context) (map[string]kv.Serial
   SUM(imp_1) AS imp1, SUM(imp_2) AS imp2, SUM(imp_3) AS imp3, SUM(imp_4) AS imp4, SUM(imp_5) AS imp5,
   SUM(imp_6) AS imp6, SUM(imp_7) AS imp7, SUM(imp_8) AS imp8, SUM(imp_9) AS imp9, SUM(imp_10) AS imp10,
   SUM(imp_11) AS imp11, SUM(imp_12) AS imp12, SUM(imp_13) AS imp13, SUM(imp_14) AS imp14, SUM(imp_15) AS imp15,
-  SUM(imp_16) AS imp16, SUM(imp_17) AS imp17, SUM(imp_18) AS imp18, SUM(imp_19) AS imp19, SUM(imp_20) AS imp20,
+  SUM(imp_16) AS imp16, SUM(imp_17) AS imp17, SUM(imp_18) AS imp18, SUM(imp_19) AS imp19, SUM(imp_20) AS imp20,SUM(imp_21) AS imp21,
   SUM(click_1) AS click1, SUM(click_2) AS click2, SUM(click_3) AS click3, SUM(click_4) AS click4, SUM(click_5) AS click5,
   SUM(click_6) AS click6, SUM(click_7) AS click7, SUM(click_8) AS click8, SUM(click_9) AS click9, SUM(click_10) AS click10,
   SUM(click_11) AS click11, SUM(click_12) AS click12, SUM(click_13) AS click13, SUM(click_14) AS click14, SUM(click_15) AS click15,
-  SUM(click_16) AS click16, SUM(click_17) AS click17, SUM(click_18) AS click18, SUM(click_19) AS click19, SUM(click_20) AS click20
+  SUM(click_16) AS click16, SUM(click_17) AS click17, SUM(click_18) AS click18, SUM(click_19) AS click19, SUM(click_20) AS click20,SUM(click_21) AS click21
   FROM websites
   LEFT JOIN ctr_stat ON w_id=pub_id AND pub_type=? AND date BETWEEN DATE_SUB(NOW(), INTERVAL 2 DAY) AND NOW() %s
   GROUP BY w_id LIMIT %d, %d`, where, j, j+cnt)
@@ -179,7 +180,7 @@ func WebsiteLoaderGen(name bool) func(ctx context.Context) (map[string]kv.Serial
 			}
 
 			for i := range res {
-				res[i].FCTR = [21]float32{}
+				res[i].FCTR = [22]float32{}
 				res[i].FCTR[1] = calc(res[i].Impression1, res[i].Click1)
 				res[i].FCTR[2] = calc(res[i].Impression2, res[i].Click2)
 				res[i].FCTR[3] = calc(res[i].Impression3, res[i].Click3)
@@ -200,6 +201,7 @@ func WebsiteLoaderGen(name bool) func(ctx context.Context) (map[string]kv.Serial
 				res[i].FCTR[18] = calc(res[i].Impression18, res[i].Click18)
 				res[i].FCTR[19] = calc(res[i].Impression19, res[i].Click19)
 				res[i].FCTR[20] = calc(res[i].Impression20, res[i].Click20)
+				res[i].FCTR[21] = calc(res[i].Impression21, res[i].Click21)
 				n := &res[i]
 				k := fmt.Sprintf("%s/%s", res[i].WSupplier, res[i].WDomain)
 				if !name {
