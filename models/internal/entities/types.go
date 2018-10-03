@@ -30,6 +30,7 @@ var (
 		16: {Width: 320, Height: 480},
 		17: {Width: 48, Height: 320},
 		18: {Width: 128, Height: 128},
+		21: {Width: 1200, Height: 627},
 	}
 )
 
