@@ -55,6 +55,8 @@ type Seat interface {
 	MinCPM() float64
 	// Soft minimum. lower than this means no sec biding. must not be lower than min cpm
 	SoftCPM() float64
+	// DID return device id sha1
+	DID() string
 }
 
 // VastSeat is a seat with vast compatibility

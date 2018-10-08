@@ -139,11 +139,13 @@ func GrpcHandler(ctx context.Context, req *openrtb.BidRequest) (*openrtb.BidResp
 	}
 
 	pub, selector, ps, prevent, err := handlePublisherSelector(domain, bundle, sup, prevent)
+
 	if err != nil {
 		e := spew.Sprintf("publisher from %s, %s, %s, not supported: %s. payload: %#v", sup.Name(), ps, req)
 		xlog.GetWithError(ctx, err).Debug(e)
 		return nil, grpc.ErrServerStopped
 	}
+
 	proto := entity.HTTP
 	for i := range req.Imp {
 		if req.Imp[i].Secure == 1 {
@@ -168,7 +170,6 @@ func GrpcHandler(ctx context.Context, req *openrtb.BidRequest) (*openrtb.BidResp
 		xlog.GetWithError(ctx, err).Debug("invalid request")
 		return res, err
 	}
-
 	b := []builder.ShowOptionSetter{
 		builder.SetTimestamp(),
 		builder.SetTargetHost(sup.ShowDomain()),
@@ -176,7 +177,7 @@ func GrpcHandler(ctx context.Context, req *openrtb.BidRequest) (*openrtb.BidResp
 		builder.SetIPLocation(ip, req.GetUser(), req.GetDevice()),
 		builder.SetPublisher(pub),
 		builder.SetProtocol(proto),
-		builder.SetTID(us, ip, ua),
+		builder.SetTID(us, ip, ua, req.GetDevice().GetDidsha1()),
 		builder.SetNoTiny(!tiny),
 		builder.SetBannerMarkup(sup),
 		builder.SetFatFinger(fatFinger),

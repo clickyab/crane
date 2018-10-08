@@ -253,7 +253,7 @@ func makeBuilder(carrier, ua string, percentage int64, ip string,
 		builder.SetCappingMode(entity.CappingNone),
 		builder.SetUnderfloor(true),
 		builder.SetCategory(bq),
-		builder.SetTID("", ip, ua),
+		builder.SetTID("", ip, ua, ""),
 		builder.SetCarrier(carrier),
 		builder.SetCategory(bq),
 	}

@@ -1516,6 +1516,18 @@ func (mr *MockSeatMockRecorder) ClickURL() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ClickURL", reflect.TypeOf((*MockSeat)(nil).ClickURL))
 }
 
+// DID mocks base method
+func (m *MockSeat) DID() string {
+	ret := m.ctrl.Call(m, "DID")
+	ret0, _ := ret[0].(string)
+	return ret0
+}
+
+// DID indicates an expected call of DID
+func (mr *MockSeatMockRecorder) DID() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DID", reflect.TypeOf((*MockSeat)(nil).DID))
+}
+
 // FatFinger mocks base method
 func (m *MockSeat) FatFinger() bool {
 	ret := m.ctrl.Call(m, "FatFinger")

@@ -67,6 +67,7 @@ var timeout = config.RegisterDuration("clickyab.timeout", time.Millisecond*1000,
 //	}
 //
 //}
+
 var demand = config.RegisterString("clickyab.demand.url", "supplier.clickyab.com/api/ortb/", "")
 
 // openRTBInput is the route for rtb input layer

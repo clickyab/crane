@@ -260,7 +260,7 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetIPLocation(ip, payload.User, payload.Device),
 		builder.SetPublisher(publisher),
 		builder.SetProtocol(proto),
-		builder.SetTID(us, ip, ua),
+		builder.SetTID(us, ip, ua, payload.GetDevice().GetDidsha1()),
 		builder.SetNoTiny(!tiny),
 		builder.SetBannerMarkup(sup),
 		builder.SetFatFinger(fatFinger),

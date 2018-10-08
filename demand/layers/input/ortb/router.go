@@ -50,6 +50,7 @@ type payloadData struct {
 	TV           bool
 	CappRegion   string
 	CMode        entity.CappingMode //capping mode (none,strict,reset)
+	Did          string
 }
 
 func extractor(ctx context.Context, r *http.Request) (*payloadData, error) {
@@ -79,17 +80,20 @@ func extractor(ctx context.Context, r *http.Request) (*payloadData, error) {
 		return false
 	}(tv)
 
-	expired, m, err := jwt.NewJWT().Decode([]byte(jt), "pt", "aid", "sup", "dom", "bid", "uaip", "susp", "pid", "now", "cpm", "ff", "t", "cmode")
+	expired, m, err := jwt.NewJWT().Decode([]byte(jt), "pt", "aid", "sup", "dom", "bid", "uaip", "susp", "pid", "now", "cpm", "ff", "t", "cmode", "did")
 	if err != nil {
 		return nil, err
 	}
 
 	pl.PreviousTime, err = strconv.ParseInt(m["now"], 10, 0)
+
 	if err != nil {
 		return nil, err
 	}
+
 	pl.CPM, _ = strconv.ParseFloat(m["cpm"], 64)
 	pl.PublicID = m["pid"]
+	pl.Did = m["did"]
 	// Get the supplier
 	pl.Supplier, err = suppliers.GetSupplierByName(m["sup"])
 	if err != nil {

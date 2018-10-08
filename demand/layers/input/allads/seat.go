@@ -17,6 +17,11 @@ type seat struct {
 	context entity.Context
 	rate    float64
 	size    int32
+	did     string
+}
+
+func (s *seat) DID() string {
+	return s.did
 }
 
 func (s *seat) PublicID() string {

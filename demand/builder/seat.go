@@ -29,6 +29,7 @@ type seat struct {
 	reserveHash string
 	bid         float64
 	cpm         float64
+	did         string
 
 	// url cache
 	click *url.URL
@@ -53,6 +54,10 @@ type seat struct {
 	// Video related stuff
 	mimes       []string
 	requestType entity.RequestType
+}
+
+func (s *seat) DID() string {
+	return s.did
 }
 
 func (s *seat) RequestType() entity.RequestType {
@@ -251,6 +256,7 @@ func (s *seat) makeURL(route string, params map[string]string, cpm float64, expi
 		"pt":    s.context.Publisher().Type().String(),
 		"t":     tiny,
 		"cmode": fmt.Sprint(s.context.Capping()),
+		"did":   s.did,
 	}, expire)
 	s.winnerAd.ID()
 	params["jt"] = j
