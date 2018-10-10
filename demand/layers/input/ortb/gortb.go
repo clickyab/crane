@@ -112,7 +112,7 @@ func GrpcHandler(ctx context.Context, req *openrtb.BidRequest) (*openrtb.BidResp
 	var (
 		tiny, fatFinger, prevent, underfloor bool
 		strategy                             []string
-		capping                              = entity.CappingReset
+		capping                              = entity.CappingStrict
 	)
 	if req.Ext != nil {
 		req.GetExt()
