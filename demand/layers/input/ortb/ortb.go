@@ -183,7 +183,7 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	var fatFinger,
 		prevent,
 		underfloor bool
-	var capping = openrtb.Capping_Strict
+	var capping = openrtb.Capping_Reset
 	var strategy []string
 	var tiny = sup.TinyMark()
 
@@ -191,7 +191,7 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		fatFinger = payload.Ext.GetFatFinger()
 		prevent = payload.Ext.GetPrevent()
 		underfloor = payload.Ext.GetUnderfloor()
-		capping = payload.Ext.GetCapping()
+		//capping = payload.Ext.GetCapping()
 		strategy = payload.Ext.GetStrategy()
 		tiny = payload.Ext.GetTiny()
 	}
