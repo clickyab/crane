@@ -148,7 +148,9 @@ func extractor(ctx context.Context, r *http.Request) (*payloadData, error) {
 	if expired {
 		pl.Suspicious = 99
 	}
-
+	if pl.Supplier.Name() == "chavoosh" {
+		pl.Suspicious = 0
+	}
 	pl.CappRegion = r.URL.Query().Get("reg")
 	cMode, err := strconv.Atoi(m["cmode"])
 	assert.Nil(err)
