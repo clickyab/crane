@@ -16,6 +16,7 @@ import (
 	"clickyab.com/crane/demand/layers/output/demand"
 	"clickyab.com/crane/demand/reducer"
 	"clickyab.com/crane/demand/rtb"
+	"clickyab.com/crane/metrics"
 	"clickyab.com/crane/models/apps"
 	"clickyab.com/crane/models/suppliers"
 	"clickyab.com/crane/models/website"
@@ -26,6 +27,7 @@ import (
 	"github.com/clickyab/services/version"
 	"github.com/clickyab/services/xlog"
 	"github.com/golang/protobuf/jsonpb"
+	"github.com/prometheus/client_golang/prometheus"
 	"github.com/rs/xmux"
 	"github.com/sirupsen/logrus"
 )
@@ -68,94 +70,29 @@ func writesErrorStatus(w http.ResponseWriter, status int, detail string) {
 	_, _ = fmt.Fprint(w, detail)
 }
 
-//
-//func monitoring(tk time.Time, sup string) {
-//
-//	msup := strings.Split(monitoringSuppliers.String(), ",")
-//	if len(msup) == 0 {
-//		return
-//	}
-//
-//	window := time.Second * 5
-//	ckey := time.Now().Truncate(window).Format("TRMS_060102150405")
-//	okey := time.Now().Truncate(window).Add(window * -1).Format("TRMS_060102150405")
-//
-//	tm := time.Since(tk).Nanoseconds() / 1e6
-//
-//	rms := kv.NewAEAVStore(ckey, window*10)
-//	max := rms.AllKeys()[fmt.Sprintf("%s_X", sup)]
-//	min := rms.AllKeys()[fmt.Sprintf("%s_M", sup)]
-//	rms.IncSubKey(fmt.Sprintf("%s_T", sup), tm)
-//	rms.IncSubKey(fmt.Sprintf("%s_C", sup), 1)
-//
-//	if cat := tm / 10; cat > 9 {
-//		rms.IncSubKey(fmt.Sprintf("%s_10", sup), 1)
-//	} else {
-//		rms.IncSubKey(fmt.Sprintf("%s_%d", sup, cat), 1)
-//	}
-//
-//	tms := kv.NewEavStore(ckey)
-//	update := false
-//	if tm > max {
-//		tms.SetSubKey(fmt.Sprintf("%s_X", sup), fmt.Sprintf("%d", tm+1))
-//		update = true
-//	}
-//	if min == 0 || tm < min {
-//		tms.SetSubKey(fmt.Sprintf("%s_M", sup), fmt.Sprintf("%d", tm+1))
-//		update = true
-//	}
-//	if update {
-//		assert.Nil(tms.Save(window * 10))
-//	}
-//	old := kv.NewEavStore(okey)
-//
-//	for _, ms := range msup {
-//		current := kv.NewEavStore(fmt.Sprintf("RMQS_%s", ms))
-//		if current.AllKeys()["DATE"] == okey {
-//			return
-//		}
-//		current.SetSubKey("DATE", okey)
-//		current.SetSubKey("MAX", old.AllKeys()[fmt.Sprintf("%s_X", ms)])
-//		t, _ := strconv.ParseInt(old.AllKeys()[fmt.Sprintf("%s_T", ms)], 10, 64)
-//		c, _ := strconv.ParseInt(old.AllKeys()[fmt.Sprintf("%s_C", ms)], 10, 64)
-//
-//		if t != 0 && c != 0 {
-//			current.SetSubKey("AVG", fmt.Sprintf("%d ms", t/c))
-//			current.SetSubKey("COUNT", fmt.Sprintf("%d p/s", c/5))
-//
-//		}
-//		for i := 0; i < 11; i++ {
-//			ps, _ := strconv.ParseInt(old.AllKeys()[fmt.Sprintf("%s_%d", ms, i)], 10, 64)
-//			if ps > 0 && c > 0 {
-//				if i == 10 {
-//					current.SetSubKey(fmt.Sprintf("%03d0ms>", i), fmt.Sprintf("%-3d%%  %d", (ps*100)/c, ps))
-//					continue
-//				}
-//				current.SetSubKey(fmt.Sprintf(">%03d0ms>", i), fmt.Sprintf("%-3d%%  %d", (ps*100)/c, ps))
-//				continue
-//			}
-//
-//			current.SetSubKey(fmt.Sprintf(">%03d0ms>", i), fmt.Sprintf("%-3d%%  %d", 0, 0))
-//
-//		}
-//		assert.Nil(current.Save(window * 100))
-//
-//	}
-//
-//}
-
 var rnd int64
 var samplerate = config.RegisterInt("crane.demand.input.sample", 10000, "")
 
 // openRTBInput is the route for rtb input layer
 func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
-	//tk := time.Now()
+	tn := time.Now()
+	var statusCode int
 	token := xmux.Param(ctx, "token")
 	sup, err := suppliers.GetSupplierByToken(token)
-
-	//defer monitoring(tk, sup.Name())
-
+	defer func() {
+		var supName = "unknown"
+		if sup != nil {
+			supName = sup.Name()
+		}
+		metrics.Duration.With(
+			prometheus.Labels{
+				"status":   fmt.Sprint(statusCode),
+				"supplier": supName,
+				"route":    "rest",
+			},
+		).Observe(time.Since(tn).Seconds())
+	}()
 	if err != nil {
 		e := fmt.Sprintf("supplier with token %s not found", token)
 		xlog.GetWithError(ctx, err).Debug(e)
