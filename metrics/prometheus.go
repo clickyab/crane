@@ -11,7 +11,7 @@ var (
 	// Duration for getting response time
 	Duration = prometheus.NewHistogramVec(
 		prometheus.HistogramOpts{
-			Name: "request_duration_millisecond",
+			Name: "demand_request_duration_millisecond",
 			Help: "Histogram of request duration",
 			Buckets: []float64{
 				.0000,
@@ -68,7 +68,7 @@ var (
 	// CounterRequest total request
 	CounterRequest = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
-			Name: "request_total",
+			Name: "demand_request_total",
 			Help: "Total number of request",
 		},
 		[]string{"status", "supplier", "route"},
@@ -76,7 +76,7 @@ var (
 	// CounterImpression for total impression ( this should be more than total request )
 	CounterImpression = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
-			Name: "request_impression",
+			Name: "demand_request_impression",
 			Help: "Total number of impressions",
 		},
 		[]string{"status", "supplier", "route"},
@@ -85,7 +85,7 @@ var (
 	// CounterSeat is for our response ( must be less then impression )
 	CounterSeat = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
-			Name: "request_seat",
+			Name: "demand_request_seat",
 			Help: "Total number of seats",
 		},
 		[]string{"status", "supplier", "route"},
