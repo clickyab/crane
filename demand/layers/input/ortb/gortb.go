@@ -4,18 +4,18 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"clickyab.com/crane/demand/builder"
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/demand/layers/output/demand"
 	"clickyab.com/crane/demand/rtb"
+	"clickyab.com/crane/metrics"
 	"clickyab.com/crane/models/suppliers"
 	"clickyab.com/crane/openrtb/v2.5"
-	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/xlog"
 	"github.com/davecgh/go-spew/spew"
-	"github.com/golang/protobuf/jsonpb"
-	"github.com/sirupsen/logrus"
+	"github.com/prometheus/client_golang/prometheus"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 )
@@ -91,6 +91,7 @@ func validate(req *openrtb.BidRequest) error {
 
 // GrpcHandler for handling openrtb request
 func GrpcHandler(ctx context.Context, req *openrtb.BidRequest) (*openrtb.BidResponse, error) {
+	tn := time.Now()
 
 	res := &openrtb.BidResponse{}
 	res.Id = req.GetId()
@@ -101,14 +102,20 @@ func GrpcHandler(ctx context.Context, req *openrtb.BidRequest) (*openrtb.BidResp
 		xlog.GetWithError(ctx, err).Debug(e)
 		return nil, e
 	}
-	rnd++
-	if rnd%1000 == 0 {
-		logrus.Warn(sup.Name())
-		j := jsonpb.Marshaler{}
-		s, e := j.MarshalToString(req)
-		assert.Nil(e)
-		logrus.Warn(s)
-	}
+	defer func() {
+		var supName = "unknown"
+		if sup != nil {
+			supName = sup.Name()
+		}
+		metrics.Duration.With(
+			prometheus.Labels{
+				"status":   "0",
+				"supplier": supName,
+				"route":    "grpc",
+			},
+		).Observe(time.Since(tn).Seconds())
+	}()
+
 	var (
 		tiny, fatFinger, prevent, underfloor bool
 		strategy                             []string

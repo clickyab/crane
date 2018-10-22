@@ -22,14 +22,12 @@ import (
 	"clickyab.com/crane/models/website"
 	"clickyab.com/crane/openrtb/v2.5"
 	"github.com/clickyab/services/assert"
-	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/kv"
 	"github.com/clickyab/services/version"
 	"github.com/clickyab/services/xlog"
 	"github.com/golang/protobuf/jsonpb"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/rs/xmux"
-	"github.com/sirupsen/logrus"
 )
 
 const demandPath = "/ortb/:token"
@@ -70,9 +68,6 @@ func writesErrorStatus(w http.ResponseWriter, status int, detail string) {
 	_, _ = fmt.Fprint(w, detail)
 }
 
-var rnd int64
-var samplerate = config.RegisterInt("crane.demand.input.sample", 10000, "")
-
 // openRTBInput is the route for rtb input layer
 func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
@@ -80,6 +75,7 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	var statusCode int
 	token := xmux.Param(ctx, "token")
 	sup, err := suppliers.GetSupplierByToken(token)
+
 	defer func() {
 		var supName = "unknown"
 		if sup != nil {
@@ -92,11 +88,19 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 				"route":    "rest",
 			},
 		).Observe(time.Since(tn).Seconds())
+
+		metrics.CounterRequest.With(prometheus.Labels{
+			"status":   fmt.Sprint(statusCode),
+			"supplier": supName,
+			"route":    "rest",
+		}).Inc()
 	}()
+
 	if err != nil {
 		e := fmt.Sprintf("supplier with token %s not found", token)
 		xlog.GetWithError(ctx, err).Debug(e)
-		writesErrorStatus(w, http.StatusNotFound, e)
+		statusCode = http.StatusNotFound
+		writesErrorStatus(w, statusCode, e)
 		return
 	}
 	payload := &openrtb.BidRequest{}
@@ -105,18 +109,11 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	defer assert.Nil(r.Body.Close())
 	if err != nil {
 		xlog.GetWithError(ctx, err).Errorf("invalid request from %s", sup.Name())
-		writesErrorStatus(w, http.StatusBadRequest, err.Error())
+		statusCode = http.StatusBadRequest
+		writesErrorStatus(w, statusCode, err.Error())
 		return
 	}
 
-	rnd++
-	if rnd%samplerate.Int64() == 0 {
-		logrus.Warn(sup.Name())
-		j := jsonpb.Marshaler{}
-		s, e := j.MarshalToString(payload)
-		assert.Nil(e)
-		logrus.Warn(s)
-	}
 	var fatFinger,
 		prevent,
 		underfloor bool
@@ -135,7 +132,8 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 	if err := validate(payload); err != nil {
 		xlog.GetWithError(ctx, err).Errorf("invalid data from %s. payload: %#v", sup.Name(), payload)
-		writesErrorStatus(w, http.StatusBadRequest, err.Error())
+		statusCode = http.StatusBadRequest
+		writesErrorStatus(w, statusCode, err.Error())
 		return
 	}
 	var domain, bundle string
@@ -150,7 +148,9 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		e := fmt.Sprintf("publisher from %s,  not supported: %s. payload: %#v", sup.Name(), ps, payload)
-		writesErrorStatus(w, http.StatusBadRequest, e)
+
+		statusCode = http.StatusBadRequest
+		writesErrorStatus(w, statusCode, e)
 		xlog.GetWithError(ctx, err).Debug(e)
 		return
 	}
@@ -176,7 +176,8 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	if ua == "" || ip == "" {
 		err := fmt.Errorf("no ip/no ua")
 		xlog.GetWithError(ctx, err).Debugf("invalid request from %s payload: %#v", sup.Name(), payload)
-		writesErrorStatus(w, http.StatusBadRequest, err.Error())
+		statusCode = http.StatusBadRequest
+		writesErrorStatus(w, statusCode, err.Error())
 		return
 	}
 	sh := fmt.Sprintf("CLICK_%x", sha1.Sum([]byte(fmt.Sprintf("%s_%s_%s_%s", prefix, time.Now().Format(format), ip, ua))))
@@ -222,7 +223,9 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	c, err := rtb.Select(ctx, selector, b...)
 	if err != nil {
 		xlog.GetWithError(ctx, err).Errorf("invalid request from %s", sup.Name())
-		writesErrorStatus(w, http.StatusBadRequest, err.Error())
+
+		statusCode = http.StatusBadRequest
+		writesErrorStatus(w, statusCode, err.Error())
 		return
 	}
 
@@ -232,6 +235,7 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	assert.Nil(err)
 	j := jsonpb.Marshaler{}
 	assert.Nil(j.Marshal(w, res))
+	statusCode = http.StatusOK
 }
 
 var vs = version.GetVersion()
