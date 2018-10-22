@@ -109,7 +109,7 @@ func GrpcHandler(ctx context.Context, req *openrtb.BidRequest) (*openrtb.BidResp
 		}
 		metrics.Duration.With(
 			prometheus.Labels{
-				"status":   "0",
+				"status":   "200",
 				"supplier": supName,
 				"route":    "grpc",
 			},
