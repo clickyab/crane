@@ -102,6 +102,7 @@ func GrpcHandler(ctx context.Context, req *openrtb.BidRequest) (*openrtb.BidResp
 		xlog.GetWithError(ctx, err).Debug(e)
 		return nil, e
 	}
+
 	defer func() {
 		var supName = "unknown"
 		if sup != nil {
@@ -114,6 +115,12 @@ func GrpcHandler(ctx context.Context, req *openrtb.BidRequest) (*openrtb.BidResp
 				"route":    "grpc",
 			},
 		).Observe(time.Since(tn).Seconds())
+
+		metrics.CounterRequest.With(prometheus.Labels{
+			"status":   "200",
+			"supplier": supName,
+			"route":    "grpc",
+		}).Inc()
 	}()
 
 	var (
