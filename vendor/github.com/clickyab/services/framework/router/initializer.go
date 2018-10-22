@@ -41,7 +41,6 @@ type initer struct {
 }
 
 func (i *initer) Initialize(ctx context.Context) {
-	time.Sleep(3 * time.Second)
 	engine = xmux.New()
 
 	var (
