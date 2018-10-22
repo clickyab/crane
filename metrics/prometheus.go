@@ -1,11 +1,8 @@
 package metrics
 
 import (
-	"net/http"
-
 	"github.com/clickyab/services/config"
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 var port = config.RegisterString("crane.metric.port", "9700", "")
@@ -94,13 +91,3 @@ var (
 		[]string{"status", "supplier", "route"},
 	)
 )
-
-func init() {
-	prometheus.MustRegister(Duration)
-	prometheus.MustRegister(CounterRequest)
-	prometheus.MustRegister(CounterImpression)
-	prometheus.MustRegister(CounterSeat)
-
-	http.Handle("/metrics", promhttp.Handler())
-	http.ListenAndServe(":"+port.String(), nil)
-}
