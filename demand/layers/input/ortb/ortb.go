@@ -233,7 +233,7 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	res, err := demand.Render(ctx, c, payload.Id)
 	safe.GoRoutine(ctx, func() {
 		for _, s := range sd {
-			go metrics.Size.With(prometheus.Labels{
+			metrics.Size.With(prometheus.Labels{
 				"supplier": sup.Name(),
 				"size":     s.Size,
 				"mode":     "in",
