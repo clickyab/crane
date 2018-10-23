@@ -21,7 +21,7 @@ var (
 	// Size of incoming impressions
 	Size = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
-			Name: "demand_request_size_in",
+			Name: "demand_request_size",
 			Help: "Histogram of request size",
 		},
 		[]string{"supplier", "size", "mode"},

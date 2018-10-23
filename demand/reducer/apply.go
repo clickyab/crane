@@ -72,6 +72,12 @@ LOOP:
 			return nil
 		case <-dl:
 			xlog.Get(c).Debugf("Filter timeout")
+			go metrics.Filter.With(
+				prometheus.Labels{
+					"supplier": imp.Publisher().Supplier().Name(),
+					"reason":   "time out",
+				},
+			).Inc()
 			close(next)
 			return nil
 		case <-done:
