@@ -234,17 +234,34 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	safe.GoRoutine(ctx, func() {
 		for _, s := range sd {
 			metrics.Size.With(prometheus.Labels{
-				"supplier": sup.Name(),
-				"size":     s.Size,
-				"mode":     "in",
+				"supplier":  sup.Name(),
+				"size":      s.Size,
+				"mode":      "in",
+				"publisher": publisher.Name(),
+				"type":      publisher.Type().String(),
 			}).Inc()
 		}
-		for i := range res.Seatbid {
+
+		if len(res.Seatbid) == 0 {
 			metrics.Size.With(prometheus.Labels{
-				"supplier": sup.Name(),
-				"size":     fmt.Sprintf("%dx%d", res.Seatbid[i].Bid[0].W, res.Seatbid[i].Bid[0].H),
-				"mode":     "out",
+				"supplier":  sup.Name(),
+				"size":      "NaN",
+				"mode":      "out",
+				"publisher": publisher.Name(),
+				"type":      publisher.Type().String(),
 			}).Inc()
+		}
+
+		for i := range res.Seatbid {
+			for b := range res.Seatbid[i].Bid {
+				metrics.Size.With(prometheus.Labels{
+					"supplier":  sup.Name(),
+					"size":      fmt.Sprintf("%dx%d", res.Seatbid[i].Bid[b].W, res.Seatbid[i].Bid[b].H),
+					"mode":      "out",
+					"publisher": publisher.Name(),
+					"type":      publisher.Type().String(),
+				}).Inc()
+			}
 		}
 	})
 

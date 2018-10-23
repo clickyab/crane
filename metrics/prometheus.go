@@ -9,22 +9,13 @@ var port = config.RegisterString("crane.metric.port", "9700", "")
 
 var (
 
-	// Publisher counter
-	Publisher = prometheus.NewCounterVec(
-		prometheus.CounterOpts{
-			Name: "demand_publisher",
-			Help: "Counter for publishers",
-		},
-		[]string{"supplier", "publisher", "type"},
-	)
-
 	// Size of incoming impressions
 	Size = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
 			Name: "demand_request_size",
 			Help: "Histogram of request size",
 		},
-		[]string{"supplier", "size", "mode"},
+		[]string{"supplier", "size", "mode", "publisher", "type"},
 	)
 
 	// Filter reasons
