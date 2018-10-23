@@ -16,8 +16,8 @@ type initer struct {
 func (initer) Initialize(ctx context.Context) {
 	prometheus.MustRegister(Duration)
 	prometheus.MustRegister(CounterRequest)
-	prometheus.MustRegister(CounterImpression)
-	prometheus.MustRegister(CounterSeat)
+	prometheus.MustRegister(Size)
+	prometheus.MustRegister(Filter)
 
 	http.Handle("/metrics", promhttp.Handler())
 	safe.GoRoutine(ctx, func() {

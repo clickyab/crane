@@ -23,6 +23,7 @@ import (
 	"clickyab.com/crane/openrtb/v2.5"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/kv"
+	"github.com/clickyab/services/safe"
 	"github.com/clickyab/services/version"
 	"github.com/clickyab/services/xlog"
 	"github.com/golang/protobuf/jsonpb"
@@ -230,6 +231,23 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 
 	res, err := demand.Render(ctx, c, payload.Id)
+	safe.GoRoutine(ctx, func() {
+		for _, s := range sd {
+			go metrics.Size.With(prometheus.Labels{
+				"supplier": sup.Name(),
+				"size":     s.Size,
+				"mode":     "in",
+			}).Inc()
+		}
+		for i := range res.Seatbid {
+			metrics.Size.With(prometheus.Labels{
+				"supplier": sup.Name(),
+				"size":     fmt.Sprintf("%dx%d", res.Seatbid[i].Bid[0].W, res.Seatbid[i].Bid[0].H),
+				"mode":     "out",
+			}).Inc()
+		}
+	})
+
 	w.Header().Set("crane-version", fmt.Sprint(vs.Count))
 	w.Header().Set("content-type", "application/json")
 	assert.Nil(err)

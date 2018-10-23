@@ -8,6 +8,34 @@ import (
 var port = config.RegisterString("crane.metric.port", "9700", "")
 
 var (
+
+	// Publisher counter
+	Publisher = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "demand_publisher",
+			Help: "Counter for publishers",
+		},
+		[]string{"supplier", "publisher", "type"},
+	)
+
+	// Size of incoming impressions
+	Size = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "demand_request_size_in",
+			Help: "Histogram of request size",
+		},
+		[]string{"supplier", "size", "mode"},
+	)
+
+	// Filter reasons
+	Filter = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "demand_filtered_reason",
+			Help: "Counter of filter",
+		},
+		[]string{"supplier", "reason"},
+	)
+
 	// Duration for getting response time
 	Duration = prometheus.NewHistogramVec(
 		prometheus.HistogramOpts{
@@ -70,23 +98,6 @@ var (
 		prometheus.CounterOpts{
 			Name: "demand_request_total",
 			Help: "Total number of request",
-		},
-		[]string{"status", "supplier", "route"},
-	)
-	// CounterImpression for total impression ( this should be more than total request )
-	CounterImpression = prometheus.NewCounterVec(
-		prometheus.CounterOpts{
-			Name: "demand_request_impression",
-			Help: "Total number of impressions",
-		},
-		[]string{"status", "supplier", "route"},
-	)
-
-	// CounterSeat is for our response ( must be less then impression )
-	CounterSeat = prometheus.NewCounterVec(
-		prometheus.CounterOpts{
-			Name: "demand_request_seat",
-			Help: "Total number of seats",
 		},
 		[]string{"status", "supplier", "route"},
 	)

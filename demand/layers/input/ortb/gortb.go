@@ -13,6 +13,7 @@ import (
 	"clickyab.com/crane/metrics"
 	"clickyab.com/crane/models/suppliers"
 	"clickyab.com/crane/openrtb/v2.5"
+	"github.com/clickyab/services/safe"
 	"github.com/clickyab/services/xlog"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/prometheus/client_golang/prometheus"
@@ -217,6 +218,21 @@ func GrpcHandler(ctx context.Context, req *openrtb.BidRequest) (*openrtb.BidResp
 		xlog.GetWithError(ctx, err).Errorf("invalid request from %s", sup.Name())
 		return nil, err
 	}
-
+	safe.GoRoutine(ctx, func() {
+		for _, s := range sd {
+			go metrics.Size.With(prometheus.Labels{
+				"supplier": sup.Name(),
+				"size":     s.Size,
+				"mode":     "in",
+			}).Inc()
+		}
+		for i := range res.Seatbid {
+			metrics.Size.With(prometheus.Labels{
+				"supplier": sup.Name(),
+				"size":     fmt.Sprintf("%dx%d", res.Seatbid[i].Bid[0].W, res.Seatbid[i].Bid[0].H),
+				"mode":     "out",
+			}).Inc()
+		}
+	})
 	return demand.Render(context.Background(), c, req.Id)
 }

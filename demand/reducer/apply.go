@@ -5,7 +5,9 @@ import (
 	"time"
 
 	"clickyab.com/crane/demand/entity"
+	"clickyab.com/crane/metrics"
 	"github.com/clickyab/services/xlog"
+	"github.com/prometheus/client_golang/prometheus"
 )
 
 // Filter is the interface to filter ads
@@ -59,6 +61,13 @@ LOOP:
 		select {
 		case res := <-fcl:
 			xlog.Get(c).Debugf("Filter doesn't match: %s", res)
+
+			go metrics.Filter.With(
+				prometheus.Labels{
+					"supplier": imp.Publisher().Supplier().Name(),
+					"reason":   res,
+				},
+			).Inc()
 			close(next)
 			return nil
 		case <-dl:
