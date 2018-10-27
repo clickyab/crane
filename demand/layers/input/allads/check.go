@@ -173,7 +173,7 @@ func allAdHandler(c context.Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	filteredAds := reducer.Apply(context.Background(), ctx, ads.GetAds(), selector)
+	filteredAds, _ := reducer.Apply(context.Background(), ctx, ads.GetAds(), selector)
 
 	framework.JSON(w, http.StatusOK, internalSelect(c, ctx, seat, filteredAds, fe))
 }

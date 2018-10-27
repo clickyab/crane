@@ -2,6 +2,7 @@ package reducer
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"clickyab.com/crane/demand/entity"
@@ -20,13 +21,16 @@ type filtered struct {
 	confirm int
 }
 
+// ErrorTimeOut for timeout filter
+var ErrorTimeOut = errors.New("timeout")
+
 // Apply get the data and then call filter on each of them concurrently, the
 // result is the accepted items
-func Apply(c context.Context, imp entity.Context, ads []entity.Creative, ff []Filter) []entity.Creative {
+func Apply(c context.Context, imp entity.Context, ads []entity.Creative, ff []Filter) ([]entity.Creative, error) {
 	var mads = make(map[int32]*filtered)
 	var res = make([]entity.Creative, 0)
 	fads := make(chan entity.Creative)
-	fcl := make(chan string)
+	fcl := make(chan error)
 	done := make(chan int)
 	next := make(chan bool)
 	dl := time.After(time.Millisecond * 60)
@@ -47,7 +51,7 @@ func Apply(c context.Context, imp entity.Context, ads []entity.Creative, ff []Fi
 				err = fe
 			}
 			if c == 0 {
-				fcl <- err.Error()
+				fcl <- err
 			} else {
 				done <- 0
 			}
@@ -61,26 +65,26 @@ LOOP:
 		select {
 		case res := <-fcl:
 			xlog.Get(c).Debugf("Filter doesn't match: %s", res)
-
 			go metrics.Filter.With(
 				prometheus.Labels{
 					"supplier": imp.Publisher().Supplier().Name(),
-					"reason":   res,
+					"reason":   res.Error(),
 				},
 			).Inc()
 			close(next)
-			return nil
+			return nil, res
 		case <-dl:
 			xlog.Get(c).Debugf("Filter timeout")
 			go metrics.Filter.With(
 				prometheus.Labels{
 					"supplier": imp.Publisher().Supplier().Name(),
-					"reason":   "time out",
+					"reason":   ErrorTimeOut.Error(),
 				},
 			).Inc()
 			close(next)
-			return nil
+			return nil, ErrorTimeOut
 		case <-done:
+			dl = time.After(time.Millisecond * 3)
 			counter++
 			if len(ff) == counter {
 				break LOOP
@@ -103,5 +107,5 @@ LOOP:
 			res = append(res, v.ad)
 		}
 	}
-	return res
+	return res, nil
 }

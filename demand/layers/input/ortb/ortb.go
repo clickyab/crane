@@ -73,7 +73,6 @@ func writesErrorStatus(w http.ResponseWriter, status int, detail string) {
 func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 	tn := time.Now()
-	var statusCode int
 	token := xmux.Param(ctx, "token")
 	sup, err := suppliers.GetSupplierByToken(token)
 
@@ -84,14 +83,12 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		}
 		metrics.Duration.With(
 			prometheus.Labels{
-				"status":   fmt.Sprint(statusCode),
 				"supplier": supName,
 				"route":    "rest",
 			},
 		).Observe(time.Since(tn).Seconds())
 
 		metrics.CounterRequest.With(prometheus.Labels{
-			"status":   fmt.Sprint(statusCode),
 			"supplier": supName,
 			"route":    "rest",
 		}).Inc()
@@ -100,8 +97,7 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		e := fmt.Sprintf("supplier with token %s not found", token)
 		xlog.GetWithError(ctx, err).Debug(e)
-		statusCode = http.StatusNotFound
-		writesErrorStatus(w, statusCode, e)
+		writesErrorStatus(w, http.StatusNotFound, e)
 		return
 	}
 	payload := &openrtb.BidRequest{}
@@ -110,8 +106,7 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	defer assert.Nil(r.Body.Close())
 	if err != nil {
 		xlog.GetWithError(ctx, err).Errorf("invalid request from %s", sup.Name())
-		statusCode = http.StatusBadRequest
-		writesErrorStatus(w, statusCode, err.Error())
+		writesErrorStatus(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -133,8 +128,7 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 	if err := validate(payload); err != nil {
 		xlog.GetWithError(ctx, err).Errorf("invalid data from %s. payload: %#v", sup.Name(), payload)
-		statusCode = http.StatusBadRequest
-		writesErrorStatus(w, statusCode, err.Error())
+		writesErrorStatus(w, http.StatusBadRequest, err.Error())
 		return
 	}
 	var domain, bundle string
@@ -150,8 +144,7 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		e := fmt.Sprintf("publisher from %s,  not supported: %s. payload: %#v", sup.Name(), ps, payload)
 
-		statusCode = http.StatusBadRequest
-		writesErrorStatus(w, statusCode, e)
+		writesErrorStatus(w, http.StatusBadRequest, e)
 		xlog.GetWithError(ctx, err).Debug(e)
 		return
 	}
@@ -177,8 +170,7 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	if ua == "" || ip == "" {
 		err := fmt.Errorf("no ip/no ua")
 		xlog.GetWithError(ctx, err).Debugf("invalid request from %s payload: %#v", sup.Name(), payload)
-		statusCode = http.StatusBadRequest
-		writesErrorStatus(w, statusCode, err.Error())
+		writesErrorStatus(w, http.StatusBadRequest, err.Error())
 		return
 	}
 	sh := fmt.Sprintf("CLICK_%x", sha1.Sum([]byte(fmt.Sprintf("%s_%s_%s_%s", prefix, time.Now().Format(format), ip, ua))))
@@ -225,13 +217,13 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		xlog.GetWithError(ctx, err).Errorf("invalid request from %s", sup.Name())
 
-		statusCode = http.StatusBadRequest
-		writesErrorStatus(w, statusCode, err.Error())
+		writesErrorStatus(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	res, err := demand.Render(ctx, c, payload.Id)
-	safe.GoRoutine(ctx, func() {
+
+	defer safe.GoRoutine(ctx, func() {
 		for _, s := range sd {
 			metrics.Size.With(prometheus.Labels{
 				"supplier":  sup.Name(),
@@ -270,7 +262,6 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	assert.Nil(err)
 	j := jsonpb.Marshaler{}
 	assert.Nil(j.Marshal(w, res))
-	statusCode = http.StatusOK
 }
 
 var vs = version.GetVersion()

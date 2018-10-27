@@ -20,7 +20,10 @@ func Select(c context.Context, sel []reducer.Filter, opt ...builder.ShowOptionSe
 	}
 	// Apply filters
 	// TODO : after selector fix it
-	all := reducer.Apply(c, ctx, ads.GetAds(), sel)
+	all, err := reducer.Apply(c, ctx, ads.GetAds(), sel)
+	if err != nil {
+		return nil, err
+	}
 	// select all
 	selectAds(c, ctx, all)
 
