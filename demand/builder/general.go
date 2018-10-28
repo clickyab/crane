@@ -18,6 +18,7 @@ import (
 	grpc "clickyab.com/crane/openrtb/v2.5"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/config"
+	"github.com/mmcloughlin/geohash"
 	"github.com/mssola/user_agent"
 	"github.com/prometheus/client_golang/prometheus"
 )
@@ -85,6 +86,7 @@ func SetIPLocation(ip string, user *grpc.User, device *grpc.Device, sup entity.S
 				"country":   l.Country().ISO,
 				"province":  l.Province().Name,
 				"isp":       l.ISP().Name,
+				"hash":      geohash.Encode(float64(lat), float64(lon)),
 			}).Inc()
 		}
 
