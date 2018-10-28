@@ -173,6 +173,14 @@
   version = "v1.0.0"
 
 [[projects]]
+  branch = "master"
+  digest = "1:12fa1907768f1b4b2d7c9c79afc2ef239001a6af19eeaba987d9ce6df92f670b"
+  name = "github.com/mmcloughlin/geohash"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "f7f2bcae3294530249c63fcb6fb6d5e83eee4e73"
+
+[[projects]]
   digest = "1:9af6e6f3d2b57cf28ff14c411d712e5dfb6ed42f566c7523dbdc066f48a5b0af"
   name = "github.com/mssola/user_agent"
   packages = ["."]
@@ -485,6 +493,7 @@
     "github.com/golang/protobuf/jsonpb",
     "github.com/golang/protobuf/proto",
     "github.com/mitchellh/mapstructure",
+    "github.com/mmcloughlin/geohash",
     "github.com/mssola/user_agent",
     "github.com/prometheus/client_golang/prometheus",
     "github.com/prometheus/client_golang/prometheus/promhttp",

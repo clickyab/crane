@@ -2,6 +2,7 @@ package ip2location
 
 import (
 	"os"
+
 	"path/filepath"
 
 	"github.com/clickyab/services/assert"
