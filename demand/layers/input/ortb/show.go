@@ -129,7 +129,7 @@ func showBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetNoTiny(!pl.Tiny),
 		builder.SetCappingMode(entity.CappingMode(pl.CMode)),
 		builder.SetTargetHost(r.Host),
-		builder.SetIPLocation(pl.IP, nil, nil),
+		builder.SetIPLocation(pl.IP, nil, nil, nil),
 		builder.SetProtocolByRequest(r),
 		builder.SetParent(pl.Parent, pl.Ref),
 		builder.SetTID(pl.TID, pl.IP, pl.UserAgent, pl.Did),

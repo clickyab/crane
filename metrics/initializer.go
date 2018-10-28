@@ -18,6 +18,8 @@ func (initer) Initialize(ctx context.Context) {
 	prometheus.MustRegister(CounterRequest)
 	prometheus.MustRegister(Size)
 	prometheus.MustRegister(Filter)
+	prometheus.MustRegister(Carrier)
+	prometheus.MustRegister(Location)
 
 	http.Handle("/metrics", promhttp.Handler())
 	safe.GoRoutine(ctx, func() {

@@ -185,11 +185,11 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 
 	b := []builder.ShowOptionSetter{
+		builder.SetPublisher(publisher),
 		builder.SetTimestamp(),
 		builder.SetTargetHost(sup.ShowDomain()),
 		builder.SetOSUserAgent(ua),
-		builder.SetIPLocation(ip, payload.User, payload.Device),
-		builder.SetPublisher(publisher),
+		builder.SetIPLocation(ip, payload.User, payload.Device, sup),
 		builder.SetProtocol(proto),
 		builder.SetTID(us, ip, ua, payload.GetDevice().GetDidsha1()),
 		builder.SetNoTiny(!tiny),
@@ -206,7 +206,7 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	// TODO : if we need to implement native/app/vast then the next line must be activated and customized
 	//b = append(b, builder.SetFloorPercentage(100), builder.SetMinBidPercentage(100))
 
-	b = setPublisherCustomContext(payload, b)
+	b = setPublisherCustomContext(payload, b, publisher)
 	sd, vast := seatDetail(payload)
 	if vast {
 		b = append(b, builder.SetMultiVideo(true))
@@ -266,13 +266,13 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 var vs = version.GetVersion()
 
-func setPublisherCustomContext(payload *openrtb.BidRequest, b []builder.ShowOptionSetter) []builder.ShowOptionSetter {
+func setPublisherCustomContext(payload *openrtb.BidRequest, b []builder.ShowOptionSetter, publisher entity.Publisher) []builder.ShowOptionSetter {
 	if payload.GetSite() != nil {
 		b = append(b, builder.SetParent(payload.GetSite().GetPage(), payload.GetSite().GetRef()))
 	}
 	if payload.GetApp() != nil && payload.GetDevice() != nil {
 		b = append(b, builder.SetConnType(payload.GetDevice().GetConnectiontype()))
-		b = append(b, builder.SetCarrier(payload.GetDevice().GetCarrier()))
+		b = append(b, builder.SetCarrier(payload.GetDevice().GetCarrier(), publisher))
 		b = append(b, builder.SetBrand(payload.GetDevice().GetModel()))
 	}
 	return b

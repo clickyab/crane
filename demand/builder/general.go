@@ -11,6 +11,7 @@ import (
 
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/internal/cyos"
+	"clickyab.com/crane/metrics"
 	"clickyab.com/crane/models/cell"
 	"clickyab.com/crane/models/ip2l"
 	"clickyab.com/crane/openrtb/v2.5"
@@ -18,6 +19,7 @@ import (
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/config"
 	"github.com/mssola/user_agent"
+	"github.com/prometheus/client_golang/prometheus"
 )
 
 // SetRate set the timestamp. must be first!
@@ -56,7 +58,7 @@ func SetUnderfloor(c bool) ShowOptionSetter {
 }
 
 // SetIPLocation is the IP and location setter for context, also it extract the IP information
-func SetIPLocation(ip string, user *grpc.User, device *grpc.Device) ShowOptionSetter {
+func SetIPLocation(ip string, user *grpc.User, device *grpc.Device, sup entity.Supplier) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
 		ipv4 := net.ParseIP(ip)
 		if ipv4 == nil {
@@ -75,6 +77,15 @@ func SetIPLocation(ip string, user *grpc.User, device *grpc.Device) ShowOptionSe
 		}
 
 		l := ip2l.GetProvinceISPByIP(ipv4, float64(lat), float64(lon))
+		if sup != nil {
+			go metrics.Location.With(prometheus.Labels{
+				"supplier":  sup.Name(),
+				"latitude":  fmt.Sprint(lat),
+				"longitude": fmt.Sprint(lon),
+				"target":    l.Country().ISO,
+			}).Inc()
+		}
+
 		o.location = l
 		return o, nil
 	}
@@ -299,12 +310,16 @@ func SetBrand(v string) ShowOptionSetter {
 }
 
 // SetCarrier is set carrier id from name
-func SetCarrier(v string) ShowOptionSetter {
+func SetCarrier(v string, pub entity.Publisher) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
 		n, err := cell.GetCarrierByName(v)
 		if err != nil {
 			return o, err
 		}
+		go metrics.Carrier.With(prometheus.Labels{
+			"supplier": pub.Supplier().Name(),
+			"carrier":  n,
+		}).Inc()
 		o.carrierName = n
 		return o, nil
 	}

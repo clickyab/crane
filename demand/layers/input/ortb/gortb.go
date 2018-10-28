@@ -187,7 +187,7 @@ func GrpcHandler(ctx context.Context, req *openrtb.BidRequest) (*openrtb.BidResp
 		builder.SetTimestamp(),
 		builder.SetTargetHost(sup.ShowDomain()),
 		builder.SetOSUserAgent(ua),
-		builder.SetIPLocation(ip, req.GetUser(), req.GetDevice()),
+		builder.SetIPLocation(ip, req.GetUser(), req.GetDevice(), sup),
 		builder.SetPublisher(pub),
 		builder.SetProtocol(proto),
 		builder.SetTID(us, ip, ua, req.GetDevice().GetDidsha1()),
@@ -204,7 +204,7 @@ func GrpcHandler(ctx context.Context, req *openrtb.BidRequest) (*openrtb.BidResp
 	// TODO : if we need to implement native/app/vast then the next line must be activated and customized
 	//b = append(b, builder.SetFloorPercentage(100), builder.SetMinBidPercentage(100))
 
-	b = setPublisherCustomContext(req, b)
+	b = setPublisherCustomContext(req, b, pub)
 	sd, vast := seatDetail(req)
 	if vast {
 		b = append(b, builder.SetMultiVideo(true))

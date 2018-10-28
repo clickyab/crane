@@ -9,6 +9,15 @@ var port = config.RegisterString("crane.metric.port", "9700", "")
 
 var (
 
+	// Carrier of incoming impressions
+	Carrier = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "demand_request_carrier",
+			Help: "Counter of request carrier",
+		},
+		[]string{"supplier", "carrier"},
+	)
+
 	// Size of incoming impressions
 	Size = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
@@ -32,7 +41,7 @@ var (
 			Name: "demand_request_location",
 			Help: "Counter for location",
 		},
-		[]string{"supplier", "size", "type", "latitude", "longitude", "target"},
+		[]string{"supplier", "latitude", "longitude", "target"},
 	)
 
 	// Duration for getting response time
