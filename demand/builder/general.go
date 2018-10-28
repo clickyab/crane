@@ -83,6 +83,7 @@ func SetIPLocation(ip string, user *grpc.User, device *grpc.Device, sup entity.S
 				"latitude":  fmt.Sprint(lat),
 				"longitude": fmt.Sprint(lon),
 				"target":    l.Country().ISO,
+				"isp":       l.ISP().Name,
 			}).Inc()
 		}
 

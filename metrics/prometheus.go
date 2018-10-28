@@ -41,7 +41,7 @@ var (
 			Name: "demand_request_location",
 			Help: "Counter for location",
 		},
-		[]string{"supplier", "latitude", "longitude", "target"},
+		[]string{"supplier", "latitude", "longitude", "target", "isp"},
 	)
 
 	// Duration for getting response time
