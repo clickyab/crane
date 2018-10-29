@@ -253,6 +253,11 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 					"publisher": publisher.Name(),
 					"type":      publisher.Type().String(),
 				}).Inc()
+
+				metrics.Campaigns.With(prometheus.Labels{
+					"supplier": sup.Name(),
+					"campaign": res.Seatbid[i].Bid[b].Cid,
+				}).Inc()
 			}
 		}
 	})

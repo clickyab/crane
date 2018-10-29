@@ -20,6 +20,7 @@ func (initer) Initialize(ctx context.Context) {
 	prometheus.MustRegister(Filter)
 	prometheus.MustRegister(Carrier)
 	prometheus.MustRegister(Location)
+	prometheus.MustRegister(Campaigns)
 
 	http.Handle("/metrics", promhttp.Handler())
 	safe.GoRoutine(ctx, func() {
