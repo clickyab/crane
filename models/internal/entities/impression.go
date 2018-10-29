@@ -1,14 +1,18 @@
 package entities
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"strconv"
 	"time"
 
 	"clickyab.com/crane/demand/entity"
+	"clickyab.com/crane/metrics"
 	"clickyab.com/crane/workers/models"
 	"github.com/clickyab/services/mysql"
+	"github.com/clickyab/services/safe"
+	"github.com/prometheus/client_golang/prometheus"
 )
 
 // Impression model for database
@@ -130,5 +134,13 @@ func AddImpression(p entity.Publisher, m models.Impression, s models.Seat) error
 		m.Timestamp.Unix(), m.Timestamp.Format("20060102"), said,
 		sID, p.Supplier().Name(), sDiffCPM,
 		impCPM, impCPM*float64(p.Supplier().Share())/100)
+	safe.GoRoutine(context.Background(), func() {
+		metrics.Impression.With(prometheus.Labels{
+			"sup": p.Supplier().Name(),
+			"cid": fmt.Sprint(ca.ID()),
+		},
+		).Inc()
+	})
+
 	return err
 }

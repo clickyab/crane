@@ -9,6 +9,24 @@ var port = config.RegisterString("crane.metric.port", "9700", "")
 
 var (
 
+	// Impression of bid
+	Impression = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "demand_impression",
+			Help: "Counter of impression",
+		},
+		[]string{"sup", "cid"},
+	)
+
+	// Click of incoming impressions
+	Click = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "demand_click",
+			Help: "Counter of click",
+		},
+		[]string{"sup", "cid"},
+	)
+
 	// Campaigns of incoming impressions
 	Campaigns = prometheus.NewCounterVec(
 		prometheus.CounterOpts{

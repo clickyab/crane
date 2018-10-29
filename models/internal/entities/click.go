@@ -1,11 +1,16 @@
 package entities
 
 import (
+	"context"
 	"database/sql"
+	"fmt"
 	"strconv"
 
 	"clickyab.com/crane/demand/entity"
+	"clickyab.com/crane/metrics"
 	"clickyab.com/crane/workers/models"
+	"github.com/clickyab/services/safe"
+	"github.com/prometheus/client_golang/prometheus"
 )
 
 // Click fill structure for Click
@@ -155,7 +160,13 @@ func InsertClick(c *Click) error {
 	if err != nil {
 		return err
 	}
-
+	safe.GoRoutine(context.Background(), func() {
+		metrics.Click.With(prometheus.Labels{
+			"sup": c.supplier,
+			"cid": fmt.Sprint(c.campaignID),
+		},
+		).Inc()
+	})
 	// insert true view here
 	if c.tv {
 		clickID, err := res.LastInsertId()
