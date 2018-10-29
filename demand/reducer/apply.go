@@ -33,7 +33,7 @@ func Apply(c context.Context, imp entity.Context, ads []entity.Creative, ff []Fi
 	fcl := make(chan error)
 	done := make(chan int)
 	next := make(chan bool)
-	dl := time.After(time.Millisecond * 60)
+	dl := time.After(time.Millisecond * 500)
 
 	for _, f := range ff {
 		go func(f Filter) {
@@ -63,6 +63,16 @@ func Apply(c context.Context, imp entity.Context, ads []entity.Creative, ff []Fi
 LOOP:
 	for {
 		select {
+		case <-c.Done():
+			err := errors.New("canceled")
+			go metrics.Filter.With(
+				prometheus.Labels{
+					"supplier": imp.Publisher().Supplier().Name(),
+					"reason":   err.Error(),
+				},
+			).Inc()
+			close(next)
+			return nil, err
 		case res := <-fcl:
 			xlog.Get(c).Debugf("Filter doesn't match: %s", res)
 			go metrics.Filter.With(
@@ -84,7 +94,6 @@ LOOP:
 			close(next)
 			return nil, ErrorTimeOut
 		case <-done:
-			dl = time.After(time.Millisecond * 3)
 			counter++
 			if len(ff) == counter {
 				break LOOP
