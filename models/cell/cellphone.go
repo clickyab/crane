@@ -6,8 +6,8 @@ import (
 
 var (
 	irmci   = regexp.MustCompile("(?i)(IR)?(-)?(MCI|TCI|43270|43211|Mobile Communications Company of Iran)$")
-	irancel = regexp.MustCompile("(?i)(MTN)?(-)?(irancell|mtn|Iran( )?cell Telecommunications Services Company)$")
-	rightel = regexp.MustCompile("(?i)(righ( )?tel(@)?|IRN 20)$") // Some case are like "Rightle | rightel"
+	irancel = regexp.MustCompile("(?i)(MTN)?(-)?(irancell|43235|mtn|Iran( )?cell Telecommunications Services Company)$")
+	rightel = regexp.MustCompile("(?i)(righ( )?tel(@)?|43220|IRN 20)$") // Some case are like "Rightle | rightel"
 )
 
 // sanitizeCarrier try to insert/retrieve brand for phone
