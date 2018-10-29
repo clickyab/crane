@@ -80,13 +80,8 @@ func SetIPLocation(ip string, user *grpc.User, device *grpc.Device, sup entity.S
 		l := ip2l.GetProvinceISPByIP(ipv4, float64(lat), float64(lon))
 		if sup != nil {
 			go metrics.Location.With(prometheus.Labels{
-				"supplier":  sup.Name(),
-				"latitude":  fmt.Sprint(lat),
-				"longitude": fmt.Sprint(lon),
-				"country":   l.Country().ISO,
-				"province":  l.Province().Name,
-				"isp":       l.ISP().Name,
-				"hash":      geohash.Encode(float64(lat), float64(lon)),
+				"sup":  sup.Name(),
+				"hash": geohash.Encode(float64(lat), float64(lon)),
 			}).Inc()
 		}
 
@@ -321,8 +316,8 @@ func SetCarrier(v string, pub entity.Publisher) ShowOptionSetter {
 			return o, err
 		}
 		go metrics.Carrier.With(prometheus.Labels{
-			"supplier": pub.Supplier().Name(),
-			"carrier":  n,
+			"sup":     pub.Supplier().Name(),
+			"carrier": n,
 		}).Inc()
 		o.carrierName = n
 		return o, nil

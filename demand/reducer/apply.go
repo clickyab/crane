@@ -67,8 +67,8 @@ LOOP:
 			err := errors.New("canceled")
 			go metrics.Filter.With(
 				prometheus.Labels{
-					"supplier": imp.Publisher().Supplier().Name(),
-					"reason":   err.Error(),
+					"sup":    imp.Publisher().Supplier().Name(),
+					"reason": err.Error(),
 				},
 			).Inc()
 			close(next)
@@ -77,8 +77,8 @@ LOOP:
 			xlog.Get(c).Debugf("Filter doesn't match: %s", res)
 			go metrics.Filter.With(
 				prometheus.Labels{
-					"supplier": imp.Publisher().Supplier().Name(),
-					"reason":   res.Error(),
+					"sup":    imp.Publisher().Supplier().Name(),
+					"reason": res.Error(),
 				},
 			).Inc()
 			close(next)
@@ -87,8 +87,8 @@ LOOP:
 			xlog.Get(c).Debugf("Filter timeout")
 			go metrics.Filter.With(
 				prometheus.Labels{
-					"supplier": imp.Publisher().Supplier().Name(),
-					"reason":   ErrorTimeOut.Error(),
+					"sup":    imp.Publisher().Supplier().Name(),
+					"reason": ErrorTimeOut.Error(),
 				},
 			).Inc()
 			close(next)

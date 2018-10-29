@@ -83,14 +83,14 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		}
 		metrics.Duration.With(
 			prometheus.Labels{
-				"supplier": supName,
-				"route":    "rest",
+				"sup":   supName,
+				"route": "rest",
 			},
 		).Observe(time.Since(tn).Seconds())
 
 		metrics.CounterRequest.With(prometheus.Labels{
-			"supplier": supName,
-			"route":    "rest",
+			"sup":   supName,
+			"route": "rest",
 		}).Inc()
 	}()
 
@@ -224,39 +224,38 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	res, err := demand.Render(ctx, c, payload.Id)
 
 	defer safe.GoRoutine(ctx, func() {
+
 		for _, s := range sd {
 			metrics.Size.With(prometheus.Labels{
-				"supplier":  sup.Name(),
-				"size":      s.Size,
-				"mode":      "in",
-				"publisher": publisher.Name(),
-				"type":      publisher.Type().String(),
+				"sup":  sup.Name(),
+				"size": s.Size,
+				"io":   "in",
 			}).Inc()
 		}
 
 		if len(res.Seatbid) == 0 {
 			metrics.Size.With(prometheus.Labels{
-				"supplier":  sup.Name(),
-				"size":      "NaN",
-				"mode":      "out",
-				"publisher": publisher.Name(),
-				"type":      publisher.Type().String(),
+				"sup":  sup.Name(),
+				"size": "NaN",
+				"io":   "out",
 			}).Inc()
 		}
 
 		for i := range res.Seatbid {
 			for b := range res.Seatbid[i].Bid {
 				metrics.Size.With(prometheus.Labels{
-					"supplier":  sup.Name(),
-					"size":      fmt.Sprintf("%dx%d", res.Seatbid[i].Bid[b].W, res.Seatbid[i].Bid[b].H),
-					"mode":      "out",
-					"publisher": publisher.Name(),
-					"type":      publisher.Type().String(),
-					"campaign":  res.Seatbid[i].Bid[b].Cid,
+					"sup":  sup.Name(),
+					"size": fmt.Sprintf("%dx%d", res.Seatbid[i].Bid[b].W, res.Seatbid[i].Bid[b].H),
+					"io":   "out",
 				}).Inc()
 
+				metrics.Campaigns.With(prometheus.Labels{
+					"sup": sup.Name(),
+					"cid": res.Seatbid[i].Bid[b].Cid,
+				}).Inc()
 			}
 		}
+
 	})
 
 	w.Header().Set("crane-version", fmt.Sprint(vs.Count))

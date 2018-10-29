@@ -111,14 +111,14 @@ func GrpcHandler(ctx context.Context, req *openrtb.BidRequest) (*openrtb.BidResp
 		}
 		metrics.Duration.With(
 			prometheus.Labels{
-				"supplier": supName,
-				"route":    "grpc",
+				"sup":   supName,
+				"route": "grpc",
 			},
 		).Observe(time.Since(tn).Seconds())
 
 		metrics.CounterRequest.With(prometheus.Labels{
-			"supplier": supName,
-			"route":    "grpc",
+			"sup":   supName,
+			"route": "grpc",
 		}).Inc()
 	}()
 
@@ -220,35 +220,31 @@ func GrpcHandler(ctx context.Context, req *openrtb.BidRequest) (*openrtb.BidResp
 
 		for _, s := range sd {
 			metrics.Size.With(prometheus.Labels{
-				"supplier":  sup.Name(),
-				"size":      s.Size,
-				"mode":      "in",
-				"publisher": pub.Name(),
-				"type":      pub.Type().String(),
+				"sup":  sup.Name(),
+				"size": s.Size,
+				"io":   "in",
 			}).Inc()
 		}
 
 		if len(res.Seatbid) == 0 {
 			metrics.Size.With(prometheus.Labels{
-				"supplier":  sup.Name(),
-				"size":      "NaN",
-				"mode":      "out",
-				"publisher": pub.Name(),
-				"type":      pub.Type().String(),
+				"sup":  sup.Name(),
+				"size": "NaN",
+				"io":   "out",
 			}).Inc()
 		}
 
 		for i := range res.Seatbid {
 			for b := range res.Seatbid[i].Bid {
 				metrics.Size.With(prometheus.Labels{
-					"supplier":  sup.Name(),
-					"size":      fmt.Sprintf("%dx%d", res.Seatbid[i].Bid[b].W, res.Seatbid[i].Bid[b].H),
-					"mode":      "out",
-					"publisher": pub.Name(),
-					"type":      pub.Type().String(),
-					"campaign":  res.Seatbid[i].Bid[b].Cid,
+					"sup":  sup.Name(),
+					"size": fmt.Sprintf("%dx%d", res.Seatbid[i].Bid[b].W, res.Seatbid[i].Bid[b].H),
+					"io":   "out",
 				}).Inc()
-
+				metrics.Campaigns.With(prometheus.Labels{
+					"sup": sup.Name(),
+					"cid": res.Seatbid[i].Bid[b].Cid,
+				})
 			}
 		}
 

@@ -9,22 +9,31 @@ var port = config.RegisterString("crane.metric.port", "9700", "")
 
 var (
 
+	// Campaigns of incoming impressions
+	Campaigns = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "demand_campaign",
+			Help: "Counter of campaign",
+		},
+		[]string{"sup", "cid"},
+	)
+
 	// Carrier of incoming impressions
 	Carrier = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
-			Name: "demand_request_carrier",
+			Name: "demand_carrier",
 			Help: "Counter of request carrier",
 		},
-		[]string{"supplier", "carrier"},
+		[]string{"sup", "carrier"},
 	)
 
 	// Size of incoming impressions
 	Size = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
-			Name: "demand_request_size",
+			Name: "demand_size",
 			Help: "Histogram of request size",
 		},
-		[]string{"supplier", "size", "mode", "publisher", "type", "campaign"},
+		[]string{"sup", "size", "io"},
 	)
 
 	// Filter reasons
@@ -33,21 +42,22 @@ var (
 			Name: "demand_filtered_reason",
 			Help: "Counter of filter",
 		},
-		[]string{"supplier", "reason"},
+		[]string{"sup", "reason"},
 	)
 
+	// Location of requests
 	Location = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
-			Name: "demand_request_location",
+			Name: "demand_location",
 			Help: "Counter for location",
 		},
-		[]string{"supplier", "latitude", "longitude", "country", "province", "isp", "hash"},
+		[]string{"sup", "hash"},
 	)
 
 	// Duration for getting response time
 	Duration = prometheus.NewHistogramVec(
 		prometheus.HistogramOpts{
-			Name: "demand_request_duration_millisecond",
+			Name: "demand_duration",
 			Help: "Histogram of request duration",
 			Buckets: []float64{
 				.001,
@@ -68,15 +78,15 @@ var (
 				1,
 			},
 		},
-		[]string{"supplier", "route"},
+		[]string{"sup", "route"},
 	)
 
 	// CounterRequest total request
 	CounterRequest = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
-			Name: "demand_request_total",
+			Name: "demand_total",
 			Help: "Total number of request",
 		},
-		[]string{"supplier", "route"},
+		[]string{"sup", "route"},
 	)
 )
