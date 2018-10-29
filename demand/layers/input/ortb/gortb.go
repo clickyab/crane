@@ -246,12 +246,9 @@ func GrpcHandler(ctx context.Context, req *openrtb.BidRequest) (*openrtb.BidResp
 					"mode":      "out",
 					"publisher": pub.Name(),
 					"type":      pub.Type().String(),
+					"campaign":  res.Seatbid[i].Bid[b].Cid,
 				}).Inc()
 
-				metrics.Campaigns.With(prometheus.Labels{
-					"supplier": sup.Name(),
-					"campaign": res.Seatbid[i].Bid[b].Cid,
-				}).Inc()
 			}
 		}
 

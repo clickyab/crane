@@ -9,15 +9,6 @@ var port = config.RegisterString("crane.metric.port", "9700", "")
 
 var (
 
-	// Campaigns of incoming impressions
-	Campaigns = prometheus.NewCounterVec(
-		prometheus.CounterOpts{
-			Name: "demand_request_campaign",
-			Help: "Counter of request campaign",
-		},
-		[]string{"supplier", "campaign"},
-	)
-
 	// Carrier of incoming impressions
 	Carrier = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
@@ -33,7 +24,7 @@ var (
 			Name: "demand_request_size",
 			Help: "Histogram of request size",
 		},
-		[]string{"supplier", "size", "mode", "publisher", "type"},
+		[]string{"supplier", "size", "mode", "publisher", "type", "campaign"},
 	)
 
 	// Filter reasons
