@@ -50,10 +50,6 @@ var (
 			Name: "demand_request_duration_millisecond",
 			Help: "Histogram of request duration",
 			Buckets: []float64{
-				.0002,
-				.0004,
-				.0006,
-				.0008,
 				.001,
 				.002,
 				.004,
