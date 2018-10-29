@@ -7,8 +7,10 @@ import (
 	"net/url"
 	"strings"
 
+	"clickyab.com/crane/metrics"
 	"clickyab.com/crane/openrtb/v2.5"
 	"github.com/clickyab/services/version"
+	"github.com/prometheus/client_golang/prometheus"
 
 	"clickyab.com/crane/demand/entity"
 	"github.com/clickyab/services/assert"
@@ -249,8 +251,23 @@ func Render(_ context.Context, ctx entity.Context, rid string) (*openrtb.BidResp
 	for _, v := range ctx.Seats() {
 		// What if we have no ad for them?
 		if v.WinnerAdvertise() == nil {
+			go metrics.Size.With(prometheus.Labels{
+				"sup":  ctx.Publisher().Supplier().Name(),
+				"size": "NaN",
+				"io":   "out",
+			}).Inc()
 			continue
 		}
+		go metrics.Size.With(prometheus.Labels{
+			"sup":  ctx.Publisher().Supplier().Name(),
+			"size": fmt.Sprintf("%dx%d", v.Width(), v.Height()),
+			"io":   "out",
+		}).Inc()
+
+		go metrics.Campaigns.With(prometheus.Labels{
+			"sup": ctx.Publisher().Supplier().Name(),
+			"cid": fmt.Sprint(v.WinnerAdvertise().Campaign().ID()),
+		}).Inc()
 		var bid *openrtb.BidResponse_SeatBid
 		switch v.RequestType() {
 		case entity.RequestTypeBanner:
