@@ -148,7 +148,7 @@ func extractor(ctx context.Context, r *http.Request) (*payloadData, error) {
 	if expired {
 		pl.Suspicious = 99
 	}
-	if pl.Supplier.Name() == "chavoosh" {
+	if pl.Supplier.Name() == "chavoosh" || pl.Supplier.Name() == "chavoosh-ne2" {
 		pl.Suspicious = 0
 	}
 	pl.CappRegion = r.URL.Query().Get("reg")
