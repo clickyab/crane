@@ -3,17 +3,20 @@ package rtb
 import (
 	"context"
 	"fmt"
-	`github.com/clickyab/services/config`
 	"sort"
+
+	"github.com/clickyab/services/config"
 
 	"clickyab.com/crane/demand/capping"
 	"clickyab.com/crane/demand/entity"
 	"github.com/clickyab/services/assert"
 )
- var forceFristBid = config.RegisterBoolean("crane.demand.select.force_first_bid", true, "if it's set we ignore second bid")
+
+var forceFristBid = config.RegisterBoolean("crane.demand.select.force_first_bid", true, "if it's set we ignore second bid")
 
 func getSecondCPM(floorCPM float64, exceedFloor []entity.SelectedCreative) float64 {
-	if forceFristBid.Bool() ||  !exceedFloor[0].IsSecBid() {
+
+	if forceFristBid.Bool() || !exceedFloor[0].IsSecBid() {
 		return exceedFloor[0].CalculatedCPM()
 	}
 
@@ -34,12 +37,12 @@ func defaultCTR(seatType entity.RequestType, pub entity.PublisherType, sup entit
 func doBid(ad entity.Creative, slot entity.Seat, minCPM, minCPC float64, pub entity.Publisher) (float64, float64, float64, bool) {
 	slotCtr := slot.CTR()
 	if slot.CTR() < 0 {
-		//get ctr based on the creative and seat type native app / native web / vast web ...
+		// get ctr based on the creative and seat type native app / native web / vast web ...
 		slotCtr = defaultCTR(slot.RequestType(), pub.Type(), pub.Supplier())
 	}
 	adCtr := ad.AdCTR()
 	if adCtr < 0 {
-		//get ctr based on the creative and seat type native app / native web / vast web ...
+		// get ctr based on the creative and seat type native app / native web / vast web ...
 		adCtr = defaultCTR(slot.RequestType(), pub.Type(), pub.Supplier())
 	}
 	ctr := float64(adCtr*float32(adCTREffect.Int())+slotCtr*float32(slotCTREffect.Int())) / float64(100)
