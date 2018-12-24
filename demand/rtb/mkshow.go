@@ -3,15 +3,17 @@ package rtb
 import (
 	"context"
 	"fmt"
+	`github.com/clickyab/services/config`
 	"sort"
 
 	"clickyab.com/crane/demand/capping"
 	"clickyab.com/crane/demand/entity"
 	"github.com/clickyab/services/assert"
 )
+ var forceFristBid = config.RegisterBoolean("crane.demand.select.force_first_bid", true, "if it's set we ignore second bid")
 
 func getSecondCPM(floorCPM float64, exceedFloor []entity.SelectedCreative) float64 {
-	if !exceedFloor[0].IsSecBid() {
+	if forceFristBid.Bool() ||  !exceedFloor[0].IsSecBid() {
 		return exceedFloor[0].CalculatedCPM()
 	}
 
