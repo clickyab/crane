@@ -2,6 +2,7 @@ package rtb
 
 import (
 	"fmt"
+	"math/rand"
 
 	"clickyab.com/crane/demand/entity"
 )
@@ -34,7 +35,13 @@ func (a byMulti) Less(i, j int) bool {
 		}
 	}
 	if a.Ads[i].CalculatedCPM() != a.Ads[j].CalculatedCPM() {
+		if a.Ads[i].CalculatedCPM() == a.Ads[j].CalculatedCPM() {
+			return rand.Int31n(2)%2 == 0
+		}
 		return a.Ads[i].CalculatedCPM() > a.Ads[j].CalculatedCPM()
+	}
+	if a.Ads[i].CalculatedCPC() == a.Ads[j].CalculatedCPC() {
+		return rand.Int31n(2)%2 == 0
 	}
 	return a.Ads[i].CalculatedCPC() > a.Ads[j].CalculatedCPC()
 }
