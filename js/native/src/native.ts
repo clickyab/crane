@@ -7,6 +7,7 @@ export default class NativeComponent {
     private style: string = `__STYLE_TEMPLATE__`;
     private customOptions: INativeOptions = {};
     private defaultOptions: INativeOptions = {
+        cyuid: "",
         clickyab: "_clickyab_",
         type: types.grid4x,
         fontFamily: fontFamilies.samim,
@@ -29,6 +30,17 @@ export default class NativeComponent {
     private options: INativeOptions;
 
     constructor(wrapper: HTMLElement, url: string) {
+        if (!(<any>window).cyuid) {
+            var ucid = "";
+            for (var i = 0; i < 5; i++) {
+                var x = Math.floor(Math.random() * 10000000000);
+                ucid += x.toString(32).toUpperCase()
+            }
+            console.log(ucid);
+            (<any>window).cyuid = ucid.substr(0, 19)
+        }
+
+        this.defaultOptions.cyuid = (<any>window).cyuid;
         this.wrapperElement = wrapper;
         this.nativeUrl = url;
         this.randomSting = Math.random().toString().replace("0.", "");
@@ -215,8 +227,7 @@ export default class NativeComponent {
         code = (code + `return r.join("");}`).replace(/[\r\t\n]/g, " ");
         try {
             result = new Function("obj", code).apply(options, [options]);
-        }
-        catch (err) {
+        } catch (err) {
             console.error("'" + err.message + "'", " in \n\nCode:\n", code, "\n");
         }
         return result;

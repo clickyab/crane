@@ -4,6 +4,7 @@ export interface INative {
 }
 
 export interface INativeOptions {
+	cyuid?: string;
 	clickyab?: string;
 	type?: string;
 	fontFamily?: fontFamilies;
