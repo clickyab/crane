@@ -137,7 +137,7 @@ func AddImpression(p entity.Publisher, m models.Impression, s models.Seat) error
 	safe.GoRoutine(context.Background(), func() {
 		metrics.Impression.With(prometheus.Labels{
 			"sup": p.Supplier().Name(),
-			"cid": fmt.Sprint(ca.ID()),
+			"cid": fmt.Sprint(ca.Campaign().ID()),
 		},
 		).Inc()
 	})
