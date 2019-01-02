@@ -10,7 +10,7 @@ for (let i = 0; i < elements.length; i++) {
 		if (!wrapper.getAttribute("cy-key")) {
 			wrapper.setAttribute("cy-key", Math.random().toString(36).substring(7));
 			// const url = "//supplier.clickyab.com/api/get/native?tid=__tid__&i=__id__&d=__domain__&count=__count__&t=__type__&ref=__ref__&parent=__parent__";
-			const url = "{{.URL}}?tid=__tid__&i=__id__&d=__domain__&count=__count__&t=__type__&ref=__ref__&parent=__parent__";
+			const url = "{{.URL}}?cyuid=__cyuid__&tid=__tid__&i=__id__&d=__domain__&count=__count__&t=__type__&ref=__ref__&parent=__parent__";
 
 			const nativeComponent = new NativeComponent(wrapper, url);
 		}
