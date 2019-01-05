@@ -4,6 +4,9 @@ import (
 	"context"
 	"fmt"
 	"sort"
+	"time"
+
+	"github.com/clickyab/services/kv"
 
 	"github.com/clickyab/services/config"
 
@@ -92,8 +95,33 @@ func internalSelect(
 ) {
 	var noVideo bool                 // once set, never unset it again
 	selected := make(map[int32]bool) // all ad selected in this session, to make sure they are not repeated
+	set := kv.NewDistributedSet("EXC" + ctx.User().CyuId())
+
+	if ctx.User().CyuId() != "" {
+		lock := kv.NewDistributedLock("LOCK"+ctx.User().CyuId(), time.Second)
+		lock.Lock()
+		defer lock.Unlock()
+
+		if len(set.Members()) != 0 {
+			setad := func() []entity.Creative {
+				res := make([]entity.Creative, 0)
+				for _, m := range set.Members() {
+					for _, v := range ads {
+						if m != fmt.Sprint(v) {
+							res = append(res, v)
+						}
+					}
+				}
+				return res
+			}()
+			if len(setad) > 4 {
+				ads = setad
+			}
+		}
+	}
 
 	for _, seat := range ctx.Seats() {
+
 		exceedFloor, underFloor := selector(ctx, ads, seat, noVideo, selected)
 
 		var (
@@ -124,6 +152,8 @@ func internalSelect(
 		sorted = ef.Ads
 
 		theAd := sorted[0]
+		set.Add(fmt.Sprint(theAd.ID()))
+
 		// Do not do second biding pricing on this ads, they can not pass CPMFloor
 		targetCPM := getSecondCPM(seat.SoftCPM(), sorted)
 		targetCPC := targetCPM / (theAd.CalculatedCTR() * 10.0)
@@ -137,6 +167,9 @@ func internalSelect(
 		if !ctx.MultiVideo() {
 			noVideo = noVideo || theAd.Type() == entity.AdTypeVideo
 		}
+	}
+	if ctx.User().CyuId() != "" {
+		_ = set.Save(time.Second)
 	}
 }
 func fixPrice(strategy entity.Strategy, cpc, cpm, minCPC, minCPM float64) (float64, float64) {

@@ -12,7 +12,7 @@ import (
 	"clickyab.com/crane/demand/rtb"
 	"clickyab.com/crane/metrics"
 	"clickyab.com/crane/models/suppliers"
-	"clickyab.com/crane/openrtb/v2.5"
+	openrtb "clickyab.com/crane/openrtb/v2.5"
 	"github.com/clickyab/services/safe"
 	"github.com/clickyab/services/xlog"
 	"github.com/davecgh/go-spew/spew"
@@ -126,6 +126,7 @@ func GrpcHandler(ctx context.Context, req *openrtb.BidRequest) (*openrtb.BidResp
 		tiny, fatFinger, prevent, underfloor bool
 		strategy                             []string
 		capping                              = entity.CappingReset
+		cyuid                                string
 	)
 	if req.Ext != nil {
 		req.GetExt()
@@ -134,6 +135,7 @@ func GrpcHandler(ctx context.Context, req *openrtb.BidRequest) (*openrtb.BidResp
 		underfloor = req.Ext.GetUnderfloor()
 		tiny = req.Ext.GetTiny()
 		strategy = req.Ext.GetStrategy()
+		cyuid = req.Ext.GetCyuid()
 		//if req.Ext.GetCapping() == openrtb.Capping_Reset {
 		//	capping = entity.CappingReset
 		//}
@@ -190,7 +192,7 @@ func GrpcHandler(ctx context.Context, req *openrtb.BidRequest) (*openrtb.BidResp
 		builder.SetIPLocation(ip, req.GetUser(), req.GetDevice(), sup),
 		builder.SetPublisher(pub),
 		builder.SetProtocol(proto),
-		builder.SetTID(us, ip, ua, req.GetDevice().GetDidsha1()),
+		builder.SetTID(us, ip, ua, req.GetDevice().GetDidsha1(), cyuid),
 		builder.SetNoTiny(!tiny),
 		builder.SetBannerMarkup(sup),
 		builder.SetFatFinger(fatFinger),

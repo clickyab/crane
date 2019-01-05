@@ -57,7 +57,7 @@ func clickBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetTargetHost(r.Host),
 		builder.SetIPLocation(pl.IP, nil, nil, nil),
 		builder.SetProtocolByRequest(r),
-		builder.SetTID(pl.TID, pl.IP, pl.UserAgent, pl.Did),
+		builder.SetTID(pl.TID, pl.IP, pl.UserAgent, pl.Did, ""),
 		builder.SetPublisher(pl.Publisher),
 		builder.SetSuspicious(pl.Suspicious),
 		builder.SetFatFinger(pl.FatFinger),

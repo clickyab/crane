@@ -8,7 +8,7 @@ import (
 	"time"
 
 	website "clickyab.com/crane/models/clickyabwebsite"
-	"clickyab.com/crane/openrtb/v2.5"
+	openrtb "clickyab.com/crane/openrtb/v2.5"
 	"clickyab.com/crane/supplier/client"
 	"clickyab.com/crane/supplier/layers/internal/supplier"
 	"clickyab.com/crane/supplier/layers/output"
@@ -127,6 +127,7 @@ func getNative(ct context.Context, w http.ResponseWriter, r *http.Request) {
 		Ext: &openrtb.BidRequest_Ext{
 			Capping:    openrtb.Capping_Reset,
 			Underfloor: true,
+			Cyuid:      r.URL.Query().Get("cyuid"),
 		},
 	}
 

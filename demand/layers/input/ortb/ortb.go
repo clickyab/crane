@@ -20,7 +20,7 @@ import (
 	"clickyab.com/crane/models/apps"
 	"clickyab.com/crane/models/suppliers"
 	"clickyab.com/crane/models/website"
-	"clickyab.com/crane/openrtb/v2.5"
+	openrtb "clickyab.com/crane/openrtb/v2.5"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/kv"
 	"github.com/clickyab/services/safe"
@@ -113,6 +113,7 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	var fatFinger,
 		prevent,
 		underfloor bool
+	var cyuid string
 	var capping = openrtb.Capping_Reset
 	var strategy []string
 	var tiny = sup.TinyMark()
@@ -124,6 +125,7 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		capping = payload.Ext.GetCapping()
 		strategy = payload.Ext.GetStrategy()
 		tiny = payload.Ext.GetTiny()
+		cyuid = payload.Ext.GetCyuid()
 	}
 
 	if err := validate(payload); err != nil {
@@ -191,7 +193,7 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetOSUserAgent(ua),
 		builder.SetIPLocation(ip, payload.User, payload.Device, sup),
 		builder.SetProtocol(proto),
-		builder.SetTID(us, ip, ua, payload.GetDevice().GetDidsha1()),
+		builder.SetTID(us, ip, ua, payload.GetDevice().GetDidsha1(), cyuid),
 		builder.SetNoTiny(!tiny),
 		builder.SetBannerMarkup(sup),
 		builder.SetFatFinger(fatFinger),

@@ -108,6 +108,7 @@ message BidRequest {
         bool tiny = 6;
         string cid = 7;
         string lac = 8;
+        string cyuid = 9;
     }
     string Token = 20;
 

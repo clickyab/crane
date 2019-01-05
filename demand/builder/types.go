@@ -3,10 +3,17 @@ package builder
 // ShowOptionSetter is the function to handle setting
 type ShowOptionSetter func(*Context) (*Context, error)
 
-type user string
+type user struct {
+	id    string
+	cyuId string
+}
+
+func (u user) CyuId() string {
+	return u.cyuId
+}
 
 func (u user) ID() string {
-	return string(u)
+	return u.id
 }
 
 // NewContext return a Context based on its setters

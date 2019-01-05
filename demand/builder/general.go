@@ -14,8 +14,8 @@ import (
 	"clickyab.com/crane/metrics"
 	"clickyab.com/crane/models/cell"
 	"clickyab.com/crane/models/ip2l"
-	"clickyab.com/crane/openrtb/v2.5"
 	grpc "clickyab.com/crane/openrtb/v2.5"
+	openrtb "clickyab.com/crane/openrtb/v2.5"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/config"
 	"github.com/mmcloughlin/geohash"
@@ -189,7 +189,7 @@ func SetFatFinger(ff bool) ShowOptionSetter {
 var copLen = config.RegisterInt("crane.context.cop_len", 41, "cop key len")
 
 // SetTID try to set tid
-func SetTID(id string, ip, ua, did string, extra ...string) ShowOptionSetter {
+func SetTID(id string, ip, ua, did, cyuId string, extra ...string) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
 		if o.ua == "" || o.ip == nil {
 			return nil, fmt.Errorf("use this after setting ip and ua")
@@ -209,7 +209,11 @@ func SetTID(id string, ip, ua, did string, extra ...string) ShowOptionSetter {
 
 		o.tid = createHash(copLen.Int(), ee...)
 
-		o.user = user(o.tid)
+		o.user = user{
+			id:    o.tid,
+			cyuId: cyuId,
+		}
+
 		return o, nil
 	}
 }
@@ -256,7 +260,7 @@ func SetPublisher(pub entity.Publisher) ShowOptionSetter {
 	}
 }
 
-//SetSuspicious is the function to set suspicious code, default is zero
+// SetSuspicious is the function to set suspicious code, default is zero
 func SetSuspicious(suspCode int) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
 		o.suspicious = suspCode
