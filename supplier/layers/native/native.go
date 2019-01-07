@@ -88,7 +88,7 @@ func getNative(ct context.Context, w http.ResponseWriter, r *http.Request) {
 	ua := user_agent.New(useragent)
 
 	if ua.Mobile() && count == 3 {
-		count = 3
+		count = 4
 	}
 
 	targetCount := getTargetCount(count, tpl.Counts...)
