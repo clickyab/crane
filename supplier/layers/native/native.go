@@ -8,7 +8,7 @@ import (
 	"time"
 
 	website "clickyab.com/crane/models/clickyabwebsite"
-	"clickyab.com/crane/openrtb/v2.5"
+	openrtb "clickyab.com/crane/openrtb/v2.5"
 	"clickyab.com/crane/supplier/client"
 	"clickyab.com/crane/supplier/layers/internal/supplier"
 	"clickyab.com/crane/supplier/layers/output"
@@ -85,6 +85,12 @@ func getNative(ct context.Context, w http.ResponseWriter, r *http.Request) {
 		count = nativeMaxCount.Int()
 	}
 
+	ua := user_agent.New(useragent)
+
+	if ua.Mobile() && count == 3 {
+		count = 3
+	}
+
 	targetCount := getTargetCount(count, tpl.Counts...)
 	if targetCount == 0 {
 		xlog.GetWithError(ctx, err).Debug("wrong count (during target count calculation)")
@@ -93,7 +99,6 @@ func getNative(ct context.Context, w http.ResponseWriter, r *http.Request) {
 
 		return
 	}
-	ua := user_agent.New(useragent)
 
 	bq := &openrtb.BidRequest{
 		Id: fmt.Sprintf("cly-%s", <-random.ID),
