@@ -63,15 +63,11 @@ func getNative(ct context.Context, w http.ResponseWriter, r *http.Request) {
 	ref := r.URL.Query().Get("ref")
 	parent := r.URL.Query().Get("parent")
 	tid := r.URL.Query().Get("tid")
-	tpl, err := getNativeTemplate(r.URL.Query().Get("t"))
-	if err != nil {
-		tpl, err = getNativeTemplate(defaultTemplate.String())
-		assert.Nil(err)
-	}
+	var tpl *nativeTemplate
 
 	ip := framework.RealIP(r)
 	useragent := r.UserAgent()
-
+	ua := user_agent.New(useragent)
 	count, err := strconv.Atoi(r.URL.Query().Get("count"))
 	if err != nil || count < 1 {
 		xlog.GetWithError(ctx, err).Debug("wrong count")
@@ -80,15 +76,21 @@ func getNative(ct context.Context, w http.ResponseWriter, r *http.Request) {
 
 		return
 	}
+	if ua.Mobile() && count == 3 {
+		tpl, err = getNativeTemplate(r.URL.Query().Get("t"))
+
+	} else {
+		tpl, err = getNativeTemplate(r.URL.Query().Get("grid4x"))
+
+		count = 4
+	}
+	if err != nil {
+		tpl, err = getNativeTemplate(defaultTemplate.String())
+		assert.Nil(err)
+	}
 
 	if count > nativeMaxCount.Int() {
 		count = nativeMaxCount.Int()
-	}
-
-	ua := user_agent.New(useragent)
-
-	if ua.Mobile() && count == 3 {
-		count = 4
 	}
 
 	targetCount := getTargetCount(count, tpl.Counts...)
@@ -106,6 +108,7 @@ func getNative(ct context.Context, w http.ResponseWriter, r *http.Request) {
 		User: &openrtb.User{
 			Id: nativeUserIDGenerator(tid, useragent, ip),
 		},
+
 		Imp: getImps(r, targetCount, pub, tpl.Image),
 		DistributionchannelOneof: &openrtb.BidRequest_Site{
 			Site: &openrtb.Site{
