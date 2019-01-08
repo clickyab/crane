@@ -14,11 +14,11 @@ export default class ShowAd {
   private publisherId: string;
 
   constructor() {
-    window.addEventListener('resize', this.setHeights.bind(this))
+    // window.addEventListener('resize', this.setHeights.bind(this))
   }
 
   public run(reload: boolean) {
-    console.log('start show ad')
+    // console.log('start show ad')
     this.ads = this.findAdsInPage(reload)
       .filter(elem => this.domainValidation(elem))
       .map(elem => this.parseElementProps(elem))
@@ -41,7 +41,7 @@ export default class ShowAd {
     if (hostname === "localhost" ||
       hostname === "127.0.0.1" ||
       hostname.split(".").splice(-2).join(".") === "clickyab.com" ||
-      hostname.split(".").splice(-2).join(".") === "clickyab.ae"
+      hostname.split(".").splice(-2).join(".") === "3rdad.com"
     ) {
       return true;
     }
@@ -60,6 +60,9 @@ export default class ShowAd {
     ad.element.style.height = ad.height + 'px'
     ad.element.style.maxWidth = ad.width + 'px'
     ad.element.style.textAlign = 'center'
+    ad.element.style.marginLeft = 'auto'
+    ad.element.style.marginRight = 'auto'
+
     return ad
   }
 
