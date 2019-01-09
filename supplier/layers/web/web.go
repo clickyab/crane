@@ -82,13 +82,13 @@ var sup = supplier.NewClickyab()
 
 var server = config.RegisterString("crane.supplier.banner.url", "", "route for banner")
 
-//	d		: domain
-//	l		: location
-//	r		: ref
-//	c		: count of impression. must match with slot count // TODO : do we need it?
-//	s		: slots
-//	m		: mobile
-//	tid		: tracking id
+// 	d		: domain
+// 	l		: location
+// 	r		: ref
+// 	c		: count of impression. must match with slot count // TODO : do we need it?
+// 	s		: slots
+// 	m		: mobile
+// 	tid		: tracking id
 func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	pubID := r.URL.Query().Get("i")
 	pub, err := website.GetWebSite(sup, pubID)
@@ -181,7 +181,8 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 		return
 	}
-	for i := range br.GetSeatbid() {
+
+	for i := 0; i < len(br.GetSeatbid()); i++ {
 		buf := &bytes.Buffer{}
 		_ = templ.Execute(buf, struct {
 			ShowT  bool
