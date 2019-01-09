@@ -58,8 +58,8 @@ export default class ShowAd {
   }
 
   private setStyle(ad: IAd) {
-    ad.element.style.height = ad.height + 'px';
-    ad.element.style.maxWidth = ad.width + 'px';
+    // ad.element.style.height = ad.height + 'px';
+    ad.element.style.maxWidth = '100%';
     ad.element.style.textAlign = 'center';
     ad.element.style.marginLeft = 'auto';
     ad.element.style.marginRight = 'auto';
