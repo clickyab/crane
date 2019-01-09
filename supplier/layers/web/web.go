@@ -175,7 +175,7 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 			H:      br.GetSeatbid()[i].GetBid()[0].GetH(),
 			Markup: br.GetSeatbid()[i].GetBid()[0].GetAdm(),
 		})
-		br.GetSeatbid()[i].GetBid()[i].AdmOneof = &openrtb.BidResponse_SeatBid_Bid_Adm{
+		br.GetSeatbid()[i].GetBid()[0].AdmOneof = &openrtb.BidResponse_SeatBid_Bid_Adm{
 			Adm: buf.String(),
 		}
 	}
