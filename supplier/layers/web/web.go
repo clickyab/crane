@@ -112,10 +112,6 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 
 	ua := user_agent.New(r.UserAgent())
-	mi := 0
-	if m {
-		mi = 1
-	}
 
 	rIP := framework.RealIP(r)
 	rUserAgent := r.UserAgent()
@@ -174,7 +170,7 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 			W, H   int32
 			Markup string
 		}{
-			ShowT:  mi == 1 && rand.Int63n(100) <= showT.Int64() && i == 0,
+			ShowT:  m && rand.Int63n(100) <= showT.Int64() && i == 0,
 			W:      br.GetSeatbid()[i].GetBid()[0].GetW(),
 			H:      br.GetSeatbid()[i].GetBid()[0].GetH(),
 			Markup: br.GetSeatbid()[i].GetBid()[0].GetAdm(),
