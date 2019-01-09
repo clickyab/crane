@@ -22,7 +22,7 @@ export default class ShowAd {
     this.ads = this.findAdsInPage(reload)
       .filter(elem => this.domainValidation(elem))
       .map(elem => this.parseElementProps(elem))
-      .map(this.setStyle)
+      // .map(this.setStyle)
     this.getAdsFromRemote(ads => {
       this.injectSrc(ads)
       this.injectIframes()
@@ -88,21 +88,21 @@ export default class ShowAd {
     })
   }
 
-  private setHeights() {
-    this.ads.forEach(ad => {
-      let newHeight =
-        ad.element.offsetWidth *
-        parseInt(ad.height ? ad.height : '0') /
-        parseInt(ad.width ? ad.width : '0')
-      ad.element.style.height = newHeight + 'px'
-      let iframe = ad.element.getElementsByTagName('iframe')
-      if (iframe.item(0)) {
-        iframe.item(0).style.height = newHeight + 'px'
-      } else {
-        ad.element.style.height = '0px'
-      }
-    })
-  }
+  // private setHeights() {
+  //   this.ads.forEach(ad => {
+  //     let newHeight =
+  //       ad.element.offsetWidth *
+  //       parseInt(ad.height ? ad.height : '0') /
+  //       parseInt(ad.width ? ad.width : '0')
+  //     ad.element.style.height = newHeight + 'px'
+  //     let iframe = ad.element.getElementsByTagName('iframe')
+  //     if (iframe.item(0)) {
+  //       iframe.item(0).style.height = newHeight + 'px'
+  //     } else {
+  //       ad.element.style.height = '0px'
+  //     }
+  //   })
+  // }
 
   private injectSrc(ads: { [key: string]: string }) {
     this.ads = this.ads.map(ad => {
@@ -231,19 +231,19 @@ export default class ShowAd {
     holder.appendChild(imgHolder);
     holder.setAttribute('style', 'height: 18px; background: linear-gradient(to bottom, rgba(246,248,249,1) 0%,rgba(229,235,238,1) 0%,rgba(220,224,226,1) 50%,rgb(209, 210, 211) 100%);');
 
-    holder.onclick = () => {
-      if (div.style.height === '18px') {
-        div.style.height = '68px'
-      } else {
-        div.style.height = '18px'
-      }
-    }
+    // holder.onclick = () => {
+    //   if (div.style.height === '18px') {
+    //     div.style.height = '68px'
+    //   } else {
+    //     div.style.height = '18px'
+    //   }
+    // }
 
     div.setAttribute(
       'style',
       `position: fixed; width: 100%; z-index:99999999; left: 0; bottom: 0px; margin: 0; padding: 0; text-align: center; margin: 0 auto; background-color: #f3f3f3;`
     );
-    div.style.height = '68px'
+    // div.style.height = '68px'
     const divHolder = document.createElement('div')
     divHolder.innerHTML = src
 
