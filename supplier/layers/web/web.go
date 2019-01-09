@@ -167,8 +167,7 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 		return
 	}
-
-	for i := 0; i < len(br.GetSeatbid()); i++ {
+	for i := range br.GetSeatbid() {
 		buf := &bytes.Buffer{}
 		_ = templ.Execute(buf, struct {
 			ShowT  bool
