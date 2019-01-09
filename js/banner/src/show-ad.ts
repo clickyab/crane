@@ -14,7 +14,7 @@ export default class ShowAd {
   private publisherId: string;
 
   constructor() {
-    window.addEventListener('resize', this.setHeights.bind(this))
+    // window.addEventListener('resize', this.setHeights.bind(this))
   }
 
   public run(reload: boolean) {
@@ -26,7 +26,7 @@ export default class ShowAd {
     this.getAdsFromRemote(ads => {
       this.injectSrc(ads)
       this.injectIframes()
-      this.setHeights()
+      // this.setHeights()
       if (ads.m) {
         this.injectMobileAds(ads.m)
       }
@@ -41,6 +41,7 @@ export default class ShowAd {
     if (hostname === "localhost" ||
       hostname === "127.0.0.1" ||
       hostname.split(".").splice(-2).join(".") === "clickyab.com" ||
+      hostname.split(".").splice(-2).join(".") === "3rdad.com" ||
       hostname.split(".").splice(-2).join(".") === "clickyab.ae"
     ) {
       return true;
