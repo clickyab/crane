@@ -49,7 +49,7 @@ func init() {
 width:100%;
 }
 </style><a class="tiny" href="https://www.clickyab.com" target="_blank"></a>
-{{ .Markup }}<iframe src="//t.clickyab.com" frameborder="0" height="1" width="1" style="position: absolute; top: -10000px; left: -10000px"></iframe></div>`))
+{{ .Markup }}{{ if .ShowT }} <iframe src="//t.clickyab.com" frameborder="0" height="1" width="1" style="position: absolute; top: -10000px; left: -10000px"></iframe></div>{{ end }}`))
 }
 
 type size struct {
@@ -182,12 +182,14 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if len(br.GetSeatbid()) > 0 && mi == 1 && rand.Int63n(100) <= showT.Int64() {
+	if len(br.GetSeatbid()) > 0 {
 		buf := &bytes.Buffer{}
 		_ = templ.Execute(buf, struct {
+			ShowT  bool
 			W, H   int32
 			Markup string
 		}{
+			ShowT:  mi == 1 && rand.Int63n(100) <= showT.Int64(),
 			W:      br.GetSeatbid()[0].GetBid()[0].GetW(),
 			H:      br.GetSeatbid()[0].GetBid()[0].GetH(),
 			Markup: br.GetSeatbid()[0].GetBid()[0].GetAdm(),
