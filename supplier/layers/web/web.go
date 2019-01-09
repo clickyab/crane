@@ -181,20 +181,19 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 		return
 	}
-
-	if len(br.GetSeatbid()) > 0 {
+	for i := range br.GetSeatbid() {
 		buf := &bytes.Buffer{}
 		_ = templ.Execute(buf, struct {
 			ShowT  bool
 			W, H   int32
 			Markup string
 		}{
-			ShowT:  mi == 1 && rand.Int63n(100) <= showT.Int64(),
-			W:      br.GetSeatbid()[0].GetBid()[0].GetW(),
-			H:      br.GetSeatbid()[0].GetBid()[0].GetH(),
-			Markup: br.GetSeatbid()[0].GetBid()[0].GetAdm(),
+			ShowT:  mi == 1 && rand.Int63n(100) <= showT.Int64() && i == 0,
+			W:      br.GetSeatbid()[i].GetBid()[i].GetW(),
+			H:      br.GetSeatbid()[i].GetBid()[i].GetH(),
+			Markup: br.GetSeatbid()[i].GetBid()[i].GetAdm(),
 		})
-		br.GetSeatbid()[0].GetBid()[0].AdmOneof = &openrtb.BidResponse_SeatBid_Bid_Adm{
+		br.GetSeatbid()[i].GetBid()[i].AdmOneof = &openrtb.BidResponse_SeatBid_Bid_Adm{
 			Adm: buf.String(),
 		}
 	}
