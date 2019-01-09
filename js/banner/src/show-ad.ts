@@ -58,15 +58,17 @@ export default class ShowAd {
   }
 
   private setStyle(ad: IAd) {
-    ad.element.style.height = ad.height + 'px'
-    ad.element.style.maxWidth = ad.width + 'px'
-    ad.element.style.textAlign = 'center'
+    ad.element.style.height = ad.height + 'px';
+    ad.element.style.maxWidth = ad.width + 'px';
+    ad.element.style.textAlign = 'center';
+    ad.element.style.marginLeft = 'auto';
+    ad.element.style.marginRight = 'auto';
     return ad
   }
 
   private injectIframes() {
     this.ads.forEach(ad => {
-      let ignoreAdBecauseCookie = false
+      let ignoreAdBecauseCookie = false;
       if (ad.valid) {
         if (ad.effect === 'interstitial' && this.getCookie('cy_interstitial')) {
           ignoreAdBecauseCookie = true
