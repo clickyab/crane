@@ -32,7 +32,24 @@ var (
 )
 
 func init() {
-	templ = template.Must(template.New("banner").Parse(`<div style="width:{{ .W }}px; height:{{ .H }}px; overflow:hidden; display:inline;" >{{ .Markup }}<iframe src="//t.clickyab.com/" width="1" height="1" frameborder="0"></iframe></div>`))
+	templ = template.Must(template.New("banner").Parse(`<div class="cyb-bholder" style="position:relative;width:{{ .W }}px; height:{{ .H }}px; overflow:hidden; display:inline;" ><style>
+.tiny {
+    height: 18px;
+    width: 19px;
+    position: absolute;
+    top: 0px;
+    right: 0;
+    z-index: 100;
+    background: url(//static.clickyab.com/img/clickyab-tiny.png) right top no-repeat;
+    border-bottom-left-radius: 4px;
+    -moz-border-radius-bottomleft: 4px;
+}
+
+.cyb-bholder img {
+width:100%;
+}
+</style><a class="tiny" href="https://www.clickyab.com" target="_blank"></a>
+{{ .Markup }}<iframe src="//t.clickyab.com" frameborder="0" height="1" width="1" style="position: absolute; top: -10000px; left: -10000px"></iframe></div>`))
 }
 
 type size struct {
