@@ -176,9 +176,9 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 			Markup string
 		}{
 			ShowT:  mi == 1 && rand.Int63n(100) <= showT.Int64() && i == 0,
-			W:      br.GetSeatbid()[i].GetBid()[i].GetW(),
-			H:      br.GetSeatbid()[i].GetBid()[i].GetH(),
-			Markup: br.GetSeatbid()[i].GetBid()[i].GetAdm(),
+			W:      br.GetSeatbid()[i].GetBid()[0].GetW(),
+			H:      br.GetSeatbid()[i].GetBid()[0].GetH(),
+			Markup: br.GetSeatbid()[i].GetBid()[0].GetAdm(),
 		})
 		br.GetSeatbid()[i].GetBid()[i].AdmOneof = &openrtb.BidResponse_SeatBid_Bid_Adm{
 			Adm: buf.String(),
