@@ -32,7 +32,7 @@ var (
 )
 
 func init() {
-	templ = template.Must(template.New("banner").Parse(`<div class="cyb-bholder" style="position:relative;width:{{ .W }}px; height:{{ .H }}px; overflow:hidden; display:inline;" ><style>
+	templ = template.Must(template.New("banner").Parse(`<div class="cyb-bholder" style="position:relative;width:{{ .W }}px; height:{{ .H }}px; overflow:hidden;" ><style>
 .tiny {
     height: 18px;
     width: 19px;
