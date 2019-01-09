@@ -101,8 +101,8 @@ RUN apk add --no-cache --virtual .build-deps git go libc-dev make \
     && mkdir -p /app/statics \
     && rm -rf /gopath /go
 
-TAG registry.clickyab.ae/clickyab/{{ .App }}:A{{ .Version }}
-PUSH registry.clickyab.ae/clickyab/{{ .App }}:A{{ .Version }}
+TAG registry.clickyab.ae/clickyab/{{ .App }}:{{ .Version }}
+PUSH registry.clickyab.ae/clickyab/{{ .App }}:{{ .Version }}
 TAG registry.clickyab.ae/clickyab/{{ .App }}:latest
 PUSH registry.clickyab.ae/clickyab/{{ .App }}:latest
 EOF
@@ -135,7 +135,7 @@ echo "The branch ${BRANCH} build finished, try to deploy it" >> ${OUT_LOG}
 echo "If there is no report after this for successful deploy, it means the deply failed. report it please." >> ${OUT_LOG}
 for WRK_TYP in demand-server supplier-server impression-worker click-worker
 do
-   kubectl -n ${NAMESPACE} set image deployment  ${APP}-${WRK_TYP} ${APP}-${BRANCH}=registry.clickyab.ae/clickyab/${APP}_${BRANCH}:A${VERSION} --record
+   kubectl -n ${NAMESPACE} set image deployment  ${APP}-${WRK_TYP} ${APP}-${BRANCH}=registry.clickyab.ae/clickyab/${APP}_${BRANCH}:${VERSION} --record
 done
 echo "..." >> ${OUT_LOG}
 echo "Deploy done successfully to image registry.clickyab.ae/clickyab/${APP}:${BRANCH}.${COMMIT_COUNT}" >> ${OUT_LOG}
