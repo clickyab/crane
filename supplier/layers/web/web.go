@@ -13,7 +13,7 @@ import (
 
 	"clickyab.com/crane/demand/entity"
 	website "clickyab.com/crane/models/clickyabwebsite"
-	"clickyab.com/crane/openrtb/v2.5"
+	openrtb "clickyab.com/crane/openrtb/v2.5"
 	"clickyab.com/crane/supplier/client"
 	"clickyab.com/crane/supplier/layers/internal/supplier"
 	"clickyab.com/crane/supplier/layers/output"
@@ -26,7 +26,7 @@ import (
 )
 
 var (
-	showT = config.RegisterInt64("crane.supplier.showt", 2, "chance of showt")
+	showT = config.RegisterInt64("crane.supplier.showt", 100, "chance of showt")
 
 	templ *template.Template
 )
