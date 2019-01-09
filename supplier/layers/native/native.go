@@ -63,15 +63,8 @@ func getNative(ct context.Context, w http.ResponseWriter, r *http.Request) {
 	ref := r.URL.Query().Get("ref")
 	parent := r.URL.Query().Get("parent")
 	tid := r.URL.Query().Get("tid")
-	tpl, err := getNativeTemplate(r.URL.Query().Get("t"))
-	if err != nil {
-		tpl, err = getNativeTemplate(defaultTemplate.String())
-		assert.Nil(err)
-	}
 
 	ip := framework.RealIP(r)
-	useragent := r.UserAgent()
-
 	count, err := strconv.Atoi(r.URL.Query().Get("count"))
 	if err != nil || count < 1 {
 		xlog.GetWithError(ctx, err).Debug("wrong count")
@@ -80,15 +73,24 @@ func getNative(ct context.Context, w http.ResponseWriter, r *http.Request) {
 
 		return
 	}
-
+	useragent := r.UserAgent()
 	if count > nativeMaxCount.Int() {
 		count = nativeMaxCount.Int()
 	}
 
 	ua := user_agent.New(useragent)
+	var tpl *nativeTemplate
 
 	if ua.Mobile() && count == 3 {
+		tpl, err = getNativeTemplate("grid4x")
 		count = 4
+	} else {
+		tpl, err = getNativeTemplate(r.URL.Query().Get("t"))
+	}
+
+	if err != nil {
+		tpl, err = getNativeTemplate(defaultTemplate.String())
+		assert.Nil(err)
 	}
 
 	targetCount := getTargetCount(count, tpl.Counts...)
