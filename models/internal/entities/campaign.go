@@ -152,9 +152,6 @@ func (c *Campaign) Category() []openrtb.ContentCategory {
 		return c.category
 	}
 	c.category = make([]openrtb.ContentCategory, 0)
-	if !c.CampaignBillingType.Valid {
-		return c.category
-	}
 	for _, v := range c.CampaignCat.Array() {
 
 		r, ok := openrtb.ContentCategory_value["IAB"+v]
