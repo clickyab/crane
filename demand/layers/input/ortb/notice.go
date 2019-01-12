@@ -38,6 +38,6 @@ func noticeHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) 
 		broker.Publish(job)
 	})
 
-	assert.Nil(pixel.Render(ctx, w, c, true))
+	assert.Nil(pixel.Render(ctx, w, c))
 
 }

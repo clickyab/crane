@@ -60,5 +60,5 @@ func showPixel(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		setCapping(ctx, pl, c.Protocol().String())
 	})
 
-	assert.Nil(pixel.Render(ctx, w, c, true))
+	assert.Nil(pixel.Render(ctx, w, c))
 }
