@@ -157,7 +157,7 @@ func (c *Campaign) Category() []openrtb.ContentCategory {
 	}
 	for _, v := range c.CampaignCat.Array() {
 
-		r, ok := openrtb.ContentCategory_value["IAB"+fmt.Sprint(v)]
+		r, ok := openrtb.ContentCategory_value["IAB-"+fmt.Sprint(v)]
 		if ok {
 			c.category = append(c.category, openrtb.ContentCategory(r))
 		}
