@@ -1,6 +1,7 @@
 package entities
 
 import (
+	"fmt"
 	"strings"
 
 	"clickyab.com/crane/demand/entity"
@@ -161,6 +162,7 @@ func (c *Campaign) Category() []openrtb.ContentCategory {
 			c.category = append(c.category, openrtb.ContentCategory(r))
 		}
 	}
+	fmt.Println("cat: ", c.FCampaignID, c.category)
 	return c.category
 }
 
