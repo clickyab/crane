@@ -6,7 +6,6 @@ import (
 	"encoding/gob"
 	"fmt"
 	"io"
-	"strconv"
 
 	"clickyab.com/crane/openrtb/v2.5"
 	"github.com/clickyab/services/kv"
@@ -55,15 +54,13 @@ func (app *App) Categories() []openrtb.ContentCategory {
 	if app.catComp {
 		return app.cat
 	}
-
-	var res = make([]openrtb.ContentCategory, 0)
-	for i := range app.AppCategories {
-		p, err := strconv.ParseInt(app.AppCategories[i], 10, 64)
-		if err != nil {
-			res = append(res, openrtb.ContentCategory(int32(p)))
+	app.cat = make([]openrtb.ContentCategory, 0)
+	for _, v := range app.AppCategories.Array() {
+		r, ok := openrtb.ContentCategory_value["IAB"+v]
+		if ok {
+			app.cat = append(app.cat, openrtb.ContentCategory(r))
 		}
 	}
-	app.cat = res
 	app.catComp = true
 	return app.cat
 }

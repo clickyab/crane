@@ -6,7 +6,6 @@ import (
 	"encoding/gob"
 	"fmt"
 	"io"
-	"strconv"
 
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/openrtb/v2.5"
@@ -133,15 +132,13 @@ func (w *Website) Categories() []openrtb.ContentCategory {
 	if w.catComp {
 		return w.cat
 	}
-
-	var res = make([]openrtb.ContentCategory, 0)
-	for i := range w.WCategories {
-		p, err := strconv.ParseInt(w.WCategories[i], 10, 64)
-		if err != nil {
-			res = append(res, openrtb.ContentCategory(int32(p)))
+	w.cat = make([]openrtb.ContentCategory, 0)
+	for _, v := range w.WCategories.Array() {
+		r, ok := openrtb.ContentCategory_value["IAB"+v]
+		if ok {
+			w.cat = append(w.cat, openrtb.ContentCategory(r))
 		}
 	}
-	w.cat = res
 	w.catComp = true
 	return w.cat
 }
