@@ -82,7 +82,7 @@ func getNative(ct context.Context, w http.ResponseWriter, r *http.Request) {
 	var tpl *nativeTemplate
 
 	if ua.Mobile() && count == 3 {
-		tpl, err = getNativeTemplate("grid")
+		tpl, err = getNativeTemplate("grid4x")
 		count = 2
 	} else {
 		tpl, err = getNativeTemplate(r.URL.Query().Get("t"))
