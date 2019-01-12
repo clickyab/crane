@@ -10,6 +10,9 @@ import (
 	"time"
 	"unicode/utf8"
 
+	"clickyab.com/crane/metrics"
+	"github.com/prometheus/client_golang/prometheus"
+
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/internal/cyslot"
 	"github.com/clickyab/services/assert"
@@ -251,12 +254,16 @@ func AdLoader(_ context.Context) (map[string]kv.Serializable, error) {
 	}
 	ads := make(map[string]kv.Serializable)
 	for i := range res {
+
 		if res[i].FCaCTR.Valid {
 			res[i].FCTR = float32(res[i].FCaCTR.Float64)
 		} else {
 			res[i].FCTR = -1
 		}
 		res[i].assets = extractAssets(res[i])
+		metrics.Loaded.With(prometheus.Labels{
+			"cid": fmt.Sprint(res[i].FCampaignID),
+		})
 		ads[fmt.Sprint(res[i].FID)] = &Advertise{ad: res[i]}
 	}
 	logrus.Debugf("Load %d ads", len(ads))

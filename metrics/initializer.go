@@ -23,6 +23,7 @@ func (initer) Initialize(ctx context.Context) {
 	prometheus.MustRegister(Campaigns)
 	prometheus.MustRegister(Click)
 	prometheus.MustRegister(Impression)
+	prometheus.MustRegister(Loaded)
 
 	http.Handle("/metrics", promhttp.Handler())
 	safe.GoRoutine(ctx, func() {

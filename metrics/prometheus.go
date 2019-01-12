@@ -18,6 +18,15 @@ var (
 		[]string{"sup", "cid"},
 	)
 
+	// Loaded campaigns
+	Loaded = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "demand_loaded_campaign",
+			Help: "loaded_ad",
+		},
+		[]string{"cid"},
+	)
+
 	// Click of incoming impressions
 	Click = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
