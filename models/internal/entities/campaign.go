@@ -1,10 +1,11 @@
 package entities
 
 import (
+	"fmt"
 	"strings"
 
 	"clickyab.com/crane/demand/entity"
-	"clickyab.com/crane/openrtb/v2.5"
+	openrtb "clickyab.com/crane/openrtb/v2.5"
 	"github.com/clickyab/services/config"
 )
 
@@ -155,7 +156,8 @@ func (c *Campaign) Category() []openrtb.ContentCategory {
 		return c.category
 	}
 	for _, v := range c.CampaignCat.Array() {
-		r, ok := openrtb.ContentCategory_value["IAB"+strings.Replace(v, "-", "S", -1)]
+
+		r, ok := openrtb.ContentCategory_value["IAB"+fmt.Sprint(v)]
 		if ok {
 			c.category = append(c.category, openrtb.ContentCategory(r))
 		}
