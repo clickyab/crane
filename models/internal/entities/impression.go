@@ -35,7 +35,6 @@ func impTableName(t time.Time) string {
 
 // FindImpressionByID return impression by impression id
 func FindImpressionByID(impid int64, t time.Time) (*Impression, error) {
-
 	q := fmt.Sprintf(`SELECT w_id,app_id,wp_id,ca_id,ad_id,cop_id,cp_id,slot_id,imp_id, reserved_hash
 				FROM  %s WHERE imp_id = ?`, impTableName(t))
 	var x = &Impression{}
@@ -51,6 +50,89 @@ func FindImpressionByRH(rh string, t time.Time) (*Impression, error) {
 	err := NewManager().GetWDbMap().SelectOne(x, q, rh)
 
 	return x, err
+}
+
+// AddMultiImpression insert new impression to daily table
+func AddMultiImpression(imps ...models.Impression) (err error) {
+
+	q := fmt.Sprintf(`INSERT INTO impressions%s (
+							cp_id,reserved_hash,ad_size,
+							w_id,wp_id,app_id,
+							ad_id,cop_id,ca_id,
+							imp_ipaddress,imp_referaddress,imp_parenturl,
+							imp_url,imp_winnerbid,imp_status,
+							imp_cookie,imp_flash,
+							imp_time,imp_date,sla_id,
+							slot_id, s_name, s_diff_cpm,
+							imp_cpm,imp_final_cpm
+							) VALUES `, time.Now().Format("20060102"))
+
+	params := make([]interface{}, 0)
+
+	for i := range imps {
+		impCPM := imps[i].Seat.CPM
+		if imps[i].Seat.SCPM != 0 {
+			impCPM = imps[i].Seat.SCPM
+		}
+
+		sDiffCPM := sql.NullFloat64{Valid: imps[i].Seat.SCPM != 0, Float64: imps[i].Seat.CPM - imps[i].Seat.SCPM}
+		wID := sql.NullInt64{}
+		appID := sql.NullInt64{}
+		refer := sql.NullString{Valid: imps[i].Referrer != "", String: imps[i].Referrer}
+		parent := sql.NullString{Valid: imps[i].ParentURL != "", String: imps[i].ParentURL}
+
+		if imps[i].Pub.Type() == entity.PublisherTypeWeb {
+			wID = sql.NullInt64{Valid: imps[i].Pub.ID() != 0, Int64: imps[i].Pub.ID()}
+
+		} else if imps[i].Pub.Type() == entity.PublisherTypeApp {
+			appID = sql.NullInt64{Valid: imps[i].Pub.ID() != 0, Int64: imps[i].Pub.ID()}
+		} else {
+			panic("mismatch impression and publisher type")
+		}
+
+		var sID int64
+
+		// find slot id
+		if wID.Valid {
+			sID, err = FindWebSlotID(imps[i].Seat.SlotPublicID, wID.Int64, imps[i].Seat.AdSize)
+		} else if appID.Valid {
+			sID, err = FindAppSlotID(imps[i].Seat.SlotPublicID, appID.Int64, imps[i].Seat.AdSize)
+		}
+		if err != nil {
+			continue
+		}
+
+		// find slot ad
+		said, err := FindSlotAd(sID, imps[i].Seat.AdID)
+		if err != nil {
+			continue
+		}
+		ca, err := GetAd(imps[i].Seat.AdID)
+		if err != nil {
+			continue
+		}
+		copString := imps[i].CopID
+		if len(imps[i].CopID) > 10 {
+			copString = copString[:10]
+		}
+
+		copID, _ := strconv.ParseInt(copString, 16, 64)
+		q += `(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?),`
+		params = append(params, ca.ID(), imps[0].Seat.ReserveHash, imps[0].Seat.AdSize, wID, 0, appID, imps[0].Seat.AdID,
+			copID, ca.CampaignAdID(), imps[0].IP.String(), refer, parent, ca.TargetURL(), imps[0].Seat.WinnerBID,
+			imps[0].Suspicious, 0, 0, imps[0].Timestamp.Unix(), imps[0].Timestamp.Format("20060102"), said,
+			sID, imps[i].Pub.Supplier().Name(), sDiffCPM, impCPM, impCPM*float64(imps[i].Pub.Supplier().Share())/100)
+
+		metrics.Impression.With(prometheus.Labels{
+			"sup": imps[i].Pub.Supplier().Name(),
+			"cid": fmt.Sprint(ca.Campaign().ID()),
+		},
+		).Inc()
+	}
+	q = q[0 : len(q)-1]
+	_, err = NewManager().GetWDbMap().Exec(q, params...)
+
+	return err
 }
 
 // AddImpression insert new impression to daily table
