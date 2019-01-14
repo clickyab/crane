@@ -16,7 +16,6 @@ var conversionPath = "/conversion"
 func conversionHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	acid := r.URL.Query().Get("action_id")
 	t := time.Now()
-
 	rh := r.URL.Query().Get("imp_id")
 	if rh == "" {
 		_ = pixel.Render(ctx, w, nil)
@@ -25,10 +24,8 @@ func conversionHandler(ctx context.Context, w http.ResponseWriter, r *http.Reque
 
 	err := ads.ConversionByRH(ctx, rh, acid, t)
 	if err != nil {
+		w.Header().Add("err", err.Error())
 		xlog.GetWithError(ctx, err).Debug(err)
-		_, _ = w.Write([]byte(err.Error()))
-		return
-
 	}
 
 	_ = pixel.Render(ctx, w, nil)
