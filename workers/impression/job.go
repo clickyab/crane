@@ -1,19 +1,24 @@
-package show
+package impression
 
 import (
 	"context"
 	"encoding/json"
+	"time"
+
+	"github.com/clickyab/services/config"
 
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/models/ads"
 	m "clickyab.com/crane/workers/models"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/broker"
-	"github.com/clickyab/services/xlog"
 	"github.com/sirupsen/logrus"
 )
 
-// job is an show (impression) job
+var bulkCount = config.RegisterInt64("crane.workers.impressions.bulk.count", 200, "expire time of ads")
+var bulkTime = config.RegisterDuration("crane.workers.impressions.bulk.time", time.Second*2, "expire time of ads")
+
+// job is an impression (impression) job
 type job struct {
 	m.Impression
 	Seats []m.Seat `json:"s"`
@@ -50,6 +55,8 @@ func (j *job) Report() func(error) {
 	return j.rep
 }
 
+var impressions = make(chan m.Impression)
+
 func (j *job) process(ctx context.Context) error {
 	// TODO : multiple seat per one query
 	errs := errorProcess{
@@ -59,12 +66,10 @@ func (j *job) process(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	for _, v := range j.Seats {
-		err := ads.AddImpression(pub, j.Impression, v)
-		if err != nil {
-			xlog.GetWithError(ctx, err)
-			errs.add(err)
-		}
+	for i := range j.Seats {
+		j.Impression.Pub = pub
+		j.Impression.Seat = j.Seats[i]
+		impressions <- j.Impression
 	}
 	return errs.result()
 }
@@ -105,10 +110,6 @@ func NewImpressionJob(ctx entity.Context, s ...entity.Seat) broker.Job {
 type errorProcess struct {
 	tasks  int
 	errors []error
-}
-
-func (e *errorProcess) add(a ...error) {
-	e.errors = append(e.errors, a...)
 }
 
 func (e *errorProcess) Error() string {

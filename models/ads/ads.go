@@ -68,6 +68,11 @@ func AddImpression(publisher entity.Publisher, impression models.Impression, sea
 	return entities.AddImpression(publisher, impression, seat)
 }
 
+// AddMultiImpression insert new impressions to daily table
+func AddMultiImpression(impression ...models.Impression) error {
+	return entities.AddMultiImpression(impression...)
+}
+
 // AdClick will get impression from job and insert it into click table
 func AdClick(p entity.Publisher, m models.Impression, s models.Seat,
 	os entity.OS, fast int64, tv bool) error {

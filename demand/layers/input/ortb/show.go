@@ -13,7 +13,7 @@ import (
 	"clickyab.com/crane/demand/capping"
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/demand/layers/output/banner"
-	"clickyab.com/crane/workers/show"
+	"clickyab.com/crane/workers/impression"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/broker"
 	"github.com/clickyab/services/config"
@@ -139,6 +139,7 @@ func showBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetFatFinger(pl.FatFinger),
 		builder.SetFullSeats(pl.PublicID, pl.Size, pl.ReserveHash, pl.Ad, pl.Bid, time.Now().Unix(), pl.CPM, pl.SCPM, pl.requestType),
 	)
+
 	if err != nil {
 		logrus.Error(err)
 		w.WriteHeader(http.StatusBadRequest)
@@ -146,7 +147,7 @@ func showBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 	exp, cnl := context.WithTimeout(ctx, 10*time.Second)
 	safe.GoRoutine(exp, func() {
-		job := show.NewImpressionJob(c, c.Seats()...)
+		job := impression.NewImpressionJob(c, c.Seats()...)
 		broker.Publish(job)
 		cnl()
 	})
