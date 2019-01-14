@@ -24,8 +24,10 @@ func conversionHandler(ctx context.Context, w http.ResponseWriter, r *http.Reque
 	}
 
 	err := ads.ConversionByRH(ctx, rh, acid, t)
-	if err == nil {
+	if err != nil {
 		xlog.GetWithError(ctx, err).Debug(err)
+		_, _ = w.Write([]byte(err.Error()))
+		return
 
 	}
 
