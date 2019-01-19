@@ -117,6 +117,8 @@ func replaceParameters(url, domain, campaign, impID, ip string) string {
 		ip,
 		"[ip]",
 		ip,
+		"[date]",
+		time.Now().Format("20060102"),
 	)
 
 	url = r.Replace(url)
