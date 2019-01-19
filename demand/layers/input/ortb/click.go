@@ -37,8 +37,8 @@ func clickBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// This is a very important thing in click expiry detection. so be aware of it
-	//TODO : if we lose redis somehow, it can lead to a problematic duplicate click,
-	//TODO : create an offline job to check duplicate click hash in the past 72 hours
+	// TODO : if we lose redis somehow, it can lead to a problematic duplicate click,
+	// TODO : create an offline job to check duplicate click hash in the past 72 hours
 	counter := kv.NewAEAVStore(pl.ReserveHash, clickExpire.Duration()+time.Hour).IncSubKey("C", 1)
 	if counter > 1 {
 		// Duplicate click!
@@ -92,7 +92,7 @@ func clickBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 func replaceParameters(url, domain, campaign, impID, ip string) string {
 
-	/// http://example.com/sdfgds/?asghar={imp_id}
+	// / http://example.com/sdfgds/?asghar={imp_id}
 
 	r := strings.NewReplacer(
 		"[app]",
