@@ -1,12 +1,38 @@
 package builder
 
+import (
+	"strconv"
+	"strings"
+
+	openrtb "clickyab.com/crane/openrtb/v2.5"
+)
+
 // ShowOptionSetter is the function to handle setting
 type ShowOptionSetter func(*Context) (*Context, error)
 
-type user string
+type user struct {
+	id       string
+	userdata []*openrtb.UserData
+}
+
+func (u user) List() map[int64][]string {
+	ls := make(map[int64][]string)
+	for _, v := range u.userdata {
+		if v.Name == "list" {
+			for _, w := range v.Segment {
+				i, err := strconv.ParseInt(w.Id, 10, 64)
+				if err != nil {
+					continue
+				}
+				ls[i] = strings.Split(w.Value, ",")
+			}
+		}
+	}
+	return ls
+}
 
 func (u user) ID() string {
-	return string(u)
+	return u.id
 }
 
 // NewContext return a Context based on its setters

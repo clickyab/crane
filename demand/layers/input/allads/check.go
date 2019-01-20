@@ -16,7 +16,7 @@ import (
 	"clickyab.com/crane/models/apps"
 	"clickyab.com/crane/models/suppliers"
 	"clickyab.com/crane/models/website"
-	"clickyab.com/crane/openrtb/v2.5"
+	openrtb "clickyab.com/crane/openrtb/v2.5"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/framework"
 	"github.com/clickyab/services/random"
@@ -253,7 +253,7 @@ func makeBuilder(carrier, ua string, percentage int64, ip string,
 		builder.SetCappingMode(entity.CappingNone),
 		builder.SetUnderfloor(true),
 		builder.SetCategory(bq),
-		builder.SetTID("", ip, ua, ""),
+		builder.SetTID("", ""),
 		builder.SetCarrier(carrier, publisher),
 		builder.SetCategory(bq),
 	}

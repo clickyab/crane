@@ -20,7 +20,7 @@ import (
 	"clickyab.com/crane/models/apps"
 	"clickyab.com/crane/models/suppliers"
 	"clickyab.com/crane/models/website"
-	"clickyab.com/crane/openrtb/v2.5"
+	openrtb "clickyab.com/crane/openrtb/v2.5"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/kv"
 	"github.com/clickyab/services/safe"
@@ -33,10 +33,6 @@ import (
 
 const demandPath = "/ortb/:token"
 
-var (
-//monitoringSuppliers = config.RegisterString("crane.rtb.monitor.suppliers", "clickyab,chavoosh", "comma separated suppliers name ")
-// deadline = config.RegisterDuration("crane.rtb.deadline", time.Millisecond*250, "maximum waiting time for ad")
-)
 var (
 	ortbWebSelector = []reducer.Filter{
 		&filter.Desktop{},
@@ -190,8 +186,9 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetTargetHost(sup.ShowDomain()),
 		builder.SetOSUserAgent(ua),
 		builder.SetIPLocation(ip, payload.User, payload.Device, sup),
+		builder.SetUser(payload.GetUser().GetData()),
 		builder.SetProtocol(proto),
-		builder.SetTID(us, ip, ua, payload.GetDevice().GetDidsha1()),
+		builder.SetTID(us, payload.GetDevice().GetDidsha1()),
 		builder.SetNoTiny(!tiny),
 		builder.SetBannerMarkup(sup),
 		builder.SetFatFinger(fatFinger),
