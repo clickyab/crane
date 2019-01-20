@@ -12,7 +12,7 @@ import (
 	"clickyab.com/crane/demand/rtb"
 	"clickyab.com/crane/metrics"
 	"clickyab.com/crane/models/suppliers"
-	"clickyab.com/crane/openrtb/v2.5"
+	openrtb "clickyab.com/crane/openrtb/v2.5"
 	"github.com/clickyab/services/safe"
 	"github.com/clickyab/services/xlog"
 	"github.com/davecgh/go-spew/spew"
@@ -183,14 +183,16 @@ func GrpcHandler(ctx context.Context, req *openrtb.BidRequest) (*openrtb.BidResp
 		xlog.GetWithError(ctx, err).Debug("invalid request")
 		return res, err
 	}
+
 	b := []builder.ShowOptionSetter{
 		builder.SetTimestamp(),
 		builder.SetTargetHost(sup.ShowDomain()),
 		builder.SetOSUserAgent(ua),
 		builder.SetIPLocation(ip, req.GetUser(), req.GetDevice(), sup),
 		builder.SetPublisher(pub),
+		builder.SetUser(req.GetUser().GetData()),
 		builder.SetProtocol(proto),
-		builder.SetTID(us, ip, ua, req.GetDevice().GetDidsha1()),
+		builder.SetTID(us, req.GetDevice().GetDidsha1()),
 		builder.SetNoTiny(!tiny),
 		builder.SetBannerMarkup(sup),
 		builder.SetFatFinger(fatFinger),

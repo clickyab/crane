@@ -14,8 +14,8 @@ import (
 	"clickyab.com/crane/metrics"
 	"clickyab.com/crane/models/cell"
 	"clickyab.com/crane/models/ip2l"
-	"clickyab.com/crane/openrtb/v2.5"
 	grpc "clickyab.com/crane/openrtb/v2.5"
+	openrtb "clickyab.com/crane/openrtb/v2.5"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/config"
 	"github.com/mmcloughlin/geohash"
@@ -188,28 +188,24 @@ func SetFatFinger(ff bool) ShowOptionSetter {
 
 var copLen = config.RegisterInt("crane.context.cop_len", 41, "cop key len")
 
+// SetUser try to set user
+func SetUser(u []*openrtb.UserData) ShowOptionSetter {
+	return func(o *Context) (*Context, error) {
+		o.user = user{
+			id:       o.tid,
+			userdata: u,
+		}
+		return o, nil
+	}
+}
+
 // SetTID try to set tid
-func SetTID(id string, ip, ua, did string, extra ...string) ShowOptionSetter {
+func SetTID(id string, did string) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
 		if o.ua == "" || o.ip == nil {
 			return nil, fmt.Errorf("use this after setting ip and ua")
 		}
-		ee := make([][]byte, len(extra)+4)
-		if did != "" {
-			ee[0] = []byte(did)
-
-		} else {
-			ee[0] = []byte(id)
-			ee[1] = []byte(ip)
-			ee[2] = []byte(ua)
-		}
-		for i := range extra {
-			ee[i+4] = []byte(extra[i])
-		}
-
-		o.tid = createHash(copLen.Int(), ee...)
-
-		o.user = user(o.tid)
+		o.tid = createHash(copLen.Int(), []byte(did), []byte(id), []byte(o.ua), []byte(o.ip.String()))
 		return o, nil
 	}
 }
@@ -256,7 +252,7 @@ func SetPublisher(pub entity.Publisher) ShowOptionSetter {
 	}
 }
 
-//SetSuspicious is the function to set suspicious code, default is zero
+// SetSuspicious is the function to set suspicious code, default is zero
 func SetSuspicious(suspCode int) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
 		o.suspicious = suspCode

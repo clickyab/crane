@@ -2,10 +2,14 @@ package native
 
 import (
 	"context"
+	"encoding/base64"
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
+
+	"github.com/golang/protobuf/jsonpb"
 
 	website "clickyab.com/crane/models/clickyabwebsite"
 	openrtb "clickyab.com/crane/openrtb/v2.5"
@@ -42,6 +46,26 @@ var (
 	sup = supplier.NewClickyab()
 )
 
+func extractList(r *http.Request) *openrtb.UserData {
+	ls := r.URL.Query().Get("ls")
+	if ls == "" {
+		return nil
+	}
+	bs, err := base64.URLEncoding.DecodeString(ls)
+	if err != nil {
+		return nil
+	}
+	rs := strings.NewReader(string(bs))
+	var s = &openrtb.UserData{}
+	err = jsonpb.Unmarshal(rs, s)
+	if err != nil {
+		return nil
+	}
+	s.Id = "1"
+	s.Name = "list"
+	return s
+}
+
 // d			:domain
 // t			:template (grid3x,grid4x,single,text-list)
 // ref			:referrer
@@ -62,7 +86,6 @@ func getNative(ct context.Context, w http.ResponseWriter, r *http.Request) {
 	dnt, _ := strconv.Atoi(r.Header.Get("DNT"))
 	ref := r.URL.Query().Get("ref")
 	parent := r.URL.Query().Get("parent")
-	tid := r.URL.Query().Get("tid")
 
 	ip := framework.RealIP(r)
 	count, err := strconv.Atoi(r.URL.Query().Get("count"))
@@ -73,15 +96,13 @@ func getNative(ct context.Context, w http.ResponseWriter, r *http.Request) {
 
 		return
 	}
-	useragent := r.UserAgent()
 	if count > nativeMaxCount.Int() {
 		count = nativeMaxCount.Int()
 	}
 
-	ua := user_agent.New(useragent)
 	var tpl *nativeTemplate
 
-	if ua.Mobile() && count == 3 {
+	if user_agent.New(r.UserAgent()).Mobile() && count == 3 {
 		tpl, err = getNativeTemplate("grid4x")
 		count = 2
 	} else {
@@ -102,11 +123,17 @@ func getNative(ct context.Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	bq := &openrtb.BidRequest{
-		Id: fmt.Sprintf("cly-%s", <-random.ID),
+	ud := make([]*openrtb.UserData, 0)
+	if ls := extractList(r); ls != nil {
+		ud = append(ud, ls)
+	}
 
+	bq := &openrtb.BidRequest{
+
+		Id: fmt.Sprintf("cly-%s", <-random.ID),
 		User: &openrtb.User{
-			Id: nativeUserIDGenerator(tid, useragent, ip),
+			Data: ud,
+			Id:   nativeUserIDGenerator(r.URL.Query().Get("tid"), r.UserAgent(), ip),
 		},
 		Imp: getImps(r, targetCount, pub, tpl.Image),
 		DistributionchannelOneof: &openrtb.BidRequest_Site{
@@ -114,7 +141,7 @@ func getNative(ct context.Context, w http.ResponseWriter, r *http.Request) {
 				Page: parent,
 				Ref:  ref,
 				Mobile: func() int32 {
-					if ua.Mobile() {
+					if user_agent.New(r.UserAgent()).Mobile() {
 						return 1
 					}
 					return 0
@@ -125,10 +152,11 @@ func getNative(ct context.Context, w http.ResponseWriter, r *http.Request) {
 				Cat:    pub.Categories(),
 			},
 		},
+
 		Device: &openrtb.Device{
 			Ip:  ip,
-			Os:  ua.OS(),
-			Ua:  useragent,
+			Os:  user_agent.New(r.UserAgent()).OS(),
+			Ua:  r.UserAgent(),
 			Dnt: int32(dnt),
 		},
 		Ext: &openrtb.BidRequest_Ext{
