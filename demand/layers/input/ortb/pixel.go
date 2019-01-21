@@ -37,6 +37,7 @@ func showPixel(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetProtocolByRequest(r),
 		builder.SetParent(pl.Parent, pl.Ref),
 		builder.SetTID(pl.TID, pl.Did),
+		builder.SetUser(nil),
 		builder.SetPublisher(pl.Publisher),
 		builder.SetSuspicious(pl.Suspicious),
 		builder.SetFatFinger(pl.FatFinger),
