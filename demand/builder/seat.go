@@ -270,6 +270,7 @@ func (s *seat) makeURL(route string, params map[string]string, cpm float64, expi
 		Path:   res,
 	}
 	v := url.Values{}
+	v.Set("uid", s.context.user.ID())
 	v.Set("tid", s.context.tid)
 	v.Set("ref", s.context.referrer)
 	v.Set("parent", s.context.parent)

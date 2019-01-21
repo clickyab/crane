@@ -67,7 +67,7 @@ type ad struct {
 	CampaignNetwork          int                    `db:"cp_network"`
 	CampaignPlacement        SharpArray             `db:"cp_placement"`
 	CampaignWebsiteFilter    SharpArray             `db:"cp_wfilter"`
-	CampaignRetargeting      sql.NullString         `db:"cp_retargeting"`
+	CampaignRetargeting      SharpArray             `db:"cp_retargeting"`
 	CampaignSegmentID        sql.NullInt64          `db:"cp_segment_id"`
 	CampaignNetProvider      SharpArray             `db:"cp_net_provider"`
 	CampaignNetProviderName  SharpArray             `db:"cp_net_provider_name"`
@@ -160,19 +160,19 @@ func extractAssets(in ad) []entity.Asset {
 	}
 
 	// TODO : before commit, make sure the dynamic support is added
-	//if entity.AdType(in.FType) == entity.AdTypeDynamic {
-	//	w, h := cyslot.GetSizeByNum(in.FAdSize)
-	//	return []entity.Asset{
-	//		{
-	//			MimeType: in.FMimeType.String,
-	//			Type:     entity.AssetTypeImage,
-	//			SubType:  entity.AssetTypeImageSubTypeIcon,
-	//			Width:    w,
-	//			Height:   h,
-	//			Data:     in.FAdImg.String,
-	//		},
-	//	}
-	//}
+	// if entity.AdType(in.FType) == entity.AdTypeDynamic {
+	// 	w, h := cyslot.GetSizeByNum(in.FAdSize)
+	// 	return []entity.Asset{
+	// 		{
+	// 			MimeType: in.FMimeType.String,
+	// 			Type:     entity.AssetTypeImage,
+	// 			SubType:  entity.AssetTypeImageSubTypeIcon,
+	// 			Width:    w,
+	// 			Height:   h,
+	// 			Data:     in.FAdImg.String,
+	// 		},
+	// 	}
+	// }
 
 	if entity.AdType(in.FType) == entity.AdTypeNative {
 		txt := in.FAdName.String
@@ -212,8 +212,8 @@ func extractAssets(in ad) []entity.Asset {
 func AdLoader(_ context.Context) (map[string]kv.Serializable, error) {
 	var res []ad
 	t := time.Now()
-	u := t.Unix()                                                        //return date in unixtimestamp
-	h, err := strconv.ParseInt(t.Round(time.Minute).Format("15"), 10, 0) //round time in minute scale
+	u := t.Unix()                                                        // return date in unixtimestamp
+	h, err := strconv.ParseInt(t.Round(time.Minute).Format("15"), 10, 0) // round time in minute scale
 	assert.Nil(err)
 
 	query := fmt.Sprintf(`SELECT
