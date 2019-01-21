@@ -3,7 +3,7 @@ package entity
 import (
 	"strings"
 
-	"clickyab.com/crane/openrtb/v2.5"
+	openrtb "clickyab.com/crane/openrtb/v2.5"
 )
 
 // Target is the target of this campaign
@@ -62,23 +62,25 @@ type Campaign interface {
 	ID() int32
 	// Name is the campaign name
 	Name() string
+	// ReTargeting determines if it's retargeting enabled or not
+	ReTargeting() []string
 	// Make sure the result is >= 1
 	Frequency() int32
-	//BlackListPublisher shows publishers in blacklist
+	// BlackListPublisher shows publishers in blacklist
 	BlackListPublisher() []string
-	//BlackListPublisher shows publishers in blacklist
+	// BlackListPublisher shows publishers in blacklist
 	WhiteListPublisher() []string
 	// AppBrands return campaign app brands
 	AppBrands() []string
 	// AppCarriers return campaign app carriers
 	AppCarriers() []string
-	//AllowedOS return os blacklist of a campaign
+	// AllowedOS return os blacklist of a campaign
 	AllowedOS() []string
-	//Country return country
+	// Country return country
 	Country() []string
 	// Province returns province ID
 	Province() []string
-	//LatLon return LanLon and radius to accept ad
+	// LatLon return LanLon and radius to accept ad
 	LatLon() (bool, float64, float64, float64)
 	// Category return the category of this campaign
 	Category() []openrtb.ContentCategory

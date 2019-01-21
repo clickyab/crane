@@ -32,6 +32,11 @@ type Campaign struct {
 	connectionType []int
 }
 
+// ReTargeting returns array of campaign lists
+func (c *Campaign) ReTargeting() []string {
+	return c.ad.CampaignRetargeting.Array()
+}
+
 // Strategy of campaign. can be cpm, cpc
 func (c *Campaign) Strategy() entity.Strategy {
 	if c.strategy > 0 {
