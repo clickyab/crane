@@ -72,8 +72,8 @@ func extractList(c string, u *openrtb.User) {
 
 func (middleware) Handler(next framework.Handler) framework.Handler {
 	return func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-		domain := r.URL.Host
-		fmt.Println("DOMAIN:", domain)
+		// domain := r.URL.Host
+		// fmt.Println("DOMAIN:", domain)
 		// if parts := strings.Split(r.URL.Hostname(), "."); len(parts) > 2 {
 		// 	domain = parts[len(parts)-2] + "." + parts[len(parts)-1]
 		// }
@@ -84,7 +84,7 @@ func (middleware) Handler(next framework.Handler) framework.Handler {
 			user.Id = <-random.ID
 			http.SetCookie(w,
 				&http.Cookie{
-					Domain:  "." + domain,
+					// Domain:  "." + domain,
 					Expires: time.Now().AddDate(2, 0, 0),
 					Value:   user.Id,
 					Name:    uidKey,
@@ -101,7 +101,7 @@ func (middleware) Handler(next framework.Handler) framework.Handler {
 			if err == nil {
 				http.SetCookie(w,
 					&http.Cookie{
-						Domain:  "." + domain,
+						// Domain:  "." + domain,
 						Expires: time.Now().AddDate(2, 0, 0),
 						Value:   string(ec),
 						Name:    lsKey,
