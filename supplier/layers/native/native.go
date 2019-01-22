@@ -109,6 +109,8 @@ func getNative(ct context.Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	fmt.Println(fmt.Sprintf("USER: %#v", user))
+
 	bq := &openrtb.BidRequest{
 		Id: fmt.Sprintf("cly-%s", <-random.ID),
 
