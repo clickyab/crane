@@ -58,6 +58,7 @@ func extractList(c string, u *openrtb.User) {
 			Value: strings.Join(xl, ","),
 		})
 	}
+	u.Data = append(u.Data, res)
 }
 
 func (middleware) Handler(next framework.Handler) framework.Handler {
