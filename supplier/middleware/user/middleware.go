@@ -5,10 +5,8 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/md5"
-	"crypto/rand"
 	"encoding/hex"
 	"fmt"
-	"io"
 	"net/http"
 	"strings"
 	"time"
@@ -93,22 +91,19 @@ func (middleware) Handler(next framework.Handler) framework.Handler {
 		} else {
 			user.Id = uc.Value
 		}
-
+		// ec, err := encrypt([]byte(""), passphrase)
+		// if err == nil {
+		// 	http.SetCookie(w,
+		// 		&http.Cookie{
+		// 			Domain:  ".clickyab.com",
+		// 			Expires: time.Now().AddDate(2, 0, 0),
+		// 			Value:   string(ec),
+		// 			Name:    lsKey,
+		// 			Path:    "/",
+		// 		})
+		// }
 		if ls, err := r.Cookie(lsKey); err != nil {
-			ec, err := encrypt([]byte(""), passphrase)
-			if err == nil {
-				http.SetCookie(w,
-					&http.Cookie{
-						Domain:  ".clickyab.com",
-						Expires: time.Now().AddDate(2, 0, 0),
-						Value:   string(ec),
-						Name:    lsKey,
-						Path:    "/",
-					})
-			}
-		} else {
 			extractList(ls.Value, user)
-
 		}
 		next(context.WithValue(ctx, KEY, user), w, r)
 	}
@@ -118,19 +113,19 @@ func init() {
 	router.RegisterGlobalMiddleware(&middleware{})
 }
 
-func encrypt(data []byte, passphrase string) ([]byte, error) {
-	block, _ := aes.NewCipher([]byte(createHash(passphrase)))
-	gcm, err := cipher.NewGCM(block)
-	if err != nil {
-		return nil, err
-	}
-	nonce := make([]byte, gcm.NonceSize())
-	if _, err = io.ReadFull(rand.Reader, nonce); err != nil {
-		panic(err.Error())
-	}
-	ciphertext := gcm.Seal(nonce, nonce, data, nil)
-	return ciphertext, nil
-}
+// func encrypt(data []byte, passphrase string) ([]byte, error) {
+// 	block, _ := aes.NewCipher([]byte(createHash(passphrase)))
+// 	gcm, err := cipher.NewGCM(block)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	nonce := make([]byte, gcm.NonceSize())
+// 	if _, err = io.ReadFull(rand.Reader, nonce); err != nil {
+// 		panic(err.Error())
+// 	}
+// 	ciphertext := gcm.Seal(nonce, nonce, data, nil)
+// 	return ciphertext, nil
+// }
 
 func decrypt(data []byte, passphrase string) ([]byte, error) {
 	key := []byte(createHash(passphrase))
