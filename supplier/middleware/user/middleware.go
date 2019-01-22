@@ -73,9 +73,10 @@ func extractList(c string, u *openrtb.User) {
 func (middleware) Handler(next framework.Handler) framework.Handler {
 	return func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		domain := r.URL.Hostname()
-		if parts := strings.Split(r.URL.Hostname(), "."); len(parts) > 2 {
-			domain = parts[len(parts)-2] + "." + parts[len(parts)-1]
-		}
+		fmt.Println("DOMAIN:", domain)
+		// if parts := strings.Split(r.URL.Hostname(), "."); len(parts) > 2 {
+		// 	domain = parts[len(parts)-2] + "." + parts[len(parts)-1]
+		// }
 		user := &openrtb.User{
 			Data: make([]*openrtb.UserData, 0),
 		}
