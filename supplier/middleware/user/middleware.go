@@ -79,7 +79,7 @@ func (middleware) Handler(next framework.Handler) framework.Handler {
 			user.Id = uc.Value
 		}
 
-		if ls, err := r.Cookie(lsKey); err != nil {
+		if ls, err := r.Cookie(lsKey); err == nil {
 			extractList(ls.Value, user)
 		}
 		next(context.WithValue(ctx, KEY, user), w, r)
