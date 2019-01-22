@@ -95,8 +95,6 @@ func (middleware) Handler(next framework.Handler) framework.Handler {
 		}
 
 		if ls, err := r.Cookie(lsKey); err != nil {
-			extractList(ls.Value, user)
-		} else {
 			ec, err := encrypt([]byte(""), passphrase)
 			if err == nil {
 				http.SetCookie(w,
@@ -108,6 +106,9 @@ func (middleware) Handler(next framework.Handler) framework.Handler {
 						Path:    "/",
 					})
 			}
+		} else {
+			extractList(ls.Value, user)
+
 		}
 		next(context.WithValue(ctx, KEY, user), w, r)
 	}
