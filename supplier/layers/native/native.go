@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"time"
 
+	user2 "clickyab.com/crane/supplier/middleware/user"
+
 	website "clickyab.com/crane/models/clickyabwebsite"
 	openrtb "clickyab.com/crane/openrtb/v2.5"
 	"clickyab.com/crane/supplier/client"
@@ -16,7 +18,6 @@ import (
 	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/framework"
 	"github.com/clickyab/services/random"
-	"github.com/clickyab/services/simplehash"
 	"github.com/clickyab/services/xlog"
 	"github.com/mssola/user_agent"
 )
@@ -62,7 +63,6 @@ func getNative(ct context.Context, w http.ResponseWriter, r *http.Request) {
 	dnt, _ := strconv.Atoi(r.Header.Get("DNT"))
 	ref := r.URL.Query().Get("ref")
 	parent := r.URL.Query().Get("parent")
-	tid := r.URL.Query().Get("tid")
 
 	ip := framework.RealIP(r)
 	count, err := strconv.Atoi(r.URL.Query().Get("count"))
@@ -101,14 +101,19 @@ func getNative(ct context.Context, w http.ResponseWriter, r *http.Request) {
 
 		return
 	}
+	user, ok := ctx.Value(user2.KEY).(*openrtb.User)
+	if !ok {
+		xlog.GetWithError(ctx, err).Debug("extract user from context")
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Header().Add("cly-error", "user data")
+		return
+	}
 
 	bq := &openrtb.BidRequest{
 		Id: fmt.Sprintf("cly-%s", <-random.ID),
 
-		User: &openrtb.User{
-			Id: nativeUserIDGenerator(tid, useragent, ip),
-		},
-		Imp: getImps(r, targetCount, pub, tpl.Image),
+		User: user,
+		Imp:  getImps(r, targetCount, pub, tpl.Image),
 		DistributionchannelOneof: &openrtb.BidRequest_Site{
 			Site: &openrtb.Site{
 				Page: parent,
@@ -172,9 +177,4 @@ func getTargetCount(max int, counts ...int) int {
 	}
 
 	return target
-}
-
-// nativeUserIDGenerator create user id for native
-func nativeUserIDGenerator(tid, ua, ip string) string {
-	return simplehash.MD5(fmt.Sprintf("%s%s%s", tid, ua, ip))
 }
