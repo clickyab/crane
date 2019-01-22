@@ -84,7 +84,7 @@ func (middleware) Handler(next framework.Handler) framework.Handler {
 			user.Id = <-random.ID
 			http.SetCookie(w,
 				&http.Cookie{
-					// Domain:  "." + domain,
+					Domain:  ".",
 					Expires: time.Now().AddDate(2, 0, 0),
 					Value:   user.Id,
 					Name:    uidKey,
@@ -99,7 +99,7 @@ func (middleware) Handler(next framework.Handler) framework.Handler {
 			if err == nil {
 				http.SetCookie(w,
 					&http.Cookie{
-						// Domain:  "." + domain,
+						Domain:  ".",
 						Expires: time.Now().AddDate(2, 0, 0),
 						Value:   string(ec),
 						Name:    lsKey,
