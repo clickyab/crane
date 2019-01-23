@@ -2,12 +2,10 @@ package user
 
 import (
 	"context"
-	"fmt"
 	"net/http"
-	"strings"
 	"time"
 
-	"github.com/clickyab/services/kv"
+	"clickyab.com/crane/supplier/lists"
 
 	"github.com/clickyab/services/random"
 
@@ -21,9 +19,7 @@ import (
 type key int
 
 const (
-	uidKey     = "a8f5f167f44f4964e6c998dee827110c"
-	lsKey      = "1ab482db173cf15b7fdbe7c38feb6748"
-	userPrefix = "USR"
+	uidKey = "a8f5f167f44f4964e6c998dee827110c"
 	// KEY of user in context
 	KEY = key(1000)
 )
@@ -33,32 +29,6 @@ type middleware struct {
 
 func (middleware) PreRoute() bool {
 	return true
-}
-
-func extractList(c string, u *openrtb.User) {
-
-	res := &openrtb.UserData{
-		Name:    "list",
-		Id:      "1",
-		Segment: []*openrtb.UserData_Segment{},
-	}
-
-	for _, v := range strings.Split(string(c), ",") {
-		k := kv.NewEavStore(fmt.Sprintf("%s_%s_%s", userPrefix, u.GetId(), v))
-		if len(k.AllKeys()) == 0 {
-			continue
-		}
-		xl := make([]string, len(k.AllKeys()))
-		for lk := range k.AllKeys() {
-			xl = append(xl, lk)
-		}
-
-		res.Segment = append(res.Segment, &openrtb.UserData_Segment{
-			Id:    v,
-			Value: strings.Join(xl, ","),
-		})
-	}
-	u.Data = append(u.Data, res)
 }
 
 func (middleware) Handler(next framework.Handler) framework.Handler {
@@ -79,10 +49,10 @@ func (middleware) Handler(next framework.Handler) framework.Handler {
 		} else {
 			user.Id = uc.Value
 		}
-
-		if ls, err := r.Cookie(lsKey); err == nil {
-			extractList(ls.Value, user)
+		if ud, err := lists.GetLists(ctx, user.Id); err != nil {
+			user.Data = append(user.Data, ud)
 		}
+
 		next(context.WithValue(ctx, KEY, user), w, r)
 	}
 }
