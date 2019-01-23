@@ -3,7 +3,6 @@ package lists
 import (
 	"context"
 	"fmt"
-	"net/http"
 	"strings"
 	"time"
 
@@ -11,10 +10,6 @@ import (
 
 	openrtb "clickyab.com/crane/openrtb/v2.5"
 )
-
-func manageList(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-
-}
 
 const prefix = "LST"
 
