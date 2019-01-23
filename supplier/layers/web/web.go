@@ -17,6 +17,7 @@ import (
 	"clickyab.com/crane/supplier/client"
 	"clickyab.com/crane/supplier/layers/internal/supplier"
 	"clickyab.com/crane/supplier/layers/output"
+	user2 "clickyab.com/crane/supplier/middleware/user"
 	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/framework"
 	"github.com/clickyab/services/random"
@@ -115,13 +116,17 @@ func getAd(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 	rIP := framework.RealIP(r)
 	rUserAgent := r.UserAgent()
-
+	user, ok := ctx.Value(user2.KEY).(*openrtb.User)
+	if !ok {
+		xlog.GetWithError(ctx, err).Debug("extract user from context")
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Header().Add("cly-error", "user data")
+		return
+	}
 	bq := &openrtb.BidRequest{
-		Id: fmt.Sprintf("cyl-%s", <-random.ID),
-		User: &openrtb.User{
-			Id: webUserIDGenerator(tid, rUserAgent, rIP),
-		},
-		Imp: imps,
+		Id:   fmt.Sprintf("cyl-%s", <-random.ID),
+		User: user,
+		Imp:  imps,
 		DistributionchannelOneof: &openrtb.BidRequest_Site{
 			Site: &openrtb.Site{
 				Mobile: func() int32 {

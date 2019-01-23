@@ -8,9 +8,11 @@ import (
 	"strconv"
 	"strings"
 
+	"clickyab.com/crane/supplier/middleware/user"
+
 	website "clickyab.com/crane/models/clickyabwebsite"
 	"clickyab.com/crane/models/staticseat"
-	"clickyab.com/crane/openrtb/v2.5"
+	openrtb "clickyab.com/crane/openrtb/v2.5"
 	"clickyab.com/crane/supplier/client"
 	"clickyab.com/crane/supplier/layers/entities"
 	"clickyab.com/crane/supplier/layers/internal/supplier"
@@ -146,13 +148,17 @@ func vast(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 	rIP := framework.RealIP(r)
 	rUserAgent := r.UserAgent()
-
+	u, ok := ctx.Value(user.KEY).(*openrtb.User)
+	if !ok {
+		xlog.GetWithError(ctx, err).Debug("extract user from context")
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Header().Add("cly-error", "user data")
+		return
+	}
 	bq := &openrtb.BidRequest{
-		Id: <-random.ID,
-		User: &openrtb.User{
-			Id: vastUserIDGenerator(tid, rUserAgent, rIP),
-		},
-		Imp: imps,
+		Id:   <-random.ID,
+		User: u,
+		Imp:  imps,
 		DistributionchannelOneof: &openrtb.BidRequest_Site{
 
 			Site: &openrtb.Site{
