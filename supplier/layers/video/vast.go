@@ -21,7 +21,6 @@ import (
 	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/framework"
 	"github.com/clickyab/services/random"
-	"github.com/clickyab/services/simplehash"
 	"github.com/clickyab/services/xlog"
 	"github.com/mssola/user_agent"
 )
@@ -57,7 +56,6 @@ func vast(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 	ref := r.URL.Query().Get("r")
 	dnt, _ := strconv.Atoi(r.Header.Get("DNT"))
-	tid := r.URL.Query().Get("tid")
 	ln := r.URL.Query().Get("l")
 	var mimes []string
 	if mim := strings.Trim(r.URL.Query().Get("mimes"), "\n\t "); mim != "" {
@@ -228,9 +226,4 @@ func vast(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 func alwaysReturnFix(seats []entities.StaticSeat) entities.StaticSeat {
 	n := rand.Int() % len(seats)
 	return seats[n]
-}
-
-// vastUserIDGenerator create user id for vast
-func vastUserIDGenerator(tid, ua, ip string) string {
-	return simplehash.MD5(fmt.Sprintf("%s%s%s", tid, ua, ip))
 }
