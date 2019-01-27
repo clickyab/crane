@@ -7,7 +7,7 @@ import (
 
 	"clickyab.com/crane/demand/builder"
 	"clickyab.com/crane/demand/layers/output/pixel"
-	"clickyab.com/crane/workers/impression"
+	"clickyab.com/crane/workers/show"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/broker"
 	"github.com/clickyab/services/kv"
@@ -52,7 +52,7 @@ func showPixel(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 	exp, _ := context.WithTimeout(ctx, 10*time.Second)
 	safe.GoRoutine(exp, func() {
-		job := impression.NewImpressionJob(c, c.Seats()...)
+		job := show.NewImpressionJob(c, c.Seats()...)
 		broker.Publish(job)
 	})
 

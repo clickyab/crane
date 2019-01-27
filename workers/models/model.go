@@ -7,7 +7,7 @@ import (
 	"clickyab.com/crane/demand/entity"
 )
 
-// Seat is model for impression and click job
+// Seat is model for show and click job
 type Seat struct {
 	AdID         int32              `json:"ad"`
 	AdSize       int32              `json:"size"`
@@ -19,7 +19,7 @@ type Seat struct {
 	Type         entity.RequestType `json:"t"`
 }
 
-// Impression is model for impression and click job
+// Impression is model for show and click job
 type Impression struct {
 	IP            net.IP               `json:"ip"`
 	CopID         string               `json:"cop"`
@@ -31,6 +31,4 @@ type Impression struct {
 	Supplier      string               `json:"sub"`
 	Timestamp     time.Time            `json:"ts"`
 	PublisherType entity.PublisherType `json:"pt"`
-	Seat          Seat                 `json:"seat"`
-	Pub           entity.Publisher     `json:"-"`
 }

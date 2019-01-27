@@ -1,11 +1,7 @@
-package impression
+package show
 
 import (
 	"context"
-	"time"
-
-	"clickyab.com/crane/models/ads"
-	m "clickyab.com/crane/workers/models"
 
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/broker"
@@ -36,12 +32,12 @@ func (c *consumer) Consume(ctx context.Context) chan<- broker.Delivery {
 				data := job{}
 				err := d.Decode(&data)
 				if err != nil {
-					xlog.GetWithError(ctx, err).Error("impression reject")
+					xlog.GetWithError(ctx, err).Error("show reject")
 					assert.Nil(d.Reject(false))
 					continue bigLoop
 				}
 				if err := data.process(ctx); err != nil {
-					xlog.GetWithError(ctx, err).Error("impression nack")
+					xlog.GetWithError(ctx, err).Error("show nack")
 					assert.Nil(d.Nack(false, false))
 					continue bigLoop
 				}
@@ -55,38 +51,4 @@ func (c *consumer) Consume(ctx context.Context) chan<- broker.Delivery {
 // NewConsumer return a new consumer
 func NewConsumer() broker.Consumer {
 	return &consumer{}
-}
-
-func init() {
-	go bulkInsert()
-}
-
-func bulkInsert() {
-
-	imps := make([]m.Impression, 0)
-	t := time.After(bulkTime.Duration())
-	for {
-		select {
-		case <-t:
-			if len(imps) > 0 {
-				err := ads.AddMultiImpression(imps...)
-				if err != nil {
-					xlog.GetWithError(context.Background(), err)
-				}
-				imps = make([]m.Impression, 0)
-			}
-			t = time.After(bulkTime.Duration())
-
-		case s := <-impressions:
-			imps = append(imps, s)
-			if len(imps) > bulkCount.Int() {
-				err := ads.AddMultiImpression(imps...)
-				if err != nil {
-					xlog.GetWithError(context.Background(), err)
-				}
-				imps = make([]m.Impression, 0)
-			}
-			t = time.After(bulkTime.Duration())
-		}
-	}
 }
