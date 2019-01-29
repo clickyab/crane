@@ -8,9 +8,11 @@ import (
 	"strconv"
 	"strings"
 
+	"clickyab.com/crane/supplier/middleware/user"
+
 	website "clickyab.com/crane/models/clickyabwebsite"
 	"clickyab.com/crane/models/staticseat"
-	"clickyab.com/crane/openrtb/v2.5"
+	openrtb "clickyab.com/crane/openrtb/v2.5"
 	"clickyab.com/crane/supplier/client"
 	"clickyab.com/crane/supplier/layers/entities"
 	"clickyab.com/crane/supplier/layers/internal/supplier"
@@ -19,7 +21,6 @@ import (
 	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/framework"
 	"github.com/clickyab/services/random"
-	"github.com/clickyab/services/simplehash"
 	"github.com/clickyab/services/xlog"
 	"github.com/mssola/user_agent"
 )
@@ -55,7 +56,6 @@ func vast(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 	ref := r.URL.Query().Get("r")
 	dnt, _ := strconv.Atoi(r.Header.Get("DNT"))
-	tid := r.URL.Query().Get("tid")
 	ln := r.URL.Query().Get("l")
 	var mimes []string
 	if mim := strings.Trim(r.URL.Query().Get("mimes"), "\n\t "); mim != "" {
@@ -146,13 +146,17 @@ func vast(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 	rIP := framework.RealIP(r)
 	rUserAgent := r.UserAgent()
-
+	u, ok := ctx.Value(user.KEY).(*openrtb.User)
+	if !ok {
+		xlog.GetWithError(ctx, err).Debug("extract user from context")
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Header().Add("cly-error", "user data")
+		return
+	}
 	bq := &openrtb.BidRequest{
-		Id: <-random.ID,
-		User: &openrtb.User{
-			Id: vastUserIDGenerator(tid, rUserAgent, rIP),
-		},
-		Imp: imps,
+		Id:   <-random.ID,
+		User: u,
+		Imp:  imps,
 		DistributionchannelOneof: &openrtb.BidRequest_Site{
 
 			Site: &openrtb.Site{
@@ -222,9 +226,4 @@ func vast(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 func alwaysReturnFix(seats []entities.StaticSeat) entities.StaticSeat {
 	n := rand.Int() % len(seats)
 	return seats[n]
-}
-
-// vastUserIDGenerator create user id for vast
-func vastUserIDGenerator(tid, ua, ip string) string {
-	return simplehash.MD5(fmt.Sprintf("%s%s%s", tid, ua, ip))
 }

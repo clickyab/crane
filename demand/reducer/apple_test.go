@@ -17,7 +17,7 @@ type filter struct {
 
 var errTest = errors.New("test filter err")
 
-func (filter) Check(_ entity.Context, c entity.Creative) error {
+func (filter) Check(_ entity.Context, c entity.Campaign) error {
 	switch c.ID() {
 	case 0:
 		time.Sleep(time.Second)
@@ -43,25 +43,25 @@ func TestApply(t *testing.T) {
 		pub.EXPECT().Supplier().Return(sup).AnyTimes()
 		imp.EXPECT().Publisher().Return(pub).AnyTimes()
 		convey.Convey("timeout error", func() {
-			crt := mock_entity.NewMockCreative(ctrl)
+			crt := mock_entity.NewMockCampaign(ctrl)
 			crt.EXPECT().ID().Return(int32(0)).AnyTimes()
 
-			res, err := Apply(ctx, imp, []entity.Creative{crt}, []Filter{filter{}})
+			res, err := Apply(ctx, imp, map[int32]entity.Campaign{1: crt}, []Filter{filter{}})
 			convey.So(err, convey.ShouldBeError, ErrorTimeOut)
 			convey.So(res, convey.ShouldBeNil)
 		})
 		convey.Convey("filter error", func() {
-			crt := mock_entity.NewMockCreative(ctrl)
+			crt := mock_entity.NewMockCampaign(ctrl)
 			crt.EXPECT().ID().Return(int32(1)).AnyTimes()
-			res, err := Apply(ctx, imp, []entity.Creative{crt}, []Filter{filter{}})
+			res, err := Apply(ctx, imp, map[int32]entity.Campaign{1: crt}, []Filter{filter{}})
 			convey.So(err, convey.ShouldEqual, errTest)
 			convey.So(res, convey.ShouldBeNil)
 		})
 
 		convey.Convey("creative", func() {
-			crt := mock_entity.NewMockCreative(ctrl)
+			crt := mock_entity.NewMockCampaign(ctrl)
 			crt.EXPECT().ID().Return(int32(2)).AnyTimes()
-			res, err := Apply(ctx, imp, []entity.Creative{crt}, []Filter{filter{}})
+			res, err := Apply(ctx, imp, map[int32]entity.Campaign{1: crt}, []Filter{filter{}})
 			convey.So(err, convey.ShouldBeNil)
 			convey.So(len(res), convey.ShouldEqual, 1)
 		})

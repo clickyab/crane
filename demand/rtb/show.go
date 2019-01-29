@@ -4,11 +4,12 @@ import (
 	"context"
 	"sort"
 
+	"clickyab.com/crane/models/campaign"
+
 	"clickyab.com/crane/demand/builder"
 	"clickyab.com/crane/demand/capping"
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/demand/reducer"
-	"clickyab.com/crane/models/ads"
 )
 
 // Select is the main entry point for this module
@@ -20,7 +21,7 @@ func Select(c context.Context, sel []reducer.Filter, opt ...builder.ShowOptionSe
 	}
 	// Apply filters
 	// TODO : after selector fix it
-	all, err := reducer.Apply(c, ctx, ads.GetAds(), sel)
+	all, err := reducer.Apply(c, ctx, campaign.GetCampaigns(), sel)
 	if err != nil {
 		return nil, err
 	}
@@ -32,9 +33,16 @@ func Select(c context.Context, sel []reducer.Filter, opt ...builder.ShowOptionSe
 
 // MinimalSelect return all ads sorted
 func MinimalSelect(
-	c context.Context, ctx *builder.Context, seat entity.Seat, all []entity.Creative) (
+	c context.Context, ctx *builder.Context, seat entity.Seat, cps []entity.Campaign) (
 	[]entity.SelectedCreative, []entity.SelectedCreative) {
-	exceed, underfloor := selector(ctx, all, seat, false, nil)
+
+	ads := make([]entity.Creative, 0)
+	for e := range cps {
+		if ak, ok := cps[e].Sizes()[seat.Size()]; ok {
+			ads = append(ads, ak...)
+		}
+	}
+	exceed, underfloor := selector(ctx, ads, seat, false, nil)
 
 	exceed = capping.ApplyCapping(ctx.Capping(), ctx.User().ID(), exceed, ctx.EventPage())
 	underfloor = capping.ApplyCapping(ctx.Capping(), ctx.User().ID(), underfloor, ctx.EventPage())

@@ -88,12 +88,19 @@ func (aab adAndBid) IsSecBid() bool {
 // WARNING : DO NOT ADD PARAMETER TO THIS FUNCTION
 func internalSelect(
 	ctx entity.Context,
-	ads []entity.Creative,
+	cps []entity.Campaign,
 ) {
 	var noVideo bool                 // once set, never unset it again
 	selected := make(map[int32]bool) // all ad selected in this session, to make sure they are not repeated
 
 	for _, seat := range ctx.Seats() {
+		ads := make([]entity.Creative, 0)
+		for e := range cps {
+			if ak, ok := cps[e].Sizes()[seat.Size()]; ok {
+				ads = append(ads, ak...)
+			}
+		}
+		ctx.User().List()
 		exceedFloor, underFloor := selector(ctx, ads, seat, noVideo, selected)
 
 		var (
@@ -151,7 +158,7 @@ func fixPrice(strategy entity.Strategy, cpc, cpm, minCPC, minCPM float64) (float
 }
 
 // selectAds is the only function that one must call to get ads
-func selectAds(_ context.Context, ctx entity.Context, ads []entity.Creative) {
+func selectAds(_ context.Context, ctx entity.Context, ads []entity.Campaign) {
 	internalSelect(ctx, ads)
 }
 

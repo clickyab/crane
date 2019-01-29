@@ -5,13 +5,14 @@
 package mock_entity
 
 import (
-	entity "clickyab.com/crane/demand/entity"
-	v2_5 "clickyab.com/crane/openrtb/v2.5"
-	gomock "github.com/golang/mock/gomock"
 	net "net"
 	url "net/url"
 	reflect "reflect"
 	time "time"
+
+	entity "clickyab.com/crane/demand/entity"
+	v2_5 "clickyab.com/crane/openrtb/v2.5"
+	gomock "github.com/golang/mock/gomock"
 )
 
 // MockContext is a mock of Context interface
@@ -39,6 +40,7 @@ func (m *MockContext) EXPECT() *MockContextMockRecorder {
 
 // BannerMarkup mocks base method
 func (m *MockContext) BannerMarkup() bool {
+
 	ret := m.ctrl.Call(m, "BannerMarkup")
 	ret0, _ := ret[0].(bool)
 	return ret0
@@ -51,6 +53,7 @@ func (mr *MockContextMockRecorder) BannerMarkup() *gomock.Call {
 
 // Brand mocks base method
 func (m *MockContext) Brand() string {
+
 	ret := m.ctrl.Call(m, "Brand")
 	ret0, _ := ret[0].(string)
 	return ret0
@@ -63,6 +66,7 @@ func (mr *MockContextMockRecorder) Brand() *gomock.Call {
 
 // Capping mocks base method
 func (m *MockContext) Capping() entity.CappingMode {
+
 	ret := m.ctrl.Call(m, "Capping")
 	ret0, _ := ret[0].(entity.CappingMode)
 	return ret0
@@ -70,11 +74,13 @@ func (m *MockContext) Capping() entity.CappingMode {
 
 // Capping indicates an expected call of Capping
 func (mr *MockContextMockRecorder) Capping() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Capping", reflect.TypeOf((*MockContext)(nil).Capping))
 }
 
 // Carrier mocks base method
 func (m *MockContext) Carrier() string {
+
 	ret := m.ctrl.Call(m, "Carrier")
 	ret0, _ := ret[0].(string)
 	return ret0
@@ -82,11 +88,13 @@ func (m *MockContext) Carrier() string {
 
 // Carrier indicates an expected call of Carrier
 func (mr *MockContextMockRecorder) Carrier() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Carrier", reflect.TypeOf((*MockContext)(nil).Carrier))
 }
 
 // Category mocks base method
 func (m *MockContext) Category() []v2_5.ContentCategory {
+
 	ret := m.ctrl.Call(m, "Category")
 	ret0, _ := ret[0].([]v2_5.ContentCategory)
 	return ret0
@@ -94,11 +102,13 @@ func (m *MockContext) Category() []v2_5.ContentCategory {
 
 // Category indicates an expected call of Category
 func (mr *MockContextMockRecorder) Category() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Category", reflect.TypeOf((*MockContext)(nil).Category))
 }
 
 // ConnectionType mocks base method
 func (m *MockContext) ConnectionType() v2_5.ConnectionType {
+
 	ret := m.ctrl.Call(m, "ConnectionType")
 	ret0, _ := ret[0].(v2_5.ConnectionType)
 	return ret0
@@ -106,11 +116,13 @@ func (m *MockContext) ConnectionType() v2_5.ConnectionType {
 
 // ConnectionType indicates an expected call of ConnectionType
 func (mr *MockContextMockRecorder) ConnectionType() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConnectionType", reflect.TypeOf((*MockContext)(nil).ConnectionType))
 }
 
 // Currency mocks base method
 func (m *MockContext) Currency() string {
+
 	ret := m.ctrl.Call(m, "Currency")
 	ret0, _ := ret[0].(string)
 	return ret0
@@ -118,11 +130,13 @@ func (m *MockContext) Currency() string {
 
 // Currency indicates an expected call of Currency
 func (mr *MockContextMockRecorder) Currency() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Currency", reflect.TypeOf((*MockContext)(nil).Currency))
 }
 
 // EventPage mocks base method
 func (m *MockContext) EventPage() string {
+
 	ret := m.ctrl.Call(m, "EventPage")
 	ret0, _ := ret[0].(string)
 	return ret0
@@ -130,11 +144,13 @@ func (m *MockContext) EventPage() string {
 
 // EventPage indicates an expected call of EventPage
 func (mr *MockContextMockRecorder) EventPage() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "EventPage", reflect.TypeOf((*MockContext)(nil).EventPage))
 }
 
 // FatFinger mocks base method
 func (m *MockContext) FatFinger() bool {
+
 	ret := m.ctrl.Call(m, "FatFinger")
 	ret0, _ := ret[0].(bool)
 	return ret0
@@ -142,11 +158,13 @@ func (m *MockContext) FatFinger() bool {
 
 // FatFinger indicates an expected call of FatFinger
 func (mr *MockContextMockRecorder) FatFinger() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FatFinger", reflect.TypeOf((*MockContext)(nil).FatFinger))
 }
 
 // FloorPercentage mocks base method
 func (m *MockContext) FloorPercentage() int64 {
+
 	ret := m.ctrl.Call(m, "FloorPercentage")
 	ret0, _ := ret[0].(int64)
 	return ret0
@@ -154,11 +172,13 @@ func (m *MockContext) FloorPercentage() int64 {
 
 // FloorPercentage indicates an expected call of FloorPercentage
 func (mr *MockContextMockRecorder) FloorPercentage() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FloorPercentage", reflect.TypeOf((*MockContext)(nil).FloorPercentage))
 }
 
 // IP mocks base method
 func (m *MockContext) IP() net.IP {
+
 	ret := m.ctrl.Call(m, "IP")
 	ret0, _ := ret[0].(net.IP)
 	return ret0
@@ -166,11 +186,13 @@ func (m *MockContext) IP() net.IP {
 
 // IP indicates an expected call of IP
 func (mr *MockContextMockRecorder) IP() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IP", reflect.TypeOf((*MockContext)(nil).IP))
 }
 
 // IsMobile mocks base method
 func (m *MockContext) IsMobile() bool {
+
 	ret := m.ctrl.Call(m, "IsMobile")
 	ret0, _ := ret[0].(bool)
 	return ret0
@@ -178,11 +200,13 @@ func (m *MockContext) IsMobile() bool {
 
 // IsMobile indicates an expected call of IsMobile
 func (mr *MockContextMockRecorder) IsMobile() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsMobile", reflect.TypeOf((*MockContext)(nil).IsMobile))
 }
 
 // Location mocks base method
 func (m *MockContext) Location() entity.Location {
+
 	ret := m.ctrl.Call(m, "Location")
 	ret0, _ := ret[0].(entity.Location)
 	return ret0
@@ -190,11 +214,13 @@ func (m *MockContext) Location() entity.Location {
 
 // Location indicates an expected call of Location
 func (mr *MockContextMockRecorder) Location() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Location", reflect.TypeOf((*MockContext)(nil).Location))
 }
 
 // MinBIDPercentage mocks base method
 func (m *MockContext) MinBIDPercentage() int64 {
+
 	ret := m.ctrl.Call(m, "MinBIDPercentage")
 	ret0, _ := ret[0].(int64)
 	return ret0
@@ -202,11 +228,13 @@ func (m *MockContext) MinBIDPercentage() int64 {
 
 // MinBIDPercentage indicates an expected call of MinBIDPercentage
 func (mr *MockContextMockRecorder) MinBIDPercentage() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MinBIDPercentage", reflect.TypeOf((*MockContext)(nil).MinBIDPercentage))
 }
 
 // MultiVideo mocks base method
 func (m *MockContext) MultiVideo() bool {
+
 	ret := m.ctrl.Call(m, "MultiVideo")
 	ret0, _ := ret[0].(bool)
 	return ret0
@@ -214,11 +242,13 @@ func (m *MockContext) MultiVideo() bool {
 
 // MultiVideo indicates an expected call of MultiVideo
 func (mr *MockContextMockRecorder) MultiVideo() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MultiVideo", reflect.TypeOf((*MockContext)(nil).MultiVideo))
 }
 
 // OS mocks base method
 func (m *MockContext) OS() entity.OS {
+
 	ret := m.ctrl.Call(m, "OS")
 	ret0, _ := ret[0].(entity.OS)
 	return ret0
@@ -226,11 +256,13 @@ func (m *MockContext) OS() entity.OS {
 
 // OS indicates an expected call of OS
 func (mr *MockContextMockRecorder) OS() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OS", reflect.TypeOf((*MockContext)(nil).OS))
 }
 
 // Parent mocks base method
 func (m *MockContext) Parent() string {
+
 	ret := m.ctrl.Call(m, "Parent")
 	ret0, _ := ret[0].(string)
 	return ret0
@@ -238,11 +270,13 @@ func (m *MockContext) Parent() string {
 
 // Parent indicates an expected call of Parent
 func (mr *MockContextMockRecorder) Parent() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Parent", reflect.TypeOf((*MockContext)(nil).Parent))
 }
 
 // PreventDefault mocks base method
 func (m *MockContext) PreventDefault() bool {
+
 	ret := m.ctrl.Call(m, "PreventDefault")
 	ret0, _ := ret[0].(bool)
 	return ret0
@@ -250,11 +284,13 @@ func (m *MockContext) PreventDefault() bool {
 
 // PreventDefault indicates an expected call of PreventDefault
 func (mr *MockContextMockRecorder) PreventDefault() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PreventDefault", reflect.TypeOf((*MockContext)(nil).PreventDefault))
 }
 
 // Protocol mocks base method
 func (m *MockContext) Protocol() entity.Protocol {
+
 	ret := m.ctrl.Call(m, "Protocol")
 	ret0, _ := ret[0].(entity.Protocol)
 	return ret0
@@ -262,11 +298,13 @@ func (m *MockContext) Protocol() entity.Protocol {
 
 // Protocol indicates an expected call of Protocol
 func (mr *MockContextMockRecorder) Protocol() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Protocol", reflect.TypeOf((*MockContext)(nil).Protocol))
 }
 
 // Publisher mocks base method
 func (m *MockContext) Publisher() entity.Publisher {
+
 	ret := m.ctrl.Call(m, "Publisher")
 	ret0, _ := ret[0].(entity.Publisher)
 	return ret0
@@ -274,11 +312,13 @@ func (m *MockContext) Publisher() entity.Publisher {
 
 // Publisher indicates an expected call of Publisher
 func (mr *MockContextMockRecorder) Publisher() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Publisher", reflect.TypeOf((*MockContext)(nil).Publisher))
 }
 
 // Rate mocks base method
 func (m *MockContext) Rate() float64 {
+
 	ret := m.ctrl.Call(m, "Rate")
 	ret0, _ := ret[0].(float64)
 	return ret0
@@ -286,11 +326,13 @@ func (m *MockContext) Rate() float64 {
 
 // Rate indicates an expected call of Rate
 func (mr *MockContextMockRecorder) Rate() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Rate", reflect.TypeOf((*MockContext)(nil).Rate))
 }
 
 // Referrer mocks base method
 func (m *MockContext) Referrer() string {
+
 	ret := m.ctrl.Call(m, "Referrer")
 	ret0, _ := ret[0].(string)
 	return ret0
@@ -298,11 +340,13 @@ func (m *MockContext) Referrer() string {
 
 // Referrer indicates an expected call of Referrer
 func (mr *MockContextMockRecorder) Referrer() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Referrer", reflect.TypeOf((*MockContext)(nil).Referrer))
 }
 
 // Seats mocks base method
 func (m *MockContext) Seats() []entity.Seat {
+
 	ret := m.ctrl.Call(m, "Seats")
 	ret0, _ := ret[0].([]entity.Seat)
 	return ret0
@@ -310,11 +354,13 @@ func (m *MockContext) Seats() []entity.Seat {
 
 // Seats indicates an expected call of Seats
 func (mr *MockContextMockRecorder) Seats() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Seats", reflect.TypeOf((*MockContext)(nil).Seats))
 }
 
 // Strategy mocks base method
 func (m *MockContext) Strategy() entity.Strategy {
+
 	ret := m.ctrl.Call(m, "Strategy")
 	ret0, _ := ret[0].(entity.Strategy)
 	return ret0
@@ -322,11 +368,13 @@ func (m *MockContext) Strategy() entity.Strategy {
 
 // Strategy indicates an expected call of Strategy
 func (mr *MockContextMockRecorder) Strategy() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Strategy", reflect.TypeOf((*MockContext)(nil).Strategy))
 }
 
 // Suspicious mocks base method
 func (m *MockContext) Suspicious() int {
+
 	ret := m.ctrl.Call(m, "Suspicious")
 	ret0, _ := ret[0].(int)
 	return ret0
@@ -334,11 +382,13 @@ func (m *MockContext) Suspicious() int {
 
 // Suspicious indicates an expected call of Suspicious
 func (mr *MockContextMockRecorder) Suspicious() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Suspicious", reflect.TypeOf((*MockContext)(nil).Suspicious))
 }
 
 // TV mocks base method
 func (m *MockContext) TV() bool {
+
 	ret := m.ctrl.Call(m, "TV")
 	ret0, _ := ret[0].(bool)
 	return ret0
@@ -346,11 +396,13 @@ func (m *MockContext) TV() bool {
 
 // TV indicates an expected call of TV
 func (mr *MockContextMockRecorder) TV() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TV", reflect.TypeOf((*MockContext)(nil).TV))
 }
 
 // Timestamp mocks base method
 func (m *MockContext) Timestamp() time.Time {
+
 	ret := m.ctrl.Call(m, "Timestamp")
 	ret0, _ := ret[0].(time.Time)
 	return ret0
@@ -358,11 +410,13 @@ func (m *MockContext) Timestamp() time.Time {
 
 // Timestamp indicates an expected call of Timestamp
 func (mr *MockContextMockRecorder) Timestamp() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Timestamp", reflect.TypeOf((*MockContext)(nil).Timestamp))
 }
 
 // Tiny mocks base method
 func (m *MockContext) Tiny() bool {
+
 	ret := m.ctrl.Call(m, "Tiny")
 	ret0, _ := ret[0].(bool)
 	return ret0
@@ -370,11 +424,13 @@ func (m *MockContext) Tiny() bool {
 
 // Tiny indicates an expected call of Tiny
 func (mr *MockContextMockRecorder) Tiny() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Tiny", reflect.TypeOf((*MockContext)(nil).Tiny))
 }
 
 // Type mocks base method
 func (m *MockContext) Type() entity.InputType {
+
 	ret := m.ctrl.Call(m, "Type")
 	ret0, _ := ret[0].(entity.InputType)
 	return ret0
@@ -382,11 +438,13 @@ func (m *MockContext) Type() entity.InputType {
 
 // Type indicates an expected call of Type
 func (mr *MockContextMockRecorder) Type() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Type", reflect.TypeOf((*MockContext)(nil).Type))
 }
 
 // UnderFloor mocks base method
 func (m *MockContext) UnderFloor() bool {
+
 	ret := m.ctrl.Call(m, "UnderFloor")
 	ret0, _ := ret[0].(bool)
 	return ret0
@@ -394,11 +452,13 @@ func (m *MockContext) UnderFloor() bool {
 
 // UnderFloor indicates an expected call of UnderFloor
 func (mr *MockContextMockRecorder) UnderFloor() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UnderFloor", reflect.TypeOf((*MockContext)(nil).UnderFloor))
 }
 
 // User mocks base method
 func (m *MockContext) User() entity.User {
+
 	ret := m.ctrl.Call(m, "User")
 	ret0, _ := ret[0].(entity.User)
 	return ret0
@@ -406,11 +466,13 @@ func (m *MockContext) User() entity.User {
 
 // User indicates an expected call of User
 func (mr *MockContextMockRecorder) User() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "User", reflect.TypeOf((*MockContext)(nil).User))
 }
 
 // UserAgent mocks base method
 func (m *MockContext) UserAgent() string {
+
 	ret := m.ctrl.Call(m, "UserAgent")
 	ret0, _ := ret[0].(string)
 	return ret0
@@ -418,6 +480,7 @@ func (m *MockContext) UserAgent() string {
 
 // UserAgent indicates an expected call of UserAgent
 func (mr *MockContextMockRecorder) UserAgent() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UserAgent", reflect.TypeOf((*MockContext)(nil).UserAgent))
 }
 
@@ -446,6 +509,7 @@ func (m *MockCreative) EXPECT() *MockCreativeMockRecorder {
 
 // AdCTR mocks base method
 func (m *MockCreative) AdCTR() float32 {
+
 	ret := m.ctrl.Call(m, "AdCTR")
 	ret0, _ := ret[0].(float32)
 	return ret0
@@ -453,11 +517,13 @@ func (m *MockCreative) AdCTR() float32 {
 
 // AdCTR indicates an expected call of AdCTR
 func (mr *MockCreativeMockRecorder) AdCTR() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AdCTR", reflect.TypeOf((*MockCreative)(nil).AdCTR))
 }
 
 // Asset mocks base method
 func (m *MockCreative) Asset(arg0 entity.AssetType, arg1 int, arg2 ...entity.AssetFilter) []entity.Asset {
+
 	varargs := []interface{}{arg0, arg1}
 	for _, a := range arg2 {
 		varargs = append(varargs, a)
@@ -469,12 +535,14 @@ func (m *MockCreative) Asset(arg0 entity.AssetType, arg1 int, arg2 ...entity.Ass
 
 // Asset indicates an expected call of Asset
 func (mr *MockCreativeMockRecorder) Asset(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+
 	varargs := append([]interface{}{arg0, arg1}, arg2...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Asset", reflect.TypeOf((*MockCreative)(nil).Asset), varargs...)
 }
 
 // Assets mocks base method
 func (m *MockCreative) Assets() []entity.Asset {
+
 	ret := m.ctrl.Call(m, "Assets")
 	ret0, _ := ret[0].([]entity.Asset)
 	return ret0
@@ -482,11 +550,13 @@ func (m *MockCreative) Assets() []entity.Asset {
 
 // Assets indicates an expected call of Assets
 func (mr *MockCreativeMockRecorder) Assets() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Assets", reflect.TypeOf((*MockCreative)(nil).Assets))
 }
 
 // Attributes mocks base method
 func (m *MockCreative) Attributes() map[string]interface{} {
+
 	ret := m.ctrl.Call(m, "Attributes")
 	ret0, _ := ret[0].(map[string]interface{})
 	return ret0
@@ -494,11 +564,13 @@ func (m *MockCreative) Attributes() map[string]interface{} {
 
 // Attributes indicates an expected call of Attributes
 func (mr *MockCreativeMockRecorder) Attributes() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Attributes", reflect.TypeOf((*MockCreative)(nil).Attributes))
 }
 
 // Campaign mocks base method
 func (m *MockCreative) Campaign() entity.Campaign {
+
 	ret := m.ctrl.Call(m, "Campaign")
 	ret0, _ := ret[0].(entity.Campaign)
 	return ret0
@@ -506,11 +578,13 @@ func (m *MockCreative) Campaign() entity.Campaign {
 
 // Campaign indicates an expected call of Campaign
 func (mr *MockCreativeMockRecorder) Campaign() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Campaign", reflect.TypeOf((*MockCreative)(nil).Campaign))
 }
 
 // CampaignAdID mocks base method
 func (m *MockCreative) CampaignAdID() int32 {
+
 	ret := m.ctrl.Call(m, "CampaignAdID")
 	ret0, _ := ret[0].(int32)
 	return ret0
@@ -518,11 +592,13 @@ func (m *MockCreative) CampaignAdID() int32 {
 
 // CampaignAdID indicates an expected call of CampaignAdID
 func (mr *MockCreativeMockRecorder) CampaignAdID() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CampaignAdID", reflect.TypeOf((*MockCreative)(nil).CampaignAdID))
 }
 
 // Capping mocks base method
 func (m *MockCreative) Capping() entity.Capping {
+
 	ret := m.ctrl.Call(m, "Capping")
 	ret0, _ := ret[0].(entity.Capping)
 	return ret0
@@ -530,11 +606,13 @@ func (m *MockCreative) Capping() entity.Capping {
 
 // Capping indicates an expected call of Capping
 func (mr *MockCreativeMockRecorder) Capping() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Capping", reflect.TypeOf((*MockCreative)(nil).Capping))
 }
 
 // Duration mocks base method
 func (m *MockCreative) Duration() int32 {
+
 	ret := m.ctrl.Call(m, "Duration")
 	ret0, _ := ret[0].(int32)
 	return ret0
@@ -542,11 +620,13 @@ func (m *MockCreative) Duration() int32 {
 
 // Duration indicates an expected call of Duration
 func (mr *MockCreativeMockRecorder) Duration() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Duration", reflect.TypeOf((*MockCreative)(nil).Duration))
 }
 
 // Height mocks base method
 func (m *MockCreative) Height() int32 {
+
 	ret := m.ctrl.Call(m, "Height")
 	ret0, _ := ret[0].(int32)
 	return ret0
@@ -554,11 +634,13 @@ func (m *MockCreative) Height() int32 {
 
 // Height indicates an expected call of Height
 func (mr *MockCreativeMockRecorder) Height() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Height", reflect.TypeOf((*MockCreative)(nil).Height))
 }
 
 // ID mocks base method
 func (m *MockCreative) ID() int32 {
+
 	ret := m.ctrl.Call(m, "ID")
 	ret0, _ := ret[0].(int32)
 	return ret0
@@ -566,11 +648,13 @@ func (m *MockCreative) ID() int32 {
 
 // ID indicates an expected call of ID
 func (mr *MockCreativeMockRecorder) ID() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ID", reflect.TypeOf((*MockCreative)(nil).ID))
 }
 
 // MaxBID mocks base method
 func (m *MockCreative) MaxBID() int32 {
+
 	ret := m.ctrl.Call(m, "MaxBID")
 	ret0, _ := ret[0].(int32)
 	return ret0
@@ -578,11 +662,13 @@ func (m *MockCreative) MaxBID() int32 {
 
 // MaxBID indicates an expected call of MaxBID
 func (mr *MockCreativeMockRecorder) MaxBID() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MaxBID", reflect.TypeOf((*MockCreative)(nil).MaxBID))
 }
 
 // Media mocks base method
 func (m *MockCreative) Media() string {
+
 	ret := m.ctrl.Call(m, "Media")
 	ret0, _ := ret[0].(string)
 	return ret0
@@ -590,11 +676,13 @@ func (m *MockCreative) Media() string {
 
 // Media indicates an expected call of Media
 func (mr *MockCreativeMockRecorder) Media() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Media", reflect.TypeOf((*MockCreative)(nil).Media))
 }
 
 // MimeType mocks base method
 func (m *MockCreative) MimeType() string {
+
 	ret := m.ctrl.Call(m, "MimeType")
 	ret0, _ := ret[0].(string)
 	return ret0
@@ -602,21 +690,25 @@ func (m *MockCreative) MimeType() string {
 
 // MimeType indicates an expected call of MimeType
 func (mr *MockCreativeMockRecorder) MimeType() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MimeType", reflect.TypeOf((*MockCreative)(nil).MimeType))
 }
 
 // SetCapping mocks base method
 func (m *MockCreative) SetCapping(arg0 entity.Capping) {
+
 	m.ctrl.Call(m, "SetCapping", arg0)
 }
 
 // SetCapping indicates an expected call of SetCapping
 func (mr *MockCreativeMockRecorder) SetCapping(arg0 interface{}) *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetCapping", reflect.TypeOf((*MockCreative)(nil).SetCapping), arg0)
 }
 
 // Size mocks base method
 func (m *MockCreative) Size() int32 {
+
 	ret := m.ctrl.Call(m, "Size")
 	ret0, _ := ret[0].(int32)
 	return ret0
@@ -624,11 +716,13 @@ func (m *MockCreative) Size() int32 {
 
 // Size indicates an expected call of Size
 func (mr *MockCreativeMockRecorder) Size() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Size", reflect.TypeOf((*MockCreative)(nil).Size))
 }
 
 // Target mocks base method
 func (m *MockCreative) Target() entity.Target {
+
 	ret := m.ctrl.Call(m, "Target")
 	ret0, _ := ret[0].(entity.Target)
 	return ret0
@@ -636,11 +730,13 @@ func (m *MockCreative) Target() entity.Target {
 
 // Target indicates an expected call of Target
 func (mr *MockCreativeMockRecorder) Target() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Target", reflect.TypeOf((*MockCreative)(nil).Target))
 }
 
 // TargetURL mocks base method
 func (m *MockCreative) TargetURL() string {
+
 	ret := m.ctrl.Call(m, "TargetURL")
 	ret0, _ := ret[0].(string)
 	return ret0
@@ -648,11 +744,13 @@ func (m *MockCreative) TargetURL() string {
 
 // TargetURL indicates an expected call of TargetURL
 func (mr *MockCreativeMockRecorder) TargetURL() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TargetURL", reflect.TypeOf((*MockCreative)(nil).TargetURL))
 }
 
 // Type mocks base method
 func (m *MockCreative) Type() entity.AdType {
+
 	ret := m.ctrl.Call(m, "Type")
 	ret0, _ := ret[0].(entity.AdType)
 	return ret0
@@ -660,11 +758,13 @@ func (m *MockCreative) Type() entity.AdType {
 
 // Type indicates an expected call of Type
 func (mr *MockCreativeMockRecorder) Type() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Type", reflect.TypeOf((*MockCreative)(nil).Type))
 }
 
 // Width mocks base method
 func (m *MockCreative) Width() int32 {
+
 	ret := m.ctrl.Call(m, "Width")
 	ret0, _ := ret[0].(int32)
 	return ret0
@@ -672,6 +772,7 @@ func (m *MockCreative) Width() int32 {
 
 // Width indicates an expected call of Width
 func (mr *MockCreativeMockRecorder) Width() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Width", reflect.TypeOf((*MockCreative)(nil).Width))
 }
 
@@ -700,6 +801,7 @@ func (m *MockCampaign) EXPECT() *MockCampaignMockRecorder {
 
 // AllowedOS mocks base method
 func (m *MockCampaign) AllowedOS() []string {
+
 	ret := m.ctrl.Call(m, "AllowedOS")
 	ret0, _ := ret[0].([]string)
 	return ret0
@@ -707,11 +809,13 @@ func (m *MockCampaign) AllowedOS() []string {
 
 // AllowedOS indicates an expected call of AllowedOS
 func (mr *MockCampaignMockRecorder) AllowedOS() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AllowedOS", reflect.TypeOf((*MockCampaign)(nil).AllowedOS))
 }
 
 // AppBrands mocks base method
 func (m *MockCampaign) AppBrands() []string {
+
 	ret := m.ctrl.Call(m, "AppBrands")
 	ret0, _ := ret[0].([]string)
 	return ret0
@@ -719,11 +823,13 @@ func (m *MockCampaign) AppBrands() []string {
 
 // AppBrands indicates an expected call of AppBrands
 func (mr *MockCampaignMockRecorder) AppBrands() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AppBrands", reflect.TypeOf((*MockCampaign)(nil).AppBrands))
 }
 
 // AppCarriers mocks base method
 func (m *MockCampaign) AppCarriers() []string {
+
 	ret := m.ctrl.Call(m, "AppCarriers")
 	ret0, _ := ret[0].([]string)
 	return ret0
@@ -731,11 +837,13 @@ func (m *MockCampaign) AppCarriers() []string {
 
 // AppCarriers indicates an expected call of AppCarriers
 func (mr *MockCampaignMockRecorder) AppCarriers() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AppCarriers", reflect.TypeOf((*MockCampaign)(nil).AppCarriers))
 }
 
 // BlackListPublisher mocks base method
 func (m *MockCampaign) BlackListPublisher() []string {
+
 	ret := m.ctrl.Call(m, "BlackListPublisher")
 	ret0, _ := ret[0].([]string)
 	return ret0
@@ -743,11 +851,13 @@ func (m *MockCampaign) BlackListPublisher() []string {
 
 // BlackListPublisher indicates an expected call of BlackListPublisher
 func (mr *MockCampaignMockRecorder) BlackListPublisher() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BlackListPublisher", reflect.TypeOf((*MockCampaign)(nil).BlackListPublisher))
 }
 
 // Category mocks base method
 func (m *MockCampaign) Category() []v2_5.ContentCategory {
+
 	ret := m.ctrl.Call(m, "Category")
 	ret0, _ := ret[0].([]v2_5.ContentCategory)
 	return ret0
@@ -755,11 +865,13 @@ func (m *MockCampaign) Category() []v2_5.ContentCategory {
 
 // Category indicates an expected call of Category
 func (mr *MockCampaignMockRecorder) Category() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Category", reflect.TypeOf((*MockCampaign)(nil).Category))
 }
 
 // ConnectionType mocks base method
 func (m *MockCampaign) ConnectionType() []int {
+
 	ret := m.ctrl.Call(m, "ConnectionType")
 	ret0, _ := ret[0].([]int)
 	return ret0
@@ -767,11 +879,13 @@ func (m *MockCampaign) ConnectionType() []int {
 
 // ConnectionType indicates an expected call of ConnectionType
 func (mr *MockCampaignMockRecorder) ConnectionType() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConnectionType", reflect.TypeOf((*MockCampaign)(nil).ConnectionType))
 }
 
 // Country mocks base method
 func (m *MockCampaign) Country() []string {
+
 	ret := m.ctrl.Call(m, "Country")
 	ret0, _ := ret[0].([]string)
 	return ret0
@@ -779,11 +893,27 @@ func (m *MockCampaign) Country() []string {
 
 // Country indicates an expected call of Country
 func (mr *MockCampaignMockRecorder) Country() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Country", reflect.TypeOf((*MockCampaign)(nil).Country))
+}
+
+// Creative mocks base method
+func (m *MockCampaign) Creative() map[int32]entity.Creative {
+
+	ret := m.ctrl.Call(m, "Creative")
+	ret0, _ := ret[0].(map[int32]entity.Creative)
+	return ret0
+}
+
+// Creative indicates an expected call of Creative
+func (mr *MockCampaignMockRecorder) Creative() *gomock.Call {
+
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Creative", reflect.TypeOf((*MockCampaign)(nil).Creative))
 }
 
 // Frequency mocks base method
 func (m *MockCampaign) Frequency() int32 {
+
 	ret := m.ctrl.Call(m, "Frequency")
 	ret0, _ := ret[0].(int32)
 	return ret0
@@ -791,11 +921,13 @@ func (m *MockCampaign) Frequency() int32 {
 
 // Frequency indicates an expected call of Frequency
 func (mr *MockCampaignMockRecorder) Frequency() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Frequency", reflect.TypeOf((*MockCampaign)(nil).Frequency))
 }
 
 // Hoods mocks base method
 func (m *MockCampaign) Hoods() []string {
+
 	ret := m.ctrl.Call(m, "Hoods")
 	ret0, _ := ret[0].([]string)
 	return ret0
@@ -803,11 +935,13 @@ func (m *MockCampaign) Hoods() []string {
 
 // Hoods indicates an expected call of Hoods
 func (mr *MockCampaignMockRecorder) Hoods() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Hoods", reflect.TypeOf((*MockCampaign)(nil).Hoods))
 }
 
 // ID mocks base method
 func (m *MockCampaign) ID() int32 {
+
 	ret := m.ctrl.Call(m, "ID")
 	ret0, _ := ret[0].(int32)
 	return ret0
@@ -815,11 +949,13 @@ func (m *MockCampaign) ID() int32 {
 
 // ID indicates an expected call of ID
 func (mr *MockCampaignMockRecorder) ID() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ID", reflect.TypeOf((*MockCampaign)(nil).ID))
 }
 
 // ISP mocks base method
 func (m *MockCampaign) ISP() []string {
+
 	ret := m.ctrl.Call(m, "ISP")
 	ret0, _ := ret[0].([]string)
 	return ret0
@@ -827,11 +963,27 @@ func (m *MockCampaign) ISP() []string {
 
 // ISP indicates an expected call of ISP
 func (mr *MockCampaignMockRecorder) ISP() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ISP", reflect.TypeOf((*MockCampaign)(nil).ISP))
+}
+
+// Items mocks base method
+func (m *MockCampaign) Items() map[string]entity.Item {
+
+	ret := m.ctrl.Call(m, "Items")
+	ret0, _ := ret[0].(map[string]entity.Item)
+	return ret0
+}
+
+// Items indicates an expected call of Items
+func (mr *MockCampaignMockRecorder) Items() *gomock.Call {
+
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Items", reflect.TypeOf((*MockCampaign)(nil).Items))
 }
 
 // LatLon mocks base method
 func (m *MockCampaign) LatLon() (bool, float64, float64, float64) {
+
 	ret := m.ctrl.Call(m, "LatLon")
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(float64)
@@ -842,11 +994,13 @@ func (m *MockCampaign) LatLon() (bool, float64, float64, float64) {
 
 // LatLon indicates an expected call of LatLon
 func (mr *MockCampaignMockRecorder) LatLon() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LatLon", reflect.TypeOf((*MockCampaign)(nil).LatLon))
 }
 
 // Name mocks base method
 func (m *MockCampaign) Name() string {
+
 	ret := m.ctrl.Call(m, "Name")
 	ret0, _ := ret[0].(string)
 	return ret0
@@ -854,11 +1008,13 @@ func (m *MockCampaign) Name() string {
 
 // Name indicates an expected call of Name
 func (mr *MockCampaignMockRecorder) Name() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Name", reflect.TypeOf((*MockCampaign)(nil).Name))
 }
 
 // Province mocks base method
 func (m *MockCampaign) Province() []string {
+
 	ret := m.ctrl.Call(m, "Province")
 	ret0, _ := ret[0].([]string)
 	return ret0
@@ -866,11 +1022,41 @@ func (m *MockCampaign) Province() []string {
 
 // Province indicates an expected call of Province
 func (mr *MockCampaignMockRecorder) Province() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Province", reflect.TypeOf((*MockCampaign)(nil).Province))
+}
+
+// ReTargeting mocks base method
+func (m *MockCampaign) ReTargeting() []string {
+
+	ret := m.ctrl.Call(m, "ReTargeting")
+	ret0, _ := ret[0].([]string)
+	return ret0
+}
+
+// ReTargeting indicates an expected call of ReTargeting
+func (mr *MockCampaignMockRecorder) ReTargeting() *gomock.Call {
+
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReTargeting", reflect.TypeOf((*MockCampaign)(nil).ReTargeting))
+}
+
+// Sizes mocks base method
+func (m *MockCampaign) Sizes() map[int32][]entity.Creative {
+
+	ret := m.ctrl.Call(m, "Sizes")
+	ret0, _ := ret[0].(map[int32][]entity.Creative)
+	return ret0
+}
+
+// Sizes indicates an expected call of Sizes
+func (mr *MockCampaignMockRecorder) Sizes() *gomock.Call {
+
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Sizes", reflect.TypeOf((*MockCampaign)(nil).Sizes))
 }
 
 // Strategy mocks base method
 func (m *MockCampaign) Strategy() entity.Strategy {
+
 	ret := m.ctrl.Call(m, "Strategy")
 	ret0, _ := ret[0].(entity.Strategy)
 	return ret0
@@ -878,11 +1064,13 @@ func (m *MockCampaign) Strategy() entity.Strategy {
 
 // Strategy indicates an expected call of Strategy
 func (mr *MockCampaignMockRecorder) Strategy() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Strategy", reflect.TypeOf((*MockCampaign)(nil).Strategy))
 }
 
 // Web mocks base method
 func (m *MockCampaign) Web() bool {
+
 	ret := m.ctrl.Call(m, "Web")
 	ret0, _ := ret[0].(bool)
 	return ret0
@@ -890,11 +1078,13 @@ func (m *MockCampaign) Web() bool {
 
 // Web indicates an expected call of Web
 func (mr *MockCampaignMockRecorder) Web() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Web", reflect.TypeOf((*MockCampaign)(nil).Web))
 }
 
 // WebMobile mocks base method
 func (m *MockCampaign) WebMobile() bool {
+
 	ret := m.ctrl.Call(m, "WebMobile")
 	ret0, _ := ret[0].(bool)
 	return ret0
@@ -902,11 +1092,13 @@ func (m *MockCampaign) WebMobile() bool {
 
 // WebMobile indicates an expected call of WebMobile
 func (mr *MockCampaignMockRecorder) WebMobile() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WebMobile", reflect.TypeOf((*MockCampaign)(nil).WebMobile))
 }
 
 // WhiteListPublisher mocks base method
 func (m *MockCampaign) WhiteListPublisher() []string {
+
 	ret := m.ctrl.Call(m, "WhiteListPublisher")
 	ret0, _ := ret[0].([]string)
 	return ret0
@@ -914,6 +1106,7 @@ func (m *MockCampaign) WhiteListPublisher() []string {
 
 // WhiteListPublisher indicates an expected call of WhiteListPublisher
 func (mr *MockCampaignMockRecorder) WhiteListPublisher() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WhiteListPublisher", reflect.TypeOf((*MockCampaign)(nil).WhiteListPublisher))
 }
 
@@ -942,6 +1135,7 @@ func (m *MockPublisher) EXPECT() *MockPublisherMockRecorder {
 
 // Attributes mocks base method
 func (m *MockPublisher) Attributes() map[entity.PublisherAttributes]interface{} {
+
 	ret := m.ctrl.Call(m, "Attributes")
 	ret0, _ := ret[0].(map[entity.PublisherAttributes]interface{})
 	return ret0
@@ -949,11 +1143,13 @@ func (m *MockPublisher) Attributes() map[entity.PublisherAttributes]interface{} 
 
 // Attributes indicates an expected call of Attributes
 func (mr *MockPublisherMockRecorder) Attributes() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Attributes", reflect.TypeOf((*MockPublisher)(nil).Attributes))
 }
 
 // CTR mocks base method
 func (m *MockPublisher) CTR(arg0 int32) float32 {
+
 	ret := m.ctrl.Call(m, "CTR", arg0)
 	ret0, _ := ret[0].(float32)
 	return ret0
@@ -961,11 +1157,13 @@ func (m *MockPublisher) CTR(arg0 int32) float32 {
 
 // CTR indicates an expected call of CTR
 func (mr *MockPublisherMockRecorder) CTR(arg0 interface{}) *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CTR", reflect.TypeOf((*MockPublisher)(nil).CTR), arg0)
 }
 
 // Categories mocks base method
 func (m *MockPublisher) Categories() []v2_5.ContentCategory {
+
 	ret := m.ctrl.Call(m, "Categories")
 	ret0, _ := ret[0].([]v2_5.ContentCategory)
 	return ret0
@@ -973,11 +1171,13 @@ func (m *MockPublisher) Categories() []v2_5.ContentCategory {
 
 // Categories indicates an expected call of Categories
 func (mr *MockPublisherMockRecorder) Categories() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Categories", reflect.TypeOf((*MockPublisher)(nil).Categories))
 }
 
 // FloorCPM mocks base method
 func (m *MockPublisher) FloorCPM() int64 {
+
 	ret := m.ctrl.Call(m, "FloorCPM")
 	ret0, _ := ret[0].(int64)
 	return ret0
@@ -985,11 +1185,13 @@ func (m *MockPublisher) FloorCPM() int64 {
 
 // FloorCPM indicates an expected call of FloorCPM
 func (mr *MockPublisherMockRecorder) FloorCPM() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FloorCPM", reflect.TypeOf((*MockPublisher)(nil).FloorCPM))
 }
 
 // ID mocks base method
 func (m *MockPublisher) ID() int64 {
+
 	ret := m.ctrl.Call(m, "ID")
 	ret0, _ := ret[0].(int64)
 	return ret0
@@ -997,11 +1199,13 @@ func (m *MockPublisher) ID() int64 {
 
 // ID indicates an expected call of ID
 func (mr *MockPublisherMockRecorder) ID() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ID", reflect.TypeOf((*MockPublisher)(nil).ID))
 }
 
 // MinBid mocks base method
 func (m *MockPublisher) MinBid() int64 {
+
 	ret := m.ctrl.Call(m, "MinBid")
 	ret0, _ := ret[0].(int64)
 	return ret0
@@ -1009,11 +1213,13 @@ func (m *MockPublisher) MinBid() int64 {
 
 // MinBid indicates an expected call of MinBid
 func (mr *MockPublisherMockRecorder) MinBid() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MinBid", reflect.TypeOf((*MockPublisher)(nil).MinBid))
 }
 
 // MinCPC mocks base method
 func (m *MockPublisher) MinCPC(arg0 string) float64 {
+
 	ret := m.ctrl.Call(m, "MinCPC", arg0)
 	ret0, _ := ret[0].(float64)
 	return ret0
@@ -1021,11 +1227,13 @@ func (m *MockPublisher) MinCPC(arg0 string) float64 {
 
 // MinCPC indicates an expected call of MinCPC
 func (mr *MockPublisherMockRecorder) MinCPC(arg0 interface{}) *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MinCPC", reflect.TypeOf((*MockPublisher)(nil).MinCPC), arg0)
 }
 
 // Name mocks base method
 func (m *MockPublisher) Name() string {
+
 	ret := m.ctrl.Call(m, "Name")
 	ret0, _ := ret[0].(string)
 	return ret0
@@ -1033,11 +1241,13 @@ func (m *MockPublisher) Name() string {
 
 // Name indicates an expected call of Name
 func (mr *MockPublisherMockRecorder) Name() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Name", reflect.TypeOf((*MockPublisher)(nil).Name))
 }
 
 // Supplier mocks base method
 func (m *MockPublisher) Supplier() entity.Supplier {
+
 	ret := m.ctrl.Call(m, "Supplier")
 	ret0, _ := ret[0].(entity.Supplier)
 	return ret0
@@ -1045,11 +1255,13 @@ func (m *MockPublisher) Supplier() entity.Supplier {
 
 // Supplier indicates an expected call of Supplier
 func (mr *MockPublisherMockRecorder) Supplier() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Supplier", reflect.TypeOf((*MockPublisher)(nil).Supplier))
 }
 
 // Type mocks base method
 func (m *MockPublisher) Type() entity.PublisherType {
+
 	ret := m.ctrl.Call(m, "Type")
 	ret0, _ := ret[0].(entity.PublisherType)
 	return ret0
@@ -1057,6 +1269,7 @@ func (m *MockPublisher) Type() entity.PublisherType {
 
 // Type indicates an expected call of Type
 func (mr *MockPublisherMockRecorder) Type() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Type", reflect.TypeOf((*MockPublisher)(nil).Type))
 }
 
@@ -1085,6 +1298,7 @@ func (m *MockSelectedCreative) EXPECT() *MockSelectedCreativeMockRecorder {
 
 // AdCTR mocks base method
 func (m *MockSelectedCreative) AdCTR() float32 {
+
 	ret := m.ctrl.Call(m, "AdCTR")
 	ret0, _ := ret[0].(float32)
 	return ret0
@@ -1092,11 +1306,13 @@ func (m *MockSelectedCreative) AdCTR() float32 {
 
 // AdCTR indicates an expected call of AdCTR
 func (mr *MockSelectedCreativeMockRecorder) AdCTR() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AdCTR", reflect.TypeOf((*MockSelectedCreative)(nil).AdCTR))
 }
 
 // Asset mocks base method
 func (m *MockSelectedCreative) Asset(arg0 entity.AssetType, arg1 int, arg2 ...entity.AssetFilter) []entity.Asset {
+
 	varargs := []interface{}{arg0, arg1}
 	for _, a := range arg2 {
 		varargs = append(varargs, a)
@@ -1108,12 +1324,14 @@ func (m *MockSelectedCreative) Asset(arg0 entity.AssetType, arg1 int, arg2 ...en
 
 // Asset indicates an expected call of Asset
 func (mr *MockSelectedCreativeMockRecorder) Asset(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+
 	varargs := append([]interface{}{arg0, arg1}, arg2...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Asset", reflect.TypeOf((*MockSelectedCreative)(nil).Asset), varargs...)
 }
 
 // Assets mocks base method
 func (m *MockSelectedCreative) Assets() []entity.Asset {
+
 	ret := m.ctrl.Call(m, "Assets")
 	ret0, _ := ret[0].([]entity.Asset)
 	return ret0
@@ -1121,11 +1339,13 @@ func (m *MockSelectedCreative) Assets() []entity.Asset {
 
 // Assets indicates an expected call of Assets
 func (mr *MockSelectedCreativeMockRecorder) Assets() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Assets", reflect.TypeOf((*MockSelectedCreative)(nil).Assets))
 }
 
 // Attributes mocks base method
 func (m *MockSelectedCreative) Attributes() map[string]interface{} {
+
 	ret := m.ctrl.Call(m, "Attributes")
 	ret0, _ := ret[0].(map[string]interface{})
 	return ret0
@@ -1133,11 +1353,13 @@ func (m *MockSelectedCreative) Attributes() map[string]interface{} {
 
 // Attributes indicates an expected call of Attributes
 func (mr *MockSelectedCreativeMockRecorder) Attributes() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Attributes", reflect.TypeOf((*MockSelectedCreative)(nil).Attributes))
 }
 
 // CalculatedCPC mocks base method
 func (m *MockSelectedCreative) CalculatedCPC() float64 {
+
 	ret := m.ctrl.Call(m, "CalculatedCPC")
 	ret0, _ := ret[0].(float64)
 	return ret0
@@ -1145,11 +1367,13 @@ func (m *MockSelectedCreative) CalculatedCPC() float64 {
 
 // CalculatedCPC indicates an expected call of CalculatedCPC
 func (mr *MockSelectedCreativeMockRecorder) CalculatedCPC() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CalculatedCPC", reflect.TypeOf((*MockSelectedCreative)(nil).CalculatedCPC))
 }
 
 // CalculatedCPM mocks base method
 func (m *MockSelectedCreative) CalculatedCPM() float64 {
+
 	ret := m.ctrl.Call(m, "CalculatedCPM")
 	ret0, _ := ret[0].(float64)
 	return ret0
@@ -1157,11 +1381,13 @@ func (m *MockSelectedCreative) CalculatedCPM() float64 {
 
 // CalculatedCPM indicates an expected call of CalculatedCPM
 func (mr *MockSelectedCreativeMockRecorder) CalculatedCPM() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CalculatedCPM", reflect.TypeOf((*MockSelectedCreative)(nil).CalculatedCPM))
 }
 
 // CalculatedCTR mocks base method
 func (m *MockSelectedCreative) CalculatedCTR() float64 {
+
 	ret := m.ctrl.Call(m, "CalculatedCTR")
 	ret0, _ := ret[0].(float64)
 	return ret0
@@ -1169,11 +1395,13 @@ func (m *MockSelectedCreative) CalculatedCTR() float64 {
 
 // CalculatedCTR indicates an expected call of CalculatedCTR
 func (mr *MockSelectedCreativeMockRecorder) CalculatedCTR() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CalculatedCTR", reflect.TypeOf((*MockSelectedCreative)(nil).CalculatedCTR))
 }
 
 // Campaign mocks base method
 func (m *MockSelectedCreative) Campaign() entity.Campaign {
+
 	ret := m.ctrl.Call(m, "Campaign")
 	ret0, _ := ret[0].(entity.Campaign)
 	return ret0
@@ -1181,11 +1409,13 @@ func (m *MockSelectedCreative) Campaign() entity.Campaign {
 
 // Campaign indicates an expected call of Campaign
 func (mr *MockSelectedCreativeMockRecorder) Campaign() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Campaign", reflect.TypeOf((*MockSelectedCreative)(nil).Campaign))
 }
 
 // CampaignAdID mocks base method
 func (m *MockSelectedCreative) CampaignAdID() int32 {
+
 	ret := m.ctrl.Call(m, "CampaignAdID")
 	ret0, _ := ret[0].(int32)
 	return ret0
@@ -1193,11 +1423,13 @@ func (m *MockSelectedCreative) CampaignAdID() int32 {
 
 // CampaignAdID indicates an expected call of CampaignAdID
 func (mr *MockSelectedCreativeMockRecorder) CampaignAdID() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CampaignAdID", reflect.TypeOf((*MockSelectedCreative)(nil).CampaignAdID))
 }
 
 // Capping mocks base method
 func (m *MockSelectedCreative) Capping() entity.Capping {
+
 	ret := m.ctrl.Call(m, "Capping")
 	ret0, _ := ret[0].(entity.Capping)
 	return ret0
@@ -1205,11 +1437,13 @@ func (m *MockSelectedCreative) Capping() entity.Capping {
 
 // Capping indicates an expected call of Capping
 func (mr *MockSelectedCreativeMockRecorder) Capping() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Capping", reflect.TypeOf((*MockSelectedCreative)(nil).Capping))
 }
 
 // Duration mocks base method
 func (m *MockSelectedCreative) Duration() int32 {
+
 	ret := m.ctrl.Call(m, "Duration")
 	ret0, _ := ret[0].(int32)
 	return ret0
@@ -1217,11 +1451,13 @@ func (m *MockSelectedCreative) Duration() int32 {
 
 // Duration indicates an expected call of Duration
 func (mr *MockSelectedCreativeMockRecorder) Duration() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Duration", reflect.TypeOf((*MockSelectedCreative)(nil).Duration))
 }
 
 // Height mocks base method
 func (m *MockSelectedCreative) Height() int32 {
+
 	ret := m.ctrl.Call(m, "Height")
 	ret0, _ := ret[0].(int32)
 	return ret0
@@ -1229,11 +1465,13 @@ func (m *MockSelectedCreative) Height() int32 {
 
 // Height indicates an expected call of Height
 func (mr *MockSelectedCreativeMockRecorder) Height() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Height", reflect.TypeOf((*MockSelectedCreative)(nil).Height))
 }
 
 // ID mocks base method
 func (m *MockSelectedCreative) ID() int32 {
+
 	ret := m.ctrl.Call(m, "ID")
 	ret0, _ := ret[0].(int32)
 	return ret0
@@ -1241,11 +1479,13 @@ func (m *MockSelectedCreative) ID() int32 {
 
 // ID indicates an expected call of ID
 func (mr *MockSelectedCreativeMockRecorder) ID() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ID", reflect.TypeOf((*MockSelectedCreative)(nil).ID))
 }
 
 // IsSecBid mocks base method
 func (m *MockSelectedCreative) IsSecBid() bool {
+
 	ret := m.ctrl.Call(m, "IsSecBid")
 	ret0, _ := ret[0].(bool)
 	return ret0
@@ -1253,11 +1493,13 @@ func (m *MockSelectedCreative) IsSecBid() bool {
 
 // IsSecBid indicates an expected call of IsSecBid
 func (mr *MockSelectedCreativeMockRecorder) IsSecBid() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsSecBid", reflect.TypeOf((*MockSelectedCreative)(nil).IsSecBid))
 }
 
 // MaxBID mocks base method
 func (m *MockSelectedCreative) MaxBID() int32 {
+
 	ret := m.ctrl.Call(m, "MaxBID")
 	ret0, _ := ret[0].(int32)
 	return ret0
@@ -1265,11 +1507,13 @@ func (m *MockSelectedCreative) MaxBID() int32 {
 
 // MaxBID indicates an expected call of MaxBID
 func (mr *MockSelectedCreativeMockRecorder) MaxBID() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MaxBID", reflect.TypeOf((*MockSelectedCreative)(nil).MaxBID))
 }
 
 // Media mocks base method
 func (m *MockSelectedCreative) Media() string {
+
 	ret := m.ctrl.Call(m, "Media")
 	ret0, _ := ret[0].(string)
 	return ret0
@@ -1277,11 +1521,13 @@ func (m *MockSelectedCreative) Media() string {
 
 // Media indicates an expected call of Media
 func (mr *MockSelectedCreativeMockRecorder) Media() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Media", reflect.TypeOf((*MockSelectedCreative)(nil).Media))
 }
 
 // MimeType mocks base method
 func (m *MockSelectedCreative) MimeType() string {
+
 	ret := m.ctrl.Call(m, "MimeType")
 	ret0, _ := ret[0].(string)
 	return ret0
@@ -1289,21 +1535,25 @@ func (m *MockSelectedCreative) MimeType() string {
 
 // MimeType indicates an expected call of MimeType
 func (mr *MockSelectedCreativeMockRecorder) MimeType() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MimeType", reflect.TypeOf((*MockSelectedCreative)(nil).MimeType))
 }
 
 // SetCapping mocks base method
 func (m *MockSelectedCreative) SetCapping(arg0 entity.Capping) {
+
 	m.ctrl.Call(m, "SetCapping", arg0)
 }
 
 // SetCapping indicates an expected call of SetCapping
 func (mr *MockSelectedCreativeMockRecorder) SetCapping(arg0 interface{}) *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetCapping", reflect.TypeOf((*MockSelectedCreative)(nil).SetCapping), arg0)
 }
 
 // Size mocks base method
 func (m *MockSelectedCreative) Size() int32 {
+
 	ret := m.ctrl.Call(m, "Size")
 	ret0, _ := ret[0].(int32)
 	return ret0
@@ -1311,11 +1561,13 @@ func (m *MockSelectedCreative) Size() int32 {
 
 // Size indicates an expected call of Size
 func (mr *MockSelectedCreativeMockRecorder) Size() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Size", reflect.TypeOf((*MockSelectedCreative)(nil).Size))
 }
 
 // Target mocks base method
 func (m *MockSelectedCreative) Target() entity.Target {
+
 	ret := m.ctrl.Call(m, "Target")
 	ret0, _ := ret[0].(entity.Target)
 	return ret0
@@ -1323,11 +1575,13 @@ func (m *MockSelectedCreative) Target() entity.Target {
 
 // Target indicates an expected call of Target
 func (mr *MockSelectedCreativeMockRecorder) Target() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Target", reflect.TypeOf((*MockSelectedCreative)(nil).Target))
 }
 
 // TargetURL mocks base method
 func (m *MockSelectedCreative) TargetURL() string {
+
 	ret := m.ctrl.Call(m, "TargetURL")
 	ret0, _ := ret[0].(string)
 	return ret0
@@ -1335,11 +1589,13 @@ func (m *MockSelectedCreative) TargetURL() string {
 
 // TargetURL indicates an expected call of TargetURL
 func (mr *MockSelectedCreativeMockRecorder) TargetURL() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TargetURL", reflect.TypeOf((*MockSelectedCreative)(nil).TargetURL))
 }
 
 // Type mocks base method
 func (m *MockSelectedCreative) Type() entity.AdType {
+
 	ret := m.ctrl.Call(m, "Type")
 	ret0, _ := ret[0].(entity.AdType)
 	return ret0
@@ -1347,11 +1603,13 @@ func (m *MockSelectedCreative) Type() entity.AdType {
 
 // Type indicates an expected call of Type
 func (mr *MockSelectedCreativeMockRecorder) Type() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Type", reflect.TypeOf((*MockSelectedCreative)(nil).Type))
 }
 
 // Width mocks base method
 func (m *MockSelectedCreative) Width() int32 {
+
 	ret := m.ctrl.Call(m, "Width")
 	ret0, _ := ret[0].(int32)
 	return ret0
@@ -1359,6 +1617,7 @@ func (m *MockSelectedCreative) Width() int32 {
 
 // Width indicates an expected call of Width
 func (mr *MockSelectedCreativeMockRecorder) Width() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Width", reflect.TypeOf((*MockSelectedCreative)(nil).Width))
 }
 
@@ -1387,6 +1646,7 @@ func (m *MockLocation) EXPECT() *MockLocationMockRecorder {
 
 // Country mocks base method
 func (m *MockLocation) Country() entity.Country {
+
 	ret := m.ctrl.Call(m, "Country")
 	ret0, _ := ret[0].(entity.Country)
 	return ret0
@@ -1394,11 +1654,13 @@ func (m *MockLocation) Country() entity.Country {
 
 // Country indicates an expected call of Country
 func (mr *MockLocationMockRecorder) Country() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Country", reflect.TypeOf((*MockLocation)(nil).Country))
 }
 
 // ISP mocks base method
 func (m *MockLocation) ISP() entity.ISP {
+
 	ret := m.ctrl.Call(m, "ISP")
 	ret0, _ := ret[0].(entity.ISP)
 	return ret0
@@ -1406,11 +1668,13 @@ func (m *MockLocation) ISP() entity.ISP {
 
 // ISP indicates an expected call of ISP
 func (mr *MockLocationMockRecorder) ISP() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ISP", reflect.TypeOf((*MockLocation)(nil).ISP))
 }
 
 // LatLon mocks base method
 func (m *MockLocation) LatLon() entity.LatLon {
+
 	ret := m.ctrl.Call(m, "LatLon")
 	ret0, _ := ret[0].(entity.LatLon)
 	return ret0
@@ -1418,11 +1682,13 @@ func (m *MockLocation) LatLon() entity.LatLon {
 
 // LatLon indicates an expected call of LatLon
 func (mr *MockLocationMockRecorder) LatLon() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LatLon", reflect.TypeOf((*MockLocation)(nil).LatLon))
 }
 
 // Province mocks base method
 func (m *MockLocation) Province() entity.Province {
+
 	ret := m.ctrl.Call(m, "Province")
 	ret0, _ := ret[0].(entity.Province)
 	return ret0
@@ -1430,6 +1696,7 @@ func (m *MockLocation) Province() entity.Province {
 
 // Province indicates an expected call of Province
 func (mr *MockLocationMockRecorder) Province() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Province", reflect.TypeOf((*MockLocation)(nil).Province))
 }
 
@@ -1458,6 +1725,7 @@ func (m *MockSeat) EXPECT() *MockSeatMockRecorder {
 
 // Acceptable mocks base method
 func (m *MockSeat) Acceptable(arg0 entity.Creative) bool {
+
 	ret := m.ctrl.Call(m, "Acceptable", arg0)
 	ret0, _ := ret[0].(bool)
 	return ret0
@@ -1465,11 +1733,13 @@ func (m *MockSeat) Acceptable(arg0 entity.Creative) bool {
 
 // Acceptable indicates an expected call of Acceptable
 func (mr *MockSeatMockRecorder) Acceptable(arg0 interface{}) *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Acceptable", reflect.TypeOf((*MockSeat)(nil).Acceptable), arg0)
 }
 
 // Bid mocks base method
 func (m *MockSeat) Bid() float64 {
+
 	ret := m.ctrl.Call(m, "Bid")
 	ret0, _ := ret[0].(float64)
 	return ret0
@@ -1477,11 +1747,13 @@ func (m *MockSeat) Bid() float64 {
 
 // Bid indicates an expected call of Bid
 func (mr *MockSeatMockRecorder) Bid() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Bid", reflect.TypeOf((*MockSeat)(nil).Bid))
 }
 
 // CPM mocks base method
 func (m *MockSeat) CPM() float64 {
+
 	ret := m.ctrl.Call(m, "CPM")
 	ret0, _ := ret[0].(float64)
 	return ret0
@@ -1489,11 +1761,13 @@ func (m *MockSeat) CPM() float64 {
 
 // CPM indicates an expected call of CPM
 func (mr *MockSeatMockRecorder) CPM() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CPM", reflect.TypeOf((*MockSeat)(nil).CPM))
 }
 
 // CTR mocks base method
 func (m *MockSeat) CTR() float32 {
+
 	ret := m.ctrl.Call(m, "CTR")
 	ret0, _ := ret[0].(float32)
 	return ret0
@@ -1501,11 +1775,13 @@ func (m *MockSeat) CTR() float32 {
 
 // CTR indicates an expected call of CTR
 func (mr *MockSeatMockRecorder) CTR() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CTR", reflect.TypeOf((*MockSeat)(nil).CTR))
 }
 
 // ClickURL mocks base method
 func (m *MockSeat) ClickURL() *url.URL {
+
 	ret := m.ctrl.Call(m, "ClickURL")
 	ret0, _ := ret[0].(*url.URL)
 	return ret0
@@ -1513,11 +1789,13 @@ func (m *MockSeat) ClickURL() *url.URL {
 
 // ClickURL indicates an expected call of ClickURL
 func (mr *MockSeatMockRecorder) ClickURL() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ClickURL", reflect.TypeOf((*MockSeat)(nil).ClickURL))
 }
 
 // DID mocks base method
 func (m *MockSeat) DID() string {
+
 	ret := m.ctrl.Call(m, "DID")
 	ret0, _ := ret[0].(string)
 	return ret0
@@ -1525,11 +1803,13 @@ func (m *MockSeat) DID() string {
 
 // DID indicates an expected call of DID
 func (mr *MockSeatMockRecorder) DID() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DID", reflect.TypeOf((*MockSeat)(nil).DID))
 }
 
 // FatFinger mocks base method
 func (m *MockSeat) FatFinger() bool {
+
 	ret := m.ctrl.Call(m, "FatFinger")
 	ret0, _ := ret[0].(bool)
 	return ret0
@@ -1537,11 +1817,13 @@ func (m *MockSeat) FatFinger() bool {
 
 // FatFinger indicates an expected call of FatFinger
 func (mr *MockSeatMockRecorder) FatFinger() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FatFinger", reflect.TypeOf((*MockSeat)(nil).FatFinger))
 }
 
 // Height mocks base method
 func (m *MockSeat) Height() int32 {
+
 	ret := m.ctrl.Call(m, "Height")
 	ret0, _ := ret[0].(int32)
 	return ret0
@@ -1549,11 +1831,13 @@ func (m *MockSeat) Height() int32 {
 
 // Height indicates an expected call of Height
 func (mr *MockSeatMockRecorder) Height() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Height", reflect.TypeOf((*MockSeat)(nil).Height))
 }
 
 // ImpressionTime mocks base method
 func (m *MockSeat) ImpressionTime() time.Time {
+
 	ret := m.ctrl.Call(m, "ImpressionTime")
 	ret0, _ := ret[0].(time.Time)
 	return ret0
@@ -1561,11 +1845,13 @@ func (m *MockSeat) ImpressionTime() time.Time {
 
 // ImpressionTime indicates an expected call of ImpressionTime
 func (mr *MockSeatMockRecorder) ImpressionTime() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ImpressionTime", reflect.TypeOf((*MockSeat)(nil).ImpressionTime))
 }
 
 // ImpressionURL mocks base method
 func (m *MockSeat) ImpressionURL() *url.URL {
+
 	ret := m.ctrl.Call(m, "ImpressionURL")
 	ret0, _ := ret[0].(*url.URL)
 	return ret0
@@ -1573,11 +1859,13 @@ func (m *MockSeat) ImpressionURL() *url.URL {
 
 // ImpressionURL indicates an expected call of ImpressionURL
 func (mr *MockSeatMockRecorder) ImpressionURL() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ImpressionURL", reflect.TypeOf((*MockSeat)(nil).ImpressionURL))
 }
 
 // MinBid mocks base method
 func (m *MockSeat) MinBid() int64 {
+
 	ret := m.ctrl.Call(m, "MinBid")
 	ret0, _ := ret[0].(int64)
 	return ret0
@@ -1585,11 +1873,13 @@ func (m *MockSeat) MinBid() int64 {
 
 // MinBid indicates an expected call of MinBid
 func (mr *MockSeatMockRecorder) MinBid() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MinBid", reflect.TypeOf((*MockSeat)(nil).MinBid))
 }
 
 // MinCPC mocks base method
 func (m *MockSeat) MinCPC() float64 {
+
 	ret := m.ctrl.Call(m, "MinCPC")
 	ret0, _ := ret[0].(float64)
 	return ret0
@@ -1597,11 +1887,13 @@ func (m *MockSeat) MinCPC() float64 {
 
 // MinCPC indicates an expected call of MinCPC
 func (mr *MockSeatMockRecorder) MinCPC() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MinCPC", reflect.TypeOf((*MockSeat)(nil).MinCPC))
 }
 
 // MinCPM mocks base method
 func (m *MockSeat) MinCPM() float64 {
+
 	ret := m.ctrl.Call(m, "MinCPM")
 	ret0, _ := ret[0].(float64)
 	return ret0
@@ -1609,11 +1901,13 @@ func (m *MockSeat) MinCPM() float64 {
 
 // MinCPM indicates an expected call of MinCPM
 func (mr *MockSeatMockRecorder) MinCPM() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MinCPM", reflect.TypeOf((*MockSeat)(nil).MinCPM))
 }
 
 // PublicID mocks base method
 func (m *MockSeat) PublicID() string {
+
 	ret := m.ctrl.Call(m, "PublicID")
 	ret0, _ := ret[0].(string)
 	return ret0
@@ -1621,11 +1915,13 @@ func (m *MockSeat) PublicID() string {
 
 // PublicID indicates an expected call of PublicID
 func (mr *MockSeatMockRecorder) PublicID() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PublicID", reflect.TypeOf((*MockSeat)(nil).PublicID))
 }
 
 // RequestType mocks base method
 func (m *MockSeat) RequestType() entity.RequestType {
+
 	ret := m.ctrl.Call(m, "RequestType")
 	ret0, _ := ret[0].(entity.RequestType)
 	return ret0
@@ -1633,11 +1929,13 @@ func (m *MockSeat) RequestType() entity.RequestType {
 
 // RequestType indicates an expected call of RequestType
 func (mr *MockSeatMockRecorder) RequestType() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RequestType", reflect.TypeOf((*MockSeat)(nil).RequestType))
 }
 
 // ReservedHash mocks base method
 func (m *MockSeat) ReservedHash() string {
+
 	ret := m.ctrl.Call(m, "ReservedHash")
 	ret0, _ := ret[0].(string)
 	return ret0
@@ -1645,21 +1943,25 @@ func (m *MockSeat) ReservedHash() string {
 
 // ReservedHash indicates an expected call of ReservedHash
 func (mr *MockSeatMockRecorder) ReservedHash() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReservedHash", reflect.TypeOf((*MockSeat)(nil).ReservedHash))
 }
 
 // SetWinnerAdvertise mocks base method
 func (m *MockSeat) SetWinnerAdvertise(arg0 entity.Creative, arg1, arg2 float64) {
+
 	m.ctrl.Call(m, "SetWinnerAdvertise", arg0, arg1, arg2)
 }
 
 // SetWinnerAdvertise indicates an expected call of SetWinnerAdvertise
 func (mr *MockSeatMockRecorder) SetWinnerAdvertise(arg0, arg1, arg2 interface{}) *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetWinnerAdvertise", reflect.TypeOf((*MockSeat)(nil).SetWinnerAdvertise), arg0, arg1, arg2)
 }
 
 // Size mocks base method
 func (m *MockSeat) Size() int32 {
+
 	ret := m.ctrl.Call(m, "Size")
 	ret0, _ := ret[0].(int32)
 	return ret0
@@ -1667,11 +1969,13 @@ func (m *MockSeat) Size() int32 {
 
 // Size indicates an expected call of Size
 func (mr *MockSeatMockRecorder) Size() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Size", reflect.TypeOf((*MockSeat)(nil).Size))
 }
 
 // SoftCPM mocks base method
 func (m *MockSeat) SoftCPM() float64 {
+
 	ret := m.ctrl.Call(m, "SoftCPM")
 	ret0, _ := ret[0].(float64)
 	return ret0
@@ -1679,11 +1983,13 @@ func (m *MockSeat) SoftCPM() float64 {
 
 // SoftCPM indicates an expected call of SoftCPM
 func (mr *MockSeatMockRecorder) SoftCPM() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SoftCPM", reflect.TypeOf((*MockSeat)(nil).SoftCPM))
 }
 
 // SupplierCPM mocks base method
 func (m *MockSeat) SupplierCPM() float64 {
+
 	ret := m.ctrl.Call(m, "SupplierCPM")
 	ret0, _ := ret[0].(float64)
 	return ret0
@@ -1691,11 +1997,13 @@ func (m *MockSeat) SupplierCPM() float64 {
 
 // SupplierCPM indicates an expected call of SupplierCPM
 func (mr *MockSeatMockRecorder) SupplierCPM() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SupplierCPM", reflect.TypeOf((*MockSeat)(nil).SupplierCPM))
 }
 
 // Type mocks base method
 func (m *MockSeat) Type() entity.InputType {
+
 	ret := m.ctrl.Call(m, "Type")
 	ret0, _ := ret[0].(entity.InputType)
 	return ret0
@@ -1703,11 +2011,13 @@ func (m *MockSeat) Type() entity.InputType {
 
 // Type indicates an expected call of Type
 func (mr *MockSeatMockRecorder) Type() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Type", reflect.TypeOf((*MockSeat)(nil).Type))
 }
 
 // Width mocks base method
 func (m *MockSeat) Width() int32 {
+
 	ret := m.ctrl.Call(m, "Width")
 	ret0, _ := ret[0].(int32)
 	return ret0
@@ -1715,11 +2025,13 @@ func (m *MockSeat) Width() int32 {
 
 // Width indicates an expected call of Width
 func (mr *MockSeatMockRecorder) Width() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Width", reflect.TypeOf((*MockSeat)(nil).Width))
 }
 
 // WinNoticeRequest mocks base method
 func (m *MockSeat) WinNoticeRequest() *url.URL {
+
 	ret := m.ctrl.Call(m, "WinNoticeRequest")
 	ret0, _ := ret[0].(*url.URL)
 	return ret0
@@ -1727,11 +2039,13 @@ func (m *MockSeat) WinNoticeRequest() *url.URL {
 
 // WinNoticeRequest indicates an expected call of WinNoticeRequest
 func (mr *MockSeatMockRecorder) WinNoticeRequest() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WinNoticeRequest", reflect.TypeOf((*MockSeat)(nil).WinNoticeRequest))
 }
 
 // WinnerAdvertise mocks base method
 func (m *MockSeat) WinnerAdvertise() entity.Creative {
+
 	ret := m.ctrl.Call(m, "WinnerAdvertise")
 	ret0, _ := ret[0].(entity.Creative)
 	return ret0
@@ -1739,6 +2053,7 @@ func (m *MockSeat) WinnerAdvertise() entity.Creative {
 
 // WinnerAdvertise indicates an expected call of WinnerAdvertise
 func (mr *MockSeatMockRecorder) WinnerAdvertise() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WinnerAdvertise", reflect.TypeOf((*MockSeat)(nil).WinnerAdvertise))
 }
 
@@ -1767,6 +2082,7 @@ func (m *MockSupplier) EXPECT() *MockSupplierMockRecorder {
 
 // AllowCreate mocks base method
 func (m *MockSupplier) AllowCreate() bool {
+
 	ret := m.ctrl.Call(m, "AllowCreate")
 	ret0, _ := ret[0].(bool)
 	return ret0
@@ -1774,11 +2090,13 @@ func (m *MockSupplier) AllowCreate() bool {
 
 // AllowCreate indicates an expected call of AllowCreate
 func (mr *MockSupplierMockRecorder) AllowCreate() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AllowCreate", reflect.TypeOf((*MockSupplier)(nil).AllowCreate))
 }
 
 // DefaultCTR mocks base method
 func (m *MockSupplier) DefaultCTR(arg0, arg1 string) float32 {
+
 	ret := m.ctrl.Call(m, "DefaultCTR", arg0, arg1)
 	ret0, _ := ret[0].(float32)
 	return ret0
@@ -1786,11 +2104,13 @@ func (m *MockSupplier) DefaultCTR(arg0, arg1 string) float32 {
 
 // DefaultCTR indicates an expected call of DefaultCTR
 func (mr *MockSupplierMockRecorder) DefaultCTR(arg0, arg1 interface{}) *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DefaultCTR", reflect.TypeOf((*MockSupplier)(nil).DefaultCTR), arg0, arg1)
 }
 
 // DefaultMinBid mocks base method
 func (m *MockSupplier) DefaultMinBid() int64 {
+
 	ret := m.ctrl.Call(m, "DefaultMinBid")
 	ret0, _ := ret[0].(int64)
 	return ret0
@@ -1798,11 +2118,13 @@ func (m *MockSupplier) DefaultMinBid() int64 {
 
 // DefaultMinBid indicates an expected call of DefaultMinBid
 func (mr *MockSupplierMockRecorder) DefaultMinBid() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DefaultMinBid", reflect.TypeOf((*MockSupplier)(nil).DefaultMinBid))
 }
 
 // Markup mocks base method
 func (m *MockSupplier) Markup() bool {
+
 	ret := m.ctrl.Call(m, "Markup")
 	ret0, _ := ret[0].(bool)
 	return ret0
@@ -1810,11 +2132,13 @@ func (m *MockSupplier) Markup() bool {
 
 // Markup indicates an expected call of Markup
 func (mr *MockSupplierMockRecorder) Markup() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Markup", reflect.TypeOf((*MockSupplier)(nil).Markup))
 }
 
 // Name mocks base method
 func (m *MockSupplier) Name() string {
+
 	ret := m.ctrl.Call(m, "Name")
 	ret0, _ := ret[0].(string)
 	return ret0
@@ -1822,11 +2146,13 @@ func (m *MockSupplier) Name() string {
 
 // Name indicates an expected call of Name
 func (mr *MockSupplierMockRecorder) Name() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Name", reflect.TypeOf((*MockSupplier)(nil).Name))
 }
 
 // Rate mocks base method
 func (m *MockSupplier) Rate() int {
+
 	ret := m.ctrl.Call(m, "Rate")
 	ret0, _ := ret[0].(int)
 	return ret0
@@ -1834,11 +2160,13 @@ func (m *MockSupplier) Rate() int {
 
 // Rate indicates an expected call of Rate
 func (mr *MockSupplierMockRecorder) Rate() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Rate", reflect.TypeOf((*MockSupplier)(nil).Rate))
 }
 
 // Share mocks base method
 func (m *MockSupplier) Share() int {
+
 	ret := m.ctrl.Call(m, "Share")
 	ret0, _ := ret[0].(int)
 	return ret0
@@ -1846,11 +2174,13 @@ func (m *MockSupplier) Share() int {
 
 // Share indicates an expected call of Share
 func (mr *MockSupplierMockRecorder) Share() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Share", reflect.TypeOf((*MockSupplier)(nil).Share))
 }
 
 // ShowDomain mocks base method
 func (m *MockSupplier) ShowDomain() string {
+
 	ret := m.ctrl.Call(m, "ShowDomain")
 	ret0, _ := ret[0].(string)
 	return ret0
@@ -1858,11 +2188,13 @@ func (m *MockSupplier) ShowDomain() string {
 
 // ShowDomain indicates an expected call of ShowDomain
 func (mr *MockSupplierMockRecorder) ShowDomain() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ShowDomain", reflect.TypeOf((*MockSupplier)(nil).ShowDomain))
 }
 
 // SoftFloorCPC mocks base method
 func (m *MockSupplier) SoftFloorCPC(arg0, arg1 string) int64 {
+
 	ret := m.ctrl.Call(m, "SoftFloorCPC", arg0, arg1)
 	ret0, _ := ret[0].(int64)
 	return ret0
@@ -1870,11 +2202,13 @@ func (m *MockSupplier) SoftFloorCPC(arg0, arg1 string) int64 {
 
 // SoftFloorCPC indicates an expected call of SoftFloorCPC
 func (mr *MockSupplierMockRecorder) SoftFloorCPC(arg0, arg1 interface{}) *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SoftFloorCPC", reflect.TypeOf((*MockSupplier)(nil).SoftFloorCPC), arg0, arg1)
 }
 
 // SoftFloorCPM mocks base method
 func (m *MockSupplier) SoftFloorCPM(arg0, arg1 string) int64 {
+
 	ret := m.ctrl.Call(m, "SoftFloorCPM", arg0, arg1)
 	ret0, _ := ret[0].(int64)
 	return ret0
@@ -1882,11 +2216,13 @@ func (m *MockSupplier) SoftFloorCPM(arg0, arg1 string) int64 {
 
 // SoftFloorCPM indicates an expected call of SoftFloorCPM
 func (mr *MockSupplierMockRecorder) SoftFloorCPM(arg0, arg1 interface{}) *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SoftFloorCPM", reflect.TypeOf((*MockSupplier)(nil).SoftFloorCPM), arg0, arg1)
 }
 
 // Strategy mocks base method
 func (m *MockSupplier) Strategy() entity.Strategy {
+
 	ret := m.ctrl.Call(m, "Strategy")
 	ret0, _ := ret[0].(entity.Strategy)
 	return ret0
@@ -1894,11 +2230,13 @@ func (m *MockSupplier) Strategy() entity.Strategy {
 
 // Strategy indicates an expected call of Strategy
 func (mr *MockSupplierMockRecorder) Strategy() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Strategy", reflect.TypeOf((*MockSupplier)(nil).Strategy))
 }
 
 // TinyLogo mocks base method
 func (m *MockSupplier) TinyLogo() string {
+
 	ret := m.ctrl.Call(m, "TinyLogo")
 	ret0, _ := ret[0].(string)
 	return ret0
@@ -1906,11 +2244,13 @@ func (m *MockSupplier) TinyLogo() string {
 
 // TinyLogo indicates an expected call of TinyLogo
 func (mr *MockSupplierMockRecorder) TinyLogo() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TinyLogo", reflect.TypeOf((*MockSupplier)(nil).TinyLogo))
 }
 
 // TinyMark mocks base method
 func (m *MockSupplier) TinyMark() bool {
+
 	ret := m.ctrl.Call(m, "TinyMark")
 	ret0, _ := ret[0].(bool)
 	return ret0
@@ -1918,11 +2258,13 @@ func (m *MockSupplier) TinyMark() bool {
 
 // TinyMark indicates an expected call of TinyMark
 func (mr *MockSupplierMockRecorder) TinyMark() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TinyMark", reflect.TypeOf((*MockSupplier)(nil).TinyMark))
 }
 
 // TinyURL mocks base method
 func (m *MockSupplier) TinyURL() string {
+
 	ret := m.ctrl.Call(m, "TinyURL")
 	ret0, _ := ret[0].(string)
 	return ret0
@@ -1930,11 +2272,13 @@ func (m *MockSupplier) TinyURL() string {
 
 // TinyURL indicates an expected call of TinyURL
 func (mr *MockSupplierMockRecorder) TinyURL() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TinyURL", reflect.TypeOf((*MockSupplier)(nil).TinyURL))
 }
 
 // Token mocks base method
 func (m *MockSupplier) Token() string {
+
 	ret := m.ctrl.Call(m, "Token")
 	ret0, _ := ret[0].(string)
 	return ret0
@@ -1942,11 +2286,13 @@ func (m *MockSupplier) Token() string {
 
 // Token indicates an expected call of Token
 func (mr *MockSupplierMockRecorder) Token() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Token", reflect.TypeOf((*MockSupplier)(nil).Token))
 }
 
 // UserID mocks base method
 func (m *MockSupplier) UserID() int64 {
+
 	ret := m.ctrl.Call(m, "UserID")
 	ret0, _ := ret[0].(int64)
 	return ret0
@@ -1954,6 +2300,7 @@ func (m *MockSupplier) UserID() int64 {
 
 // UserID indicates an expected call of UserID
 func (mr *MockSupplierMockRecorder) UserID() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UserID", reflect.TypeOf((*MockSupplier)(nil).UserID))
 }
 
@@ -1982,6 +2329,7 @@ func (m *MockRequest) EXPECT() *MockRequestMockRecorder {
 
 // EventPage mocks base method
 func (m *MockRequest) EventPage() string {
+
 	ret := m.ctrl.Call(m, "EventPage")
 	ret0, _ := ret[0].(string)
 	return ret0
@@ -1989,11 +2337,13 @@ func (m *MockRequest) EventPage() string {
 
 // EventPage indicates an expected call of EventPage
 func (mr *MockRequestMockRecorder) EventPage() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "EventPage", reflect.TypeOf((*MockRequest)(nil).EventPage))
 }
 
 // IP mocks base method
 func (m *MockRequest) IP() net.IP {
+
 	ret := m.ctrl.Call(m, "IP")
 	ret0, _ := ret[0].(net.IP)
 	return ret0
@@ -2001,11 +2351,13 @@ func (m *MockRequest) IP() net.IP {
 
 // IP indicates an expected call of IP
 func (mr *MockRequestMockRecorder) IP() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IP", reflect.TypeOf((*MockRequest)(nil).IP))
 }
 
 // IsMobile mocks base method
 func (m *MockRequest) IsMobile() bool {
+
 	ret := m.ctrl.Call(m, "IsMobile")
 	ret0, _ := ret[0].(bool)
 	return ret0
@@ -2013,11 +2365,13 @@ func (m *MockRequest) IsMobile() bool {
 
 // IsMobile indicates an expected call of IsMobile
 func (mr *MockRequestMockRecorder) IsMobile() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsMobile", reflect.TypeOf((*MockRequest)(nil).IsMobile))
 }
 
 // Location mocks base method
 func (m *MockRequest) Location() entity.Location {
+
 	ret := m.ctrl.Call(m, "Location")
 	ret0, _ := ret[0].(entity.Location)
 	return ret0
@@ -2025,11 +2379,13 @@ func (m *MockRequest) Location() entity.Location {
 
 // Location indicates an expected call of Location
 func (mr *MockRequestMockRecorder) Location() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Location", reflect.TypeOf((*MockRequest)(nil).Location))
 }
 
 // OS mocks base method
 func (m *MockRequest) OS() entity.OS {
+
 	ret := m.ctrl.Call(m, "OS")
 	ret0, _ := ret[0].(entity.OS)
 	return ret0
@@ -2037,11 +2393,13 @@ func (m *MockRequest) OS() entity.OS {
 
 // OS indicates an expected call of OS
 func (mr *MockRequestMockRecorder) OS() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OS", reflect.TypeOf((*MockRequest)(nil).OS))
 }
 
 // Parent mocks base method
 func (m *MockRequest) Parent() string {
+
 	ret := m.ctrl.Call(m, "Parent")
 	ret0, _ := ret[0].(string)
 	return ret0
@@ -2049,11 +2407,13 @@ func (m *MockRequest) Parent() string {
 
 // Parent indicates an expected call of Parent
 func (mr *MockRequestMockRecorder) Parent() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Parent", reflect.TypeOf((*MockRequest)(nil).Parent))
 }
 
 // Protocol mocks base method
 func (m *MockRequest) Protocol() entity.Protocol {
+
 	ret := m.ctrl.Call(m, "Protocol")
 	ret0, _ := ret[0].(entity.Protocol)
 	return ret0
@@ -2061,11 +2421,13 @@ func (m *MockRequest) Protocol() entity.Protocol {
 
 // Protocol indicates an expected call of Protocol
 func (mr *MockRequestMockRecorder) Protocol() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Protocol", reflect.TypeOf((*MockRequest)(nil).Protocol))
 }
 
 // Referrer mocks base method
 func (m *MockRequest) Referrer() string {
+
 	ret := m.ctrl.Call(m, "Referrer")
 	ret0, _ := ret[0].(string)
 	return ret0
@@ -2073,11 +2435,13 @@ func (m *MockRequest) Referrer() string {
 
 // Referrer indicates an expected call of Referrer
 func (mr *MockRequestMockRecorder) Referrer() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Referrer", reflect.TypeOf((*MockRequest)(nil).Referrer))
 }
 
 // Suspicious mocks base method
 func (m *MockRequest) Suspicious() int {
+
 	ret := m.ctrl.Call(m, "Suspicious")
 	ret0, _ := ret[0].(int)
 	return ret0
@@ -2085,11 +2449,13 @@ func (m *MockRequest) Suspicious() int {
 
 // Suspicious indicates an expected call of Suspicious
 func (mr *MockRequestMockRecorder) Suspicious() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Suspicious", reflect.TypeOf((*MockRequest)(nil).Suspicious))
 }
 
 // Timestamp mocks base method
 func (m *MockRequest) Timestamp() time.Time {
+
 	ret := m.ctrl.Call(m, "Timestamp")
 	ret0, _ := ret[0].(time.Time)
 	return ret0
@@ -2097,11 +2463,13 @@ func (m *MockRequest) Timestamp() time.Time {
 
 // Timestamp indicates an expected call of Timestamp
 func (mr *MockRequestMockRecorder) Timestamp() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Timestamp", reflect.TypeOf((*MockRequest)(nil).Timestamp))
 }
 
 // UserAgent mocks base method
 func (m *MockRequest) UserAgent() string {
+
 	ret := m.ctrl.Call(m, "UserAgent")
 	ret0, _ := ret[0].(string)
 	return ret0
@@ -2109,6 +2477,7 @@ func (m *MockRequest) UserAgent() string {
 
 // UserAgent indicates an expected call of UserAgent
 func (mr *MockRequestMockRecorder) UserAgent() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UserAgent", reflect.TypeOf((*MockRequest)(nil).UserAgent))
 }
 
@@ -2137,6 +2506,7 @@ func (m *MockUser) EXPECT() *MockUserMockRecorder {
 
 // ID mocks base method
 func (m *MockUser) ID() string {
+
 	ret := m.ctrl.Call(m, "ID")
 	ret0, _ := ret[0].(string)
 	return ret0
@@ -2144,5 +2514,20 @@ func (m *MockUser) ID() string {
 
 // ID indicates an expected call of ID
 func (mr *MockUserMockRecorder) ID() *gomock.Call {
+
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ID", reflect.TypeOf((*MockUser)(nil).ID))
+}
+
+// List mocks base method
+func (m *MockUser) List() map[string][]string {
+
+	ret := m.ctrl.Call(m, "List")
+	ret0, _ := ret[0].(map[string][]string)
+	return ret0
+}
+
+// List indicates an expected call of List
+func (mr *MockUserMockRecorder) List() *gomock.Call {
+
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockUser)(nil).List))
 }

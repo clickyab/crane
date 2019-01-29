@@ -26,9 +26,9 @@ type Creative interface {
 	Campaign() Campaign
 	// AdCTR the ad ctr from database (its not calculated from )
 	AdCTR() float32
-	//// MaxBID get the campaign max bid
+	// MaxBID get the campaign max bid
 	MaxBID() int32
-	//// Target return the target of this campaign
+	// Target return the target of this campaign
 	Target() Target
 	// Size returns ads size
 	Size() int32

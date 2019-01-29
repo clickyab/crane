@@ -8,9 +8,11 @@ import (
 	"strconv"
 	"strings"
 
+	"clickyab.com/crane/supplier/middleware/user"
+
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/models/clickyabapps"
-	"clickyab.com/crane/openrtb/v2.5"
+	openrtb "clickyab.com/crane/openrtb/v2.5"
 	"clickyab.com/crane/supplier/client"
 	"clickyab.com/crane/supplier/layers/internal/supplier"
 	"clickyab.com/crane/supplier/layers/output"
@@ -50,9 +52,16 @@ func getApp(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 		return
 	}
-
+	u, ok := ctx.Value(user.KEY).(*openrtb.User)
+	if !ok {
+		xlog.GetWithError(ctx, err).Debug("extract user from context")
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Header().Add("cly-error", "user data")
+		return
+	}
 	q := &openrtb.BidRequest{
-		Id: <-random.ID,
+		User: u,
+		Id:   <-random.ID,
 		DistributionchannelOneof: &openrtb.BidRequest_App{
 			App: &openrtb.App{
 				Bundle: pub.Name(),

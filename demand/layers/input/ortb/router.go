@@ -7,9 +7,10 @@ import (
 	"net/http"
 	"strconv"
 
+	"clickyab.com/crane/models/campaign"
+
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/internal/hash"
-	"clickyab.com/crane/models/ads"
 	"clickyab.com/crane/models/apps"
 	"clickyab.com/crane/models/suppliers"
 	"clickyab.com/crane/models/website"
@@ -119,7 +120,7 @@ func extractor(ctx context.Context, r *http.Request) (*payloadData, error) {
 	}
 	aid, _ := strconv.ParseInt(m["aid"], 10, 64)
 	pl.AdID = int32(aid)
-	pl.Ad, err = ads.GetAd(pl.AdID)
+	pl.Ad, err = campaign.GetAd(pl.AdID)
 	if err != nil {
 		return nil, err
 	}

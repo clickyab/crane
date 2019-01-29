@@ -5,8 +5,9 @@ import (
 	"net/http"
 	"time"
 
+	"clickyab.com/crane/models/campaign"
+
 	"clickyab.com/crane/demand/layers/output/pixel"
-	"clickyab.com/crane/models/ads"
 	"github.com/clickyab/services/framework"
 	"github.com/clickyab/services/xlog"
 )
@@ -23,7 +24,7 @@ func conversionHandler(ctx context.Context, w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	err := ads.ConversionByRH(ctx, rh, acid, t, framework.RealIP(r))
+	err := campaign.ConversionByRH(ctx, rh, acid, t, framework.RealIP(r))
 	if err != nil {
 		w.Header().Add("err", err.Error())
 		xlog.GetWithError(ctx, err).Debug(err)
