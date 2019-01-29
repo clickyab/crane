@@ -270,6 +270,7 @@ func (s *seat) makeURL(route string, params map[string]string, cpm float64, expi
 		Path:   res,
 	}
 	v := url.Values{}
+	v.Set("uid", s.context.user.ID())
 	v.Set("tid", s.context.tid)
 	v.Set("ref", s.context.referrer)
 	v.Set("parent", s.context.parent)
@@ -297,10 +298,6 @@ func (s seat) genericTests(advertise entity.Creative) bool {
 func (s *seat) Acceptable(advertise entity.Creative) bool {
 	// this function, handle banner only
 	if !s.genericTests(advertise) {
-		return false
-	}
-
-	if s.size != advertise.Size() {
 		return false
 	}
 

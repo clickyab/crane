@@ -1,4 +1,4 @@
-package ads
+package adsxx
 
 import (
 	"time"
@@ -10,7 +10,6 @@ import (
 	"clickyab.com/crane/models/internal/entities"
 	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/kv"
-	"github.com/clickyab/services/mysql"
 	"github.com/clickyab/services/pool"
 	"github.com/clickyab/services/pool/drivers/memorypool"
 	"github.com/sirupsen/logrus"
@@ -55,5 +54,6 @@ func (loader) Initialize() {
 }
 
 func init() {
-	mysql.Register(&loader{})
+	_ = loader{}
+	// mysql.Register(&loader{})
 }

@@ -2,7 +2,7 @@ package notice
 
 import (
 	"clickyab.com/crane/demand/entity"
-	"clickyab.com/crane/models/ads"
+	"clickyab.com/crane/models/campaign"
 	m "clickyab.com/crane/workers/models"
 	"github.com/clickyab/services/broker"
 	"github.com/clickyab/services/xlog"
@@ -59,12 +59,12 @@ func (j *job) process(ctx context.Context) error {
 		tasks: len(j.Seats),
 	}
 
-	pub, err := ads.FindPublisher(j.Supplier, j.Publisher, 0, j.PublisherType)
+	pub, err := campaign.FindPublisher(j.Supplier, j.Publisher, 0, j.PublisherType)
 	if err != nil {
 		return err
 	}
 	for _, v := range j.Seats {
-		err := ads.AddNotice(pub, j.Impression, v)
+		err := campaign.AddNotice(pub, j.Impression, v)
 		if err != nil {
 			xlog.GetWithError(ctx, err)
 			errs.add(err)
