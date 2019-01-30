@@ -125,6 +125,7 @@ type Item interface {
 	Brand() string
 	// Image url of product
 	Image() string
+	// Title of product
 	Title() string
 	// Price of product
 	Price() int32

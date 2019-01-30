@@ -37,13 +37,13 @@ type Campaign struct {
 }
 
 // CTR from database (its not calculated from )
-func (a *Campaign) CTR() float32 {
-	return float32(a.CampaignCTR)
+func (c *Campaign) CTR() float32 {
+	return float32(c.CampaignCTR)
 }
 
 // MaxBID is the max bid of campaign
-func (a *Campaign) MaxBID() int32 {
-	return a.FCampaignMaxBid
+func (c *Campaign) MaxBID() int32 {
+	return c.FCampaignMaxBid
 }
 
 // Encode is the encode function for serialize object in io writer

@@ -22,7 +22,7 @@ type Creative interface {
 	ID() int32
 	// Type return the type of ad
 	Type() AdType
-	// Campaign return the ad campaign
+	// Type return the type of ad
 	Campaign() Campaign
 	// AdCTR the ad ctr from database (its not calculated from )
 	AdCTR() float32
