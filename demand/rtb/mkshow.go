@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"sort"
 
+	"clickyab.com/crane/models/item"
+
 	"github.com/clickyab/services/config"
 
 	"clickyab.com/crane/demand/capping"
@@ -49,12 +51,12 @@ func doBid(ad entity.Creative, slot entity.Seat, minCPM, minCPC float64, pub ent
 	var cpc, cpm float64
 	var exceed bool
 	if ad.Campaign().Strategy() == entity.StrategyCPC {
-		cpm = float64(ad.MaxBID()) * ctr * 10.0
-		cpc = float64(ad.MaxBID())
+		cpm = float64(ad.Campaign().MaxBID()) * ctr * 10.0
+		cpc = float64(ad.Campaign().MaxBID())
 		exceed = cpc >= minCPC
 	} else {
-		cpm = float64(ad.MaxBID())
-		cpc = float64(ad.MaxBID()) / (ctr * 10.0)
+		cpm = float64(ad.Campaign().MaxBID())
+		cpc = float64(ad.Campaign().MaxBID()) / (ctr * 10.0)
 		exceed = cpm >= minCPM
 	}
 
@@ -99,6 +101,9 @@ func internalSelect(
 			if ak, ok := cps[e].Sizes()[seat.Size()]; ok {
 				ads = append(ads, ak...)
 			}
+		}
+		if seat.RequestType() == entity.RequestTypeNative {
+			ads = append(ads, target(ctx.User(), seat, cps)...)
 		}
 		ctx.User().List()
 		exceedFloor, underFloor := selector(ctx, ads, seat, noVideo, selected)
@@ -146,6 +151,26 @@ func internalSelect(
 		}
 	}
 }
+
+func target(u entity.User, s entity.Seat, c []entity.Campaign) []entity.Creative {
+	if s.Size() != 20 {
+		return nil
+	}
+	iid := make([]string, 0)
+	for e := range c {
+		for _, v := range c[e].ReTargeting() {
+			iid = append(iid, u.List()[v]...)
+		}
+	}
+	its := make([]entity.Item, 0)
+	for _, k := range iid {
+		its = append(its, item.GetItem(context.Background(), k))
+	}
+
+	return nil
+
+}
+
 func fixPrice(strategy entity.Strategy, cpc, cpm, minCPC, minCPM float64) (float64, float64) {
 
 	if strategy == entity.StrategyCPC && cpc < minCPC {

@@ -53,6 +53,8 @@ var sizes = map[string]int32{
 	"320x480":  16,
 	"48x320":   17,
 	"128x128":  18,
+	// TODO "800x440":19, [WE HAVE BUG HERE] conflict with 9
+	"0x0":      20,
 	"1200x627": 21,
 }
 

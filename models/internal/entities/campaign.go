@@ -36,6 +36,16 @@ type Campaign struct {
 	sizes          map[int32][]entity.Creative
 }
 
+// CTR from database (its not calculated from )
+func (a *Campaign) CTR() float32 {
+	return float32(a.CampaignCTR)
+}
+
+// MaxBID is the max bid of campaign
+func (a *Campaign) MaxBID() int32 {
+	return a.FCampaignMaxBid
+}
+
 // Encode is the encode function for serialize object in io writer
 func (c *Campaign) Encode(w io.Writer) error {
 	return gob.NewEncoder(w).Encode(c)

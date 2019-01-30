@@ -105,6 +105,10 @@ type Campaign interface {
 	Sizes() map[int32][]Creative
 	// Items return reTargeting items
 	Items() map[string]Item
+	// MaxBID get the campaign max bid
+	MaxBID() int32
+	// CTR from database (its not calculated from )
+	CTR() float32
 }
 
 // Item for advertiser product info

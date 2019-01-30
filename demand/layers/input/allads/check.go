@@ -224,7 +224,7 @@ func internalSelect(c context.Context, ctx *builder.Context, seat entity.Seat, f
 		fAds = append(fAds, responseAds{
 			ID:           a.ID(),
 			CampaignID:   a.Campaign().ID(),
-			MaxBid:       a.MaxBID(),
+			MaxBid:       a.Campaign().MaxBID(),
 			Size:         a.Size(),
 			CampaignName: a.Campaign().Name(),
 			TargetURL:    a.TargetURL(),
@@ -267,7 +267,7 @@ func responseBuilder(ads []entity.SelectedCreative) []responseAds {
 		x := responseAds{
 			ID:            v.ID(),
 			CampaignID:    v.Campaign().ID(),
-			MaxBid:        v.MaxBID(),
+			MaxBid:        v.Campaign().MaxBID(),
 			CampaignName:  v.Campaign().Name(),
 			TargetURL:     v.TargetURL(),
 			Size:          v.Size(),
