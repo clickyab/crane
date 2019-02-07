@@ -270,27 +270,28 @@ func CampaignLoader(_ context.Context) (map[string]kv.Serializable, error) {
 		}
 		crt := make(map[int32]entity.Creative)
 		sizes := make(map[int32][]entity.Creative)
-		for ak, av := range v {
-			if av.FCaCTR.Valid {
-				av.FCTR = float32(av.FCaCTR.Float64)
+		for ak := range v {
+			if v[ak].FCaCTR.Valid {
+				v[ak].FCTR = float32(v[ak].FCaCTR.Float64)
 			} else {
-				av.FCTR = -1
+				v[ak].FCTR = -1
 			}
-			av.assets = extractAssets(av)
+			v[ak].assets = extractAssets(v[ak])
 
-			crt[ak] = &Advertise{ad: av}
-			if _, ok := sizes[av.FAdSize]; !ok {
-				sizes[av.FAdSize] = []entity.Creative{
-					&Advertise{ad: av},
-				}
+			crt[ak] = &Advertise{ad: v[ak]}
+			if _, ok := sizes[v[ak].FAdSize]; ok {
+				sizes[v[ak].FAdSize] = append(sizes[v[ak].FAdSize], &Advertise{ad: v[ak]})
 			} else {
-				sizes[av.FAdSize] = append(sizes[av.FAdSize], &Advertise{ad: av})
+				sizes[v[ak].FAdSize] = []entity.Creative{
+					&Advertise{ad: v[ak]},
+				}
 			}
 		}
+		fmt.Println(sizes)
 		cp := &Campaign{
-			ad:       ad,
-			creative: crt,
-			sizes:    sizes,
+			ad:        ad,
+			FCreative: crt,
+			FSizes:    sizes,
 		}
 		res[fmt.Sprint(k)] = cp
 	}
@@ -298,7 +299,7 @@ func CampaignLoader(_ context.Context) (map[string]kv.Serializable, error) {
 		metrics.Loaded.With(prometheus.Labels{
 			"cid": fmt.Sprint(qres[i].FCampaignID),
 		})
-		res[fmt.Sprint(qres[i].FCampaignID)] = &Campaign{ad: &qres[i]}
+		// res[fmt.Sprint(qres[i].FCampaignID)] = &Campaign{ad: &qres[i]}
 	}
 
 	logrus.Debugf("Load %d ads", len(res))

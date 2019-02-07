@@ -108,13 +108,14 @@ func getAsset(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	pl.FSKU = r.URL.Query().Get("sku")
 	pl.FBrand = r.URL.Query().Get("brand")
 
-	go func() {
-		err := lists.SetLists(ctx, u.Id, pl.Hash(), l.KEY)
-		if err != nil {
-			xlog.GetWithError(ctx, err).Debug("set list id")
-		}
-		assetChan <- pl
-	}()
+	// go func() {
+	err = lists.SetLists(ctx, u.Id, pl.Hash(), l.KEY)
+	fmt.Println("ASSET", u.Id, pl.Hash(), l.KEY)
+	if err != nil {
+		xlog.GetWithError(ctx, err).Debug("set list id")
+	}
+	assetChan <- pl
+	// }()
 }
 
 func init() {

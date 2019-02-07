@@ -32,8 +32,8 @@ type Campaign struct {
 	category       []openrtb.ContentCategory
 	strategy       entity.Strategy
 	connectionType []int
-	creative       map[int32]entity.Creative
-	sizes          map[int32][]entity.Creative
+	FCreative      map[int32]entity.Creative
+	FSizes         map[int32][]entity.Creative
 }
 
 // CTR from database (its not calculated from )
@@ -58,12 +58,12 @@ func (c *Campaign) Decode(r io.Reader) error {
 
 // Creative return map of create map, key of map is id of creative
 func (c *Campaign) Creative() map[int32]entity.Creative {
-	return c.creative
+	return c.FCreative
 }
 
 // Sizes return creative by size
 func (c *Campaign) Sizes() map[int32][]entity.Creative {
-	return c.sizes
+	return c.FSizes
 }
 
 // Items return reTargeting items

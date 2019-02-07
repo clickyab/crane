@@ -104,7 +104,8 @@ func internalSelect(
 				ads = append(ads, ak...)
 			}
 		}
-		fmt.Println("RETARGET 1")
+		fmt.Println("RETARGET ads 0 ", len(ads))
+
 		xlog.GetWithField(context.Background(), "RETARGET", "BEFORE").Debug()
 
 		if seat.RequestType() == entity.RequestTypeNative {
@@ -112,6 +113,8 @@ func internalSelect(
 
 			ads = append(ads, target(ctx.User(), seat, cps)...)
 		}
+		fmt.Println("RETARGET ads 1 ", len(ads))
+
 		exceedFloor, underFloor := selector(ctx, ads, seat, noVideo, selected)
 
 		var (

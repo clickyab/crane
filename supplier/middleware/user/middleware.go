@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -36,6 +37,7 @@ func (middleware) Handler(next framework.Handler) framework.Handler {
 		user := &openrtb.User{
 			Data: make([]*openrtb.UserData, 0),
 		}
+
 		if uc, err := r.Cookie(uidKey); err != nil {
 			user.Id = <-random.ID
 			http.SetCookie(w,
@@ -57,10 +59,16 @@ func (middleware) Handler(next framework.Handler) framework.Handler {
 
 		} else {
 			user.Id = uc.Value
+			if ud, err := lists.GetLists(ctx, user.Id); err != nil {
+				user.Data = append(user.Data, ud)
+			}
 		}
-		if ud, err := lists.GetLists(ctx, user.Id); err != nil {
-			user.Data = append(user.Data, ud)
+
+		fmt.Println("USER ", r.Host, user.Id)
+		for k, v := range user.Data {
+			fmt.Println("aaaaaaa", k, v)
 		}
+		fmt.Println(r.Cookie(uidKey))
 
 		next(context.WithValue(ctx, KEY, user), w, r)
 	}

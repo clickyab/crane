@@ -19,7 +19,6 @@ func genKey(s string) kv.Kiwi {
 }
 
 func getData(s string) (kv.Kiwi, *openrtb.UserData) {
-
 	res := &openrtb.UserData{
 		Id:      "1",
 		Name:    "list",
@@ -55,8 +54,9 @@ func getData(s string) (kv.Kiwi, *openrtb.UserData) {
 // GetLists return user list
 func GetLists(ctx context.Context, uid string) (*openrtb.UserData, error) {
 	k, u := getData(uid)
-	_ = k.Save(time.Hour * 24 * 30)
-	return u, nil
+
+	fmt.Println("bbbbbbb", k.AllKeys())
+	return u, k.Save(time.Hour * 24 * 30)
 
 }
 
@@ -64,6 +64,13 @@ func GetLists(ctx context.Context, uid string) (*openrtb.UserData, error) {
 func SetLists(ctx context.Context, uid, url string, lid ...string) error {
 	k, _ := getData(uid)
 	for i := range lid {
+		if strings.Contains(k.SubKey(lid[i]), url) {
+			continue
+		}
+		if len(k.SubKey(lid[i])) == 0 {
+			k.SetSubKey(lid[i], url)
+			return k.Save(time.Hour * 24 * 30)
+		}
 		ut := append(strings.Split(k.SubKey(lid[i]), ","), url)
 		if len(ut) > 50 {
 			ut = ut[len(ut)-50:]
