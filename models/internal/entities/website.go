@@ -8,7 +8,7 @@ import (
 	"io"
 
 	"clickyab.com/crane/demand/entity"
-	"clickyab.com/crane/openrtb/v2.5"
+	openrtb "clickyab.com/crane/openrtb/v2.5"
 	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/kv"
 	"github.com/clickyab/services/mysql"
@@ -147,7 +147,7 @@ func (w *Website) Categories() []openrtb.ContentCategory {
 func WebsiteLoaderGen(name bool) func(ctx context.Context) (map[string]kv.Serializable, error) {
 	return func(ctx context.Context) (map[string]kv.Serializable, error) {
 		b := make(map[string]kv.Serializable)
-		//return b, nil // Uncomment this line after first time in DEV mode
+		return b, nil // Uncomment this line after first time in DEV mode
 
 		where := ""
 		if !name {

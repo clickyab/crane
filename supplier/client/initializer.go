@@ -3,11 +3,12 @@ package client
 import (
 	"container/ring"
 	"context"
+	"fmt"
 	"net/http"
 	"sync"
 	"time"
 
-	"clickyab.com/crane/openrtb/v2.5"
+	openrtb "clickyab.com/crane/openrtb/v2.5"
 	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/initializer"
 	"github.com/clickyab/services/safe"
@@ -39,8 +40,8 @@ func init() {
 }
 
 var (
-	concurrentConnections = config.RegisterInt("crane.supplier.stream.concurrentConnections", 40, "")
-	insecureSever         = config.RegisterString("crane.supplier.stream.address", "crane-stream:9001", "")
+	concurrentConnections = config.RegisterInt("crane.supplier.stream.concurrentConnections", 1, "")
+	insecureSever         = config.RegisterString("crane.supplier.stream.address", "127.0.0.1:9801", "")
 	token                 = config.RegisterString("crane.supplier.demand.token", "forbidden", "")
 	timeout               = config.RegisterDuration("crane.supplier.timeout", time.Millisecond*150, "maximum timeout")
 	// RequestChannel for stream
@@ -184,6 +185,7 @@ func (ic *initClient) Initialize(ctx context.Context) {
 }
 
 func init() {
+	fmt.Println("stream port: ", insecureSever.String())
 	initializer.Register(&initClient{
 		server: insecureSever.String(),
 	}, 100)

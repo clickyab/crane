@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"clickyab.com/crane/demand/layers/input/ortb"
-	"clickyab.com/crane/openrtb/v2.5"
+	openrtb "clickyab.com/crane/openrtb/v2.5"
 	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/initializer"
 	"github.com/clickyab/services/safe"
@@ -31,7 +31,7 @@ type initClient struct {
 func (*initClient) Initialize(ctx context.Context) {
 
 	go safe.Try(func() error {
-		logrus.Info("initiate secure stream server")
+		logrus.Info("initiate secure stream server on port:", securePort.Int())
 
 		ce := make(chan error)
 
@@ -66,7 +66,7 @@ func (*initClient) Initialize(ctx context.Context) {
 	}, time.Second)
 
 	go safe.Try(func() error {
-		logrus.Info("initiate insecure stream server")
+		logrus.Info("initiate insecure stream server on port:", insecurePort.Int())
 
 		ce := make(chan error)
 

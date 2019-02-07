@@ -2,6 +2,7 @@ package pool
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"sync/atomic"
@@ -39,6 +40,7 @@ func (p *pl) Start(ctx context.Context) context.Context {
 	return safe.ContinuesGoRoutine(ctx, func(cnl context.CancelFunc) time.Duration {
 		data, err := p.loader(ctx)
 		if err != nil {
+			fmt.Println(err)
 			p.fail++
 			if p.fail > p.retry {
 				cnl()

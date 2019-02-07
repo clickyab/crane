@@ -7,16 +7,17 @@ import (
 	"strconv"
 	"strings"
 
+	"clickyab.com/crane/models/campaign"
+
 	"clickyab.com/crane/demand/builder"
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/demand/reducer"
 	"clickyab.com/crane/demand/rtb"
 	"clickyab.com/crane/internal/cyslot"
-	"clickyab.com/crane/models/ads"
 	"clickyab.com/crane/models/apps"
 	"clickyab.com/crane/models/suppliers"
 	"clickyab.com/crane/models/website"
-	"clickyab.com/crane/openrtb/v2.5"
+	openrtb "clickyab.com/crane/openrtb/v2.5"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/framework"
 	"github.com/clickyab/services/random"
@@ -173,7 +174,7 @@ func allAdHandler(c context.Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	filteredAds, _ := reducer.Apply(context.Background(), ctx, ads.GetAds(), selector)
+	filteredAds, _ := reducer.Apply(context.Background(), ctx, campaign.GetCampaigns(), selector)
 
 	framework.JSON(w, http.StatusOK, internalSelect(c, ctx, seat, filteredAds, fe))
 }
@@ -215,15 +216,15 @@ func applyPublisherFilter(bq *openrtb.BidRequest, target string, sup entity.Supp
 	return publisher, selector, err
 }
 
-func internalSelect(c context.Context, ctx *builder.Context, seat entity.Seat, filteredAds []entity.Creative, fe map[int32][]string) response {
+func internalSelect(c context.Context, ctx *builder.Context, seat entity.Seat, filteredAds []entity.Campaign, fe map[int32][]string) response {
 	fAds := make([]responseAds, 0)
 	for id, ers := range fe {
-		a, err := ads.GetAd(id)
+		a, err := campaign.GetAd(id)
 		assert.Nil(err)
 		fAds = append(fAds, responseAds{
 			ID:           a.ID(),
 			CampaignID:   a.Campaign().ID(),
-			MaxBid:       a.MaxBID(),
+			MaxBid:       a.Campaign().MaxBID(),
 			Size:         a.Size(),
 			CampaignName: a.Campaign().Name(),
 			TargetURL:    a.TargetURL(),
@@ -253,7 +254,7 @@ func makeBuilder(carrier, ua string, percentage int64, ip string,
 		builder.SetCappingMode(entity.CappingNone),
 		builder.SetUnderfloor(true),
 		builder.SetCategory(bq),
-		builder.SetTID("", ip, ua, ""),
+		builder.SetTID("", ""),
 		builder.SetCarrier(carrier, publisher),
 		builder.SetCategory(bq),
 	}
@@ -266,7 +267,7 @@ func responseBuilder(ads []entity.SelectedCreative) []responseAds {
 		x := responseAds{
 			ID:            v.ID(),
 			CampaignID:    v.Campaign().ID(),
-			MaxBid:        v.MaxBID(),
+			MaxBid:        v.Campaign().MaxBID(),
 			CampaignName:  v.Campaign().Name(),
 			TargetURL:     v.TargetURL(),
 			Size:          v.Size(),

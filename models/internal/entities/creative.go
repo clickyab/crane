@@ -67,7 +67,7 @@ type ad struct {
 	CampaignNetwork          int                    `db:"cp_network"`
 	CampaignPlacement        SharpArray             `db:"cp_placement"`
 	CampaignWebsiteFilter    SharpArray             `db:"cp_wfilter"`
-	CampaignRetargeting      sql.NullString         `db:"cp_retargeting"`
+	CampaignRetargeting      SharpArray             `db:"cp_retargeting"`
 	CampaignSegmentID        sql.NullInt64          `db:"cp_segment_id"`
 	CampaignNetProvider      SharpArray             `db:"cp_net_provider"`
 	CampaignNetProviderName  SharpArray             `db:"cp_net_provider_name"`
@@ -130,7 +130,7 @@ type ad struct {
 	assets []entity.Asset `db:"-"`
 }
 
-func extractAssets(in ad) []entity.Asset {
+func extractAssets(in *ad) []entity.Asset {
 	if entity.AdType(in.FType) == entity.AdTypeBanner {
 		w, h := cyslot.GetSizeByNum(in.FAdSize)
 		return []entity.Asset{
@@ -160,20 +160,19 @@ func extractAssets(in ad) []entity.Asset {
 	}
 
 	// TODO : before commit, make sure the dynamic support is added
-	//if entity.AdType(in.FType) == entity.AdTypeDynamic {
-	//	w, h := cyslot.GetSizeByNum(in.FAdSize)
-	//	return []entity.Asset{
-	//		{
-	//			MimeType: in.FMimeType.String,
-	//			Type:     entity.AssetTypeImage,
-	//			SubType:  entity.AssetTypeImageSubTypeIcon,
-	//			Width:    w,
-	//			Height:   h,
-	//			Data:     in.FAdImg.String,
-	//		},
-	//	}
-	//}
-
+	// if entity.AdType(in.FType) == entity.AdTypeDynamic {
+	// 	w, h := cyslot.GetSizeByNum(in.FAdSize)
+	// 	return []entity.Asset{
+	// 		{
+	// 			MimeType: in.FMimeType.String,
+	// 			Type:     entity.AssetTypeImage,
+	// 			SubType:  entity.AssetTypeImageSubTypeIcon,
+	// 			Width:    w,
+	// 			Height:   h,
+	// 			Data:     in.FAdImg.String,
+	// 		},
+	// 	}
+	// }
 	if entity.AdType(in.FType) == entity.AdTypeNative {
 		txt := in.FAdName.String
 		w, _ := in.FAdAttribute["w"].(string)
@@ -208,12 +207,12 @@ func extractAssets(in ad) []entity.Asset {
 	return nil
 }
 
-// AdLoader is the loader of ads
-func AdLoader(_ context.Context) (map[string]kv.Serializable, error) {
-	var res []ad
+// CampaignLoader is the loader of ads
+func CampaignLoader(_ context.Context) (map[string]kv.Serializable, error) {
+	var qres []ad
 	t := time.Now()
-	u := t.Unix()                                                        //return date in unixtimestamp
-	h, err := strconv.ParseInt(t.Round(time.Minute).Format("15"), 10, 0) //round time in minute scale
+	u := t.Unix()                                                        // return date in unixtimestamp
+	h, err := strconv.ParseInt(t.Round(time.Minute).Format("15"), 10, 0) // round time in minute scale
 	assert.Nil(err)
 
 	query := fmt.Sprintf(`SELECT
@@ -246,6 +245,104 @@ func AdLoader(_ context.Context) (map[string]kv.Serializable, error) {
 				U.u_balance > %d`, u, u, h, minUserBalance.Int())
 
 	_, err = NewManager().GetRDbMap().Select(
+		&qres,
+		query,
+	)
+	if err != nil {
+		return nil, err
+	}
+	ads := make(map[int32]map[int32]*ad)
+	for i := range qres {
+		ca := &Advertise{ad: &qres[i]}
+		if _, ok := ads[qres[i].FCampaignID]; !ok {
+			ads[qres[i].FCampaignID] = make(map[int32]*ad)
+		}
+		ads[qres[i].FCampaignID][ca.FID] = &qres[i]
+	}
+
+	res := make(map[string]kv.Serializable)
+
+	for k, v := range ads {
+		var ad *ad
+		for _, v := range v {
+			ad = v
+			break
+		}
+		crt := make(map[int32]entity.Creative)
+		sizes := make(map[int32][]entity.Creative)
+		for ak, av := range v {
+			if av.FCaCTR.Valid {
+				av.FCTR = float32(av.FCaCTR.Float64)
+			} else {
+				av.FCTR = -1
+			}
+			av.assets = extractAssets(av)
+
+			crt[ak] = &Advertise{ad: av}
+			if _, ok := sizes[av.FAdSize]; !ok {
+				sizes[av.FAdSize] = []entity.Creative{
+					&Advertise{ad: av},
+				}
+			} else {
+				sizes[av.FAdSize] = append(sizes[av.FAdSize], &Advertise{ad: av})
+			}
+		}
+		cp := &Campaign{
+			ad:       ad,
+			creative: crt,
+			sizes:    sizes,
+		}
+		res[fmt.Sprint(k)] = cp
+	}
+	for i := range qres {
+		metrics.Loaded.With(prometheus.Labels{
+			"cid": fmt.Sprint(qres[i].FCampaignID),
+		})
+		res[fmt.Sprint(qres[i].FCampaignID)] = &Campaign{ad: &qres[i]}
+	}
+
+	logrus.Debugf("Load %d ads", len(res))
+	return res, nil
+}
+
+// AdLoader is the loader of ads
+func AdLoader(_ context.Context) (map[string]kv.Serializable, error) {
+	var res []ad
+	t := time.Now()
+	u := t.Unix()                                                        // return date in unixtimestamp
+	h, err := strconv.ParseInt(t.Round(time.Minute).Format("15"), 10, 0) // round time in minute scale
+	assert.Nil(err)
+
+	query := fmt.Sprintf(`SELECT
+		A.ad_id, C.u_id, ad_name, ad_url,ad_code, ad_title, ad_body, ad_img, ad_status,ad_size,
+	 ad_reject_reason, CA.ca_ctr , ad_conv, ad_time, ad_type, ad_mainText, ad_defineText,
+	 ad_textColor, ad_target, ad_attribute, ad_hash_attribute, A.created_at, A.updated_at,
+	 U.u_email, U.u_balance, C.cp_id, cp_type, cp_billing_type, cp_name, cp_network, cp_placement,
+	 cp_wfilter, cp_retargeting, cp_frequency, cp_segment_id, cp_app_brand, cp_net_provider,
+	 cp_app_lang, cp_app_market, cp_web_mobile, cp_web, cp_application, cp_video, cp_apps_carriers,
+	 cp_longmap, cp_latmap, cp_radius, cp_opt_ctr, cp_opt_conv, cp_opt_br, cp_gender,
+	 cp_fatfinger, cp_under, cp_geos, cp_region, cp_country, cp_hoods, cp_isp_blacklist, cp_cat,
+	 cp_like_app, cp_app, cp_app_filter, cp_keywords, cp_platforms, cp_platform_version, cp_maxbid,
+	 cp_weekly_budget, cp_daily_budget, cp_total_budget, cp_weekly_spend, cp_total_spend,
+	 cp_today_spend, cp_clicks, cp_ctr, cp_imps, cp_cpm, cp_cpa, cp_cpc, cp_conv, cp_conv_rate,
+	 cp_revenue, cp_roi, cp_start, cp_end, cp_status, cp_lastupdate, cp_hour_start, cp_hour_end,cp_isp,
+	 is_crm, cp_lock,cp_app_brand_name,cp_app_carrier_name,cp_net_provider_name,CA.ca_id, A.ad_mime
+	 	FROM campaigns AS C
+	 	INNER JOIN users AS U ON C.u_id=U.u_id
+		INNER JOIN campaigns_ads AS CA ON C.cp_id=CA.cp_id
+		INNER JOIN ads AS A ON A.ad_id=CA.ad_id
+		WHERE A.ad_status=1
+				AND C.cp_status=1
+				AND CA.ca_status = 1
+				AND (C.cp_start <= %d OR C.cp_start=0)
+				AND (C.cp_end >= %d OR C.cp_end=0)
+				AND (cp_time_duration IS NULL OR cp_time_duration LIKE "%%#%d#%%")
+				AND C.cp_daily_budget > C.cp_today_spend
+				AND C.cp_total_budget > C.cp_total_spend
+				AND U.u_balance > U.u_today_spend AND
+				U.u_balance > %d`, u, u, h, minUserBalance.Int())
+	fmt.Println(query)
+	_, err = NewManager().GetRDbMap().Select(
 		&res,
 		query,
 	)
@@ -260,11 +357,11 @@ func AdLoader(_ context.Context) (map[string]kv.Serializable, error) {
 		} else {
 			res[i].FCTR = -1
 		}
-		res[i].assets = extractAssets(res[i])
+		res[i].assets = extractAssets(&res[i])
 		metrics.Loaded.With(prometheus.Labels{
 			"cid": fmt.Sprint(res[i].FCampaignID),
 		})
-		ads[fmt.Sprint(res[i].FID)] = &Advertise{ad: res[i]}
+		ads[fmt.Sprint(res[i].FID)] = &Advertise{ad: &res[i]}
 	}
 	logrus.Debugf("Load %d ads", len(ads))
 	return ads, nil
@@ -291,41 +388,38 @@ func GetAd(adID int32) (entity.Creative, error) {
 		INNER JOIN campaigns_ads AS CA ON C.cp_id=CA.cp_id
 		INNER JOIN ads AS A ON A.ad_id=CA.ad_id
 		WHERE A.ad_id=?`
+	fmt.Println(query)
 
-	res := Advertise{}
+	tmp := &ad{}
 	err := NewManager().GetRDbMap().SelectOne(
-		&res,
+		tmp,
 		query,
 		adID,
 	)
 	if err != nil {
 		return nil, err
 	}
+	res := &Advertise{ad: tmp}
 	if res.FCaCTR.Valid {
 		res.FCTR = float32(res.FCaCTR.Float64)
 	} else {
 		res.FCTR = -1
 	}
 	res.assets = extractAssets(res.ad)
-	return &res, nil
+	return res, nil
 }
 
 // Advertise implement entity advertise interface
 type Advertise struct {
-	ad
-	campaign entity.Campaign
-	size     *size
-	capping  entity.Capping
+	*ad
+	campaign entity.Campaign `db:"-"`
+	size     *size           `db:"-"`
+	capping  entity.Capping  `db:"-"`
 }
 
-// Assets return creative's asset
+// Assets return creative's Asset
 func (a *Advertise) Assets() []entity.Asset {
 	return a.assets
-}
-
-// MaxBID is the max bid of campaign
-func (a *Advertise) MaxBID() int32 {
-	return a.FCampaignMaxBid
 }
 
 // Target is target of campaign (creative in new design)
@@ -424,7 +518,7 @@ func (a *Advertise) MimeType() string {
 	return a.FMimeType.String
 }
 
-// Asset return the asset for this advertise
+// Asset return the Asset for this advertise
 func (a *Advertise) Asset(assetType entity.AssetType, sub int, filter ...entity.AssetFilter) []entity.Asset {
 	var res []entity.Asset
 	// Ignore if the assets is empty

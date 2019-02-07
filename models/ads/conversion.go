@@ -1,4 +1,4 @@
-package ads
+package adsxx
 
 import (
 	"context"

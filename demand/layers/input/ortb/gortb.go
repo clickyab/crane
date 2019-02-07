@@ -6,13 +6,15 @@ import (
 	"strings"
 	"time"
 
+	"github.com/clickyab/services/random"
+
 	"clickyab.com/crane/demand/builder"
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/demand/layers/output/demand"
 	"clickyab.com/crane/demand/rtb"
 	"clickyab.com/crane/metrics"
 	"clickyab.com/crane/models/suppliers"
-	"clickyab.com/crane/openrtb/v2.5"
+	openrtb "clickyab.com/crane/openrtb/v2.5"
 	"github.com/clickyab/services/safe"
 	"github.com/clickyab/services/xlog"
 	"github.com/davecgh/go-spew/spew"
@@ -134,9 +136,6 @@ func GrpcHandler(ctx context.Context, req *openrtb.BidRequest) (*openrtb.BidResp
 		underfloor = req.Ext.GetUnderfloor()
 		tiny = req.Ext.GetTiny()
 		strategy = req.Ext.GetStrategy()
-		//if req.Ext.GetCapping() == openrtb.Capping_Reset {
-		//	capping = entity.CappingReset
-		//}
 	}
 
 	if err := validate(req); err != nil {
@@ -173,16 +172,21 @@ func GrpcHandler(ctx context.Context, req *openrtb.BidRequest) (*openrtb.BidResp
 		ua = strings.Trim(req.GetDevice().GetUa(), "\n\t ")
 		ip = strings.Trim(req.GetDevice().GetIp(), "\n\t ")
 	}
-	us := ""
-	if req.GetUser() != nil {
-		us = req.GetUser().GetId()
+
+	if req.GetUser() == nil {
+		req.User = &openrtb.User{
+			Id:   <-random.ID,
+			Data: []*openrtb.UserData{},
+		}
 	}
+	us := req.GetUser().GetId()
 
 	if ua == "" || ip == "" {
 		err := fmt.Errorf("no ip/no ua")
 		xlog.GetWithError(ctx, err).Debug("invalid request")
 		return res, err
 	}
+
 	b := []builder.ShowOptionSetter{
 		builder.SetTimestamp(),
 		builder.SetTargetHost(sup.ShowDomain()),
@@ -190,7 +194,8 @@ func GrpcHandler(ctx context.Context, req *openrtb.BidRequest) (*openrtb.BidResp
 		builder.SetIPLocation(ip, req.GetUser(), req.GetDevice(), sup),
 		builder.SetPublisher(pub),
 		builder.SetProtocol(proto),
-		builder.SetTID(us, ip, ua, req.GetDevice().GetDidsha1()),
+		builder.SetTID(us, req.GetDevice().GetDidsha1()),
+		builder.SetUser(req.GetUser().GetData()),
 		builder.SetNoTiny(!tiny),
 		builder.SetBannerMarkup(sup),
 		builder.SetFatFinger(fatFinger),
@@ -202,7 +207,7 @@ func GrpcHandler(ctx context.Context, req *openrtb.BidRequest) (*openrtb.BidResp
 		builder.SetCategory(req),
 	}
 	// TODO : if we need to implement native/app/vast then the next line must be activated and customized
-	//b = append(b, builder.SetFloorPercentage(100), builder.SetMinBidPercentage(100))
+	// b = append(b, builder.SetFloorPercentage(100), builder.SetMinBidPercentage(100))
 
 	b = setPublisherCustomContext(req, b, pub)
 	sd, vast := seatDetail(req)
@@ -210,6 +215,8 @@ func GrpcHandler(ctx context.Context, req *openrtb.BidRequest) (*openrtb.BidResp
 		b = append(b, builder.SetMultiVideo(true))
 	}
 	b = append(b, builder.SetDemandSeats(sd...))
+	xlog.GetWithField(ctx, "RETARGETING", "ada").Debug()
+	fmt.Println("RETARGET 5")
 
 	c, err := rtb.Select(ctx, selector, b...)
 	if err != nil {

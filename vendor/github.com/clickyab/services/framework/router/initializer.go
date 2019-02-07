@@ -85,10 +85,15 @@ func (i *initer) Initialize(ctx context.Context) {
 	for i := range all {
 		all[i].Routes(xm)
 	}
+	
 	// Append some generic middleware, to handle recovery and log
 	handler := middleware.Recovery(
 		xhandler.New(context.Background(), fake{base: fPre(engine.ServeHTTPC)}).ServeHTTP,
 	)
+
+	for k, v := range reverse {
+		fmt.Println(fmt.Sprintf("%-10s:%s",k,v))
+	}
 	server := &http.Server{Addr: listen.String(), Handler: handler}
 	go func() {
 		if err := server.ListenAndServe(); err != nil {

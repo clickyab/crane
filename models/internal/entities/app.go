@@ -7,10 +7,10 @@ import (
 	"fmt"
 	"io"
 
-	"clickyab.com/crane/openrtb/v2.5"
 	"github.com/clickyab/services/kv"
 
 	"clickyab.com/crane/demand/entity"
+	openrtb "clickyab.com/crane/openrtb/v2.5"
 	"github.com/clickyab/services/mysql"
 	"github.com/clickyab/services/simplehash"
 )
@@ -122,7 +122,7 @@ func (app *App) CTR(size int32) float32 {
 func AppLoaderGen(name bool) func(ctx context.Context) (map[string]kv.Serializable, error) {
 	return func(ctx context.Context) (map[string]kv.Serializable, error) {
 		b := make(map[string]kv.Serializable)
-		//return b, nil // Uncomment this line after first time in DEV mode
+		return b, nil // Uncomment this line after first time in DEV mode
 
 		const cnt = 10000
 		where := ""

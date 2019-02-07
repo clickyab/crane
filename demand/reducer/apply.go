@@ -13,11 +13,11 @@ import (
 
 // Filter is the interface to filter ads
 type Filter interface {
-	Check(entity.Context, entity.Creative) error
+	Check(entity.Context, entity.Campaign) error
 }
 
 type filtered struct {
-	ad      entity.Creative
+	ad      entity.Campaign
 	confirm int
 }
 
@@ -26,10 +26,10 @@ var ErrorTimeOut = errors.New("timeout")
 
 // Apply get the data and then call filter on each of them concurrently, the
 // result is the accepted items
-func Apply(c context.Context, imp entity.Context, ads []entity.Creative, ff []Filter) ([]entity.Creative, error) {
+func Apply(c context.Context, imp entity.Context, ads map[int32]entity.Campaign, ff []Filter) ([]entity.Campaign, error) {
 	var mads = make(map[int32]*filtered)
-	var res = make([]entity.Creative, 0)
-	fads := make(chan entity.Creative)
+	var res = make([]entity.Campaign, 0)
+	fads := make(chan entity.Campaign)
 	fcl := make(chan error)
 	done := make(chan int)
 	next := make(chan bool)
@@ -110,7 +110,6 @@ LOOP:
 			}
 		}
 	}
-
 	for _, v := range mads {
 		if v.confirm == len(ff) {
 			res = append(res, v.ad)

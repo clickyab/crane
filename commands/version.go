@@ -2,9 +2,8 @@ package commands
 
 import (
 	"context"
-	"net/http"
-
 	"fmt"
+	"net/http"
 
 	"github.com/clickyab/services/framework"
 	"github.com/clickyab/services/framework/router"

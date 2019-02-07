@@ -2,8 +2,11 @@ package ortb
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"time"
+
+	"github.com/clickyab/services/xlog"
 
 	"clickyab.com/crane/demand/builder"
 	"clickyab.com/crane/demand/layers/output/pixel"
@@ -24,6 +27,8 @@ func showPixel(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+	xlog.GetWithField(ctx, "RETARGETING", "ada").Debug()
+	fmt.Println("RETARGET PIX")
 	counter := kv.NewAEAVStore(pl.ReserveHash, clickExpire.Duration()+time.Hour).IncSubKey("I", 1)
 	if counter > 1 {
 		// Duplicate impression!
@@ -36,7 +41,8 @@ func showPixel(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetIPLocation(pl.IP, nil, nil, nil),
 		builder.SetProtocolByRequest(r),
 		builder.SetParent(pl.Parent, pl.Ref),
-		builder.SetTID(pl.TID, pl.IP, pl.UserAgent, pl.Did),
+		builder.SetTID(pl.TID, pl.Did),
+		builder.SetUser(nil),
 		builder.SetPublisher(pl.Publisher),
 		builder.SetSuspicious(pl.Suspicious),
 		builder.SetFatFinger(pl.FatFinger),

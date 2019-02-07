@@ -64,7 +64,6 @@ func FindImpFromClickByRH(rh string) (*Impression, error) {
 func FillClickData(p entity.Publisher, m models.Impression, s models.Seat, os entity.OS, fast int64, tv bool) (*Click, error) {
 
 	var err error
-
 	wID := sql.NullInt64{}
 	appID := sql.NullInt64{}
 

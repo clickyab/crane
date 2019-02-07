@@ -3,7 +3,7 @@ package entity
 import (
 	"strings"
 
-	"clickyab.com/crane/openrtb/v2.5"
+	openrtb "clickyab.com/crane/openrtb/v2.5"
 )
 
 // Target is the target of this campaign
@@ -62,23 +62,25 @@ type Campaign interface {
 	ID() int32
 	// Name is the campaign name
 	Name() string
+	// ReTargeting determines if it's retargeting enabled or not
+	ReTargeting() []string
 	// Make sure the result is >= 1
 	Frequency() int32
-	//BlackListPublisher shows publishers in blacklist
+	// BlackListPublisher shows publishers in blacklist
 	BlackListPublisher() []string
-	//BlackListPublisher shows publishers in blacklist
+	// BlackListPublisher shows publishers in blacklist
 	WhiteListPublisher() []string
 	// AppBrands return campaign app brands
 	AppBrands() []string
 	// AppCarriers return campaign app carriers
 	AppCarriers() []string
-	//AllowedOS return os blacklist of a campaign
+	// AllowedOS return os blacklist of a campaign
 	AllowedOS() []string
-	//Country return country
+	// Country return country
 	Country() []string
 	// Province returns province ID
 	Province() []string
-	//LatLon return LanLon and radius to accept ad
+	// LatLon return LanLon and radius to accept ad
 	LatLon() (bool, float64, float64, float64)
 	// Category return the category of this campaign
 	Category() []openrtb.ContentCategory
@@ -97,6 +99,42 @@ type Campaign interface {
 	ConnectionType() []int
 	// Strategy can be cpm, cpc
 	Strategy() Strategy
+	// Creative return map of create map, key of map is id of creative
+	Creative() map[int32]Creative
+	// Sizes return creative by size
+	Sizes() map[int32][]Creative
+	// Items return reTargeting items
+	Items() map[string]Item
+	// MaxBID get the campaign max bid
+	MaxBID() int32
+	// CTR from database (its not calculated from )
+	CTR() float32
+}
+
+// Item for advertiser product info
+type Item interface {
+	// ID of item
+	ID() int32
+	// Hash of url
+	Hash() string
+	// URL of product
+	URL() string
+	// SKU is advertiser product id
+	SKU() string
+	// Brand of product
+	Brand() string
+	// Image url of product
+	Image() string
+	// Title of product
+	Title() string
+	// Price of product
+	Price() int32
+	// Discount of product if any
+	Discount() int32
+	// Cat of product
+	Cat() []openrtb.ContentCategory
+	// Available for product
+	Available() bool
 }
 
 // IsSizeAllowed return if the size is allowed in target type or not

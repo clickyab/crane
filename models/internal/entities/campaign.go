@@ -1,6 +1,8 @@
 package entities
 
 import (
+	"encoding/gob"
+	"io"
 	"strings"
 
 	"clickyab.com/crane/demand/entity"
@@ -26,10 +28,52 @@ const (
 
 // Campaign implement entity advertise interface
 type Campaign struct {
-	ad
+	*ad
 	category       []openrtb.ContentCategory
 	strategy       entity.Strategy
 	connectionType []int
+	creative       map[int32]entity.Creative
+	sizes          map[int32][]entity.Creative
+}
+
+// CTR from database (its not calculated from )
+func (c *Campaign) CTR() float32 {
+	return float32(c.CampaignCTR)
+}
+
+// MaxBID is the max bid of campaign
+func (c *Campaign) MaxBID() int32 {
+	return c.FCampaignMaxBid
+}
+
+// Encode is the encode function for serialize object in io writer
+func (c *Campaign) Encode(w io.Writer) error {
+	return gob.NewEncoder(w).Encode(c)
+}
+
+// Decode try to decode object from io reader
+func (c *Campaign) Decode(r io.Reader) error {
+	return gob.NewDecoder(r).Decode(c)
+}
+
+// Creative return map of create map, key of map is id of creative
+func (c *Campaign) Creative() map[int32]entity.Creative {
+	return c.creative
+}
+
+// Sizes return creative by size
+func (c *Campaign) Sizes() map[int32][]entity.Creative {
+	return c.sizes
+}
+
+// Items return reTargeting items
+func (c *Campaign) Items() map[string]entity.Item {
+	panic("ops item")
+}
+
+// ReTargeting returns array of campaign lists
+func (c *Campaign) ReTargeting() []string {
+	return c.ad.CampaignRetargeting.Array()
 }
 
 // Strategy of campaign. can be cpm, cpc

@@ -10,9 +10,12 @@ import (
 	"strings"
 	"time"
 
+	"clickyab.com/crane/demand/filter/campaign"
+
+	"github.com/clickyab/services/random"
+
 	"clickyab.com/crane/demand/builder"
 	"clickyab.com/crane/demand/entity"
-	"clickyab.com/crane/demand/filter"
 	"clickyab.com/crane/demand/layers/output/demand"
 	"clickyab.com/crane/demand/reducer"
 	"clickyab.com/crane/demand/rtb"
@@ -20,7 +23,7 @@ import (
 	"clickyab.com/crane/models/apps"
 	"clickyab.com/crane/models/suppliers"
 	"clickyab.com/crane/models/website"
-	"clickyab.com/crane/openrtb/v2.5"
+	openrtb "clickyab.com/crane/openrtb/v2.5"
 	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/kv"
 	"github.com/clickyab/services/safe"
@@ -34,32 +37,30 @@ import (
 const demandPath = "/ortb/:token"
 
 var (
-//monitoringSuppliers = config.RegisterString("crane.rtb.monitor.suppliers", "clickyab,chavoosh", "comma separated suppliers name ")
-// deadline = config.RegisterDuration("crane.rtb.deadline", time.Millisecond*250, "maximum waiting time for ad")
-)
-var (
 	ortbWebSelector = []reducer.Filter{
-		&filter.Desktop{},
-		&filter.OS{},
-		&filter.WhiteList{},
-		&filter.BlackList{},
-		&filter.Category{},
-		&filter.Province{},
-		&filter.ISP{},
-		&filter.Strategy{},
+		&campaign.Desktop{},
+		&campaign.OS{},
+		&campaign.WhiteList{},
+		&campaign.BlackList{},
+		&campaign.Category{},
+		&campaign.Province{},
+		&campaign.ISP{},
+		&campaign.Strategy{},
+		&campaign.ReTargeting{},
 	}
 
 	ortbAppSelector = []reducer.Filter{
-		&filter.AppBrand{},
-		&filter.ConnectionType{},
-		&filter.AppCarrier{},
-		&filter.WhiteList{},
-		&filter.BlackList{},
-		&filter.Category{},
-		&filter.Province{},
-		&filter.ISP{},
-		&filter.AreaInGlob{},
-		&filter.Strategy{},
+		&campaign.AppBrand{},
+		&campaign.ConnectionType{},
+		&campaign.AppCarrier{},
+		&campaign.WhiteList{},
+		&campaign.BlackList{},
+		&campaign.Category{},
+		&campaign.Province{},
+		&campaign.ISP{},
+		&campaign.AreaInGlob{},
+		&campaign.Strategy{},
+		&campaign.ReTargeting{},
 	}
 )
 
@@ -162,10 +163,13 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		ua = strings.Trim(payload.GetDevice().GetUa(), "\n\t ")
 		ip = strings.Trim(payload.GetDevice().GetIp(), "\n\t ")
 	}
-	us := ""
-	if payload.GetUser() != nil {
-		us = payload.User.GetId()
+	if payload.GetUser() == nil {
+		payload.User = &openrtb.User{
+			Id:   <-random.ID,
+			Data: []*openrtb.UserData{},
+		}
 	}
+	us := payload.GetUser().GetId()
 
 	if ua == "" || ip == "" {
 		err := fmt.Errorf("no ip/no ua")
@@ -191,7 +195,8 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetOSUserAgent(ua),
 		builder.SetIPLocation(ip, payload.User, payload.Device, sup),
 		builder.SetProtocol(proto),
-		builder.SetTID(us, ip, ua, payload.GetDevice().GetDidsha1()),
+		builder.SetTID(us, payload.GetDevice().GetDidsha1()),
+		builder.SetUser(payload.GetUser().GetData()),
 		builder.SetNoTiny(!tiny),
 		builder.SetBannerMarkup(sup),
 		builder.SetFatFinger(fatFinger),
@@ -204,7 +209,7 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 
 	// TODO : if we need to implement native/app/vast then the next line must be activated and customized
-	//b = append(b, builder.SetFloorPercentage(100), builder.SetMinBidPercentage(100))
+	// b = append(b, builder.SetFloorPercentage(100), builder.SetMinBidPercentage(100))
 
 	b = setPublisherCustomContext(payload, b, publisher)
 	sd, vast := seatDetail(payload)
@@ -222,7 +227,8 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 
 	res, err := demand.Render(ctx, c, payload.Id)
-
+	xlog.GetWithField(ctx, "RETARGETING", "ada").Debug()
+	fmt.Println("RETARGET 11")
 	defer safe.GoRoutine(ctx, func() {
 
 		for _, s := range sd {

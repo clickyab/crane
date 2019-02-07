@@ -3,7 +3,7 @@ package commands
 import (
 	"github.com/clickyab/services/config"
 	// Activate slack
-	_ "github.com/clickyab/services/slack"
+	//_ "github.com/clickyab/services/slack"
 )
 
 const (

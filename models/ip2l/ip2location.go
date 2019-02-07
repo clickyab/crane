@@ -35,7 +35,7 @@ var ispConst = map[int64]*regexp.Regexp{
 }
 
 var m = map[string]int64{
-	"IR": 1,
+	"IR":                          1,
 	"Azarbayjan-e Sharqi":         2,
 	"Ostan-e Azarbayjan-e Gharbi": 3,
 	"Ardabil":                     4,
@@ -109,7 +109,6 @@ func GetProvinceISPByIP(ip net.IP, lat, lon float64) entity.Location {
 			Lat:   lat,
 		},
 	}
-
 	return l
 }
 

@@ -27,9 +27,10 @@ export RUSER?=$(APPNAME)
 export RPASS?=$(DEFAULT_PASS)
 export WORK_DIR=$(ROOT)/tmp
 export UGLIFYJS=$(ROOT)/node_modules/.bin/uglifyjs
-export CRN_SERVICES_MYSQL_WDSN=root:bita123@tcp(127.0.0.1:3306)/clickyab?charset=utf8&parseTime=true
-export CRN_SERVICES_MYSQL_RDSN?=dev:cH3M7Z7I4sY8QP&ll130U&73&6KS@tcp(db-2.clickyab.ae:3306)/clickyab?charset=utf8&parseTime=true
+export CRN_SERVICES_MYSQL_WDSN=root:pOxYOJp50cxJ4dRY@tcp(db-2.3rdad.com:3306)/clickyab?charset=utf8&parseTime=true
+export CRN_SERVICES_MYSQL_RDSN?=root:pOxYOJp50cxJ4dRY@tcp(db-1.3rdad.com:3306)/clickyab?charset=utf8&parseTime=true
 export CRN_CRANE_SUPPLIER_STREAM_ADDRESS=127.0.0.1:9801
+export CRN_CRANE_SUPPLIER_STREAM_URL=127.0.0.1:9801
 
 all: codegen
 	$(BUILD) ./...

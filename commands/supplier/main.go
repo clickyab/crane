@@ -5,14 +5,16 @@ import (
 
 	"clickyab.com/crane/commands"
 	_ "clickyab.com/crane/supplier/layers/app"
+	_ "clickyab.com/crane/supplier/layers/asset"
 	_ "clickyab.com/crane/supplier/layers/native"
 	_ "clickyab.com/crane/supplier/layers/output/statics"
 	_ "clickyab.com/crane/supplier/layers/video"
 	_ "clickyab.com/crane/supplier/layers/web"
 
-	// CORS is required for supplier
 	_ "clickyab.com/crane/models/staticseat"
+	// CORS is required for supplier
 	_ "clickyab.com/crane/supplier/middleware/cors"
+	_ "clickyab.com/crane/supplier/middleware/user"
 	"github.com/clickyab/services/assert"
 	_ "github.com/clickyab/services/broker/selector"
 	"github.com/clickyab/services/config"
