@@ -128,9 +128,9 @@ type Item interface {
 	// Title of product
 	Title() string
 	// Price of product
-	Price() int32
+	Price() int64
 	// Discount of product if any
-	Discount() int32
+	Discount() int64
 	// Cat of product
 	Cat() []openrtb.ContentCategory
 	// Available for product

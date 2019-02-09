@@ -89,14 +89,14 @@ func getAsset(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		msg = "discount is not defined"
 		return
 	}
-	pl.FDiscount = int32(d)
+	pl.FDiscount = d
 
 	p, err := strconv.ParseInt(r.URL.Query().Get("price"), 10, 64)
 	if err != nil && r.URL.Query().Get("price") != "" {
 		msg = "price is not defined"
 		return
 	}
-	pl.FPrice = int32(p)
+	pl.FPrice = p
 
 	img, err := url.Parse(r.URL.Query().Get("img"))
 	if err != nil {

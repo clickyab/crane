@@ -55,7 +55,7 @@ func getData(s string) (kv.Kiwi, *openrtb.UserData) {
 func GetLists(ctx context.Context, uid string) (*openrtb.UserData, error) {
 	k, u := getData(uid)
 
-	fmt.Println("bbbbbbb", k.AllKeys())
+	fmt.Println("bbbbbbb", k.AllKeys(), &u)
 	return u, k.Save(time.Hour * 24 * 30)
 
 }

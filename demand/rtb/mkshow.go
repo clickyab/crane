@@ -106,7 +106,7 @@ func internalSelect(
 		}
 		fmt.Println("RETARGET ads 0 ", len(ads))
 
-		xlog.GetWithField(context.Background(), "RETARGET", "BEFORE").Debug()
+		xlog.GetWithField(context.Background(), "RETARGET", "BEFORE").Debug(seat.Size(), seat.RequestType())
 
 		if seat.RequestType() == entity.RequestTypeNative {
 			xlog.GetWithField(context.Background(), "RETARGET", "INSIDE").Debug()
@@ -168,12 +168,12 @@ func target(u entity.User, s entity.Seat, c []entity.Campaign) []entity.Creative
 			iid = append(iid, u.List()[v]...)
 		}
 	}
-	xlog.GetWithField(context.Background(), "RETARGET", iid).Debug()
+	xlog.GetWithField(context.Background(), "RETARGET", "IID").Debug(len(iid))
 	its := make([]entity.Creative, 0)
 	for _, k := range iid {
 		var cr entity.Creative
 		it := item.GetItem(context.Background(), k).(entity.Creative)
-		if it != nil {
+		if it == nil {
 			continue
 		}
 		cr, ok := it.(entity.Creative)
@@ -181,7 +181,7 @@ func target(u entity.User, s entity.Seat, c []entity.Campaign) []entity.Creative
 			its = append(its, cr)
 		}
 	}
-	xlog.GetWithField(context.Background(), "RETARGET", iid).Debug()
+	xlog.GetWithField(context.Background(), "RETARGET", "IID").Debug(len(iid))
 	return its
 }
 

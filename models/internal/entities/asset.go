@@ -29,11 +29,11 @@ type Asset struct {
 	FBrand     string           `db:"brand"`
 	FImg       string           `db:"img"`
 	FTitle     string           `db:"title"`
-	FPrice     int32            `db:"price"`
-	FDiscount  int32            `db:"discount"`
+	FPrice     mysql.NullInt64  `db:"price"`
+	FDiscount  mysql.NullInt64  `db:"discount"`
 	FMime      string           `db:"mime"`
 	FCat       mysql.NullString `db:"cat"`
-	FAvailable int32            `db:"is_available"`
+	FAvailable int              `db:"is_available"`
 	campaign   entity.Campaign  `db:"-"`
 	capping    entity.Capping   `db:"-"`
 	assets     []entity.Asset   `db:"-"`
@@ -205,13 +205,19 @@ func (a *Asset) Title() string {
 }
 
 // Price of product
-func (a *Asset) Price() int32 {
-	return a.FPrice
+func (a *Asset) Price() int64 {
+	if a.FPrice.Valid {
+		return a.FPrice.Int64
+	}
+	return -1
 }
 
 // Discount of product if any
-func (a *Asset) Discount() int32 {
-	return a.FDiscount
+func (a *Asset) Discount() int64 {
+	if a.FDiscount.Valid {
+		return a.FDiscount.Int64
+	}
+	return -1
 }
 
 // ID of item
@@ -261,7 +267,7 @@ func AddAssets(ctx context.Context, a []entity.Item) error {
 
 	for _, e := range a {
 		q += p
-		params = append(params, simplehash.SHA1(e.URL()), e.URL(), e.SKU(), e.Brand(), e.Image(), e.Title(), e.Discount(), func() int32 {
+		params = append(params, simplehash.SHA1(e.URL()), e.URL(), e.SKU(), e.Brand(), e.Image(), e.Title(), e.Discount(), func() int {
 			if e.Available() {
 				return 1
 			}

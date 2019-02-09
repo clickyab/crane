@@ -9,23 +9,23 @@ import (
 
 	"github.com/clickyab/services/xlog"
 
+	"github.com/sirupsen/logrus"
+
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/models/internal/entities"
 	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/mysql"
 	"github.com/clickyab/services/pool"
 	"github.com/clickyab/services/pool/drivers/memorypool"
-	"github.com/sirupsen/logrus"
 )
 
 var item pool.Interface
 
 // GetItem return all ads in system
 func GetItem(ctx context.Context, s string) entity.Item {
-	xlog.GetWithField(ctx, "RETARGET", GetItems()).Debug()
 	t, err := item.Get(s, &entities.Asset{})
 	if err != nil {
-		xlog.GetWithError(ctx, err).Debug()
+		xlog.GetWithError(ctx, err).Debug("GET ITEM")
 	}
 	return t.(*entities.Asset)
 }
@@ -42,7 +42,7 @@ func GetItems() map[string]entity.Item {
 }
 
 var (
-	adsExp = config.RegisterDuration("crane.models.expire.item", time.Minute*10, "expire time of ads")
+	adsExp = config.RegisterDuration("crane.models.expire.item", time.Minute*1, "expire time of ads")
 )
 
 type loader struct {
@@ -69,8 +69,8 @@ type Asset struct {
 	FURL        string        `json:"url"`
 	FImg        string        `json:"img"`
 	FTitle      string        `json:"title"`
-	FPrice      int32         `json:"price"`
-	FDiscount   int32         `json:"discount"`
+	FPrice      int64         `json:"price"`
+	FDiscount   int64         `json:"discount"`
 	FSKU        string        `json:"sku"`
 	IsAvailable bool          `json:"is_available"`
 	FCategory   []string      `json:"category"`
@@ -120,12 +120,12 @@ func (a *Asset) Title() string {
 }
 
 // Price of product
-func (a *Asset) Price() int32 {
+func (a *Asset) Price() int64 {
 	return a.FPrice
 }
 
 // Discount of product if any
-func (a *Asset) Discount() int32 {
+func (a *Asset) Discount() int64 {
 	return a.FDiscount
 }
 
