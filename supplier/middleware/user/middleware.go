@@ -46,6 +46,7 @@ func (middleware) Handler(next framework.Handler) framework.Handler {
 		}
 
 		if uc, err := r.Cookie(uidKey); err != nil {
+
 			user.Id = <-random.ID
 
 			http.SetCookie(w,
