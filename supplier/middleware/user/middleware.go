@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"strings"
 	"time"
 
 	"clickyab.com/crane/supplier/lists"
@@ -35,10 +34,10 @@ func (middleware) PreRoute() bool {
 
 func (middleware) Handler(next framework.Handler) framework.Handler {
 	return func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-		if !strings.Contains(r.URL.Hostname(), "clickyab") {
-			next(ctx, w, r)
-			return
-		}
+		//if !strings.Contains(r.URL.Hostname(), "clickyab") {
+		//	next(ctx, w, r)
+		//	return
+		//}
 		user := &openrtb.User{
 			Data: make([]*openrtb.UserData, 0),
 		}
@@ -47,7 +46,7 @@ func (middleware) Handler(next framework.Handler) framework.Handler {
 			user.Id = <-random.ID
 			http.SetCookie(w,
 				&http.Cookie{
-					Domain:  ".clickyab.com",
+					Domain:  "clickyab.com",
 					Expires: time.Now().AddDate(2, 0, 0),
 					Value:   user.Id,
 					Name:    uidKey,
@@ -55,7 +54,7 @@ func (middleware) Handler(next framework.Handler) framework.Handler {
 				})
 			http.SetCookie(w,
 				&http.Cookie{
-					Domain:  ".3rdad.com",
+					Domain:  "3rdad.com",
 					Expires: time.Now().AddDate(2, 0, 0),
 					Value:   user.Id,
 					Name:    uidKey,
