@@ -48,6 +48,7 @@ func getAsset(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusInternalServerError)
 
 		}
+
 	}()
 	pl := &item.Asset{}
 	u, ok := ctx.Value(user.KEY).(*openrtb.User)
