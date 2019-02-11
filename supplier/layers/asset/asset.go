@@ -46,6 +46,7 @@ func getAsset(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 			_, _ = w.Write([]byte(msg))
 
 			w.WriteHeader(http.StatusInternalServerError)
+
 		}
 	}()
 	pl := &item.Asset{}
