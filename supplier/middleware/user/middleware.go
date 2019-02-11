@@ -38,7 +38,6 @@ func (middleware) Handler(next framework.Handler) framework.Handler {
 		if !strings.Contains(r.URL.Hostname(), "clickyab") {
 			next(ctx, w, r)
 			return
-
 		}
 
 		fmt.Println("DOMAIN:", r.URL.Hostname())
