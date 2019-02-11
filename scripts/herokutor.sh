@@ -101,10 +101,10 @@ RUN apk add --no-cache --virtual .build-deps git go libc-dev make \
     && mkdir -p /app/statics \
     && rm -rf /gopath /go
 
-TAG -f registry.clickyab.ae/clickyab/{{ .App }}:{{ .Version }}
-PUSH -f registry.clickyab.ae/clickyab/{{ .App }}:{{ .Version }}
-TAG -f registry.clickyab.ae/clickyab/{{ .App }}:latest
-PUSH -f registry.clickyab.ae/clickyab/{{ .App }}:latest
+TAG registry.clickyab.ae/clickyab/{{ .App }}:{{ .Version }}
+PUSH registry.clickyab.ae/clickyab/{{ .App }}:{{ .Version }}
+TAG registry.clickyab.ae/clickyab/{{ .App }}:latest
+PUSH registry.clickyab.ae/clickyab/{{ .App }}:latest
 EOF
 
 TARGET=$(mktemp -d)
