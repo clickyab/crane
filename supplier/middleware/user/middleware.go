@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"strings"
 	"time"
 
 	"clickyab.com/crane/supplier/lists"
@@ -35,11 +34,6 @@ func (middleware) PreRoute() bool {
 
 func (middleware) Handler(next framework.Handler) framework.Handler {
 	return func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-
-		if !strings.Contains(r.URL.Hostname(), "clickyab") {
-			next(ctx, w, r)
-			return
-		}
 
 		fmt.Println("DOMAIN:", r.URL.Hostname())
 		user := &openrtb.User{
