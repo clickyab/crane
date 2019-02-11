@@ -32,6 +32,7 @@ func (controller) Routes(r framework.Mux) {
 
 // https://t.clickyab.com/pixel/collecting?list=bamilo&url=https%3A%2F%2Fwww.bamilo.com%2Fproduct%2Factive-%25D9%25BE%25D9%2588%25D8%25AF%25D8%25B1-%25D9%2584%25D8%25A8%25D8%25A7%25D8%25B3%25D8%25B4%25D9%2588%25DB%258C%25DB%258C-%25D9%2585%25D8%25A7%25D8%25B4%25DB%258C%25D9%2586%25DB%258C-500-%25DA%25AF%25D8%25B1%25D9%2585%25DB%258C-9395631%2F&img=%2F%2Fmedia.bamilo.com%2Fp%2Factive-1843-1365939-1-zoom.jpg&title=%D9%BE%D9%88%D8%AF%D8%B1%20%D9%84%D8%A8%D8%A7%D8%B3%D8%B4%D9%88%DB%8C%DB%8C%20%D9%85%D8%A7%D8%B4%DB%8C%D9%86%DB%8C%20500%20%DA%AF%D8%B1%D9%85%DB%8C&price=5355&discount=10&sku=AC696OT084RNIALIYUN&isavailable=true&category=%D8%B3%D9%88%D9%BE%D8%B1%D9%85%D8%A7%D8%B1%DA%A9%D8%AA%2C%D8%A8%D9%87%D8%AF%D8%A7%D8%B4%D8%AA%20%D9%85%D9%86%D8%B2%D9%84%2C%D8%B4%D9%88%DB%8C%D9%86%D8%AF%D9%87%20%D9%84%D8%A8%D8%A7%D8%B3&brand=Active
 func getAsset(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+
 	var err error
 	var msg = ""
 	defer func() {
