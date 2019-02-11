@@ -63,6 +63,7 @@ func (middleware) Handler(next framework.Handler) framework.Handler {
 					Name:    uidKey,
 					Path:    "/",
 				})
+
 			http.SetCookie(w,
 				&http.Cookie{
 					Domain:  "3rdad.com",
