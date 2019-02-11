@@ -146,6 +146,9 @@ func newConnection(ctx context.Context, server, cert string) (*connection, error
 }
 
 func (ic *initClient) Initialize(ctx context.Context) {
+	if demand.String() == "rest" {
+		return
+	}
 	connections = ring.New(concurrentConnections.Int())
 	for i := 0; i < concurrentConnections.Int(); i++ {
 		safe.Try(func() error {
