@@ -50,7 +50,9 @@ func getAsset(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		}
 
 	}()
+
 	pl := &item.Asset{}
+
 	u, ok := ctx.Value(user.KEY).(*openrtb.User)
 	if !ok {
 		err = fmt.Errorf("user not found")
