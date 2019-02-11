@@ -36,7 +36,6 @@ func (middleware) PreRoute() bool {
 func (middleware) Handler(next framework.Handler) framework.Handler {
 	return func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		if !strings.Contains(r.URL.Hostname(), "clickyab") {
-
 			next(ctx, w, r)
 
 			return
