@@ -186,6 +186,7 @@ func GrpcHandler(ctx context.Context, req *openrtb.BidRequest) (*openrtb.BidResp
 		xlog.GetWithError(ctx, err).Debug("invalid request")
 		return res, err
 	}
+	xlog.GetWithField(ctx, "USER DATA", fmt.Sprintf("%#v", req.GetUser())).Debug("userdata")
 
 	b := []builder.ShowOptionSetter{
 		builder.SetTimestamp(),

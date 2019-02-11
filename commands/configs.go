@@ -15,17 +15,8 @@ const (
 	Prefix = "CRN"
 )
 
-type MiddlewareFunc func(int) int
-
-// Wrap is the actual middleware function
-func (mf MiddlewareFunc) Wrap(w int) int {
-	return mf(w)
-}
-
 // DefaultConfig for this set of apps
 func DefaultConfig() config.DescriptiveLayer {
-	var ss = MiddlewareFunc(func(a int) int { return a })
-	ss.Wrap(2)
 
 	d := config.NewDescriptiveLayer()
 	d.Add("", "services.broker.provider", "rabbitmq")

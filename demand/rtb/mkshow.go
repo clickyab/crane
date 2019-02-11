@@ -162,27 +162,23 @@ func internalSelect(
 }
 
 func target(u entity.User, s entity.Seat, c []entity.Campaign) []entity.Creative {
-	iid := make([]string, 0)
+	crs := make([]entity.Creative, 0)
+
 	for e := range c {
 		for _, v := range c[e].ReTargeting() {
-			iid = append(iid, u.List()[v]...)
+			if ls, ok := u.List()[v]; ok {
+				for i := range ls {
+					it := item.GetItem(context.Background(), ls[i])
+					if it == nil {
+						continue
+					}
+					it.SetCampaign(c[e])
+					crs = append(crs, it)
+				}
+			}
 		}
 	}
-	xlog.GetWithField(context.Background(), "RETARGET", "IID").Debug(len(iid))
-	its := make([]entity.Creative, 0)
-	for _, k := range iid {
-		var cr entity.Creative
-		it := item.GetItem(context.Background(), k).(entity.Creative)
-		if it == nil {
-			continue
-		}
-		cr, ok := it.(entity.Creative)
-		if ok {
-			its = append(its, cr)
-		}
-	}
-	xlog.GetWithField(context.Background(), "RETARGET", "IID").Debug(len(iid))
-	return its
+	return crs
 }
 
 func fixPrice(strategy entity.Strategy, cpc, cpm, minCPC, minCPM float64) (float64, float64) {

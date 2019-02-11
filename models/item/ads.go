@@ -22,10 +22,11 @@ import (
 var item pool.Interface
 
 // GetItem return all ads in system
-func GetItem(ctx context.Context, s string) entity.Item {
+func GetItem(ctx context.Context, s string) *entities.Asset {
 	t, err := item.Get(s, &entities.Asset{})
 	if err != nil {
 		xlog.GetWithError(ctx, err).Debug("GET ITEM")
+		return nil
 	}
 	return t.(*entities.Asset)
 }

@@ -59,7 +59,7 @@ func (middleware) Handler(next framework.Handler) framework.Handler {
 
 		} else {
 			user.Id = uc.Value
-			if ud, err := lists.GetLists(ctx, user.Id); err != nil {
+			if ud, err := lists.GetLists(ctx, user.Id); err == nil {
 				user.Data = append(user.Data, ud)
 			}
 		}
