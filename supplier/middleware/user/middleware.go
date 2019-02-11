@@ -38,6 +38,8 @@ func (middleware) Handler(next framework.Handler) framework.Handler {
 		//	next(ctx, w, r)
 		//	return
 		//}
+
+		fmt.Println("DOMAIN:", r.URL.Hostname())
 		user := &openrtb.User{
 			Data: make([]*openrtb.UserData, 0),
 		}
