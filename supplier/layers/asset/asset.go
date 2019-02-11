@@ -36,6 +36,7 @@ func getAsset(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	var err error
 
 	var msg = ""
+
 	defer func() {
 		if err != nil {
 			w.Header().Set("error", msg)
