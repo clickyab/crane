@@ -104,19 +104,21 @@ func internalSelect(
 				ads = append(ads, ak...)
 			}
 		}
-		fmt.Println("RETARGET ads 0 ", len(ads))
 
-		xlog.GetWithField(context.Background(), "RETARGET", "BEFORE").Debug(seat.Size(), seat.RequestType())
+		xlog.GetWithField(context.Background(), "RETARGET", "BEFORE").Debug(seat.Size(), seat.RequestType(), len(ads))
 
 		if seat.RequestType() == entity.RequestTypeNative {
-			xlog.GetWithField(context.Background(), "RETARGET", "INSIDE").Debug()
-
 			ads = append(ads, target(ctx.User(), seat, cps)...)
 		}
-		fmt.Println("RETARGET ads 1 ", len(ads))
+		for _, v := range ads {
+			fmt.Println("ADINFO:", v.Campaign().ID(), v.ID())
+		}
+
+		xlog.GetWithField(context.Background(), "RETARGET", "AFTER").Debug(seat.Size(), seat.RequestType(), len(ads))
 
 		exceedFloor, underFloor := selector(ctx, ads, seat, noVideo, selected)
-
+		fmt.Println(fmt.Sprintf("EXC %#v", exceedFloor))
+		fmt.Println(fmt.Sprintf("UND %#v", underFloor))
 		var (
 			sorted []entity.SelectedCreative
 			ef     byMulti
@@ -152,6 +154,7 @@ func internalSelect(
 		targetCPC, targetCPM = fixPrice(theAd.Campaign().Strategy(), targetCPC, targetCPM, seat.MinCPC(), seat.MinCPM())
 
 		selected[theAd.ID()] = true
+		fmt.Println("iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii", fmt.Sprintf("%#v", theAd.Campaign().ID()), theAd.ID())
 		// Only decrease share for CPM (which is reported to supplier) not bid (which is used by us)
 		seat.SetWinnerAdvertise(theAd, targetCPC, targetCPM)
 
@@ -199,18 +202,23 @@ func selectAds(_ context.Context, ctx entity.Context, ads []entity.Campaign) {
 
 func selector(ctx entity.Context, ads []entity.Creative, seat entity.Seat, noVideo bool, selected map[int32]bool) (exceedFloor []entity.SelectedCreative, underFloor []entity.SelectedCreative) {
 	assert.True(seat.SoftCPM() >= seat.MinCPM())
-	fmt.Println("RETARGET 2")
 
 	for _, creative := range ads {
 		fmt.Println("RETARGET 3")
 
 		if creative.Type() == entity.AdTypeVideo && noVideo {
+			fmt.Println("RETARGET AAA")
+
 			continue
 		}
 		if selected[creative.ID()] {
+			fmt.Println("RETARGET BBB", creative.ID())
+
 			continue
 		}
 		if !seat.Acceptable(creative) {
+			fmt.Println("RETARGET CCCC")
+
 			continue
 		}
 

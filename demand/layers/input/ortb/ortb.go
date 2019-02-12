@@ -291,6 +291,7 @@ func seatDetail(req *openrtb.BidRequest) ([]builder.DemandSeatData, bool) {
 		} else if imp[i].GetNative() != nil {
 			t = entity.RequestTypeNative
 			assets = imp[i].GetNative().GetRequestNative().GetAssets()
+			fmt.Println(fmt.Sprintf("FUCKING ASSET: %+v", imp[i].GetNative().GetRequestNative().GetAssets()))
 		}
 
 		seats = append(seats, builder.DemandSeatData{

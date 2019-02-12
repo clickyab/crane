@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"time"
 
-	user2 "clickyab.com/crane/supplier/middleware/user"
+	"clickyab.com/crane/supplier/middleware/user"
 
 	website "clickyab.com/crane/models/clickyabwebsite"
 	openrtb "clickyab.com/crane/openrtb/v2.5"
@@ -101,7 +101,7 @@ func getNative(ct context.Context, w http.ResponseWriter, r *http.Request) {
 
 		return
 	}
-	user, ok := ctx.Value(user2.KEY).(*openrtb.User)
+	us, ok := ctx.Value(user.KEY).(*openrtb.User)
 	if !ok {
 		xlog.GetWithError(ctx, err).Debug("extract user from context")
 		w.WriteHeader(http.StatusInternalServerError)
@@ -109,12 +109,12 @@ func getNative(ct context.Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println(fmt.Sprintf("USER: %#v", user))
+	fmt.Println(fmt.Sprintf("USER: %#v", us))
 
 	bq := &openrtb.BidRequest{
 		Id: fmt.Sprintf("cly-%s", <-random.ID),
 
-		User: user,
+		User: us,
 		Imp:  getImps(r, targetCount, pub, tpl.Image),
 		DistributionchannelOneof: &openrtb.BidRequest_Site{
 			Site: &openrtb.Site{

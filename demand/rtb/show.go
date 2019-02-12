@@ -28,6 +28,12 @@ func Select(c context.Context, sel []reducer.Filter, opt ...builder.ShowOptionSe
 	if err != nil {
 		return nil, err
 	}
+
+	for _, v := range all {
+		if len(v.ReTargeting()) > 0 {
+			fmt.Println("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT: ", v.ID(), v.ReTargeting(), len(all))
+		}
+	}
 	// select all
 	selectAds(c, ctx, all)
 

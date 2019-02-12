@@ -113,7 +113,8 @@ export default class ShowAd {
 
   private getAdsFromRemote(onload: (ads: { [key: string]: string }) => void) {
     this.generateUrl(url => {
-      let request = new XMLHttpRequest()
+      let request = new XMLHttpRequest();
+      request.withCredentials = true;
       request.addEventListener('load', function () {
         try {
           onload(JSON.parse(this.responseText))

@@ -2,6 +2,7 @@ package item
 
 import (
 	"context"
+	"strconv"
 	"time"
 
 	openrtb "clickyab.com/crane/openrtb/v2.5"
@@ -76,13 +77,14 @@ type Asset struct {
 	IsAvailable bool          `json:"is_available"`
 	FCategory   []string      `json:"category"`
 	FBrand      string        `json:"brand"`
-	FAvailable  bool          `json:"is_available"`
+	FAvailable  string        `json:"is_available"`
 	User        *openrtb.User `json:"-"`
 }
 
 // Available for availability
 func (a *Asset) Available() bool {
-	return a.FAvailable
+	res, _ := strconv.ParseBool(a.FAvailable)
+	return res
 }
 
 // ID of item

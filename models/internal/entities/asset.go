@@ -127,8 +127,18 @@ func (a *Asset) MimeType() string {
 	return a.FMime
 }
 
+// {
+// "banner_title_text_type":"فانوس وب | طراحی سایت، سئو، طراحی فروشگاه اینترنتی",
+// "product":"http:\/\/static.clickyab.com\/ad\/product_53426_27136_1549981654.jpeg",
+// "banner_description_text_type":"",
+// "link_text_type":"https:\/\/fanoosweb.ir",
+// "w":495,
+// "h":400
+// }
+
 // Asset return the asset that pass all filters and type is exactly matched the value
 func (a *Asset) Asset(assetType entity.AssetType, sub int, filter ...entity.AssetFilter) []entity.Asset {
+
 	var res []entity.Asset
 	// Ignore if the assets is empty
 	if len(a.assets) == 0 {
@@ -151,26 +161,6 @@ bigLoop:
 
 // Assets return the assets
 func (a *Asset) Assets() []entity.Asset {
-	if a.assets != nil {
-		return a.assets
-	}
-	a.assets = []entity.Asset{
-		{
-			MimeType: a.FMime,
-			Type:     entity.AssetTypeImage,
-			SubType:  entity.AssetTypeImageSubTypeMain,
-			Width:    250,
-			Height:   156,
-			Data:     a.FImg,
-		},
-		{
-			MimeType: "text/html",
-			Type:     entity.AssetTypeText,
-			SubType:  entity.AssetTypeTextSubTypeTitle,
-			Len:      int32(utf8.RuneCountInString(a.FTitle)),
-			Data:     a.FTitle,
-		},
-	}
 	return a.assets
 }
 
@@ -222,7 +212,7 @@ func (a *Asset) Discount() int64 {
 
 // ID of item
 func (a *Asset) ID() int32 {
-	return a.FID
+	return a.FID + 1e6*-1
 }
 
 // Hash of url
@@ -248,6 +238,23 @@ func AssetLoader(_ context.Context) (map[string]kv.Serializable, error) {
 	_, err := NewManager().GetRDbMap().Select(&res, q)
 	if err != nil {
 		return nil, err
+	}
+
+	for i := range res {
+		res[i].assets = []entity.Asset{{
+			MimeType: "image/jpeg",
+			Type:     entity.AssetTypeImage,
+			SubType:  entity.AssetTypeImageSubTypeMain,
+			Width:    int32(500),
+			Height:   int32(315),
+			Data:     res[i].FImg,
+		}, {
+			MimeType: "text/html",
+			Type:     entity.AssetTypeText,
+			SubType:  entity.AssetTypeTextSubTypeTitle,
+			Len:      int32(utf8.RuneCountInString(res[i].FTitle)),
+			Data:     res[i].FTitle,
+		}}
 	}
 
 	k := make(map[string]kv.Serializable)

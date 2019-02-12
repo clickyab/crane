@@ -41,7 +41,7 @@ func (middleware) Handler(next framework.Handler) framework.Handler {
 		}
 
 		if uc, err := r.Cookie(uidKey); err != nil {
-			user.Id = <-random.ID
+			user.Id = "cyb-" + <-random.ID
 			http.SetCookie(w,
 				&http.Cookie{
 					Domain:  "clickyab.com",
@@ -61,19 +61,15 @@ func (middleware) Handler(next framework.Handler) framework.Handler {
 				})
 
 		} else {
+
 			user.Id = uc.Value
 			if ud, err := lists.GetLists(ctx, user.Id); err == nil {
 				user.Data = append(user.Data, ud)
 			}
 		}
-
-		fmt.Println("USER ", r.Host, user.Id)
-		for k, v := range user.Data {
-			fmt.Println("aaaaaaa", k, v)
-		}
-		fmt.Println(r.Cookie(uidKey))
-
-		next(context.WithValue(ctx, KEY, user), w, r)
+		x := context.WithValue(ctx, KEY, user)
+		r = r.WithContext(x)
+		next(x, w, r)
 	}
 }
 

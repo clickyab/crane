@@ -105,6 +105,7 @@ func GrpcHandler(ctx context.Context, req *openrtb.BidRequest) (*openrtb.BidResp
 		xlog.GetWithError(ctx, err).Debug(e)
 		return nil, e
 	}
+	fmt.Println("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR", req.GetUser().GetData())
 
 	defer func() {
 		var supName = "unknown"
@@ -153,6 +154,7 @@ func GrpcHandler(ctx context.Context, req *openrtb.BidRequest) (*openrtb.BidResp
 	pub, selector, ps, prevent, err := handlePublisherSelector(domain, bundle, sup, prevent)
 
 	if err != nil {
+		fmt.Println(err)
 		e := spew.Sprintf("publisher from %s, %s, %s, not supported: %s. payload: %#v", sup.Name(), ps, req)
 		xlog.GetWithError(ctx, err).Debug(e)
 		return nil, grpc.ErrServerStopped
@@ -186,8 +188,6 @@ func GrpcHandler(ctx context.Context, req *openrtb.BidRequest) (*openrtb.BidResp
 		xlog.GetWithError(ctx, err).Debug("invalid request")
 		return res, err
 	}
-	xlog.GetWithField(ctx, "USER DATA", fmt.Sprintf("%#v", req.GetUser())).Debug("userdata")
-
 	b := []builder.ShowOptionSetter{
 		builder.SetTimestamp(),
 		builder.SetTargetHost(sup.ShowDomain()),
@@ -216,9 +216,6 @@ func GrpcHandler(ctx context.Context, req *openrtb.BidRequest) (*openrtb.BidResp
 		b = append(b, builder.SetMultiVideo(true))
 	}
 	b = append(b, builder.SetDemandSeats(sd...))
-	xlog.GetWithField(ctx, "RETARGETING", "ada").Debug()
-	fmt.Println("RETARGET 5")
-
 	c, err := rtb.Select(ctx, selector, b...)
 	if err != nil {
 		xlog.GetWithError(ctx, err).Errorf("invalid request from %s", sup.Name())

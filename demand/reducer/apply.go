@@ -3,7 +3,6 @@ package reducer
 import (
 	"context"
 	"errors"
-	"fmt"
 	"time"
 
 	"clickyab.com/crane/demand/entity"
@@ -35,8 +34,6 @@ func Apply(c context.Context, imp entity.Context, ads map[int32]entity.Campaign,
 	done := make(chan int)
 	next := make(chan bool)
 	dl := time.After(time.Millisecond * 500)
-	fmt.Println("RETARGET cps apply ", len(ads))
-
 	for _, f := range ff {
 		go func(f Filter) {
 			c := 0

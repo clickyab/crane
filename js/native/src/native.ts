@@ -163,6 +163,7 @@ export default class NativeComponent {
     private loadNativeJson(): Promise<INative> {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
+            xhr.withCredentials = true;
             const url = this.compiler(this.nativeUrl, Object.assign(this.defaultOptions, this.customOptions));
             xhr.onreadystatechange = function () {
                 if (this.readyState === 4 && this.status === 200) {
@@ -171,7 +172,8 @@ export default class NativeComponent {
                 }
             };
 
-            xhr.onerror = () => {
+            xhr.onerror = (e) => {
+                console.log(e);
                 reject();
                 throw new Error(`Failed to load Native Json from ${url}`);
             };

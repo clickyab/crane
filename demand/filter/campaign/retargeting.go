@@ -21,6 +21,8 @@ func (*ReTargeting) Check(impression entity.Context, ad entity.Campaign) error {
 	}
 	for _, v := range ad.ReTargeting() {
 		if _, ok := impression.User().List()[v]; ok {
+			fmt.Println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAART FILTER:", ad.ID())
+
 			return nil
 		}
 	}

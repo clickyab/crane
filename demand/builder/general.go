@@ -201,6 +201,10 @@ func SetUser(u []*openrtb.UserData) ShowOptionSetter {
 // SetTID try to set tid
 func SetTID(id string, did string) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
+		if strings.HasPrefix(id, "cyb-") {
+			o.tid = id
+			return o, nil
+		}
 		if o.ua == "" || o.ip == nil {
 			return nil, fmt.Errorf("use this after setting ip and ua")
 		}
