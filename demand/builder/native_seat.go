@@ -1,7 +1,6 @@
 package builder
 
 import (
-	"fmt"
 	"net/url"
 
 	"clickyab.com/crane/demand/builder/internal/filters"
@@ -122,27 +121,17 @@ func (s *nativeSeat) Acceptable(advertise entity.Creative) bool {
 	default:
 		panic("invalid type")
 	}
-	fmt.Println("RETARGET GGGG")
-
 	for i := range s.filters {
 		if !s.filters[i].Required {
-			fmt.Println("RETARGET XXXX")
-
 			continue
 		}
 		// TODO : think about this. it is somehow complicated thing. what if the asset is selected for two (or more) filter
 		// TODO : its a good idea to cache result here, maybe with a key for each AssetFilter function
 		if len(advertise.Asset(s.filters[i].Type, s.filters[i].SubType, s.filters[i].Extra...)) > 0 {
-			fmt.Println("RETARGET FFFF")
-
 			continue
 		}
-		fmt.Println("RETARGET QQQ")
-
 		return false
 	}
-	fmt.Println("RETARGET WWWWW")
-
 	return true
 }
 

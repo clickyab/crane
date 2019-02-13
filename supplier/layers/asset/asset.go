@@ -110,7 +110,6 @@ func getAsset(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 	go func() {
 		err = lists.SetLists(ctx, u.Id, pl.Hash(), l.KEY)
-		fmt.Println("ASSET", u.Id, pl.Hash(), l.KEY)
 		if err != nil {
 			xlog.GetWithError(ctx, err).Debug("set list id")
 		}

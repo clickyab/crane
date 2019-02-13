@@ -2,7 +2,6 @@ package ortb
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -28,7 +27,6 @@ func showPixel(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	xlog.GetWithField(ctx, "TID:", pl.TID).Debug()
-	fmt.Println("RETARGET PIX")
 	counter := kv.NewAEAVStore(pl.ReserveHash, clickExpire.Duration()+time.Hour).IncSubKey("I", 1)
 	if counter > 1 {
 		// Duplicate impression!

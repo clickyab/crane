@@ -3,7 +3,6 @@ package client
 import (
 	"container/ring"
 	"context"
-	"fmt"
 	"net/http"
 	"sync"
 	"time"
@@ -188,7 +187,6 @@ func (ic *initClient) Initialize(ctx context.Context) {
 }
 
 func init() {
-	fmt.Println("stream port: ", insecureSever.String())
 	initializer.Register(&initClient{
 		server: insecureSever.String(),
 	}, 100)

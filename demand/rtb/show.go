@@ -2,7 +2,6 @@ package rtb
 
 import (
 	"context"
-	"fmt"
 	"sort"
 
 	"clickyab.com/crane/models/campaign"
@@ -15,8 +14,6 @@ import (
 
 // Select is the main entry point for this module
 func Select(c context.Context, sel []reducer.Filter, opt ...builder.ShowOptionSetter) (entity.Context, error) {
-	fmt.Println("RETARGET 4")
-
 	// Build context
 	ctx, err := builder.NewContext(opt...)
 	if err != nil {
@@ -29,11 +26,6 @@ func Select(c context.Context, sel []reducer.Filter, opt ...builder.ShowOptionSe
 		return nil, err
 	}
 
-	for _, v := range all {
-		if len(v.ReTargeting()) > 0 {
-			fmt.Println("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT: ", v.ID(), v.ReTargeting(), len(all))
-		}
-	}
 	// select all
 	selectAds(c, ctx, all)
 

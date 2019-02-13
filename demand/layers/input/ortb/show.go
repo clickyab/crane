@@ -116,8 +116,6 @@ func showBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	xlog.GetWithField(ctx, "RETARGETING", "ada").Debug()
-	fmt.Println("RETARGET SHOW")
 	counter := kv.NewAEAVStore(pl.ReserveHash, clickExpire.Duration()+time.Hour).IncSubKey("I", 1)
 	if counter > 1 {
 		// Duplicate impression!

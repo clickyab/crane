@@ -287,7 +287,6 @@ func CampaignLoader(_ context.Context) (map[string]kv.Serializable, error) {
 				}
 			}
 		}
-		fmt.Println(sizes)
 		cp := &Campaign{
 			ad:        ad,
 			FCreative: crt,
@@ -389,8 +388,6 @@ func GetAd(adID int32) (entity.Creative, error) {
 		INNER JOIN campaigns_ads AS CA ON C.cp_id=CA.cp_id
 		INNER JOIN ads AS A ON A.ad_id=CA.ad_id
 		WHERE A.ad_id=?`
-	fmt.Println(query)
-
 	tmp := &ad{}
 	err := NewManager().GetRDbMap().SelectOne(
 		tmp,

@@ -8,8 +8,6 @@ import (
 	openrtb "clickyab.com/crane/openrtb/v2.5"
 	"github.com/clickyab/services/simplehash"
 
-	"github.com/clickyab/services/xlog"
-
 	"github.com/sirupsen/logrus"
 
 	"clickyab.com/crane/demand/entity"
@@ -26,7 +24,6 @@ var item pool.Interface
 func GetItem(ctx context.Context, s string) *entities.Asset {
 	t, err := item.Get(s, &entities.Asset{})
 	if err != nil {
-		xlog.GetWithError(ctx, err).Debug("GET ITEM")
 		return nil
 	}
 	return t.(*entities.Asset)

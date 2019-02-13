@@ -105,8 +105,6 @@ func GrpcHandler(ctx context.Context, req *openrtb.BidRequest) (*openrtb.BidResp
 		xlog.GetWithError(ctx, err).Debug(e)
 		return nil, e
 	}
-	fmt.Println("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR", req.GetUser().GetData())
-
 	defer func() {
 		var supName = "unknown"
 		if sup != nil {

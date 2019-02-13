@@ -228,7 +228,6 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 	res, err := demand.Render(ctx, c, payload.Id)
 	xlog.GetWithField(ctx, "RETARGETING", "ada").Debug()
-	fmt.Println("RETARGET 11")
 	defer safe.GoRoutine(ctx, func() {
 
 		for _, s := range sd {
@@ -291,7 +290,6 @@ func seatDetail(req *openrtb.BidRequest) ([]builder.DemandSeatData, bool) {
 		} else if imp[i].GetNative() != nil {
 			t = entity.RequestTypeNative
 			assets = imp[i].GetNative().GetRequestNative().GetAssets()
-			fmt.Println(fmt.Sprintf("FUCKING ASSET: %+v", imp[i].GetNative().GetRequestNative().GetAssets()))
 		}
 
 		seats = append(seats, builder.DemandSeatData{
