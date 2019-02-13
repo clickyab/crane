@@ -2,6 +2,7 @@ package ortb
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -23,6 +24,7 @@ const pixelPath = "/pixel/:rh/:size/:type/:subtype/:jt"
 func showPixel(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	pl, err := extractor(ctx, r)
 	if err != nil {
+		fmt.Println(err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
