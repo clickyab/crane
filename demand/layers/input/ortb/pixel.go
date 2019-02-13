@@ -27,7 +27,7 @@ func showPixel(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	xlog.GetWithField(ctx, "RETARGETING", "ada").Debug()
+	xlog.GetWithField(ctx, "TID:", pl.TID).Debug()
 	fmt.Println("RETARGET PIX")
 	counter := kv.NewAEAVStore(pl.ReserveHash, clickExpire.Duration()+time.Hour).IncSubKey("I", 1)
 	if counter > 1 {

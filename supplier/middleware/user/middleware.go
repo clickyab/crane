@@ -3,12 +3,11 @@ package user
 import (
 	"context"
 	"fmt"
+	"math/rand"
 	"net/http"
 	"time"
 
 	"clickyab.com/crane/supplier/lists"
-
-	"github.com/clickyab/services/random"
 
 	openrtb "clickyab.com/crane/openrtb/v2.5"
 
@@ -41,7 +40,8 @@ func (middleware) Handler(next framework.Handler) framework.Handler {
 		}
 
 		if uc, err := r.Cookie(uidKey); err != nil {
-			user.Id = "cyb-" + <-random.ID
+
+			user.Id = "cyb-" + fmt.Sprintf("%d", rand.Int31n(1e9)+1e9)
 			http.SetCookie(w,
 				&http.Cookie{
 					Domain:  "clickyab.com",
