@@ -124,6 +124,7 @@ func unaryInit(ctx context.Context) {
 func UnaryCall(ctx context.Context, pl *openrtb.BidRequest) (*openrtb.BidResponse, error) {
 	uclock.RLock()
 	defer uclock.RUnlock()
+	pl.Token = token.String()
 	res, err := ucl.Ortb(ctx, pl)
 	if err != nil {
 		close(recon)
