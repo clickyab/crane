@@ -98,24 +98,26 @@ var ucl openrtb.OrtbServiceClient
 var recon chan int
 var uclock = sync.RWMutex{}
 
-func unaryInit() {
-	go func() {
-		for {
-			uclock.Lock()
-			recon = make(chan int)
-		RC:
-			conn, err := grpc.Dial(insecureSever.String(), grpc.WithInsecure())
-			if err != nil {
-				fmt.Println(fmt.Sprintf("filed to connect: %s", err))
-				time.Sleep(time.Second * 2)
-				goto RC
-			}
-			ucl = openrtb.NewOrtbServiceClient(conn)
-			uclock.Unlock()
-			<-recon
-			_ = conn.Close()
+func unaryInit(ctx context.Context) {
+	for {
+		uclock.Lock()
+		recon = make(chan int)
+	RC:
+		conn, err := grpc.Dial(insecureSever.String(), grpc.WithInsecure())
+		if err != nil {
+			fmt.Println(fmt.Sprintf("filed to connect: %s", err))
+			time.Sleep(time.Second * 2)
+			goto RC
 		}
-	}()
+		ucl = openrtb.NewOrtbServiceClient(conn)
+		uclock.Unlock()
+		select {
+		case <-recon:
+			_ = conn.Close()
+		case <-ctx.Done():
+			break
+		}
+	}
 }
 
 // UnaryCall an openrtp end point

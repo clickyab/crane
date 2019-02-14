@@ -145,7 +145,7 @@ func newConnection(ctx context.Context, server, cert string) (*connection, error
 }
 
 func (ic *initClient) Initialize(ctx context.Context) {
-	unaryInit()
+	go unaryInit(ctx)
 	if demand.String() != "managed" {
 		return
 	}
