@@ -10,6 +10,8 @@ import (
 	"sync"
 	"time"
 
+	"google.golang.org/grpc/resolver"
+
 	"google.golang.org/grpc/balancer/roundrobin"
 
 	openrtb "clickyab.com/crane/openrtb/v2.5"
@@ -101,6 +103,7 @@ var recon chan int
 var uclock = sync.RWMutex{}
 
 func unaryInit(ctx context.Context) {
+	resolver.SetDefaultScheme("dns")
 	for {
 		uclock.Lock()
 		recon = make(chan int)
