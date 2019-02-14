@@ -10,6 +10,8 @@ import (
 	"sync"
 	"time"
 
+	"google.golang.org/grpc/balancer/roundrobin"
+
 	openrtb "clickyab.com/crane/openrtb/v2.5"
 	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/xlog"
@@ -103,7 +105,7 @@ func unaryInit(ctx context.Context) {
 		uclock.Lock()
 		recon = make(chan int)
 	RC:
-		conn, err := grpc.Dial(insecureSever.String(), grpc.WithInsecure(), grpc.WithBalancerName("supplier"))
+		conn, err := grpc.Dial(insecureSever.String(), grpc.WithInsecure(), grpc.WithBalancerName(roundrobin.Name))
 		if err != nil {
 			fmt.Println(fmt.Sprintf("filed to connect: %s", err))
 			time.Sleep(time.Second * 2)
