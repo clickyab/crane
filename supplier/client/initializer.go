@@ -145,7 +145,7 @@ func newConnection(ctx context.Context, server, cert string) (*connection, error
 }
 
 func (ic *initClient) Initialize(ctx context.Context) {
-	if demand.String() == "managed" {
+	if demand.String() != "managed" {
 		return
 	}
 	connections = ring.New(concurrentConnections.Int())
