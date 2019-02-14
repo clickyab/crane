@@ -39,7 +39,7 @@ func init() {
 }
 
 var (
-	concurrentConnections = config.RegisterInt("crane.supplier.stream.concurrentConnections", 1, "")
+	concurrentConnections = config.RegisterInt("crane.supplier.stream.concurrentConnections", 10, "")
 	insecureSever         = config.RegisterString("crane.supplier.stream.address", "127.0.0.1:9801", "")
 	token                 = config.RegisterString("crane.supplier.demand.token", "forbidden", "")
 	timeout               = config.RegisterDuration("crane.supplier.timeout", time.Millisecond*150, "maximum timeout")
@@ -146,9 +146,6 @@ func newConnection(ctx context.Context, server, cert string) (*connection, error
 
 func (ic *initClient) Initialize(ctx context.Context) {
 	go unaryInit(ctx)
-	if demand.String() != "managed" {
-		return
-	}
 	connections = ring.New(concurrentConnections.Int())
 	for i := 0; i < concurrentConnections.Int(); i++ {
 		safe.Try(func() error {
