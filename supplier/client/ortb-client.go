@@ -7,8 +7,10 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"sync"
+	"time"
 
-	"clickyab.com/crane/openrtb/v2.5"
+	openrtb "clickyab.com/crane/openrtb/v2.5"
 	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/xlog"
 	"google.golang.org/grpc"
@@ -92,19 +94,54 @@ func managed(ctx context.Context, pl *openrtb.BidRequest) (*openrtb.BidResponse,
 	}
 }
 
+var ucl openrtb.OrtbServiceClient
+var recon chan int
+var uclock = sync.RWMutex{}
+
+func unaryInit() {
+	go func() {
+		for {
+			uclock.Lock()
+			recon = make(chan int)
+		RC:
+			conn, err := grpc.Dial(insecureSever.String(), grpc.WithInsecure())
+			if err != nil {
+				fmt.Println(fmt.Sprintf("filed to connect: %s", err))
+				time.Sleep(time.Second * 2)
+				goto RC
+			}
+			ucl = openrtb.NewOrtbServiceClient(conn)
+			uclock.Unlock()
+			<-recon
+			_ = conn.Close()
+		}
+	}()
+}
+
 // UnaryCall an openrtp end point
 func UnaryCall(ctx context.Context, pl *openrtb.BidRequest) (*openrtb.BidResponse, error) {
-	conn, err := grpc.Dial(insecureSever.String(), grpc.WithInsecure())
+	uclock.RLock()
+	defer uclock.RUnlock()
+	res, err := ucl.Ortb(ctx, pl)
 	if err != nil {
-		return nil, err
+		close(recon)
 	}
-	defer func() {
-		_ = conn.Close()
-	}()
-	client := openrtb.NewOrtbServiceClient(conn)
-	pl.Token = token.String()
-	return client.Ortb(ctx, pl)
+	return res, err
 }
+
+// UnaryCall an openrtp end point
+// func UnaryCall(ctx context.Context, pl *openrtb.BidRequest) (*openrtb.BidResponse, error) {
+// 	conn, err := grpc.Dial(insecureSever.String(), grpc.WithInsecure())
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	defer func() {
+// 		_ = conn.Close()
+// 	}()
+// 	client := openrtb.NewOrtbServiceClient(conn)
+// 	pl.Token = token.String()
+// 	return client.Ortb(ctx, pl)
+// }
 
 // StreamCall an openrtp end point
 func StreamCall(ctx context.Context, pl *openrtb.BidRequest) (*openrtb.BidResponse, error) {
