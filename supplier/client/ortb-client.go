@@ -103,7 +103,7 @@ func unaryInit(ctx context.Context) {
 		uclock.Lock()
 		recon = make(chan int)
 	RC:
-		conn, err := grpc.Dial(insecureSever.String(), grpc.WithInsecure())
+		conn, err := grpc.Dial(insecureSever.String(), grpc.WithInsecure(), grpc.WithBalancerName("supplier"))
 		if err != nil {
 			fmt.Println(fmt.Sprintf("filed to connect: %s", err))
 			time.Sleep(time.Second * 2)
