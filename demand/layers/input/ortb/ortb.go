@@ -76,7 +76,6 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	tn := time.Now()
 	token := xmux.Param(ctx, "token")
 	sup, err := suppliers.GetSupplierByToken(token)
-
 	defer func() {
 		var supName = "unknown"
 		if sup != nil {

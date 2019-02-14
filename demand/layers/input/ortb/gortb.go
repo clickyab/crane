@@ -95,6 +95,7 @@ func validate(req *openrtb.BidRequest) error {
 // GrpcHandler for handling openrtb request
 func GrpcHandler(ctx context.Context, req *openrtb.BidRequest) (*openrtb.BidResponse, error) {
 	tn := time.Now()
+	xlog.GetWithField(ctx, "REQUEST FROM SUPPLIER", req.Id)
 
 	res := &openrtb.BidResponse{}
 	res.Id = req.GetId()
