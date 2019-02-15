@@ -149,14 +149,6 @@ func SetProtocol(scheme entity.Protocol) ShowOptionSetter {
 	}
 }
 
-// SetEventPage is the event page setter for multi request
-func SetEventPage(ep string) ShowOptionSetter {
-	return func(o *Context) (*Context, error) {
-		o.eventPage = ep
-		return o, nil
-	}
-}
-
 // SetCategory set the capping mode
 func SetCategory(b *openrtb.BidRequest) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {

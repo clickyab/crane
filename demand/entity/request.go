@@ -35,8 +35,6 @@ type Request interface {
 	Location() Location
 	// IsMobile shows if its a phone
 	IsMobile() bool
-	// EventPage is a string, generated only from multiple request (not one request to select multiple ad)
-	EventPage() string
 	// Referrer of the page
 	Referrer() string
 	// Parent is the page contain the ad

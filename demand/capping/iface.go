@@ -2,14 +2,14 @@ package capping
 
 import (
 	"fmt"
-	"strconv"
 	"strings"
 	"time"
+
+	"github.com/sirupsen/logrus"
 
 	"clickyab.com/crane/demand/entity"
 	"github.com/clickyab/services/config"
 	"github.com/clickyab/services/kv"
-	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -49,31 +49,21 @@ func noCappingMode(ads []entity.SelectedCreative) []entity.SelectedCreative {
 }
 
 // ApplyCapping is an entry for set capping in ads
-func ApplyCapping(mode entity.CappingMode, copID string, ads []entity.SelectedCreative, ep string) []entity.SelectedCreative {
+func ApplyCapping(mode entity.CappingMode, copID string, ads []entity.SelectedCreative) []entity.SelectedCreative {
 	switch mode {
 	case entity.CappingNone:
 		return noCappingMode(ads)
 	case entity.CappingReset:
-		return resetCappingMode(copID, ads, ep)
+		return resetCappingMode(copID, ads)
 	case entity.CappingStrict:
-		return strictCappingMode(copID, ads, ep)
+		return strictCappingMode(copID, ads)
 	}
 	panic("invalid capping mode")
 }
 
-func strictCappingMode(copID string, ads []entity.SelectedCreative, ep string) []entity.SelectedCreative {
+func strictCappingMode(copID string, ads []entity.SelectedCreative) []entity.SelectedCreative {
 	var selected = make(map[int32]bool)
 
-	// evenet page is an old hack to handle ads in same page in multiple request. maybe we should retire it
-	// TODO : remove event page after 31 March 2018 if there is no need for it
-	if ep != "" {
-		s := kv.NewDistributedSet(ep)
-		for _, v := range s.Members() {
-			vInt, _ := strconv.ParseInt(v, 10, 0)
-			selected[int32(vInt)] = true
-		}
-
-	}
 	c := newContext()
 	ck := kv.NewAEAVStore(getCappingKey(entity.CappingStrict, copID), dailyCapExpire.Duration())
 	results := ck.AllKeys()
@@ -107,19 +97,8 @@ func strictCappingMode(copID string, ads []entity.SelectedCreative, ep string) [
 }
 
 // GetCapping try to get capping for current ad
-func resetCappingMode(copID string, ads []entity.SelectedCreative, ep string) []entity.SelectedCreative {
+func resetCappingMode(copID string, ads []entity.SelectedCreative) []entity.SelectedCreative {
 	var selected = make(map[int32]bool)
-	// evenet page is an old hack to handle ads in same page in multiple request. maybe we should retire it
-	// TODO : remove event page after 31 March 2018 if there is no need for it
-	if ep != "" {
-		s := kv.NewDistributedSet(ep)
-
-		for _, v := range s.Members() {
-			vInt, _ := strconv.ParseInt(v, 10, 0)
-			selected[int32(vInt)] = true
-		}
-
-	}
 	c := newContext()
 	ck := kv.NewAEAVStore(getCappingKey(entity.CappingReset, copID), dailyCapExpire.Duration())
 	results := ck.AllKeys()

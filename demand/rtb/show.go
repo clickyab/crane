@@ -45,8 +45,8 @@ func MinimalSelect(
 	}
 	exceed, underfloor := selector(ctx, ads, seat, false, nil)
 
-	exceed = capping.ApplyCapping(ctx.Capping(), ctx.User().ID(), exceed, ctx.EventPage())
-	underfloor = capping.ApplyCapping(ctx.Capping(), ctx.User().ID(), underfloor, ctx.EventPage())
+	exceed = capping.ApplyCapping(ctx.Capping(), ctx.User().ID(), exceed)
+	underfloor = capping.ApplyCapping(ctx.Capping(), ctx.User().ID(), underfloor)
 
 	ef := byMulti{
 		Ads:   exceed,

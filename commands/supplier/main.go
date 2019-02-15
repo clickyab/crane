@@ -6,12 +6,16 @@ import (
 	"clickyab.com/crane/commands"
 	_ "clickyab.com/crane/supplier/layers/app"
 	_ "clickyab.com/crane/supplier/layers/asset"
+	_ "clickyab.com/crane/supplier/layers/exam"
 	_ "clickyab.com/crane/supplier/layers/native"
 	_ "clickyab.com/crane/supplier/layers/output/statics"
 	_ "clickyab.com/crane/supplier/layers/video"
 	_ "clickyab.com/crane/supplier/layers/web"
 
+	"github.com/sirupsen/logrus"
+
 	_ "clickyab.com/crane/models/staticseat"
+
 	// CORS is required for supplier
 	_ "clickyab.com/crane/supplier/middleware/cors"
 	_ "clickyab.com/crane/supplier/middleware/user"
@@ -22,7 +26,6 @@ import (
 	_ "github.com/clickyab/services/kv/redis"
 	_ "github.com/clickyab/services/mysql/connection/mysql"
 	"github.com/clickyab/services/shell"
-	"github.com/sirupsen/logrus"
 )
 
 func main() {

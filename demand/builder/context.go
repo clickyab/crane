@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"clickyab.com/crane/demand/entity"
-	"clickyab.com/crane/openrtb/v2.5"
+	openrtb "clickyab.com/crane/openrtb/v2.5"
 )
 
 // Context is the app Context
@@ -27,8 +27,7 @@ type Context struct {
 	user      entity.User
 	currency  string
 
-	eventPage string
-	NoTiny    bool
+	NoTiny bool
 
 	host     string
 	referrer string
@@ -130,11 +129,6 @@ func (c *Context) Referrer() string {
 // Parent is the request parent
 func (c *Context) Parent() string {
 	return c.parent
-}
-
-// EventPage is the event page for the single ad requests
-func (c *Context) EventPage() string {
-	return c.eventPage
 }
 
 // Capping is enabled or not?

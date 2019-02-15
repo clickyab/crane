@@ -128,7 +128,7 @@ func internalSelect(
 			continue
 		}
 
-		ef.Ads = capping.ApplyCapping(ctx.Capping(), ctx.User().ID(), ef.Ads, ctx.EventPage())
+		ef.Ads = capping.ApplyCapping(ctx.Capping(), ctx.User().ID(), ef.Ads)
 		if len(ef.Ads) == 0 {
 			continue
 		}
