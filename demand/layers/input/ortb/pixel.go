@@ -2,11 +2,8 @@ package ortb
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"time"
-
-	"github.com/clickyab/services/xlog"
 
 	"clickyab.com/crane/demand/builder"
 	"clickyab.com/crane/demand/layers/output/pixel"
@@ -15,7 +12,7 @@ import (
 	"github.com/clickyab/services/broker"
 	"github.com/clickyab/services/kv"
 	"github.com/clickyab/services/safe"
-	"github.com/sirupsen/logrus"
+	"github.com/clickyab/services/xlog"
 )
 
 const pixelPath = "/pixel/:rh/:size/:type/:subtype/:jt"
@@ -24,7 +21,7 @@ const pixelPath = "/pixel/:rh/:size/:type/:subtype/:jt"
 func showPixel(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	pl, err := extractor(ctx, r)
 	if err != nil {
-		fmt.Println(err)
+		w.Header().Add("err", err.Error())
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -51,7 +48,7 @@ func showPixel(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	// Build context
 	c, err := builder.NewContext(b...)
 	if err != nil {
-		logrus.Error(err)
+		w.Header().Add("err", err.Error())
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}

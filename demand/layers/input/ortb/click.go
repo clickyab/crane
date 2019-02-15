@@ -33,6 +33,7 @@ var (
 func clickBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	pl, err := extractor(ctx, r)
 	if err != nil {
+		w.Header().Add("err", err.Error())
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -75,6 +76,7 @@ func clickBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	// Build context
 	c, err := builder.NewContext(b...)
 	if err != nil {
+		w.Header().Add("err", err.Error())
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
