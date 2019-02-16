@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
+	"sync"
 	"time"
 
 	"github.com/clickyab/services/xlog"
@@ -37,7 +39,6 @@ func getAsset(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	defer func() {
 		if err != nil {
 			w.Header().Set("error", msg)
-			_, _ = w.Write([]byte(msg))
 			w.WriteHeader(http.StatusInternalServerError)
 		}
 	}()
@@ -52,32 +53,34 @@ func getAsset(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	pl.User = u
 	ul, err := url.Parse(r.URL.Query().Get("url"))
 	if err != nil {
+		xlog.GetWithError(ctx, err).Debug()
 		msg = "invalid url"
 		return
 	}
 	ti := r.URL.Query().Get("title")
 	if ti == "" {
 		msg = "title does not exists"
+		xlog.GetWithError(ctx, fmt.Errorf(msg)).Debug()
 		return
 	}
 	pl.FTitle = ti
 	pl.FURL = ul.String()
 	l, err := item.CheckList(r.URL.Query().Get("list"))
 	if err != nil {
+		xlog.GetWithError(ctx, err).Debug()
 		msg = "list doesn't exists"
 		return
 	}
-	if ul.Host != l.Domain {
-		msg = "domain doesn't match"
-		return
-	}
-	if err != nil {
-		msg = "list does not exists"
+	if !strings.HasSuffix(ul.Host, l.Domain) {
+		err = fmt.Errorf("domain doesn't match")
+		xlog.GetWithError(ctx, err).Debug()
+		msg = err.Error()
 		return
 	}
 
 	bl, err := strconv.ParseBool(r.URL.Query().Get("isavailable"))
 	if err != nil {
+		xlog.GetWithError(ctx, err).Debug()
 		msg = "availability is not defined"
 		return
 	}
@@ -86,6 +89,7 @@ func getAsset(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	pl.FBrand = r.URL.Query().Get("brand")
 	d, err := strconv.ParseInt(r.URL.Query().Get("discount"), 10, 64)
 	if err != nil && r.URL.Query().Get("discount") != "" {
+		xlog.GetWithError(ctx, err).Debug()
 		msg = "discount is not defined"
 		return
 	}
@@ -93,6 +97,7 @@ func getAsset(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 	p, err := strconv.ParseInt(r.URL.Query().Get("price"), 10, 64)
 	if err != nil && r.URL.Query().Get("price") != "" {
+		xlog.GetWithError(ctx, err).Debug()
 		msg = "price is not defined"
 		return
 	}
@@ -100,11 +105,11 @@ func getAsset(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 	img, err := url.Parse(r.URL.Query().Get("img"))
 	if err != nil {
+		xlog.GetWithError(ctx, err).Debug()
 		msg = "image url is not valid"
 		return
 	}
 	pl.FImg = img.String()
-
 	pl.FSKU = r.URL.Query().Get("sku")
 	pl.FBrand = r.URL.Query().Get("brand")
 
@@ -113,6 +118,7 @@ func getAsset(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			xlog.GetWithError(ctx, err).Debug("set list id")
 		}
+		xlog.GetWithError(ctx, err).Debug("add list to channel")
 		assetChan <- pl
 	}()
 }
@@ -133,7 +139,9 @@ func assetHandler() {
 			flush()
 			t = time.After(d)
 		case a := <-assetChan:
+			lock.Lock()
 			items[a.Hash()] = a
+			lock.Unlock()
 			if len(items) > 100 {
 				flush()
 				t = time.After(d)
@@ -143,8 +151,11 @@ func assetHandler() {
 }
 
 var items = make(map[string]entity.Item)
+var lock = sync.Mutex{}
 
 func flush() {
+	lock.Lock()
+	defer lock.Unlock()
 	ts := make([]entity.Item, 0)
 	for _, v := range items {
 		ts = append(ts, v)
@@ -152,6 +163,11 @@ func flush() {
 	if len(ts) == 0 {
 		return
 	}
-	_ = item.AddAssets(context.Background(), ts)
+
+	err := item.AddAssets(context.Background(), ts)
+	if err != nil {
+		fmt.Println("ASSET FLUSH: ", err.Error())
+	}
+
 	items = make(map[string]entity.Item)
 }

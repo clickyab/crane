@@ -250,11 +250,14 @@ func AssetLoader(_ context.Context) (map[string]kv.Serializable, error) {
 	for i := range res {
 		img, err := url.Parse(imgconv.String())
 		assert.Nil(err)
-		img.Query().Add("w", "500")
-		img.Query().Add("x", "500")
-		img.Query().Add("h", "500")
-		img.Query().Add("y", "500")
-		img.Query().Add("url", res[i].FImg)
+		qs := img.Query()
+
+		qs.Add("w", "500")
+		qs.Add("x", "500")
+		qs.Add("h", "315")
+		qs.Add("y", "315")
+		qs.Add("url", res[i].FImg)
+		img.RawQuery = qs.Encode()
 		res[i].assets = []entity.Asset{{
 			MimeType: "image/jpeg",
 			Type:     entity.AssetTypeImage,
@@ -281,8 +284,8 @@ func AssetLoader(_ context.Context) (map[string]kv.Serializable, error) {
 
 // AddAssets add multiple product asset
 func AddAssets(ctx context.Context, a []entity.Item) error {
-	q := "INSERT INTO list_asset (hash,url,sku,brand,img,title,discount,is_available,cat) VALUES "
-	p := "(?,?,?,?,?,?,?,?,?),"
+	q := "INSERT INTO list_asset (hash,url,sku,brand,img,title,discount,is_available) VALUES "
+	p := "(?,?,?,?,?,?,?,?),"
 	x := " ON DUPLICATE KEY UPDATE hash=VALUES(hash)"
 	params := make([]interface{}, 0)
 
@@ -294,7 +297,7 @@ func AddAssets(ctx context.Context, a []entity.Item) error {
 			return 0
 		}()
 		q += p
-		params = append(params, simplehash.SHA1(e.URL()), e.URL(), e.SKU(), e.Brand(), e.Image(), e.Title(), e.Discount(), a, "")
+		params = append(params, simplehash.SHA1(e.URL()), e.URL(), e.SKU(), e.Brand(), e.Image(), e.Title(), e.Discount(), a)
 	}
 	q = q[:len(q)-1] + x
 
