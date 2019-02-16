@@ -5,7 +5,12 @@ import (
 	"encoding/gob"
 	"fmt"
 	"io"
+	"net/url"
 	"unicode/utf8"
+
+	"github.com/clickyab/services/assert"
+
+	"github.com/clickyab/services/config"
 
 	"github.com/clickyab/services/xlog"
 
@@ -230,6 +235,8 @@ func (a *Asset) Decode(r io.Reader) error {
 	return gob.NewDecoder(r).Decode(a)
 }
 
+var imgconv = config.RegisterString("crane.demand.cropper", "http://t.clickyab.com/cropper/", "")
+
 // AssetLoader for caching advertiser product
 func AssetLoader(_ context.Context) (map[string]kv.Serializable, error) {
 
@@ -241,13 +248,20 @@ func AssetLoader(_ context.Context) (map[string]kv.Serializable, error) {
 	}
 
 	for i := range res {
+		img, err := url.Parse(imgconv.String())
+		assert.Nil(err)
+		img.Query().Add("w", "500")
+		img.Query().Add("x", "500")
+		img.Query().Add("h", "500")
+		img.Query().Add("y", "500")
+		img.Query().Add("url", res[i].FImg)
 		res[i].assets = []entity.Asset{{
 			MimeType: "image/jpeg",
 			Type:     entity.AssetTypeImage,
 			SubType:  entity.AssetTypeImageSubTypeMain,
 			Width:    int32(500),
 			Height:   int32(315),
-			Data:     res[i].FImg,
+			Data:     img.String(),
 		}, {
 			MimeType: "text/html",
 			Type:     entity.AssetTypeText,
@@ -273,13 +287,14 @@ func AddAssets(ctx context.Context, a []entity.Item) error {
 	params := make([]interface{}, 0)
 
 	for _, e := range a {
-		q += p
-		params = append(params, simplehash.SHA1(e.URL()), e.URL(), e.SKU(), e.Brand(), e.Image(), e.Title(), e.Discount(), func() int {
+		a := func() int32 {
 			if e.Available() {
 				return 1
 			}
 			return 0
-		}(), "")
+		}()
+		q += p
+		params = append(params, simplehash.SHA1(e.URL()), e.URL(), e.SKU(), e.Brand(), e.Image(), e.Title(), e.Discount(), a, "")
 	}
 	q = q[:len(q)-1] + x
 
