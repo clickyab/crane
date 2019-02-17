@@ -2,6 +2,7 @@ package ortb
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -49,6 +50,8 @@ func showPixel(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 	b = append(b, builder.SetFullSeats(pl.PublicID, pl.Size, pl.ReserveHash, pl.AdID, pl.CpID, pl.CpAdID, pl.cpn,
 		pl.Bid, time.Now().Unix(), pl.CPM, pl.SCPM, pl.requestType, pl.targetURL))
+	fmt.Println("IMPRESSION:", pl.PublicID, pl.Size, pl.ReserveHash, pl.AdID, pl.CpID, pl.CpAdID, pl.cpn,
+		pl.Bid, pl.PreviousTime, pl.CPM, pl.SCPM, pl.requestType, pl.targetURL)
 	// Build context
 	c, err := builder.NewContext(b...)
 	if err != nil {
