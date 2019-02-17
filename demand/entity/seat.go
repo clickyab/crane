@@ -57,6 +57,16 @@ type Seat interface {
 	SoftCPM() float64
 	// DID return device id sha1
 	DID() string
+	// CampaignID return campaign ID
+	CampaignID() int32
+	// CampaignAdID return campaign ad id
+	CampaignAdID() int32
+	// AdID return ad id
+	AdID() int32
+	// CampaignName return campaign name
+	CampaignName() string
+	// TargetURL of advertiser
+	TargetURL() string
 }
 
 // VastSeat is a seat with vast compatibility

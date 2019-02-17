@@ -1,7 +1,7 @@
 package entity
 
 import (
-	"clickyab.com/crane/openrtb/v2.5"
+	openrtb "clickyab.com/crane/openrtb/v2.5"
 )
 
 // InputType is demand
@@ -102,4 +102,12 @@ type Context interface {
 	TV() bool
 	// BannerMarkup true if do not need iframe
 	BannerMarkup() bool
+	// CampaignID return campaign ID
+	CampaignID() int32
+	// CampaignAdID return campaign ad id
+	CampaignAdID() int32
+	// CampaignName return campaign name
+	CampaignName() string
+	// AdID return ad id
+	AdID() int32
 }

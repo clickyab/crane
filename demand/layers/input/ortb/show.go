@@ -60,7 +60,7 @@ func getRegion(key string) string {
 
 func setCapping(ctx context.Context, pl *payloadData, proto string) {
 	if (pl.CappRegion == currentRegion.String() || pl.CappRegion == "") && pl.CMode != entity.CappingNone {
-		capping.StoreCapping(pl.CMode, pl.TID, pl.Ad.ID())
+		capping.StoreCapping(pl.CMode, pl.TID, pl.AdID)
 		return
 	}
 
@@ -73,7 +73,7 @@ func setCapping(ctx context.Context, pl *payloadData, proto string) {
 	var httpClient = &http.Client{}
 
 	urlPath := router.MustPath("capping", map[string]string{
-		"ad_id":     fmt.Sprint(pl.Ad.ID()),
+		"ad_id":     fmt.Sprint(pl.AdID),
 		"user_id":   pl.TID,
 		"capp_mode": fmt.Sprint(pl.CMode),
 	})
@@ -137,7 +137,8 @@ func showBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetPublisher(pl.Publisher),
 		builder.SetSuspicious(pl.Suspicious),
 		builder.SetFatFinger(pl.FatFinger),
-		builder.SetFullSeats(pl.PublicID, pl.Size, pl.ReserveHash, pl.Ad, pl.Bid, time.Now().Unix(), pl.CPM, pl.SCPM, pl.requestType),
+		builder.SetFullSeats(pl.PublicID, pl.Size, pl.ReserveHash, pl.AdID, pl.CpID, pl.CpAdID, pl.cpn,
+			pl.Bid, time.Now().Unix(), pl.CPM, pl.SCPM, pl.requestType, pl.targetURL),
 	)
 	if err != nil {
 		logrus.Error(err)

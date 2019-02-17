@@ -87,19 +87,13 @@ func FillClickData(p entity.Publisher, m models.Impression, s models.Seat, os en
 		return nil, err
 	}
 
-	//find ad
-	ad, err := GetAd(s.AdID)
-	if err != nil {
-		return nil, err
-	}
-
 	return &Click{
 		reservedHash: s.ReserveHash,
 		winnerBid:    s.WinnerBID,
 		webSiteID:    wID,
 		appID:        appID,
-		campaignID:   ad.Campaign().ID(),
-		campaignAdID: ad.CampaignAdID(),
+		campaignID:   s.CpID,
+		campaignAdID: s.CpAdID,
 		slotID:       sID,
 		slotAdID:     s.AdID,
 		copID:        m.CopID,
@@ -115,7 +109,7 @@ func FillClickData(p entity.Publisher, m models.Impression, s models.Seat, os en
 		date:         m.Timestamp.Format("20060102"),
 		fast:         fast,
 		typ:          entity.InputTypeDemand,
-		adID:         ad.ID(),
+		adID:         s.AdID,
 		supplier:     p.Supplier().Name(),
 	}, nil
 

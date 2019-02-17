@@ -55,7 +55,31 @@ type Context struct {
 
 	underfloor bool
 	// true view
-	tv bool
+	tv           bool
+	cpID         int32
+	adID         int32
+	cpAdID       int32
+	campaignName string
+}
+
+// CampaignName return campaign name
+func (c *Context) CampaignName() string {
+	return c.campaignName
+}
+
+// CampaignID return campaign ID
+func (c *Context) CampaignID() int32 {
+	return c.cpID
+}
+
+// CampaignAdID return campaign ad id
+func (c *Context) CampaignAdID() int32 {
+	return c.cpAdID
+}
+
+// AdID return ad id
+func (c *Context) AdID() int32 {
+	return c.adID
 }
 
 // ConnectionType return connection type 2g,3g,4g,...

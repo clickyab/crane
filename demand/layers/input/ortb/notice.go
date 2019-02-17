@@ -25,7 +25,8 @@ func noticeHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) 
 	// Build context
 	c, err := builder.NewContext(
 		builder.SetPublisher(pl.Publisher),
-		builder.SetFullSeats(pl.PublicID, pl.Size, pl.ReserveHash, pl.Ad, pl.Bid, pl.PreviousTime, pl.CPM, pl.SCPM, pl.requestType),
+		builder.SetFullSeats(pl.PublicID, pl.Size, pl.ReserveHash, pl.AdID, pl.CpID, pl.CpAdID, pl.cpn,
+			pl.Bid, pl.PreviousTime, pl.CPM, pl.SCPM, pl.requestType, pl.targetURL),
 	)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)

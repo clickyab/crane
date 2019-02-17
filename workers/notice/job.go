@@ -85,7 +85,9 @@ func NewNoticeJob(ctx entity.Context, s ...entity.Seat) broker.Job {
 	}
 	for i := range s {
 		j.Seats = append(j.Seats, m.Seat{
-			AdID:         s[i].WinnerAdvertise().ID(),
+			AdID:         s[i].AdID(),
+			CpID:         s[i].CampaignID(),
+			CpAdID:       s[i].CampaignAdID(),
 			AdSize:       s[i].Size(),
 			SlotPublicID: s[i].PublicID(),
 			WinnerBID:    s[i].Bid(),

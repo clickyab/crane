@@ -54,6 +54,31 @@ type seat struct {
 	// Video related stuff
 	mimes       []string
 	requestType entity.RequestType
+	cpID        int32
+	cpAdID      int32
+	adID        int32
+	cpName      string
+	tr          string
+}
+
+func (s *seat) TargetURL() string {
+	return s.tr
+}
+
+func (s *seat) CampaignName() string {
+	return s.cpName
+}
+
+func (s *seat) CampaignID() int32 {
+	return s.cpID
+}
+
+func (s *seat) CampaignAdID() int32 {
+	return s.cpAdID
+}
+
+func (s *seat) AdID() int32 {
+	return s.adID
 }
 
 func (s *seat) DID() string {
@@ -125,6 +150,11 @@ func (s *seat) SetWinnerAdvertise(wa entity.Creative, bid float64, cpm float64) 
 	s.winnerAd = wa
 	s.bid = bid
 	s.cpm = decShare(s.context.publisher.Supplier(), cpm)
+	s.adID = wa.ID()
+	s.cpAdID = wa.CampaignAdID()
+	s.cpID = wa.Campaign().ID()
+	s.cpName = wa.Campaign().Name()
+	s.tr = wa.TargetURL()
 }
 
 func (s *seat) WinnerAdvertise() entity.Creative {
@@ -243,20 +273,24 @@ func (s *seat) makeURL(route string, params map[string]string, cpm float64, expi
 		tiny = "T"
 	}
 	j := jwt.NewJWT().Encode(map[string]string{
-		"aid":   fmt.Sprint(s.winnerAd.ID()),
-		"dom":   s.context.Publisher().Name(),
-		"sup":   s.context.Publisher().Supplier().Name(),
-		"bid":   fmt.Sprint(s.bid),
-		"uaip":  string(data),
-		"pid":   s.publicID,
-		"susp":  fmt.Sprint(s.context.Suspicious()),
-		"now":   fmt.Sprint(time.Now().Unix()),
-		"cpm":   fmt.Sprint(cpm),
-		"ff":    ff,
-		"pt":    s.context.Publisher().Type().String(),
-		"t":     tiny,
-		"cmode": fmt.Sprint(s.context.Capping()),
-		"did":   s.did,
+		"aid":    fmt.Sprint(s.winnerAd.ID()),
+		"dom":    s.context.Publisher().Name(),
+		"sup":    s.context.Publisher().Supplier().Name(),
+		"bid":    fmt.Sprint(s.bid),
+		"uaip":   string(data),
+		"pid":    s.publicID,
+		"susp":   fmt.Sprint(s.context.Suspicious()),
+		"now":    fmt.Sprint(time.Now().Unix()),
+		"cpm":    fmt.Sprint(cpm),
+		"ff":     ff,
+		"pt":     s.context.Publisher().Type().String(),
+		"t":      tiny,
+		"cmode":  fmt.Sprint(s.context.Capping()),
+		"did":    s.did,
+		"cpid":   fmt.Sprint(s.winnerAd.Campaign().ID()),
+		"cpadid": fmt.Sprint(s.winnerAd.CampaignAdID()),
+		"tr":     s.winnerAd.TargetURL(),
+		"cpn":    s.winnerAd.Campaign().Name(),
 	}, expire)
 	s.winnerAd.ID()
 	params["jt"] = j

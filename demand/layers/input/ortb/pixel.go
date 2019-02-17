@@ -43,8 +43,12 @@ func showPixel(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetPublisher(pl.Publisher),
 		builder.SetSuspicious(pl.Suspicious),
 		builder.SetFatFinger(pl.FatFinger),
+		builder.SetAdID(pl.AdID),
+		builder.SetCpID(pl.CpID),
+		builder.SetCpAdID(pl.CpAdID),
 	}
-	b = append(b, builder.SetFullSeats(pl.PublicID, pl.Size, pl.ReserveHash, pl.Ad, pl.Bid, time.Now().Unix(), pl.CPM, pl.SCPM, pl.requestType))
+	b = append(b, builder.SetFullSeats(pl.PublicID, pl.Size, pl.ReserveHash, pl.AdID, pl.CpID, pl.CpAdID, pl.cpn,
+		pl.Bid, time.Now().Unix(), pl.CPM, pl.SCPM, pl.requestType, pl.targetURL))
 	// Build context
 	c, err := builder.NewContext(b...)
 	if err != nil {

@@ -63,7 +63,11 @@ func clickBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		builder.SetPublisher(pl.Publisher),
 		builder.SetSuspicious(pl.Suspicious),
 		builder.SetFatFinger(pl.FatFinger),
-		builder.SetFullSeats(pl.PublicID, pl.Size, pl.ReserveHash, pl.Ad, pl.Bid, pl.PreviousTime, pl.CPM, pl.SCPM, pl.requestType),
+		builder.SetAdID(pl.AdID),
+		builder.SetCpID(pl.CpID),
+		builder.SetCpAdID(pl.CpAdID),
+		builder.SetFullSeats(pl.PublicID, pl.Size, pl.ReserveHash, pl.AdID, pl.CpID, pl.CpAdID, pl.cpn,
+			pl.Bid, pl.PreviousTime, pl.CPM, pl.SCPM, pl.requestType, pl.targetURL),
 	}
 
 	if pl.requestType == entity.RequestTypeVast {
@@ -86,7 +90,7 @@ func clickBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		job := click.NewClickJob(c)
 		broker.Publish(job)
 	})
-	body := replaceParameters(pl.Ad.TargetURL(), pl.Publisher.Name(), pl.Ad.Campaign().Name(), pl.ReserveHash, pl.IP)
+	body := replaceParameters(pl.targetURL, pl.Publisher.Name(), pl.cpn, pl.ReserveHash, pl.IP)
 
 	w.WriteHeader(http.StatusOK)
 	_, err = w.Write([]byte(body))

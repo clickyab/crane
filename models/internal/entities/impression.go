@@ -93,10 +93,6 @@ func AddImpression(p entity.Publisher, m models.Impression, s models.Seat) error
 	if err != nil {
 		return err
 	}
-	ca, err := GetAd(s.AdID)
-	if err != nil {
-		return err
-	}
 	copString := m.CopID
 	if len(m.CopID) > 10 {
 		copString = copString[:10]
@@ -125,11 +121,11 @@ func AddImpression(p entity.Publisher, m models.Impression, s models.Seat) error
 							)`, time.Now().Format("20060102"))
 
 	_, err = NewManager().GetWDbMap().Exec(q,
-		ca.Campaign().ID(), s.ReserveHash, s.AdSize,
+		s.CpID, s.ReserveHash, s.AdSize,
 		wID, 0, appID,
-		s.AdID, copID, ca.CampaignAdID(),
+		s.AdID, copID, s.CpAdID,
 		m.IP.String(), refer, parent,
-		ca.TargetURL(), s.WinnerBID, m.Suspicious,
+		s.TargetURL, s.WinnerBID, m.Suspicious,
 		0, 0,
 		m.Timestamp.Unix(), m.Timestamp.Format("20060102"), said,
 		sID, p.Supplier().Name(), sDiffCPM,
@@ -137,7 +133,7 @@ func AddImpression(p entity.Publisher, m models.Impression, s models.Seat) error
 	safe.GoRoutine(context.Background(), func() {
 		metrics.Impression.With(prometheus.Labels{
 			"sup": p.Supplier().Name(),
-			"cid": fmt.Sprint(ca.Campaign().ID()),
+			"cid": fmt.Sprint(s.CpID),
 		},
 		).Inc()
 	})

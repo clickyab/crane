@@ -18,6 +18,29 @@ type seat struct {
 	rate    float64
 	size    int32
 	did     string
+	cpID    int32
+	adID    int32
+	cpAdID  int32
+}
+
+func (s *seat) TargetURL() string {
+	panic("implement me")
+}
+
+func (s *seat) CampaignName() string {
+	panic("implement me")
+}
+
+func (s *seat) CampaignID() int32 {
+	return s.cpID
+}
+
+func (s *seat) CampaignAdID() int32 {
+	return s.cpAdID
+}
+
+func (s *seat) AdID() int32 {
+	return s.adID
 }
 
 func (s *seat) DID() string {

@@ -57,6 +57,14 @@ func SetUnderfloor(c bool) ShowOptionSetter {
 	}
 }
 
+// SetCampaignName is the type setter for context
+func SetCampaignName(c string) ShowOptionSetter {
+	return func(o *Context) (*Context, error) {
+		o.campaignName = c
+		return o, nil
+	}
+}
+
 // SetIPLocation is the IP and location setter for context, also it extract the IP information
 func SetIPLocation(ip string, user *openrtb.User, device *openrtb.Device, sup entity.Supplier) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
@@ -165,6 +173,30 @@ func SetCategory(b *openrtb.BidRequest) ShowOptionSetter {
 func SetCappingMode(mode entity.CappingMode) ShowOptionSetter {
 	return func(o *Context) (*Context, error) {
 		o.cappingMode = mode
+		return o, nil
+	}
+}
+
+// SetCpAdID set ad id
+func SetCpAdID(ff int32) ShowOptionSetter {
+	return func(o *Context) (*Context, error) {
+		o.cpAdID = ff
+		return o, nil
+	}
+}
+
+// SetCpID set ad id
+func SetCpID(ff int32) ShowOptionSetter {
+	return func(o *Context) (*Context, error) {
+		o.cpID = ff
+		return o, nil
+	}
+}
+
+// SetAdID set ad id
+func SetAdID(ff int32) ShowOptionSetter {
+	return func(o *Context) (*Context, error) {
+		o.adID = ff
 		return o, nil
 	}
 }

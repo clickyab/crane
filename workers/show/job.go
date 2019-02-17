@@ -89,7 +89,9 @@ func NewImpressionJob(ctx entity.Context, s ...entity.Seat) broker.Job {
 	}
 	for i := range s {
 		j.Seats = append(j.Seats, m.Seat{
-			AdID:         s[i].WinnerAdvertise().ID(),
+			AdID:         s[i].AdID(),
+			CpAdID:       s[i].CampaignAdID(),
+			CpID:         s[i].CampaignID(),
 			AdSize:       s[i].Size(),
 			SlotPublicID: s[i].PublicID(),
 			WinnerBID:    s[i].Bid(),

@@ -17,6 +17,10 @@ type Seat struct {
 	CPM          float64            `json:"cpm"`
 	SCPM         float64            `json:"scpm"`
 	Type         entity.RequestType `json:"t"`
+	CpID         int32              `json:"cp_id"`
+	CpAdID       int32              `json:"cp_ad_id"`
+	CpName       string             `json:"cp_name"`
+	TargetURL    string             `json:"target_url"`
 }
 
 // Impression is model for show and click job

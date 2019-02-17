@@ -7,8 +7,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"clickyab.com/crane/models/campaign"
-
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/internal/hash"
 	"clickyab.com/crane/models/apps"
@@ -26,16 +24,18 @@ type controller struct {
 }
 
 type payloadData struct {
-	ReserveHash  string
-	Size         int32
-	Type         entity.InputType
-	requestType  entity.RequestType
-	PubType      entity.PublisherType
-	TID          string
-	Ref          string
-	Parent       string
-	AdID         int32
-	Ad           entity.Creative
+	ReserveHash string
+	Size        int32
+	Type        entity.InputType
+	requestType entity.RequestType
+	PubType     entity.PublisherType
+	TID         string
+	Ref         string
+	Parent      string
+	AdID        int32
+	CpID        int32
+	CpAdID      int32
+	// Ad           entity.Creative
 	Supplier     entity.Supplier
 	Publisher    entity.Publisher
 	Bid          float64
@@ -50,8 +50,10 @@ type payloadData struct {
 	Tiny         bool
 	TV           bool
 	CappRegion   string
-	CMode        entity.CappingMode //capping mode (none,strict,reset)
+	CMode        entity.CappingMode // capping mode (none,strict,reset)
 	Did          string
+	targetURL    string
+	cpn          string
 }
 
 func extractor(ctx context.Context, r *http.Request) (*payloadData, error) {
@@ -81,7 +83,8 @@ func extractor(ctx context.Context, r *http.Request) (*payloadData, error) {
 		return false
 	}(tv)
 
-	expired, m, err := jwt.NewJWT().Decode([]byte(jt), "pt", "aid", "sup", "dom", "bid", "uaip", "susp", "pid", "now", "cpm", "ff", "t", "cmode", "did")
+	expired, m, err := jwt.NewJWT().Decode([]byte(jt), "pt", "aid", "sup", "dom", "bid", "uaip",
+		"susp", "pid", "now", "cpm", "ff", "t", "cmode", "did", "cpid", "cpadid", "tr", "cpn")
 	if err != nil {
 		return nil, err
 	}
@@ -120,10 +123,13 @@ func extractor(ctx context.Context, r *http.Request) (*payloadData, error) {
 	}
 	aid, _ := strconv.ParseInt(m["aid"], 10, 64)
 	pl.AdID = int32(aid)
-	pl.Ad, err = campaign.GetAd(pl.AdID)
-	if err != nil {
-		return nil, err
-	}
+	cpid, _ := strconv.ParseInt(m["cpid"], 10, 64)
+	pl.CpID = int32(cpid)
+	cpadid, _ := strconv.ParseInt(m["cpadid"], 10, 64)
+	pl.CpAdID = int32(cpadid)
+
+	pl.targetURL = m["tr"]
+	pl.cpn = m["cpn"]
 	ts, err := strconv.Atoi(xmux.Param(ctx, "size"))
 	if err != nil {
 		return nil, fmt.Errorf("invalid size %s", m["size"])
