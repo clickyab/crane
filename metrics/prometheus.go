@@ -9,6 +9,15 @@ var port = config.RegisterString("crane.metric.port", "9700", "")
 
 var (
 
+	// Asset of items
+	Asset = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "supplier_asset",
+			Help: "Counter of asset",
+		},
+		[]string{"list"},
+	)
+
 	// Impression of bid
 	Impression = prometheus.NewCounterVec(
 		prometheus.CounterOpts{

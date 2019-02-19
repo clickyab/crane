@@ -10,6 +10,9 @@ import (
 	"sync"
 	"time"
 
+	"clickyab.com/crane/metrics"
+	"github.com/prometheus/client_golang/prometheus"
+
 	"github.com/clickyab/services/xlog"
 
 	"clickyab.com/crane/supplier/lists"
@@ -119,6 +122,9 @@ func getAsset(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 			xlog.GetWithError(ctx, err).Debug("set list id")
 		}
 		xlog.GetWithError(ctx, err).Debug("add list to channel")
+		metrics.Asset.With(prometheus.Labels{
+			"list": pl.FList,
+		})
 		assetChan <- pl
 	}()
 }
