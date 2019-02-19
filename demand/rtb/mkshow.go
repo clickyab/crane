@@ -135,6 +135,7 @@ func internalSelect(
 
 		sort.Sort(ef)
 		sorted = ef.Ads
+
 		theAd := sorted[0]
 		// Do not do second biding pricing on this ads, they can not pass CPMFloor
 		targetCPM := getSecondCPM(seat.SoftCPM(), sorted)
