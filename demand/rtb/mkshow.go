@@ -144,6 +144,7 @@ func internalSelect(
 		targetCPC, targetCPM = fixPrice(theAd.Campaign().Strategy(), targetCPC, targetCPM, seat.MinCPC(), seat.MinCPM())
 
 		selected[theAd.ID()] = true
+
 		// Only decrease share for CPM (which is reported to supplier) not bid (which is used by us)
 		seat.SetWinnerAdvertise(theAd, targetCPC, targetCPM)
 
