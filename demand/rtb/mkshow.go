@@ -132,6 +132,7 @@ func internalSelect(
 		if len(ef.Ads) == 0 {
 			continue
 		}
+
 		sort.Sort(ef)
 		sorted = ef.Ads
 
