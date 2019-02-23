@@ -10,6 +10,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/clickyab/services/assert"
+
 	"clickyab.com/crane/metrics"
 	"github.com/prometheus/client_golang/prometheus"
 
@@ -42,55 +44,59 @@ func getAsset(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		return
 	}
+	pl := &item.Asset{
+		User: u,
+	}
+
 	l, err := item.CheckList(r.URL.Query().Get("list"))
 	if err != nil {
 		return
 	}
 
-	pl := &item.Asset{
-		User: u,
-	}
-
 	defer func() {
 		if err != nil {
-			err = lists.SetLists(ctx, u.Id, "STATIC", l.KEY)
+			assert.Nil(lists.SetLists(ctx, u.Id, "STATIC", l.KEY))
 		}
 	}()
 
 	ti := r.URL.Query().Get("title")
 	if ti == "" {
+		xlog.GetWithError(ctx, err).Debug()
 		return
 	}
 	pl.FTitle = ti
 	ul, err := url.Parse(r.URL.Query().Get("url"))
 	if err != nil {
+		xlog.GetWithError(ctx, err).Debug()
 		return
 	}
 	if !strings.HasSuffix(ul.Host, l.Domain) {
+		xlog.GetWithError(ctx, err).Debug()
 		return
 	}
 	pl.FURL = ul.String()
-	bl, err := strconv.ParseBool(r.URL.Query().Get("isavailable"))
+	pl.IsAvailable, err = strconv.ParseBool(r.URL.Query().Get("isavailable"))
 	if err != nil {
+		xlog.GetWithError(ctx, err).Debug()
 		return
 	}
-	pl.IsAvailable = bl
 
 	pl.FBrand = r.URL.Query().Get("brand")
-	d, err := strconv.ParseInt(r.URL.Query().Get("discount"), 10, 64)
+	pl.FDiscount, err = strconv.ParseInt(r.URL.Query().Get("discount"), 10, 64)
 	if err != nil && r.URL.Query().Get("discount") != "" {
+		xlog.GetWithError(ctx, err).Debug()
 		return
 	}
-	pl.FDiscount = d
 
-	p, err := strconv.ParseInt(r.URL.Query().Get("price"), 10, 64)
+	pl.FPrice, err = strconv.ParseInt(r.URL.Query().Get("price"), 10, 64)
 	if err != nil && r.URL.Query().Get("price") != "" {
+		xlog.GetWithError(ctx, err).Debug()
 		return
 	}
-	pl.FPrice = p
 
 	img, err := url.Parse(r.URL.Query().Get("img"))
 	if err != nil {
+		xlog.GetWithError(ctx, err).Debug()
 		return
 	}
 	pl.FImg = img.String()
