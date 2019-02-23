@@ -62,6 +62,7 @@ func getAsset(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 	ti := r.URL.Query().Get("title")
 	if ti == "" {
+		err = fmt.Errorf("not title")
 		xlog.GetWithError(ctx, err).Debug()
 		return
 	}
