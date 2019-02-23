@@ -50,6 +50,7 @@ func getAsset(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 	l, err := item.CheckList(r.URL.Query().Get("list"))
 	if err != nil {
+		xlog.GetWithError(ctx, err).Debug()
 		return
 	}
 
@@ -78,19 +79,21 @@ func getAsset(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	pl.FURL = ul.String()
 	pl.IsAvailable, err = strconv.ParseBool(r.URL.Query().Get("isavailable"))
 	if err != nil {
-		xlog.GetWithError(ctx, err).Debug()
+		xlog.GetWithError(ctx, err).Debug("isavailable")
 		return
 	}
 
 	pl.FBrand = r.URL.Query().Get("brand")
 	pl.FDiscount, err = strconv.ParseInt(r.URL.Query().Get("discount"), 10, 64)
 	if err != nil && r.URL.Query().Get("discount") != "" {
+		err = fmt.Errorf("discount")
 		xlog.GetWithError(ctx, err).Debug()
 		return
 	}
 
 	pl.FPrice, err = strconv.ParseInt(r.URL.Query().Get("price"), 10, 64)
 	if err != nil && r.URL.Query().Get("price") != "" {
+		err = fmt.Errorf("price")
 		xlog.GetWithError(ctx, err).Debug()
 		return
 	}
