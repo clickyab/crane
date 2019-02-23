@@ -71,6 +71,7 @@ func getAsset(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if !strings.HasSuffix(ul.Host, l.Domain) {
+		err = fmt.Errorf("domain not exists")
 		xlog.GetWithError(ctx, err).Debug()
 		return
 	}
