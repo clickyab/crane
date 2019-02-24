@@ -139,9 +139,11 @@ type videoData struct {
 
 func renderVideoBanner(w io.Writer, ctx entity.Context, s entity.Seat) error {
 	src := s.WinnerAdvertise().Media()
-	if ctx.Protocol() == entity.HTTPS {
-		src = strings.Replace(src, "http://", "https://", -1)
-	}
+	src = strings.Replace(src, "http://", "https://", -1)
+
+	// if ctx.Protocol() == entity.HTTPS {
+	// 	src = strings.Replace(src, "http://", "https://", -1)
+	// }
 	sa := videoData{
 		Link:     s.ClickURL().String(),
 		Height:   s.Height(),
