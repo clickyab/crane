@@ -227,7 +227,7 @@ func (s *seat) ClickURL() *url.URL {
 	)
 	// a hack, to prevent https links on click. it seems google analytic has some kind of problem with
 	// https referrer : https://www.e-nor.com/blog/google-analytics/https-to-http-secure-to-nonsecure-referrer-loss
-	s.click.Scheme = "https"
+	s.click.Scheme = string(entity.HTTPS)
 
 	return s.click
 }
@@ -310,6 +310,7 @@ func (s *seat) makeURL(route string, params map[string]string, cpm float64, expi
 	v.Set("parent", s.context.parent)
 	v.Set("reg", currentRegion.String())
 	u.RawQuery = v.Encode()
+	u.Scheme = "https"
 	return u
 }
 
