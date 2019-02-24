@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"clickyab.com/crane/metrics"
-	"clickyab.com/crane/openrtb/v2.5"
+	openrtb "clickyab.com/crane/openrtb/v2.5"
 	"github.com/clickyab/services/version"
 	"github.com/prometheus/client_golang/prometheus"
 
@@ -51,9 +51,11 @@ func nativeMarkup(ctx entity.Context, s entity.NativeSeat) *openrtb.BidResponse_
 
 			if f.Type == entity.AssetTypeImage {
 				src := a[0].Data
-				if ctx.Protocol() == entity.HTTPS {
-					src = strings.Replace(src, "http://", "https://", -1)
-				}
+				src = strings.Replace(src, "http://", "https://", -1)
+
+				// if ctx.Protocol() == entity.HTTPS {
+				// 	src = strings.Replace(src, "http://", "https://", -1)
+				// }
 				as.AssetOneof = &openrtb.NativeResponse_Asset_Img{
 					Img: &openrtb.NativeResponse_Asset_Image{
 						Url: src,
@@ -116,9 +118,11 @@ func vastMarkup(ctx entity.Context, s entity.VastSeat) *openrtb.BidResponse_Seat
 	q := tracking.Query()
 	q.Add("tv", "1")
 	src := s.WinnerAdvertise().Media()
-	if ctx.Protocol() == entity.HTTPS {
-		src = strings.Replace(src, "http://", "https://", -1)
-	}
+	src = strings.Replace(src, "http://", "https://", -1)
+	//
+	// if ctx.Protocol() == entity.HTTPS {
+	// 	src = strings.Replace(src, "http://", "https://", -1)
+	// }
 	tracking.RawQuery = q.Encode()
 	if s.Linear() {
 		skipAfter := vast.Duration(s.SkipAfter())
@@ -147,10 +151,12 @@ func vastMarkup(ctx entity.Context, s entity.VastSeat) *openrtb.BidResponse_Seat
 					URI: func() string {
 						// TODO : it should check bcause we hard coded click to http
 						// remove it after you remove hard coded http in click url
-						if ctx.Protocol() == entity.HTTPS {
-							return strings.Replace(tracking.String(), "http://", "https://", -1)
-						}
-						return tracking.String()
+						return strings.Replace(tracking.String(), "http://", "https://", -1)
+						//
+						// if ctx.Protocol() == entity.HTTPS {
+						// 	return strings.Replace(tracking.String(), "http://", "https://", -1)
+						// }
+						// return tracking.String()
 					}(),
 					Event: "complete",
 				},
