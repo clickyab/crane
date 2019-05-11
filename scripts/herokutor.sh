@@ -135,7 +135,7 @@ echo "The branch ${BRANCH} build finished, try to deploy it" >> ${OUT_LOG}
 echo "If there is no report after this for successful deploy, it means the deply failed. report it please." >> ${OUT_LOG}
 for WRK_TYP in demand-server supplier-server impression-worker click-worker
 do
-   kubectl -n ${NAMESPACE} set image deployment  ${APP}-${WRK_TYP} ${WRK_TYP}=registry.3rdad.com/clickyab/${APP}_${BRANCH}:${VERSION} --record
+   kubectl  --insecure-skip-tls-verify -n ${NAMESPACE} set image deployment  ${APP}-${WRK_TYP} ${WRK_TYP}=registry.3rdad.com/clickyab/${APP}_${BRANCH}:${VERSION} --record
 done
 echo "..." >> ${OUT_LOG}
 echo "Deploy done successfully to image registry.3rdad.com/clickyab/${APP}:${BRANCH}.${COMMIT_COUNT}" >> ${OUT_LOG}
