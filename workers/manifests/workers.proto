@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package worker;
+
+message Impression {
+    string ip = 1;
+    string copid = 2;
+    string useragent = 3;
+    int32 suspicious = 4;
+    string referrer = 5;
+    string parenturl = 6;
+    string publisher = 7;
+    string supplier = 8;
+    int32 timestamp = 9;
+    PublisherType publishertype = 10;
+
+    enum PublisherType {
+        APP = 0;
+        WEB = 1;
+    }
+}
+
+message Seat {
+     int64 adid = 1;
+     int32 adsize = 2;
+     string slotpublicid = 3;
+     string reservehash = 4;
+     float winnerbid = 5;
+     float cpm = 6;
+     float scpm = 7;
+     RequestType type = 8;
+
+     enum RequestType {
+         NATIVE = 0;
+         VAST = 1;
+         BANNER =2;
+     }
+
+}
