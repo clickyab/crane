@@ -263,7 +263,9 @@ func setPublisherCustomContext(payload *openrtb.BidRequest, b []builder.ShowOpti
 type nativeVersion int
 
 const (
+	// RequestString for old version of openrtb native request
 	RequestString nativeVersion = 0
+	// RequestNative for recent version of openrtb native request
 	RequestNative nativeVersion = 1
 )
 
