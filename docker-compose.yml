@@ -1,0 +1,18 @@
+version: "2"
+services:
+        supplier:
+                image: golang:1.12
+                # links:
+                #        - redis
+                #        - rabbit
+                # depends_on:
+                #         - "rabbit"
+                #         - "redis"
+                command: /crane/scripts/local.sh
+                          #command: ls -l /crane/
+                volumes:
+                        - .:/crane
+                          #        redis:
+                          #                image: redis:latest
+                          #        rabbit:
+                          #                image: rabbitmq:3.7-management

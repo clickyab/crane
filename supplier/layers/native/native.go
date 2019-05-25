@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/golang/protobuf/jsonpb"
+
 	"clickyab.com/crane/supplier/middleware/user"
 
 	website "clickyab.com/crane/models/clickyabwebsite"
@@ -110,8 +112,7 @@ func getNative(ct context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 
 	bq := &openrtb.BidRequest{
-		Id: fmt.Sprintf("cly-%s", <-random.ID),
-
+		Id:   fmt.Sprintf("cly-%s", <-random.ID),
 		User: us,
 		Imp:  getImps(r, targetCount, pub, tpl.Image),
 		DistributionchannelOneof: &openrtb.BidRequest_Site{
@@ -140,6 +141,15 @@ func getNative(ct context.Context, w http.ResponseWriter, r *http.Request) {
 			Capping:    openrtb.Capping_Reset,
 			Underfloor: true,
 		},
+	}
+
+	msh := jsonpb.Marshaler{}
+
+	rbz, err := msh.MarshalToString(bq)
+	if err != nil {
+		fmt.Println(err.Error())
+	} else {
+		fmt.Println(rbz)
 	}
 
 	br, err := client.Call(ctx, server.String(), bq)

@@ -7,6 +7,9 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/clickyab/services/xlog"
+	"github.com/golang/protobuf/jsonpb"
+
 	"clickyab.com/crane/metrics"
 	openrtb "clickyab.com/crane/openrtb/v2.5"
 	"github.com/clickyab/services/version"
@@ -25,7 +28,7 @@ func cdata(in string) vast.CDATAString {
 	}
 }
 
-func nativeMarkup(ctx entity.Context, s entity.NativeSeat) *openrtb.BidResponse_SeatBid {
+func nativeMarkup(ctx entity.Context, s entity.NativeSeat, ver int) *openrtb.BidResponse_SeatBid {
 	v := &openrtb.NativeResponse{
 		Link: &openrtb.NativeResponse_Link{
 			Url: s.ClickURL().String(),
@@ -38,7 +41,6 @@ func nativeMarkup(ctx entity.Context, s entity.NativeSeat) *openrtb.BidResponse_
 		// TODO : Decide for duplicate assets per type :/
 		a := s.WinnerAdvertise().Asset(f.Type, f.SubType, f.Extra...)
 		if len(a) > 0 {
-
 			as := &openrtb.NativeResponse_Asset{
 				Id: f.ID,
 				Required: func() int32 {
@@ -51,11 +53,9 @@ func nativeMarkup(ctx entity.Context, s entity.NativeSeat) *openrtb.BidResponse_
 
 			if f.Type == entity.AssetTypeImage {
 				src := a[0].Data
-				src = strings.Replace(src, "http://", "https://", -1)
-
-				// if ctx.Protocol() == entity.HTTPS {
-				// 	src = strings.Replace(src, "http://", "https://", -1)
-				// }
+				if ctx.Protocol() == entity.HTTPS {
+					src = strings.Replace(src, "http://", "https://", -1)
+				}
 				as.AssetOneof = &openrtb.NativeResponse_Asset_Img{
 					Img: &openrtb.NativeResponse_Asset_Image{
 						Url: src,
@@ -86,10 +86,36 @@ func nativeMarkup(ctx entity.Context, s entity.NativeSeat) *openrtb.BidResponse_
 			v.Assets = append(v.Assets, as)
 		}
 	}
+
+	if ver == 0 {
+		var jm = jsonpb.Marshaler{}
+		st, err := jm.MarshalToString(v)
+		if err != nil {
+			xlog.GetWithError(context.Background(), err)
+			return nil
+		}
+		return &openrtb.BidResponse_SeatBid{
+			Bid: []*openrtb.BidResponse_SeatBid_Bid{
+				{
+					Id:    s.ReservedHash(),
+					Impid: s.PublicID(),
+					AdmOneof: &openrtb.BidResponse_SeatBid_Bid_Adm{
+						Adm: st,
+					},
+					Adid:  fmt.Sprint(s.WinnerAdvertise().ID()),
+					H:     int32(s.Height()),
+					W:     int32(s.Width()),
+					Price: s.CPM() / ctx.Rate(),
+					Cid:   fmt.Sprint(s.WinnerAdvertise().Campaign().ID()),
+					// Nurl: s.WinNoticeRequest().String(),
+				},
+			},
+		}
+	}
+
 	return &openrtb.BidResponse_SeatBid{
 		Bid: []*openrtb.BidResponse_SeatBid_Bid{
 			{
-
 				Id:    s.ReservedHash(),
 				Impid: s.PublicID(),
 				AdmOneof: &openrtb.BidResponse_SeatBid_Bid_AdmNative{
@@ -104,6 +130,7 @@ func nativeMarkup(ctx entity.Context, s entity.NativeSeat) *openrtb.BidResponse_
 			},
 		},
 	}
+
 }
 
 func vastMarkup(ctx entity.Context, s entity.VastSeat) *openrtb.BidResponse_SeatBid {
@@ -252,7 +279,7 @@ func bannerMarkup(ctx entity.Context, s entity.Seat) *openrtb.BidResponse_SeatBi
 }
 
 // Render write open-rtb bid-response to writer
-func Render(_ context.Context, ctx entity.Context, rid string) (*openrtb.BidResponse, error) {
+func Render(_ context.Context, ctx entity.Context, rid string, ver int) (*openrtb.BidResponse, error) {
 	var r []*openrtb.BidResponse_SeatBid
 	for _, v := range ctx.Seats() {
 		// What if we have no ad for them?
@@ -281,7 +308,7 @@ func Render(_ context.Context, ctx entity.Context, rid string) (*openrtb.BidResp
 		case entity.RequestTypeVast:
 			bid = vastMarkup(ctx, v.(entity.VastSeat))
 		case entity.RequestTypeNative:
-			bid = nativeMarkup(ctx, v.(entity.NativeSeat))
+			bid = nativeMarkup(ctx, v.(entity.NativeSeat), ver)
 		}
 
 		if bid != nil {

@@ -180,7 +180,7 @@ func GrpcHandler(ctx context.Context, req *openrtb.BidRequest) (*openrtb.BidResp
 			Data: []*openrtb.UserData{},
 		}
 	}
-	us := req.GetUser().GetId()
+	us := req.GetUser().GetId() + req.GetUser().GetBuyeruid()
 
 	if ua == "" || ip == "" {
 		err := fmt.Errorf("no ip/no ua")
@@ -210,7 +210,7 @@ func GrpcHandler(ctx context.Context, req *openrtb.BidRequest) (*openrtb.BidResp
 	// b = append(b, builder.SetFloorPercentage(100), builder.SetMinBidPercentage(100))
 
 	b = setPublisherCustomContext(req, b, pub)
-	sd, vast := seatDetail(req)
+	sd, vast, version := seatDetail(req)
 	if vast {
 		b = append(b, builder.SetMultiVideo(true))
 	}
@@ -229,5 +229,5 @@ func GrpcHandler(ctx context.Context, req *openrtb.BidRequest) (*openrtb.BidResp
 			}).Inc()
 		}
 	})
-	return demand.Render(context.Background(), c, req.Id)
+	return demand.Render(context.Background(), c, req.Id, int(version))
 }

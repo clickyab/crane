@@ -34,7 +34,7 @@ func (m *Token) Reset()         { *m = Token{} }
 func (m *Token) String() string { return proto.CompactTextString(m) }
 func (*Token) ProtoMessage()    {}
 func (*Token) Descriptor() ([]byte, []int) {
-	return fileDescriptor_svc_0e299245225a7c2d, []int{0}
+	return fileDescriptor_svc_067fe324c3812a54, []int{0}
 }
 func (m *Token) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Token.Unmarshal(m, b)
@@ -203,9 +203,9 @@ var _OrtbService_serviceDesc = grpc.ServiceDesc{
 	Metadata: "svc.proto",
 }
 
-func init() { proto.RegisterFile("svc.proto", fileDescriptor_svc_0e299245225a7c2d) }
+func init() { proto.RegisterFile("svc.proto", fileDescriptor_svc_067fe324c3812a54) }
 
-var fileDescriptor_svc_0e299245225a7c2d = []byte{
+var fileDescriptor_svc_067fe324c3812a54 = []byte{
 	// 182 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x2c, 0x2e, 0x4b, 0xd6,
 	0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0xcf, 0x2f, 0x48, 0xcd, 0x2b, 0x2a, 0x49, 0x92, 0xe2,
