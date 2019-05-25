@@ -425,7 +425,7 @@ message User {
     string id = 1;
     // Buyer-specific ID for the user as mapped by the exchange for
     // the buyer. At least one of buyeruid or id is recommended.
-    string buyerid = 2;
+    string buyeruid = 2;
     // Year of birth as a 4-digit integer.
     int32 yob = 3;
     // Gender, where “M” = male, “F” = female, “O” = known to be

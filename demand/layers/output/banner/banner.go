@@ -2,7 +2,6 @@ package banner
 
 import (
 	"io"
-
 	"strings"
 
 	"html/template"
@@ -98,11 +97,11 @@ type bannerData struct {
 
 func renderWebBanner(w io.Writer, ctx entity.Context, seat entity.Seat) error {
 	src := seat.WinnerAdvertise().Media()
-	src = strings.Replace(src, "http://", "https://", -1)
+	//src = strings.Replace(src, "http://", "https://", -1)
 
-	// if ctx.Protocol() == entity.HTTPS {
-	// 	src = strings.Replace(src, "http://", "https://", -1)
-	// }
+	if ctx.Protocol() == entity.HTTPS {
+		src = strings.Replace(src, "http://", "https://", -1)
+	}
 
 	sa := bannerData{
 		Link:           seat.ClickURL().String(),

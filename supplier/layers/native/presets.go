@@ -4,11 +4,15 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/golang/protobuf/jsonpb"
+
 	"clickyab.com/crane/demand/entity"
-	"clickyab.com/crane/openrtb/v2.5"
+	openrtb "clickyab.com/crane/openrtb/v2.5"
 	"github.com/clickyab/services/framework"
 	"github.com/clickyab/services/random"
 )
+
+const Version = 1
 
 func getImps(r *http.Request, count int, pub entity.Publisher, image bool) []*openrtb.Imp {
 	var (
@@ -42,6 +46,37 @@ func getImps(r *http.Request, count int, pub entity.Publisher, image bool) []*op
 			})
 		}
 
+		if Version == 0 {
+
+			jm := jsonpb.Marshaler{}
+			s, err := jm.MarshalToString(req)
+			if err != nil {
+				fmt.Println(err)
+			}
+
+			imp := &openrtb.Imp{
+				Id:       fmt.Sprintf("cly-%d470%d-%s", pub.ID(), i, <-random.ID),
+				Bidfloor: float64(pub.FloorCPM()),
+				Secure: func() int32 {
+					if sec {
+						return 1
+					}
+					return 0
+				}(),
+				Native: &openrtb.Native{
+					RequestOneof: &openrtb.Native_Request{
+						Request: s,
+					},
+				},
+				Ext: &openrtb.Imp_Ext{
+					Mincpc: pub.MinCPC(string(entity.RequestTypeNative)),
+				},
+			}
+
+			res = append(res, imp)
+			continue
+		}
+
 		imp := &openrtb.Imp{
 			Id:       fmt.Sprintf("cly-%d470%d-%s", pub.ID(), i, <-random.ID),
 			Bidfloor: float64(pub.FloorCPM()),
@@ -62,6 +97,7 @@ func getImps(r *http.Request, count int, pub entity.Publisher, image bool) []*op
 		}
 
 		res = append(res, imp)
+
 	}
 	return res
 }

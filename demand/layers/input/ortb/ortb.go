@@ -168,7 +168,7 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 			Data: []*openrtb.UserData{},
 		}
 	}
-	us := payload.GetUser().GetId()
+	us := payload.GetUser().GetId() + payload.GetUser().GetBuyeruid()
 
 	if ua == "" || ip == "" {
 		err := fmt.Errorf("no ip/no ua")
@@ -176,8 +176,11 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		writesErrorStatus(w, http.StatusBadRequest, err.Error())
 		return
 	}
+
 	sh := fmt.Sprintf("CLICK_%x", sha1.Sum([]byte(fmt.Sprintf("%s_%s_%s_%s", prefix, time.Now().Format(format), ip, ua))))
+
 	perHour, _ := strconv.ParseInt(kv.NewEavStore(sh).AllKeys()["C"], 10, 64)
+
 	if perHour > dailyClickLimit.Int64() {
 		w.Header().Set("content-type", "application/json")
 		j := jsonpb.Marshaler{}
@@ -211,7 +214,7 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	// b = append(b, builder.SetFloorPercentage(100), builder.SetMinBidPercentage(100))
 
 	b = setPublisherCustomContext(payload, b, publisher)
-	sd, vast := seatDetail(payload)
+	sd, vast, ver := seatDetail(payload)
 	if vast {
 		b = append(b, builder.SetMultiVideo(true))
 	}
@@ -220,15 +223,13 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	c, err := rtb.Select(ctx, selector, b...)
 	if err != nil {
 		xlog.GetWithError(ctx, err).Errorf("invalid request from %s", sup.Name())
-
 		writesErrorStatus(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	res, err := demand.Render(ctx, c, payload.Id)
+	res, err := demand.Render(ctx, c, payload.Id, int(ver))
 	xlog.GetWithField(ctx, "RETARGETING", "ada").Debug()
 	defer safe.GoRoutine(ctx, func() {
-
 		for _, s := range sd {
 			metrics.Size.With(prometheus.Labels{
 				"sup":  sup.Name(),
@@ -236,7 +237,6 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 				"io":   "in",
 			}).Inc()
 		}
-
 	})
 
 	w.Header().Set("crane-version", fmt.Sprint(vs.Count))
@@ -260,14 +260,25 @@ func setPublisherCustomContext(payload *openrtb.BidRequest, b []builder.ShowOpti
 	return b
 }
 
-func seatDetail(req *openrtb.BidRequest) ([]builder.DemandSeatData, bool) {
+type nativeVersion int
+
+const (
+	RequestString nativeVersion = 0
+	RequestNative nativeVersion = 1
+)
+
+func seatDetail(req *openrtb.BidRequest) ([]builder.DemandSeatData, bool, nativeVersion) {
+
 	var (
-		imp    = req.Imp
+		imp    = req.GetImp()
 		seats  = make([]builder.DemandSeatData, 0)
 		w, h   int32
 		vast   bool
 		assets []*openrtb.NativeRequest_Asset
+		nver   = RequestNative
 	)
+	fmt.Println(len(imp))
+
 	for i := range imp {
 		var t entity.RequestType
 		if imp[i].GetVideo() != nil {
@@ -287,10 +298,32 @@ func seatDetail(req *openrtb.BidRequest) ([]builder.DemandSeatData, bool) {
 			w, h = imp[i].GetBanner().W, imp[i].GetBanner().H
 			t = entity.RequestTypeBanner
 		} else if imp[i].GetNative() != nil {
-			t = entity.RequestTypeNative
-			assets = imp[i].GetNative().GetRequestNative().GetAssets()
-		}
 
+			t = entity.RequestTypeNative
+			if nil != imp[i].GetNative().GetRequestNative() {
+				assets = imp[i].GetNative().GetRequestNative().GetAssets()
+
+			} else {
+				//bd := strings.NewReader(strings.ReplaceAll(imp[i].GetNative().GetRequest(), "\n", ""))
+				bd := strings.NewReader(imp[i].GetNative().GetRequest())
+				lp := jsonpb.Unmarshaler{}
+				tas := openrtb.NativeRequest{}
+				err := lp.Unmarshal(bd, &tas)
+				if err != nil {
+					xlog.GetWithError(context.Background(), err)
+				}
+
+				for x := range tas.Assets {
+					if tas.Assets[x].GetImg() != nil && tas.Assets[x].GetImg().Type == 0 {
+						tas.Assets[x].GetImg().Type = 3
+					}
+				}
+
+				fmt.Println(len(tas.GetAssets()))
+				assets = tas.GetAssets()
+				nver = RequestString
+			}
+		}
 		seats = append(seats, builder.DemandSeatData{
 			MinBid: imp[i].GetBidfloor(),
 			PubID:  imp[i].Id,
@@ -307,7 +340,7 @@ func seatDetail(req *openrtb.BidRequest) ([]builder.DemandSeatData, bool) {
 			}(),
 		})
 	}
-	return seats, vast
+	return seats, vast, nver
 }
 
 func handlePublisherSelector(domain, bundle string, sup entity.Supplier, prevent bool) (entity.Publisher, []reducer.Filter, string, bool, error) {
