@@ -12,7 +12,8 @@ import (
 	"github.com/clickyab/services/random"
 )
 
-const Version = 1
+// Version for default version of native request
+var Version = 1
 
 func getImps(r *http.Request, count int, pub entity.Publisher, image bool) []*openrtb.Imp {
 	var (
