@@ -9,7 +9,6 @@ import (
 	"clickyab.com/crane/demand/layers/output/pixel"
 	"clickyab.com/crane/workers/notice"
 	"github.com/clickyab/services/assert"
-	"github.com/clickyab/services/broker"
 	"github.com/clickyab/services/safe"
 )
 
@@ -35,8 +34,10 @@ func noticeHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) 
 	exp, _ := context.WithTimeout(ctx, 10*time.Second)
 
 	safe.GoRoutine(exp, func() {
-		job := notice.NewNoticeJob(c, c.Seats()...)
-		broker.Publish(job)
+		_ = notice.NewNoticeJob(c, c.Seats()...)
+		// TODO: uncomment below lines when notice worker is ready
+		//job := notice.NewNoticeJob(c, c.Seats()...)
+		//broker.Publish(job)
 	})
 
 	assert.Nil(pixel.Render(ctx, w, c))

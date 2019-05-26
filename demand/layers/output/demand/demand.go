@@ -107,7 +107,7 @@ func nativeMarkup(ctx entity.Context, s entity.NativeSeat, ver int) *openrtb.Bid
 					W:     int32(s.Width()),
 					Price: s.CPM() / ctx.Rate(),
 					Cid:   fmt.Sprint(s.WinnerAdvertise().Campaign().ID()),
-					// Nurl: s.WinNoticeRequest().String(),
+					Nurl:  s.WinNoticeRequest().String(),
 				},
 			},
 		}
@@ -126,7 +126,7 @@ func nativeMarkup(ctx entity.Context, s entity.NativeSeat, ver int) *openrtb.Bid
 				W:     int32(s.Width()),
 				Price: s.CPM() / ctx.Rate(),
 				Cid:   fmt.Sprint(s.WinnerAdvertise().Campaign().ID()),
-				// Nurl: s.WinNoticeRequest().String(),
+				Nurl:  s.WinNoticeRequest().String(),
 			},
 		},
 	}
@@ -233,7 +233,7 @@ func vastMarkup(ctx entity.Context, s entity.VastSeat) *openrtb.BidResponse_Seat
 				W:     s.Width(),
 				Price: s.CPM() / ctx.Rate(),
 				Cid:   fmt.Sprint(s.WinnerAdvertise().Campaign().ID()),
-				// Nurl:       s.WinNoticeRequest().String(),
+				Nurl:  s.WinNoticeRequest().String(),
 			},
 		},
 	}

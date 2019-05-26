@@ -169,7 +169,7 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	us := payload.GetUser().GetId() + payload.GetUser().GetBuyeruid()
-
+	fmt.Println("uid", us)
 	if ua == "" || ip == "" {
 		err := fmt.Errorf("no ip/no ua")
 		xlog.GetWithError(ctx, err).Debugf("invalid request from %s payload: %#v", sup.Name(), payload)
@@ -321,7 +321,6 @@ func seatDetail(req *openrtb.BidRequest) ([]builder.DemandSeatData, bool, native
 					}
 				}
 
-				fmt.Println(len(tas.GetAssets()))
 				assets = tas.GetAssets()
 				nver = RequestString
 			}
