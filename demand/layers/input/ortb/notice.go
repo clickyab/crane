@@ -6,9 +6,7 @@ import (
 	"time"
 
 	"clickyab.com/crane/demand/builder"
-	"clickyab.com/crane/demand/layers/output/pixel"
 	"clickyab.com/crane/workers/show"
-	"github.com/clickyab/services/assert"
 	"github.com/clickyab/services/broker"
 	"github.com/clickyab/services/kv"
 	"github.com/clickyab/services/safe"
@@ -94,6 +92,5 @@ func noticeHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) 
 		setCapping(ctx, pl, c.Protocol().String())
 	})
 
-	assert.Nil(pixel.Render(ctx, w, c))
-
+	_, _ = w.Write([]byte(""))
 }
