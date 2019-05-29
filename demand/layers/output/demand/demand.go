@@ -50,12 +50,11 @@ func nativeMarkup(ctx entity.Context, s entity.NativeSeat, ver int) *openrtb.Bid
 					return 0
 				}(),
 			}
-
 			if f.Type == entity.AssetTypeImage {
 				src := a[0].Data
-				if ctx.Protocol() == entity.HTTPS {
-					src = strings.Replace(src, "http://", "https://", -1)
-				}
+				//if ctx.Protocol() == entity.HTTPS {
+				src = strings.Replace(src, "http://", "https://", -1)
+				//}
 				as.AssetOneof = &openrtb.NativeResponse_Asset_Img{
 					Img: &openrtb.NativeResponse_Asset_Image{
 						Url: src,
