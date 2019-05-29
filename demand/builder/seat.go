@@ -310,7 +310,6 @@ func (s *seat) makeURL(route string, params map[string]string, cpm float64, expi
 	v.Set("parent", s.context.parent)
 	v.Set("reg", currentRegion.String())
 	u.RawQuery = v.Encode()
-	u.Scheme = "https"
 	return u
 }
 
