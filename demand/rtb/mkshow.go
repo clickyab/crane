@@ -140,8 +140,11 @@ func internalSelect(
 		// Do not do second biding pricing on this ads, they can not pass CPMFloor
 		targetCPM := getSecondCPM(seat.SoftCPM(), sorted)
 		targetCPC := targetCPM / (theAd.CalculatedCTR() * 10.0)
-
 		targetCPC, targetCPM = fixPrice(theAd.Campaign().Strategy(), targetCPC, targetCPM, seat.MinCPC(), seat.MinCPM())
+
+		if targetCPM > float64(theAd.Campaign().MaxBID()) {
+			targetCPM = float64(theAd.Campaign().MaxBID())
+		}
 
 		selected[theAd.ID()] = true
 
