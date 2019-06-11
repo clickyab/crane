@@ -33,6 +33,7 @@ type Website struct {
 	MobAd       int                    `db:"w_mobad"`
 	PublicID    int64                  `db:"w_pub_id"`
 	WMinCPC     mysql.GenericJSONField `db:"w_min_cpc"`
+	WMaxCPC     sql.NullInt64          `db:"w_max_cpc"`
 	CTRStat
 	Supp entity.Supplier `db:"-"`
 	FCTR [22]float32
@@ -41,6 +42,14 @@ type Website struct {
 	catComp bool
 
 	att map[entity.PublisherAttributes]interface{}
+}
+
+// MaxCPC return max allowed cpc for publisher
+func (w *Website) MaxCPC() float64 {
+	if w.WMaxCPC.Valid {
+		return float64(w.WMaxCPC.Int64)
+	}
+	return 0
 }
 
 // Attributes return publisher attributes

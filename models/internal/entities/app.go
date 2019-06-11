@@ -28,6 +28,7 @@ type App struct {
 	AppCategories SharpArray             `db:"app_cat"`
 	AppToken      string                 `db:"app_token"`
 	AppMinCPC     mysql.GenericJSONField `db:"app_min_cpc"`
+	AppMaxCPC     sql.NullInt64          `db:"app_max_cpc"`
 	Supp          entity.Supplier
 	FCTR          [22]float32
 	CTRStat
@@ -35,6 +36,14 @@ type App struct {
 	catComp bool
 	cat     []openrtb.ContentCategory                  `db:"-"`
 	att     map[entity.PublisherAttributes]interface{} `db:"-"`
+}
+
+// MaxCPC return max allowed cpc for publisher
+func (app *App) MaxCPC() float64 {
+	if app.AppMaxCPC.Valid {
+		return float64(app.AppMaxCPC.Int64)
+	}
+	return 0
 }
 
 // Attributes return publisher attributes
