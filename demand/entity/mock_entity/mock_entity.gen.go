@@ -1116,6 +1116,11 @@ type MockPublisher struct {
 	recorder *MockPublisherMockRecorder
 }
 
+// MaxCPC return max allowed cpc for publisher
+func (m *MockPublisher) MaxCPC() float64 {
+	return 0
+}
+
 // MockPublisherMockRecorder is the mock recorder for MockPublisher
 type MockPublisherMockRecorder struct {
 	mock *MockPublisher

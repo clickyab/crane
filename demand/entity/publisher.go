@@ -1,8 +1,6 @@
 package entity
 
-import (
-	"clickyab.com/crane/openrtb/v2.5"
-)
+import openrtb "clickyab.com/crane/openrtb/v2.5"
 
 // PublisherType is the type of publisher
 type PublisherType string
@@ -47,6 +45,8 @@ type Publisher interface {
 	Attributes() map[PublisherAttributes]interface{}
 	// MinCPC return min cpc based on ad type
 	MinCPC(string) float64
+	// MaxCPC return max cpc for publisher
+	MaxCPC() float64
 	// Categories return categories
 	Categories() []openrtb.ContentCategory
 }

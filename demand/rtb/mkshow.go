@@ -92,6 +92,7 @@ func internalSelect(
 	ctx entity.Context,
 	cps []entity.Campaign,
 ) {
+
 	var noVideo bool                 // once set, never unset it again
 	selected := make(map[int32]bool) // all ad selected in this session, to make sure they are not repeated
 
@@ -145,7 +146,9 @@ func internalSelect(
 		if targetCPM > float64(theAd.Campaign().MaxBID()) {
 			targetCPM = float64(theAd.Campaign().MaxBID())
 		}
-
+		if ctx.Publisher().MaxCPC() > 0 {
+			targetCPC = ctx.Publisher().MaxCPC()
+		}
 		selected[theAd.ID()] = true
 
 		// Only decrease share for CPM (which is reported to supplier) not bid (which is used by us)

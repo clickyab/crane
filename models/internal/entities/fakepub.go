@@ -2,7 +2,7 @@ package entities
 
 import (
 	"clickyab.com/crane/demand/entity"
-	"clickyab.com/crane/openrtb/v2.5"
+	openrtb "clickyab.com/crane/openrtb/v2.5"
 )
 
 type fakepub struct {
@@ -11,6 +11,11 @@ type fakepub struct {
 	ptype entity.PublisherType
 
 	att map[entity.PublisherAttributes]interface{}
+}
+
+// MaxCPC return max allowed cpc for publisher
+func (fp *fakepub) MaxCPC() float64 {
+	return 0
 }
 
 // Categories return publisher categories
