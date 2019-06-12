@@ -139,7 +139,7 @@ func AppLoaderGen(name bool) func(ctx context.Context) (map[string]kv.Serializab
 			where = fmt.Sprintf(" WHERE app_supplier='%s' ", supplierName)
 		}
 		for j := 0; ; j = j + cnt {
-			q := fmt.Sprintf(`SELECT app_id,app_token, app_package, app_supplier, app_name, app_cat, app_minbid, app_floor_cpm, app_fatfinger, app_status,app_min_cpc,
+			q := fmt.Sprintf(`SELECT app_id,app_token, app_package, app_supplier, app_name, app_cat, app_minbid, app_floor_cpm, app_fatfinger, app_status,app_min_cpc, app_max_cpc,
   SUM(imp_1) AS imp1, SUM(imp_2) AS imp2, SUM(imp_3) AS imp3, SUM(imp_4) AS imp4, SUM(imp_5) AS imp5,
   SUM(imp_6) AS imp6, SUM(imp_7) AS imp7, SUM(imp_8) AS imp8, SUM(imp_9) AS imp9, SUM(imp_10) AS imp10,
   SUM(imp_11) AS imp11, SUM(imp_12) AS imp12, SUM(imp_13) AS imp13, SUM(imp_14) AS imp14, SUM(imp_15) AS imp15,

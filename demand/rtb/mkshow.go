@@ -147,6 +147,7 @@ func internalSelect(
 			targetCPM = float64(theAd.Campaign().MaxBID())
 		}
 		if ctx.Publisher().MaxCPC() > 0 && targetCPC > ctx.Publisher().MaxCPC() {
+			targetCPM = ctx.Publisher().MaxCPC()
 			targetCPC = ctx.Publisher().MaxCPC()
 		}
 		selected[theAd.ID()] = true

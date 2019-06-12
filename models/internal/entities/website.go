@@ -46,6 +46,7 @@ type Website struct {
 
 // MaxCPC return max allowed cpc for publisher
 func (w *Website) MaxCPC() float64 {
+	fmt.Println(w.WMaxCPC.Int64)
 	if w.WMaxCPC.Valid {
 		return float64(w.WMaxCPC.Int64)
 	}
@@ -164,7 +165,7 @@ func WebsiteLoaderGen(name bool) func(ctx context.Context) (map[string]kv.Serial
 		}
 		const cnt = 10000
 		for j := 0; ; j = j + cnt {
-			q := fmt.Sprintf(`SELECT w_id, w_domain, w_supplier, w_name, w_categories, w_minbid, w_floor_cpm, w_fatfinger, w_status,w_mobad,w_pub_id,w_min_cpc,
+			q := fmt.Sprintf(`SELECT w_id, w_domain, w_supplier, w_name, w_categories, w_minbid, w_floor_cpm, w_fatfinger, w_status,w_mobad,w_pub_id,w_min_cpc, w_max_cpc,
   SUM(imp_1) AS imp1, SUM(imp_2) AS imp2, SUM(imp_3) AS imp3, SUM(imp_4) AS imp4, SUM(imp_5) AS imp5,
   SUM(imp_6) AS imp6, SUM(imp_7) AS imp7, SUM(imp_8) AS imp8, SUM(imp_9) AS imp9, SUM(imp_10) AS imp10,
   SUM(imp_11) AS imp11, SUM(imp_12) AS imp12, SUM(imp_13) AS imp13, SUM(imp_14) AS imp14, SUM(imp_15) AS imp15,
