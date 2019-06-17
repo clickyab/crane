@@ -8,6 +8,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/clickyab/services/simplehash"
+
 	"clickyab.com/crane/demand/builder"
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/workers/click"
@@ -27,6 +29,7 @@ const (
 var (
 	clickExpire     = config.RegisterDuration("crane.context.seat.click_exp", 72*time.Hour, "determine how long click url is valid")
 	dailyClickLimit = config.RegisterInt64("crane.context.seat.click_limit", 3, "determine limit click for ip per day")
+	balanceURL      = config.RegisterString("crane.balance.url", "", "send click event")
 )
 
 // clickBanner is handler for click ad requestType
@@ -51,7 +54,6 @@ func clickBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	if perDay > dailyClickLimit.Int64() {
 		pl.Suspicious = 96
 	}
-
 	b := []builder.ShowOptionSetter{
 		builder.SetTimestamp(),
 		builder.SetOSUserAgent(pl.UserAgent),
@@ -82,6 +84,16 @@ func clickBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 	// Build context
 	c, err := builder.NewContext(b...)
+	safe.GoRoutine(ctx, func() {
+		if balanceURL.String() == "" {
+			return
+		}
+		_, err := http.Get(balanceURL.String() + simplehash.SHA1(pl.Parent))
+		if err != nil {
+			fmt.Println("err", err)
+		}
+	})
+
 	if err != nil {
 		w.Header().Add("err", err.Error())
 		w.WriteHeader(http.StatusBadRequest)
