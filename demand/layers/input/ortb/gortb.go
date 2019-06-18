@@ -153,7 +153,6 @@ func GrpcHandler(ctx context.Context, req *openrtb.BidRequest) (*openrtb.BidResp
 	pub, selector, ps, prevent, err := handlePublisherSelector(domain, bundle, sup, prevent)
 
 	if err != nil {
-		fmt.Println(err)
 		e := spew.Sprintf("publisher from %s, %s, %s, not supported: %s. payload: %#v", sup.Name(), ps, req)
 		xlog.GetWithError(ctx, err).Debug(e)
 		return nil, grpc.ErrServerStopped

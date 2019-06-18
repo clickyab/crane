@@ -8,6 +8,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/clickyab/services/xlog"
+
 	"github.com/clickyab/services/simplehash"
 
 	"clickyab.com/crane/demand/builder"
@@ -72,9 +74,6 @@ func clickBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 			pl.Bid, pl.PreviousTime, pl.CPM, pl.SCPM, pl.requestType, pl.targetURL),
 	}
 
-	fmt.Println("CLICK:", pl.PublicID, pl.Size, pl.ReserveHash, pl.AdID, pl.CpID, pl.CpAdID, pl.cpn,
-		pl.Bid, pl.PreviousTime, pl.CPM, pl.SCPM, pl.requestType, pl.targetURL)
-
 	if pl.requestType == entity.RequestTypeVast {
 		b = append(b, builder.SetTrueView(pl.TV))
 	}
@@ -90,7 +89,7 @@ func clickBanner(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		}
 		_, err := http.Get(balanceURL.String() + simplehash.SHA1(pl.Parent))
 		if err != nil {
-			fmt.Println("err", err)
+			xlog.GetWithError(ctx, err).Debug()
 		}
 	})
 
