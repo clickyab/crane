@@ -5,13 +5,10 @@ import (
 	"crypto/sha1"
 	"errors"
 	"fmt"
-	"math/rand"
 	"net/http"
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/clickyab/services/simplehash"
 
 	"clickyab.com/crane/demand/filter/campaign"
 
@@ -113,18 +110,18 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		writesErrorStatus(w, http.StatusBadRequest, err.Error())
 		return
 	}
-	if payload.GetSite() != nil && sup.Name() == "mediaad" {
-		k := kv.NewAEAVStore("BLC_"+simplehash.SHA1(payload.GetSite().GetPage()), time.Hour*72)
-		rnd := rand.Int31n(100) > 50
-		if k.AllKeys()["c"] == 0 && rnd {
-			w.Header().Set("content-type", "application/json")
-			j := jsonpb.Marshaler{}
-			assert.Nil(j.Marshal(w, &openrtb.BidResponse{
-				Id: payload.Id,
-			}))
-			return
-		}
-	}
+	//if payload.GetSite() != nil && sup.Name() == "mediaad" {
+	//	k := kv.NewAEAVStore("BLC_"+simplehash.SHA1(payload.GetSite().GetPage()), time.Hour*72)
+	//	rnd := rand.Int31n(100) > 50
+	//	if k.AllKeys()["c"] == 0 && rnd {
+	//		w.Header().Set("content-type", "application/json")
+	//		j := jsonpb.Marshaler{}
+	//		assert.Nil(j.Marshal(w, &openrtb.BidResponse{
+	//			Id: payload.Id,
+	//		}))
+	//		return
+	//	}
+	//}
 
 	var fatFinger,
 		prevent,
