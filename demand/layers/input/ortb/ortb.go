@@ -242,12 +242,15 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	go func() {
+	safe.GoRoutine(ctx, func() {
 		publisher := func() string {
-			if payload.GetSite() == nil {
-				return "app"
+			if payload.GetSite() != nil {
+				return payload.GetSite().Domain
 			}
-			return payload.GetSite().Domain
+			if payload.GetApp() != nil {
+				return payload.GetApp().Name
+			}
+			panic("BUG[invalid publisher]")
 		}()
 
 		for _, m := range payload.GetImp() {
@@ -264,7 +267,7 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 				"publisher": publisher,
 			}).Inc()
 		}
-	}()
+	})
 
 	res, err := demand.Render(ctx, c, payload.Id, int(ver))
 	xlog.GetWithField(ctx, "RETARGETING", "ada").Debug()

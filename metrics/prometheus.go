@@ -13,7 +13,7 @@ var (
 	Price = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
 			Name: "demand_price",
-			Help: "Counter of asset",
+			Help: "Counter of publisher and price",
 		},
 		[]string{"price", "publisher", "io"},
 	)
