@@ -92,6 +92,7 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 			"sup":   supName,
 			"route": "rest",
 		}).Inc()
+
 	}()
 
 	if err != nil {
@@ -110,6 +111,7 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		writesErrorStatus(w, http.StatusBadRequest, err.Error())
 		return
 	}
+
 	//if payload.GetSite() != nil && sup.Name() == "mediaad" {
 	//	k := kv.NewAEAVStore("BLC_"+simplehash.SHA1(payload.GetSite().GetPage()), time.Hour*72)
 	//	rnd := rand.Int31n(100) > 50
@@ -239,6 +241,30 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		writesErrorStatus(w, http.StatusBadRequest, err.Error())
 		return
 	}
+
+	go func() {
+		publisher := func() string {
+			if payload.GetSite() == nil {
+				return "app"
+			}
+			return payload.GetSite().Domain
+		}()
+
+		for _, m := range payload.GetImp() {
+			metrics.Price.With(prometheus.Labels{
+				"price":     fmt.Sprint(m.GetBidfloor()),
+				"io":        "in",
+				"publisher": publisher,
+			}).Inc()
+		}
+		for _, s := range c.Seats() {
+			metrics.Price.With(prometheus.Labels{
+				"price":     fmt.Sprint(s.CPM() / c.Rate()),
+				"io":        "out",
+				"publisher": publisher,
+			}).Inc()
+		}
+	}()
 
 	res, err := demand.Render(ctx, c, payload.Id, int(ver))
 	xlog.GetWithField(ctx, "RETARGETING", "ada").Debug()
