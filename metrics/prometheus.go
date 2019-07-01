@@ -9,6 +9,15 @@ var port = config.RegisterString("crane.metric.port", "9700", "")
 
 var (
 
+	// Price of in and out
+	Price = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "demand_price",
+			Help: "Counter of asset",
+		},
+		[]string{"price", "publisher", "io"},
+	)
+
 	// Asset of items
 	Asset = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
