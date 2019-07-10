@@ -6,12 +6,13 @@ import (
 	"strings"
 	"time"
 
+	"clickyab.com/crane/demand/nrtb"
+
 	"github.com/clickyab/services/random"
 
 	"clickyab.com/crane/demand/builder"
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/demand/layers/output/demand"
-	"clickyab.com/crane/demand/rtb"
 	"clickyab.com/crane/metrics"
 	"clickyab.com/crane/models/suppliers"
 	openrtb "clickyab.com/crane/openrtb/v2.5"
@@ -214,7 +215,7 @@ func GrpcHandler(ctx context.Context, req *openrtb.BidRequest) (*openrtb.BidResp
 		b = append(b, builder.SetMultiVideo(true))
 	}
 	b = append(b, builder.SetDemandSeats(sd...))
-	c, err := rtb.Select(ctx, selector, b...)
+	c, err := nrtb.Select(ctx, selector, b...)
 	if err != nil {
 		xlog.GetWithError(ctx, err).Errorf("invalid request from %s", sup.Name())
 		return nil, err

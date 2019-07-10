@@ -10,6 +10,8 @@ import (
 	"strings"
 	"time"
 
+	"clickyab.com/crane/demand/nrtb"
+
 	"clickyab.com/crane/demand/filter/campaign"
 
 	"github.com/clickyab/services/random"
@@ -18,7 +20,6 @@ import (
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/demand/layers/output/demand"
 	"clickyab.com/crane/demand/reducer"
-	"clickyab.com/crane/demand/rtb"
 	"clickyab.com/crane/metrics"
 	"clickyab.com/crane/models/apps"
 	"clickyab.com/crane/models/suppliers"
@@ -235,7 +236,7 @@ func openRTBInput(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	}
 	b = append(b, builder.SetDemandSeats(sd...))
 
-	c, err := rtb.Select(ctx, selector, b...)
+	c, err := nrtb.Select(ctx, selector, b...)
 	if err != nil {
 		xlog.GetWithError(ctx, err).Errorf("invalid request from %s", sup.Name())
 		writesErrorStatus(w, http.StatusBadRequest, err.Error())
