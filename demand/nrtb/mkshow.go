@@ -110,6 +110,9 @@ func selectAds(
 		}
 
 		exceedFloor, underFloor := selector(ctx, ads, seat, noVideo, selected)
+		if ctx.UnderFloor() == false {
+			underFloor = make([]entity.SelectedCreative, 0)
+		}
 		var (
 			sorted []entity.SelectedCreative
 			ef     byMulti
