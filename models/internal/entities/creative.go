@@ -294,13 +294,15 @@ func CampaignLoader(_ context.Context) (map[string]kv.Serializable, error) {
 		}
 		res[fmt.Sprint(k)] = cp
 	}
+	cps := make([]int32, 0)
 	for i := range qres {
+		cps = append(cps, qres[i].FCampaignID)
 		metrics.Loaded.With(prometheus.Labels{
 			"cid": fmt.Sprint(qres[i].FCampaignID),
 		})
 		// res[fmt.Sprint(qres[i].FCampaignID)] = &Campaign{ad: &qres[i]}
 	}
-
+	logrus.Debugf("loaded %d campaigns: %v", len(cps), cps)
 	logrus.Debugf("Load %d ads", len(res))
 	return res, nil
 }
@@ -350,7 +352,10 @@ func AdLoader(_ context.Context) (map[string]kv.Serializable, error) {
 		return nil, err
 	}
 	ads := make(map[string]kv.Serializable)
+	cps := make([]int32, 0)
+
 	for i := range res {
+		cps = append(cps, res[i].FCampaignID)
 
 		if res[i].FCaCTR.Valid {
 			res[i].FCTR = float32(res[i].FCaCTR.Float64)
@@ -363,6 +368,7 @@ func AdLoader(_ context.Context) (map[string]kv.Serializable, error) {
 		})
 		ads[fmt.Sprint(res[i].FID)] = &Advertise{ad: &res[i]}
 	}
+	logrus.Debugf("loaded %d campaigns: %v", len(cps), cps)
 	logrus.Debugf("Load %d ads", len(ads))
 	return ads, nil
 }
