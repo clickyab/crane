@@ -241,7 +241,7 @@ var imgconv = config.RegisterString("crane.demand.cropper", "http://t.clickyab.c
 func AssetLoader(_ context.Context) (map[string]kv.Serializable, error) {
 
 	var res []Asset
-	q := fmt.Sprintf(`select id,hash,url,sku,brand,img,title,price,discount,is_available,cat from list_asset where is_available = 1`)
+	q := fmt.Sprintf(`select id,hash,url,sku,brand,img,title,price,discount,is_available,cat from list_asset`)
 	_, err := NewManager().GetRDbMap().Select(&res, q)
 	if err != nil {
 		return nil, err
