@@ -14,11 +14,11 @@ import (
 	"github.com/clickyab/services/assert"
 )
 
-var forceFristBid = config.RegisterBoolean("crane.demand.select.force_first_bid", true, "if it's set we ignore second bid")
+var forceFirstBid = config.RegisterBoolean("crane.demand.select.force_first_bid", true, "if it's set we ignore second bid")
 
 func getSecondCPM(floorCPM float64, exceedFloor []entity.SelectedCreative) float64 {
 
-	if forceFristBid.Bool() || !exceedFloor[0].IsSecBid() {
+	if forceFirstBid.Bool() || !exceedFloor[0].IsSecBid() {
 		return exceedFloor[0].CalculatedCPM()
 	}
 
@@ -143,7 +143,7 @@ func selectAds(
 
 		theAd := sorted[0]
 		// Do not do second biding pricing on this ads, they can not pass CPMFloor
-		targetCPM := getSecondCPM(seat.SoftCPM(), sorted)
+		targetCPM := getSecondCPM(seat.CPM(), sorted)
 		targetCPC := theAd.CalculatedCTR()
 		targetCPC, targetCPM = fixPrice(theAd.Campaign().Strategy(), targetCPC, targetCPM, seat.MinCPC(), seat.MinCPM())
 
