@@ -302,7 +302,7 @@ func CampaignLoader(_ context.Context) (map[string]kv.Serializable, error) {
 		})
 		// res[fmt.Sprint(qres[i].FCampaignID)] = &Campaign{ad: &qres[i]}
 	}
-	logrus.Debugf("loaded %d campaigns: %v", len(cps), cps)
+	logrus.Debugf("loaded %d campaigns from campaign loader: %v", len(cps), cps)
 	logrus.Debugf("Load %d ads", len(res))
 	return res, nil
 }
@@ -368,7 +368,7 @@ func AdLoader(_ context.Context) (map[string]kv.Serializable, error) {
 		})
 		ads[fmt.Sprint(res[i].FID)] = &Advertise{ad: &res[i]}
 	}
-	logrus.Debugf("loaded %d campaigns: %v", len(cps), cps)
+	logrus.Debugf("loaded %d campaigns from creative loader: %v", len(cps), cps)
 	logrus.Debugf("Load %d ads", len(ads))
 	return ads, nil
 }
