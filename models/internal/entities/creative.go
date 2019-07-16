@@ -295,10 +295,10 @@ func CampaignLoader(_ context.Context) (map[string]kv.Serializable, error) {
 		res[fmt.Sprint(k)] = cp
 	}
 	cps := make([]int32, 0)
-	for i := range qres {
-		cps = append(cps, qres[i].FCampaignID)
+	for k := range ads {
+		cps = append(cps, k)
 		metrics.Loaded.With(prometheus.Labels{
-			"cid": fmt.Sprint(qres[i].FCampaignID),
+			"cid": fmt.Sprint(k),
 		})
 		// res[fmt.Sprint(qres[i].FCampaignID)] = &Campaign{ad: &qres[i]}
 	}
