@@ -91,9 +91,6 @@ func (a *Asset) ID() int32 {
 
 // Hash of url
 func (a *Asset) Hash() string {
-	if a.FSKU != "" {
-		return simplehash.SHA1(a.FSKU)
-	}
 	return simplehash.SHA1(a.FURL)
 }
 
