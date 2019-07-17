@@ -60,6 +60,9 @@ func getAsset(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		}
 	}()
 
+	pl.FSKU = r.URL.Query().Get("sku")
+	pl.FBrand = r.URL.Query().Get("brand")
+
 	ti := r.URL.Query().Get("title")
 	if ti == "" {
 		err = fmt.Errorf("not title")
@@ -105,8 +108,6 @@ func getAsset(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	pl.FImg = img.String()
-	pl.FSKU = r.URL.Query().Get("sku")
-	pl.FBrand = r.URL.Query().Get("brand")
 
 	go func() {
 		err = lists.SetLists(ctx, u.Id, pl.Hash(), l.KEY)
