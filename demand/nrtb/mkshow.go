@@ -12,47 +12,8 @@ import (
 	"github.com/clickyab/services/assert"
 )
 
-func getSecondCPM(floorCPM float64, exceedFloor []entity.SelectedCreative) float64 {
-
-	if len(exceedFloor) > 1 &&
-		exceedFloor[1].IsSecBid() &&
-		!exceedFloor[1].Capping().Selected() &&
-		exceedFloor[1].CalculatedCPM()+10 <= exceedFloor[0].CalculatedCPM() {
-		return exceedFloor[1].CalculatedCPM() + 10
-	}
-
-	return floorCPM
-}
-
 func defaultCTR(seatType entity.RequestType, pub entity.PublisherType, sup entity.Supplier) float32 {
 	return sup.DefaultCTR(fmt.Sprint(seatType), fmt.Sprint(pub))
-}
-
-func doBid(ad entity.Creative, slot entity.Seat, minCPM, minCPC float64, pub entity.Publisher) (float64, float64, float64, bool) {
-	slotCtr := slot.CTR()
-	if slot.CTR() < 0 {
-		// get ctr based on the creative and seat type native app / native web / vast web ...
-		slotCtr = defaultCTR(slot.RequestType(), pub.Type(), pub.Supplier())
-	}
-	adCtr := ad.AdCTR()
-	if adCtr < 0 {
-		// get ctr based on the creative and seat type native app / native web / vast web ...
-		adCtr = defaultCTR(slot.RequestType(), pub.Type(), pub.Supplier())
-	}
-	ctr := float64(adCtr*float32(adCTREffect.Int())+slotCtr*float32(slotCTREffect.Int())) / float64(100)
-	var cpc, cpm float64
-	var exceed bool
-	if ad.Campaign().Strategy() == entity.StrategyCPC {
-		cpm = float64(ad.Campaign().MaxBID()) * ctr * 10.0
-		cpc = float64(ad.Campaign().MaxBID())
-		exceed = cpc >= minCPC
-	} else {
-		cpm = float64(ad.Campaign().MaxBID())
-		cpc = float64(ad.Campaign().MaxBID()) / (ctr * 10.0)
-		exceed = cpm >= minCPM
-	}
-
-	return ctr, cpm, cpc, exceed
 }
 
 type adAndBid struct {
@@ -78,6 +39,25 @@ func (aab adAndBid) CalculatedCPM() float64 {
 func (aab adAndBid) IsSecBid() bool {
 	return aab.secBid
 }
+func target(u entity.User, s entity.Seat, c []entity.Campaign) []entity.Creative {
+	crs := make([]entity.Creative, 0)
+
+	for e := range c {
+		for _, v := range c[e].ReTargeting() {
+			if ls, ok := u.List()[v]; ok {
+				for i := range ls {
+					it := item.GetItem(context.Background(), ls[i])
+					if it == nil {
+						continue
+					}
+					it.SetCampaign(c[e])
+					crs = append(crs, it)
+				}
+			}
+		}
+	}
+	return crs
+}
 
 // selectAds is the only function that one must call to get ads
 // WARNING : DO NOT ADD PARAMETER TO THIS FUNCTION
@@ -101,7 +81,57 @@ func selectAds(
 			ads = append(ads, target(ctx.User(), seat, cps)...)
 		}
 
-		exceedFloor := selector(ctx, ads, seat, noVideo, selected)
+		exceedFloor := make([]entity.SelectedCreative, 0)
+		assert.True(seat.SoftCPM() >= seat.MinCPM())
+
+		for _, creative := range ads {
+			if creative.Type() == entity.AdTypeVideo && noVideo {
+				continue
+			}
+			if selected[creative.ID()] {
+				continue
+			}
+			if !seat.Acceptable(creative) {
+				continue
+			}
+			slotCtr := seat.CTR()
+			if seat.CTR() < 0 {
+				// get ctr based on the creative and seat type native app / native web / vast web ...
+				slotCtr = defaultCTR(seat.RequestType(), ctx.Publisher().Type(), ctx.Publisher().Supplier())
+			}
+			adCtr := creative.AdCTR()
+			if adCtr < 0 {
+				// get ctr based on the creative and seat type native app / native web / vast web ...
+				adCtr = defaultCTR(seat.RequestType(), ctx.Publisher().Type(), ctx.Publisher().Supplier())
+			}
+			ctr := float64(adCtr*float32(adCTREffect.Int())+slotCtr*float32(slotCTREffect.Int())) / float64(100)
+			var cpc, cpm float64
+			var exceed bool
+			if creative.Campaign().Strategy() == entity.StrategyCPC {
+				cpm = float64(creative.Campaign().MaxBID()) * ctr * 10.0
+				cpc = float64(creative.Campaign().MaxBID())
+				exceed = cpc >= seat.MinCPC()
+			} else {
+				cpm = float64(creative.Campaign().MaxBID())
+				cpc = float64(creative.Campaign().MaxBID()) / (ctr * 10.0)
+				exceed = cpm >= seat.MinCPM()
+			}
+
+			if exceed {
+				// a pass!
+				exceedFloor = append(
+					exceedFloor,
+					adAndBid{
+						Creative: creative,
+						ctr:      ctr,
+						cpm:      cpm,
+						secBid:   cpm >= seat.SoftCPM(),
+						cpc:      cpc,
+					},
+				)
+			}
+		}
+
 		var (
 			sorted []entity.SelectedCreative
 			ef     byMulti
@@ -126,88 +156,24 @@ func selectAds(
 
 		theAd := sorted[0]
 		// Do not do second biding pricing on this ads, they can not pass CPMFloor
-		targetCPM := getSecondCPM(seat.CPM(), sorted)
-		targetCPC, targetCPM := fixPrice(theAd.Campaign().Strategy(), float64(theAd.Campaign().MaxBID()), targetCPM, seat.MinCPC(), seat.MinCPM())
 
-		if targetCPM > float64(theAd.Campaign().MaxBID()) {
-			targetCPM = float64(theAd.Campaign().MaxBID())
+		if len(exceedFloor) > 1 &&
+			!exceedFloor[1].Capping().Selected() &&
+			exceedFloor[1].CalculatedCPM()+10 <= exceedFloor[0].CalculatedCPM() {
 		}
+		targetCPC := float64(theAd.Campaign().MaxBID())
 
 		if ctx.Publisher().MaxCPC() > 0 && targetCPC > ctx.Publisher().MaxCPC() {
-			targetCPM = ctx.Publisher().MaxCPC()
 			targetCPC = ctx.Publisher().MaxCPC()
 		}
 
 		selected[theAd.ID()] = true
 
 		// Only decrease share for CPM (which is reported to supplier) not bid (which is used by us)
-		seat.SetWinnerAdvertise(theAd, targetCPC, targetCPM)
+		seat.SetWinnerAdvertise(theAd, targetCPC, targetCPC)
 
 		if !ctx.MultiVideo() {
 			noVideo = noVideo || theAd.Type() == entity.AdTypeVideo
 		}
 	}
-}
-
-func target(u entity.User, s entity.Seat, c []entity.Campaign) []entity.Creative {
-	crs := make([]entity.Creative, 0)
-
-	for e := range c {
-		for _, v := range c[e].ReTargeting() {
-			if ls, ok := u.List()[v]; ok {
-				for i := range ls {
-					it := item.GetItem(context.Background(), ls[i])
-					if it == nil {
-						continue
-					}
-					it.SetCampaign(c[e])
-					crs = append(crs, it)
-				}
-			}
-		}
-	}
-	return crs
-}
-
-func fixPrice(strategy entity.Strategy, cpc, cpm, minCPC, minCPM float64) (float64, float64) {
-
-	if strategy == entity.StrategyCPC && cpc < minCPC {
-		return minCPC, cpm
-	}
-	if strategy == entity.StrategyCPM && cpm < minCPM {
-		return cpc, minCPM
-	}
-	return cpc, cpm
-}
-
-func selector(ctx entity.Context, ads []entity.Creative, seat entity.Seat, noVideo bool, selected map[int32]bool) (exceedFloor []entity.SelectedCreative) {
-	assert.True(seat.SoftCPM() >= seat.MinCPM())
-
-	for _, creative := range ads {
-		if creative.Type() == entity.AdTypeVideo && noVideo {
-			continue
-		}
-		if selected[creative.ID()] {
-			continue
-		}
-		if !seat.Acceptable(creative) {
-			continue
-		}
-
-		if ctr, cpm, cpc, exceed := doBid(creative, seat, seat.MinCPM(), seat.MinCPC(), ctx.Publisher()); exceed {
-			// a pass!
-			exceedFloor = append(
-				exceedFloor,
-				adAndBid{
-					Creative: creative,
-					ctr:      ctr,
-					cpm:      cpm,
-					secBid:   cpm >= seat.SoftCPM(),
-					cpc:      cpc,
-				},
-			)
-		}
-	}
-
-	return exceedFloor
 }
