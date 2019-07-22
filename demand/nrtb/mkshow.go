@@ -7,20 +7,12 @@ import (
 
 	"clickyab.com/crane/models/item"
 
-	"github.com/clickyab/services/config"
-
 	"clickyab.com/crane/demand/capping"
 	"clickyab.com/crane/demand/entity"
 	"github.com/clickyab/services/assert"
 )
 
-var forceFirstBid = config.RegisterBoolean("crane.demand.select.force_first_bid", true, "if it's set we ignore second bid")
-
 func getSecondCPM(floorCPM float64, exceedFloor []entity.SelectedCreative) float64 {
-
-	if forceFirstBid.Bool() || !exceedFloor[0].IsSecBid() {
-		return exceedFloor[0].CalculatedCPM()
-	}
 
 	if len(exceedFloor) > 1 &&
 		exceedFloor[1].IsSecBid() &&
@@ -109,10 +101,7 @@ func selectAds(
 			ads = append(ads, target(ctx.User(), seat, cps)...)
 		}
 
-		exceedFloor, underFloor := selector(ctx, ads, seat, noVideo, selected)
-		if ctx.UnderFloor() == false {
-			underFloor = make([]entity.SelectedCreative, 0)
-		}
+		exceedFloor := selector(ctx, ads, seat, noVideo, selected)
 		var (
 			sorted []entity.SelectedCreative
 			ef     byMulti
@@ -121,12 +110,6 @@ func selectAds(
 		if len(exceedFloor) > 0 {
 			ef = byMulti{
 				Ads:   exceedFloor,
-				Video: ctx.MultiVideo(),
-			}
-		} else if ctx.UnderFloor() && len(underFloor) > 0 {
-			// under floor means we want to fill the seat at any cost. normally our own seat
-			ef = byMulti{
-				Ads:   underFloor,
 				Video: ctx.MultiVideo(),
 			}
 		} else {
@@ -144,16 +127,17 @@ func selectAds(
 		theAd := sorted[0]
 		// Do not do second biding pricing on this ads, they can not pass CPMFloor
 		targetCPM := getSecondCPM(seat.CPM(), sorted)
-		targetCPC := theAd.CalculatedCTR()
-		targetCPC, targetCPM = fixPrice(theAd.Campaign().Strategy(), targetCPC, targetCPM, seat.MinCPC(), seat.MinCPM())
+		targetCPC, targetCPM := fixPrice(theAd.Campaign().Strategy(), float64(theAd.Campaign().MaxBID()), targetCPM, seat.MinCPC(), seat.MinCPM())
 
 		if targetCPM > float64(theAd.Campaign().MaxBID()) {
 			targetCPM = float64(theAd.Campaign().MaxBID())
 		}
+
 		if ctx.Publisher().MaxCPC() > 0 && targetCPC > ctx.Publisher().MaxCPC() {
 			targetCPM = ctx.Publisher().MaxCPC()
 			targetCPC = ctx.Publisher().MaxCPC()
 		}
+
 		selected[theAd.ID()] = true
 
 		// Only decrease share for CPM (which is reported to supplier) not bid (which is used by us)
@@ -196,7 +180,7 @@ func fixPrice(strategy entity.Strategy, cpc, cpm, minCPC, minCPM float64) (float
 	return cpc, cpm
 }
 
-func selector(ctx entity.Context, ads []entity.Creative, seat entity.Seat, noVideo bool, selected map[int32]bool) (exceedFloor []entity.SelectedCreative, underFloor []entity.SelectedCreative) {
+func selector(ctx entity.Context, ads []entity.Creative, seat entity.Seat, noVideo bool, selected map[int32]bool) (exceedFloor []entity.SelectedCreative) {
 	assert.True(seat.SoftCPM() >= seat.MinCPM())
 
 	for _, creative := range ads {
@@ -222,19 +206,8 @@ func selector(ctx entity.Context, ads []entity.Creative, seat entity.Seat, noVid
 					cpc:      cpc,
 				},
 			)
-		} else {
-			underFloor = append(
-				underFloor,
-				adAndBid{
-					Creative: creative,
-					ctr:      ctr,
-					cpm:      cpm,
-					cpc:      cpc,
-					secBid:   false,
-				},
-			)
 		}
 	}
 
-	return exceedFloor, underFloor
+	return exceedFloor
 }
