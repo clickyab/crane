@@ -151,7 +151,7 @@ func selectAds(
 			targetCPC = ctx.Publisher().MaxCPC()
 		}
 
-		if float64(seat.MinBid()) > targetCPC {
+		if float64(seat.MinCPC()) > targetCPC {
 			continue
 		}
 

@@ -5,7 +5,7 @@ import (
 
 	"clickyab.com/crane/demand/entity"
 	"clickyab.com/crane/internal/cyslot"
-	"clickyab.com/crane/openrtb/v2.5"
+	openrtb "clickyab.com/crane/openrtb/v2.5"
 
 	"github.com/clickyab/services/config"
 )
@@ -89,7 +89,7 @@ func SetDemandSeats(sd ...DemandSeatData) ShowOptionSetter {
 				ctr:         o.publisher.CTR(size),
 				rate:        o.rate,
 				requestType: sd[i].Type,
-				minCPC:      minCPC,
+				minCPC:      float64(incShare(o.Publisher().Supplier(), minCPC)),
 				softCPM:     float64(o.Publisher().Supplier().SoftFloorCPM(fmt.Sprint(sd[i].Type), fmt.Sprint(o.Publisher().Type()))),
 				minCPM:      float64(incShare(o.Publisher().Supplier(), sd[i].MinBid)),
 			}
